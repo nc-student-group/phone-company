@@ -4,23 +4,35 @@ import com.phonecompany.dao.interfaces.CrudDao;
 
 import java.util.List;
 
-public abstract class CrudDaoImpl<T> implements CrudDao<T> {
+public class CrudDaoImpl<T> implements CrudDao<T> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T save(T entity) {
         return null;
     }
 
-    @Override
-    public void delete(T entity) {
-
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getById(Long id) {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Long id) {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<T> getAll() {
         return null;
