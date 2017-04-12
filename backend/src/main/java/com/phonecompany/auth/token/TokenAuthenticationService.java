@@ -1,4 +1,4 @@
-package com.phonecompany.config.auth;
+package com.phonecompany.auth.token;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,7 +49,7 @@ public class TokenAuthenticationService {
     private static String getUserNameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET)
-                .parseClaimsJws(token.replace(TOKEN_PREFIX, "")) //TODO: rework to replace()
+                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                 .getBody()
                 .getSubject();
     }
