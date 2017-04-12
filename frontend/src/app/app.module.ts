@@ -6,6 +6,7 @@ import {CreateUserComponent} from "./user/create-user/create-user.component";
 import {appRoutes} from "./router";
 import {RouterModule} from "@angular/router";
 import {PhoneCompanyComponent} from "./phone-company.component";
+import {AuthenticationComponent} from "./user/authentication/authentication.component";
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {PhoneCompanyComponent} from "./phone-company.component";
   ],
   declarations: [
     PhoneCompanyComponent,
-    CreateUserComponent
+    CreateUserComponent,
+    AuthenticationComponent
   ],
   providers: [],
   bootstrap: [PhoneCompanyComponent]
