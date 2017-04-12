@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <div class="form">
+    <p class="create-user-header">Create user</p>
+    <form [formGroup]="createUserForm" (ngSubmit)="createUser(createUserForm.value)"
+          autocomplete="off" novalidate>
+      <input type="text" formControlName="userName" placeholder="Username"/>
+      <input type="text" [ngClass]="{'error': !isFieldValid(email)}"
+             formControlName="email" placeholder="email address"/>
+      <select class="select-user-role custom-select mb-2 mr-sm-2 mb-sm-0"
+              name="employeeRole" id="employeeRole">
+        <option value="Client">Client</option>
+        <option value="CSR">CSR</option>
+        <option value="PMG">PMG</option>
+      </select>
+      <button style="margin-top: 20px;" class="submit-user-creation"
+              [disabled]="registerForm.invalid || disabled"
+              [ngClass]="{'button-if-invalidForm': registerForm.invalid,
+              'button-if-form-ok': !registerForm.invalid}"
+              type="submit">create user
+      </button>
+    </form>
+  </div>
+</div>

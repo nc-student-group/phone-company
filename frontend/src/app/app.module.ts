@@ -1,20 +1,26 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-
-import { AppComponent } from './app.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
+import {CreateUserComponent} from "./user/create-user/create-user.component";
+import {appRoutes} from "./router";
+import {RouterModule} from "@angular/router";
+import {PhoneCompanyComponent} from "./phone-company.component";
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(appRoutes),
+    HttpModule,
     FormsModule,
-    HttpModule
+    ReactiveFormsModule
+  ],
+  declarations: [
+    PhoneCompanyComponent,
+    CreateUserComponent
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [PhoneCompanyComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
