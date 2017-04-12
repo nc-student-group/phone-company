@@ -13,4 +13,21 @@
         <module>backend</module>
         <module>frontend</module>
     </modules>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.4.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
+        <java.version>1.8</java.version>
+    </properties>
+
+
+
 </project>
