@@ -1,10 +1,16 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.model.DomainEntity;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-public class CrudDaoImpl<T> implements CrudDao<T> {
+@Slf4j
+@NoArgsConstructor
+public abstract class CrudDaoImpl<T extends DomainEntity>
+        implements CrudDao<T> {
 
     /**
      * {@inheritDoc}
