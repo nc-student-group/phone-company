@@ -22,26 +22,6 @@ public class UserDaoImpl extends CrudDaoImpl<User> implements UserDao {
     @Autowired
     private QueryLoader queryLoader;
 
-//    @Override
-//    public User save(User entity) {
-//        return null;
-//    }
-//
-//    @Override
-//    public User getById(Long id) {
-//        return null;
-//    }
-//
-//    @Override
-//    public void delete(Long id) {
-//
-//    }
-//
-//    @Override
-//    public List<User> getAll() {
-//        return null;
-//    }
-
     @Override
     public User findByUsername(String userName) {
         return null;
@@ -49,12 +29,11 @@ public class UserDaoImpl extends CrudDaoImpl<User> implements UserDao {
 
     @Override
     public String getQuery(String type){
-        return queryLoader.getQuery("query.user."+type);
+        return queryLoader.getQuery("query.user." + type);
     }
 
     @Override
-    public Map<Integer, Object> getParams(Object entity){
-        User user = (User) entity;
+    public Map<Integer, Object> getParams(User user){
         Map<Integer, Object> params = new HashMap<>();
         params.put(1, user.getEmail());
         params.put(2, user.getPassword());
@@ -62,8 +41,7 @@ public class UserDaoImpl extends CrudDaoImpl<User> implements UserDao {
     }
 
     @Override
-    public void setId(Object entity, long id){
-        User user = (User) entity;
+    public void setId(User user, long id){
         user.setId(id);
     }
 
@@ -76,6 +54,7 @@ public class UserDaoImpl extends CrudDaoImpl<User> implements UserDao {
             user.setPassword(rs.getString("password"));
         } catch (SQLException e) {
             e.printStackTrace();
+            //TODO: exception handling
         }
         return user;
     }

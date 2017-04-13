@@ -30,12 +30,12 @@ public interface CrudDao<T> {
      *
      * @param id identifier of the entity that has to be deleted
      */
-    void delete(Long id);
+    void delete(Long id) throws SQLException;
 
     /**
      * Gets all the entities
      *
      * @return all entities
      */
-    List<T> getAll();
+    List<T> getAll() throws SQLException;
 }

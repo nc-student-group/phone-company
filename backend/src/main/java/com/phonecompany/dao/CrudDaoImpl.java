@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 
 import javax.validation.Valid;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public T getById(Long id) throws SQLException {
         Connection conn = DriverManager.getConnection(connStr);
         PreparedStatement preparedStatement = conn.prepareStatement(getQuery("getById"));
-        preparedStatement.setObject(1, id);
+        preparedStatement.setLong(1, id);
         ResultSet rs = preparedStatement.executeQuery();
         rs.next();
         T res = init(rs);
@@ -62,30 +63,39 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws SQLException {
+        Connection conn = DriverManager.getConnection(connStr);
 
+        PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"));
+        preparedStatement.setLong(1, id);
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+        conn.close();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<T> getAll() {
-        return null;
+    public List<T> getAll() throws SQLException {
+        Connection conn = DriverManager.getConnection(connStr);
+        PreparedStatement preparedStatement = conn.prepareStatement(getQuery("getAll"));
+        ResultSet rs = preparedStatement.executeQuery();
+        List<T> result = new ArrayList<>();
+        while(rs.next()) {
+            result.add(init(rs));
+        }
+        preparedStatement.close();
+        conn.close();
+        return result;
     }
 
-    public String getQuery(String type) {
-        return "";
-    }
+    public abstract String getQuery(String type);
 
-    public Map<Integer, Object> getParams(Object o) {
-        return null;
-    }
+    public abstract Map<Integer, Object> getParams(T o);
 
-    public void setId(Object o, long id) {
-    }
+    public abstract void setId(T obj, long id);
 
-    public T init(ResultSet resultSet){
-        return null;
-    }
+    public abstract T init(ResultSet resultSet);
 }
