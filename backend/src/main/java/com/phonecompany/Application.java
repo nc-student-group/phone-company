@@ -16,19 +16,19 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    public CommandLineRunner testData(final UserDaoImpl userDao) {
-        return new CommandLineRunner() {
-            @Override
-            public void run(String... strings) throws Exception {
-//                User user = new User();
-//                user.setEmail("shpilak.yura1@gmail.com");
-//                user.setPassword("123456");
-//                userDao.save(user);
-                User user = userDao.getById(1l);
-                System.out.println(user.getEmail());
-            }
-        };
-    }
+//    @Bean
+//    public CommandLineRunner testData(final UserDaoImpl userDao) {
+//        return new CommandLineRunner() {
+//            @Override
+//            public void run(String... strings) throws Exception {
+////                User user = new User();
+////                user.setEmail("shpilak.yura1@gmail.com");
+////                user.setPassword("123456");
+////                userDao.save(user);
+//                User user = userDao.getById(1l);
+//                System.out.println(user.getEmail());
+//            }
+//        };
+//    }
 
 }
