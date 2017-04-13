@@ -5,7 +5,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Person extends DomainEntity {
     private String firstName;
@@ -16,5 +15,9 @@ public class Person extends DomainEntity {
 
     public Person(Long id) {
         super(id);
+    }
+
+    public Person() {
+
     }
 }

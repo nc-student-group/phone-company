@@ -1,5 +1,6 @@
 package com.phonecompany.dao.interfaces;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public interface CrudDao<T> {
      * @param entity entity to be saved
      * @return saved entity
      */
-    T save(T entity);
+    T save(T entity) throws SQLException;
 
     /**
      * Gets entity by its id
@@ -22,7 +23,7 @@ public interface CrudDao<T> {
      * @param id entity identifier
      * @return entity found by the provided identifier
      */
-    T getById(Long id);
+    T getById(Long id) throws SQLException;
 
     /**
      * Deletes entity by the given id
