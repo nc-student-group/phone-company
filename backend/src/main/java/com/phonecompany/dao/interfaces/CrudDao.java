@@ -10,12 +10,20 @@ import java.util.List;
  */
 public interface CrudDao<T> {
     /**
-     * Saves entity
+     * Inserts entity
      *
      * @param entity entity to be saved
      * @return saved entity
      */
-    T save(T entity) throws SQLException;
+    T insert(T entity) throws SQLException;
+
+    /**
+     * Updates entity
+     *
+     * @param entity entity to be saved
+     * @return saved entity
+     */
+    T update(T entity) throws SQLException;
 
     /**
      * Gets entity by its id

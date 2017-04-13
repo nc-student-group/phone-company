@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -33,11 +34,14 @@ public class UserDaoImpl extends CrudDaoImpl<User> implements UserDao {
     }
 
     @Override
-    public Map<Integer, Object> getParams(User user){
-        Map<Integer, Object> params = new HashMap<>();
-        params.put(1, user.getEmail());
-        params.put(2, user.getPassword());
-        return params;
+    public void setParamsForSaveStatement(User user, PreparedStatement preparedStatement){
+        try {
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2 ,user.getPassword());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //TODO: exception handling
+        }
     }
 
     @Override
