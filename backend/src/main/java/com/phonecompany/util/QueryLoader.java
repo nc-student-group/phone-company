@@ -1,6 +1,5 @@
 package com.phonecompany.util;
 
-
 /**
  * The <code>QueryLoader</code> interface should be implemented by
  * the classes that are capable of loading queries.

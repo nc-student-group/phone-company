@@ -1,12 +1,7 @@
 package com.phonecompany.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@Getter
-@ToString
 public abstract class DomainEntity {
 
     @JsonIgnoreProperties(ignoreUnknown = true)

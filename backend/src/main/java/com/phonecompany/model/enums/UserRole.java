@@ -1,13 +1,8 @@
 package com.phonecompany.model.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Defines user roles
  */
-@Getter
-@AllArgsConstructor
 public enum UserRole {
     /* Can create users with such roles as: CLIENT, CSR, PMG */
     ADMIN("ADMIN"),
@@ -20,4 +15,12 @@ public enum UserRole {
     PMG("PMG");
 
     private String title;
+
+    UserRole(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

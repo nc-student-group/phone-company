@@ -1,6 +1,9 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityPersistenceException;
+import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +35,13 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     }
 
     @Override
-    public void setParamsForSaveStatement(User user, PreparedStatement preparedStatement){
+    public void populateSaveStatement(PreparedStatement preparedStatement, User user){
         try {
             preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2 ,user.getPassword());
+            preparedStatement.setString(2, user.getPassword());
         } catch (SQLException e) {
-            e.printStackTrace();
-            //TODO: exception handling
+            throw new PreparedStatementPopulationException(e);
         }
-    }
-
-    @Override
-    public void setId(User user, long id){
-        user.setId(id);
     }
 
     @Override
@@ -55,8 +52,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
         } catch (SQLException e) {
-            e.printStackTrace();
-            //TODO: exception handling
+            throw new EntityInitializationException(e);
         }
         return user;
     }

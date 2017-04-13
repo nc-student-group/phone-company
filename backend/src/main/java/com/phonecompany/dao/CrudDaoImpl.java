@@ -1,18 +1,14 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.CrudDao;
-import com.phonecompany.exception.EntityNotFoundException;
+import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
-@NoArgsConstructor
 public abstract class CrudDaoImpl<T extends DomainEntity>
         implements CrudDao<T> {
 
@@ -23,26 +19,31 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public T insert(T entity) throws SQLException {
+    public T save(T entity) {
         try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement preparedStatement = conn.prepareStatement(getQuery("insert"))) {
-            this.setParamsForSaveStatement(entity, preparedStatement);
-            ResultSet rs = preparedStatement.executeQuery();
+            PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
+            this.populateSaveStatement(ps, entity);
+            ResultSet rs = ps.executeQuery();
             rs.next();
-            setId(entity, rs.getLong(1));
+            long generatedId = rs.getLong(1);
+            entity.setId(generatedId);
+            return entity;
+        } catch (SQLException e) {
+            throw new EntityPersistenceException(entity, e);
         }
-        return entity;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public T update(T entity) throws SQLException {
+    public T update(T entity) {
         try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement preparedStatement = conn.prepareStatement(getQuery("update"))) {
-            this.setParamsForSaveStatement(entity, preparedStatement);
-            preparedStatement.executeUpdate();
+            PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
+            this.populateSaveStatement(ps, entity); //TODO: populateUpdateStatement(ps, entity);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new EntityModificationException(entity, e);
         }
         return entity;
     }
@@ -53,7 +54,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     @Override
     public T getById(Long id) {
         try (Connection conn = DriverManager.getConnection(connStr);
-             PreparedStatement ps = conn.prepareStatement(getQuery("getById"))) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getById"))) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -67,11 +68,13 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public void delete(Long id) throws SQLException {
+    public void delete(Long id) {
         try(Connection conn = DriverManager.getConnection(connStr);
             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new EntityDeletionException(id, e);
         }
     }
 
@@ -79,24 +82,24 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public List<T> getAll() throws SQLException {
+    public List<T> getAll() {
         try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement preparedStatement = conn.prepareStatement(getQuery("getAll"))) {
-            ResultSet rs = preparedStatement.executeQuery();
+            PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
+            ResultSet rs = ps.executeQuery();
             List<T> result = new ArrayList<>();
             while (rs.next()) {
                 result.add(init(rs));
             }
             return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
         }
-
     }
 
     public abstract String getQuery(String type);
 
-    public abstract void setParamsForSaveStatement(T o, PreparedStatement preparedStatement);
-
-    public abstract void setId(T obj, long id);
+    public abstract void populateSaveStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
 }
