@@ -7,6 +7,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,9 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-/**
- * Created by Yurii on 14.04.2017.
- */
+@Repository
 public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken> implements VerificationTokenDao {
 
     private QueryLoader queryLoader;
