@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleServiceImpl extends CrudServiceImpl<Role> implements RoleService{
+public class RoleServiceImpl extends CrudServiceImpl<Role> implements RoleService {
 
     @Autowired
     public RoleServiceImpl(CrudDao<Role> dao) {
