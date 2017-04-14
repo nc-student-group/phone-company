@@ -16,6 +16,13 @@ public class User extends DomainEntity{
         super();
     }
 
+    public User(Long id, String email) { // for angular2 demo
+    }
+
+    public User(Long id) {
+        super(id);
+    }
+
     public User(String password, String email, Role role, String firstName, String lastName, String secondName, String phone, Address address) {
         this.password = password;
         this.email = email;
@@ -73,11 +80,6 @@ public class User extends DomainEntity{
 
     public void setAddress(Address address) {
         this.address = address;
-    public User(Long id, String email) { // for angular2 demo
-    }
-
-    public User(Long id) {
-        super(id);
     }
 
     public String getPassword() {
