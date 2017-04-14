@@ -59,6 +59,22 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     }
 
     @Override
+    public void populateUpdateStatement(PreparedStatement preparedStatement, User user){
+        try {
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getFirstName());
+            preparedStatement.setString(4, user.getSecondName());
+            preparedStatement.setString(5, user.getPhone());
+            preparedStatement.setString(6, user.getPassword());
+//            preparedStatement.setLong(7, user.getAddress());
+            preparedStatement.setLong(8, user.getId());
+        } catch (SQLException e) {
+            throw new PreparedStatementPopulationException(e);
+        }
+    }
+
+    @Override
     public User init(ResultSet rs) {
         User user = new User();
         try {
