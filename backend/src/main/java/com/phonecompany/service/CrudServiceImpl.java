@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class CrudServiceImpl<T extends DomainEntity> implements CrudService<T> {
 
-    private CrudDao<T> dao;
+    protected CrudDao<T> dao;
 
     public CrudServiceImpl(CrudDao<T> dao) {
         this.dao = dao;

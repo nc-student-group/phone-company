@@ -1,7 +1,5 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.dao.interfaces.CrudDao;
-
 import java.util.List;
 
 /**
