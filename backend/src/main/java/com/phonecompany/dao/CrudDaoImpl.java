@@ -115,5 +115,4 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     public abstract T init(ResultSet resultSet);
 
-    public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 }
