@@ -12,6 +12,9 @@ public class User extends Person {
         super();
     }
 
+    public User(Long id, String email) { // for angular2 demo
+    }
+
     public User(Long id) {
         super(id);
     }
