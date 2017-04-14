@@ -1,5 +1,7 @@
 package com.phonecompany.dao.interfaces;
 
+import com.phonecompany.model.DomainEntity;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  *
  * @param <T> entity type that CRUD operations are performed on
  */
-public interface CrudDao<T> {
+public interface CrudDao<T extends DomainEntity> {
     /**
      * Saves entity
      *
