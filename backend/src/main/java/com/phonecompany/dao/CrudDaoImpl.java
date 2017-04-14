@@ -14,14 +14,24 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     @Value("${spring.datasource.url}")
     private String connStr;
+    private boolean autoCommit = true;
+
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public T save(T entity) {
-        try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
+            conn.setAutoCommit(this.autoCommit);
             this.populateSaveStatement(ps, entity);
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -38,8 +48,8 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public T update(T entity) {
-        try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
             this.populateSaveStatement(ps, entity); //TODO: populateUpdateStatement(ps, entity);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -69,8 +79,8 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public void delete(Long id) {
-        try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -83,8 +93,8 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public List<T> getAll() {
-        try(Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
             ResultSet rs = ps.executeQuery();
             List<T> result = new ArrayList<>();
             while (rs.next()) {
