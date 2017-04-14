@@ -1,5 +1,7 @@
 package com.phonecompany.dao;
 
+import com.phonecompany.dao.interfaces.AddressDao;
+import com.phonecompany.dao.interfaces.RoleDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityPersistenceException;
@@ -20,6 +22,12 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private QueryLoader queryLoader;
 
     @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
+    private AddressDao addressDao;
+
+    @Autowired
     public UserDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
     }
@@ -38,7 +46,13 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     public void populateSaveStatement(PreparedStatement preparedStatement, User user){
         try {
             preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getFirstName());
+            preparedStatement.setString(4, user.getSecondName());
+            preparedStatement.setLong(5, user.getAddress().getId());
+            preparedStatement.setString(6, user.getPhone());
+            preparedStatement.setString(7, user.getPassword());
+            preparedStatement.setLong(8, user.getRole().getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -50,10 +64,33 @@ public class UserDaoImpl extends CrudDaoImpl<User>
         try {
             user.setId(rs.getLong("id"));
             user.setEmail(rs.getString("email"));
+            user.setLastName(rs.getString("lastname"));
+            user.setFirstName(rs.getString("firstname"));
+            user.setSecondName(rs.getString("secondname"));
+            user.setAddress(addressDao.getById(rs.getLong("address")));
+            user.setPhone(rs.getString("phone"));
             user.setPassword(rs.getString("password"));
+            user.setRole(roleDao.getById(rs.getLong("role_id")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
         return user;
+    }
+
+    @Override
+    public void populateUpdateStatement(PreparedStatement preparedStatement, User user) {
+        try {
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getFirstName());
+            preparedStatement.setString(4, user.getSecondName());
+            preparedStatement.setLong(5, user.getAddress().getId());
+            preparedStatement.setString(6, user.getPhone());
+            preparedStatement.setString(7, user.getPassword());
+            preparedStatement.setLong(8, user.getRole().getId());
+            preparedStatement.setLong(9, user.getId());
+        } catch (SQLException e) {
+            throw new PreparedStatementPopulationException(e);
+        }
     }
 }

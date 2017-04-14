@@ -23,8 +23,8 @@ public abstract class AbstractTest {
     @Value("${spring.datasource.url}")
     private String connStr;
 
-    public final String BEGIN_TRANSACTION = "BEGIN;";
-    public final String ROLLBACK_TRANSACTION = "ROLLBACK;";
+    private final String BEGIN_TRANSACTION = "BEGIN;";
+    private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
     @Before
     public void setUp(){
         try(Connection conn = DriverManager.getConnection(connStr);
