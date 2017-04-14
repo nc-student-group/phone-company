@@ -17,7 +17,7 @@ import java.util.Set;
  * Created by Yurii on 14.04.2017.
  */
 @Service
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
 
@@ -28,7 +28,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(login + " not found");
 
         Set<GrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(user.getRole().getName()));
+        roles.add(new SimpleGrantedAuthority("ROLE_"+user.getRole().getName()));
 
         return new User(user.getEmail(), user.getPassword(), roles);
     }
