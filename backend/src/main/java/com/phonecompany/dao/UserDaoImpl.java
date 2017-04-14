@@ -41,8 +41,9 @@ public class UserDaoImpl extends CrudDaoImpl<User>
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return init(rs);
+            if(rs.next()) {
+                return init(rs);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -84,6 +85,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             user.setPassword(rs.getString("password"));
             user.setRole(roleDao.getById(rs.getLong("role_id")));
         } catch (SQLException e) {
+//            e.printStackTrace();
             throw new EntityInitializationException(e);
         }
         return user;
