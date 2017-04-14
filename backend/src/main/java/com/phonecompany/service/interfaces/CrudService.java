@@ -1,4 +1,4 @@
-package com.phonecompany.dao.service;
+package com.phonecompany.service.interfaces;
 
 import com.phonecompany.dao.interfaces.CrudDao;
 
@@ -7,10 +7,9 @@ import java.util.List;
 /**
  * Base interface for service operations on DAO
  *
- * @param <K> DAO type that service operations are performed on
  * @param <T> entity type that DAO implements CRUD operation for
  */
-public interface CrudService<T, K extends CrudDao<T>> {
+public interface CrudService<T> {
 
     /**
      * Saves entity
