@@ -50,7 +50,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public T update(T entity) {
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
-            this.populateSaveStatement(ps, entity); //TODO: populateUpdateStatement(ps, entity);
+            this.populateUpdateStatement(ps, entity);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new EntityModificationException(entity, e);
@@ -110,6 +110,8 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public abstract String getQuery(String type);
 
     public abstract void populateSaveStatement(PreparedStatement preparedStatement, T entity);
+
+    public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
 }
