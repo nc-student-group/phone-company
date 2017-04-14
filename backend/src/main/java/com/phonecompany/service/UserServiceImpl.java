@@ -1,4 +1,4 @@
-package com.phonecompany.service.impl;
+package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.UserDao;
@@ -7,17 +7,16 @@ import com.phonecompany.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by Yurii on 14.04.2017.
- */
 @Service
-public class UserServiceImpl extends AbstractServiceImpl<User> implements UserService{
+public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
 
     @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    public UserServiceImpl(UserDao dao) {
+    public UserServiceImpl(CrudDao<User> dao) {
         super(dao);
+    }
+
+    @Override
+    public User findByUsername(String userName) {
+        return ((UserDao)dao).findByUsername(userName);
     }
 }
