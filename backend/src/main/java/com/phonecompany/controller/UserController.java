@@ -35,7 +35,8 @@ public class UserController {
         users.add(new User(1L, "test1@gmail.com"));
         users.add(new User(2L, "test2@gmail.com"));
 
-        return Collections.unmodifiableList(users);}
+        return Collections.unmodifiableList(users);
+    }
 
     @RequestMapping(method = POST, value = "/api/users")
     public ResponseEntity<?> saveUser(@RequestBody User user) {
