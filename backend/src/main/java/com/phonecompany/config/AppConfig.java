@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.Filter;
 
@@ -15,7 +16,7 @@ import javax.servlet.Filter;
  */
 @Configuration
 @EnableWebMvc
-public class AppConfig {
+public class AppConfig extends WebMvcConfigurerAdapter{
 
     @Bean
     public UserDetailsService userDetailsService() {
