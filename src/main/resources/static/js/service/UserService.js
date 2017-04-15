@@ -14,7 +14,7 @@
 
         // Template for CRUD operations
         userService.perform = function () {
-            return $resource('https://localhost:8090/api/users/:id', null,
+            return $resource('/api/users/:id', null,
                 {
                     'update': {method: 'PUT'}
                 });
