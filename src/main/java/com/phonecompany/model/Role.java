@@ -1,6 +1,7 @@
 package com.phonecompany.model;
 
 public class Role extends DomainEntity {
+
     private String name;
 
     public Role() {

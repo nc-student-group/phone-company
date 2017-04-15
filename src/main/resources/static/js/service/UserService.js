@@ -25,6 +25,11 @@
             return userService.perform().save(user);
         };
 
+        userService.getUsers = function () {
+            console.log('Retrieving all the users contained in the database');
+            return userService.perform().get();
+        };
+
         return userService;
     }
 }());

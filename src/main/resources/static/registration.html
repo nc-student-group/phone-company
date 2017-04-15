@@ -18,7 +18,7 @@
               ng-submit="">
             <input ng-model="user.userName" type="text" placeholder="Username"/>
             <input ng-model="user.password" type="password" placeholder="password"/>
-            <button type="submit">
+            <button class="register-button" type="submit">
                 login
             </button>
         </form>
@@ -39,7 +39,7 @@
             <span ng-show="registerForm.confirmPassword.$dirty && frm.confirmPassword.$error.compareTo">
                 Passwords don't match.</span>
             <input ng-model="user.email" type="text" placeholder="email"/>
-            <button type="submit">
+            <button class="register-button" type="submit">
                 login
             </button>
         </form>

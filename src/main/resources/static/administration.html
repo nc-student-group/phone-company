@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 user-list">
+            <div class="card users">
+      <span class="fa fa-times close-user">
+      </span>
+                <button class="add-user-button">Add User</button>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>
+              <span class="fa fa-check-circle fa-lg"></span>
+                            <span class="user-item">{{task.taskName}}</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6 userForm hideMe">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="header">
+                            <h4 class="title">Create User</h4>
+                        </div>
+                    </div>
+                    <div class="task-controls">
+                        <a><i class="fa fa-tasks fa-lg"></i></a>
+                        <a><i class="close-user fa fa-times-circle fa-lg"></i></a>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <form ng-click="createUser()" autocomplete="off"
+                          novalidate>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>User name</label>
+                                    <input ng-model="userName" type="text" class="form-control"
+                                           placeholder="User name">
+                                </div>
+                                <div class="form-group">
+                                    <label>User email</label>
+                                    <input ng-model="email" type="text" class="form-control"
+                                           placeholder="User email">
+                                </div>
+                                <div class="form-group">
+                                    <label>User role</label>
+                                    <input ng-model="role" type="text" class="form-control"
+                                           placeholder="User role">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit"
+                                class="add-user-button pull-right">
+                            Submit
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

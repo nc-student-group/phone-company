@@ -8,6 +8,10 @@
                 templateUrl: 'registration.html',
                 controller: 'RegistrationController'
             })
+            .when('/administration', {
+                templateUrl: 'administration.html',
+                controller: 'AdministrationController'
+            })
             .otherwise({redirectTo: '/registration'});
     });
 
