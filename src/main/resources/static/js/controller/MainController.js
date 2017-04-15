@@ -9,6 +9,13 @@ angular.module('phone-company').controller('MainController', [
         console.log('This is MainController');
         $scope.inProgress = false;
 
+        $scope.setHeader = function () {
+            if (SessionService.hasToken() && $rootScope.currentRole != undefined) {
+                $scope.headerTmplt = 'view/fragments.navbar/navbar.html';
+            }
+            return $scope.headerTmplt;
+        };
+
         $scope.watchRedirect = function () {
             if (SessionService.hasToken()) {
                 if($rootScope.currentRole == undefined && $scope.inProgress == false){

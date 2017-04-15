@@ -27,6 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        logger.info(login);
         com.phonecompany.model.User user = userService.findByUsername(login);
         if (user == null)
             throw new UsernameNotFoundException(login + " not found");
