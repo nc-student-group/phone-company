@@ -1,6 +1,4 @@
-## Build
+# phone-company
 
-1) Proceed to the frontend directory of the project
-2) Run `npm install` if you locally don't have changes introduced in the latest commit
-3) Run `npm start`
-4) Go to `http://localhost:4200` and see the the result
+![ErModel](https://cloud.githubusercontent.com/assets/27305820/24996353/39f7f328-203b-11e7-9081-110db10bc7d4.jpg
+)
