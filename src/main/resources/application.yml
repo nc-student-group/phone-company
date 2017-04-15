@@ -1,0 +1,11 @@
+server:
+  port: 8090
+
+spring:
+  profiles:
+    active: prod
+
+logging:
+  level:
+    com:
+      phonecompany: info
