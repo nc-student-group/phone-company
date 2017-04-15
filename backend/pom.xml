@@ -57,6 +57,13 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+        <!-- mock testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.netcracker</groupId>
             <artifactId>frontend</artifactId>

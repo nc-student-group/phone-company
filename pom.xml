@@ -30,6 +30,7 @@
         <frontend-maven-plugin.npm.version>4.1.2</frontend-maven-plugin.npm.version>
         <maven-compiler-plugin-version>3.6.1</maven-compiler-plugin-version>
         <frontend-maven-plugin.version>1.0</frontend-maven-plugin.version>
+        <mockito.version>1.10.19</mockito.version>
     </properties>
 
     <build>
