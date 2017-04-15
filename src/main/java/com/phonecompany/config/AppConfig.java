@@ -1,20 +1,19 @@
 package com.phonecompany.config;
 
 import com.phonecompany.service.UserDetailServiceImpl;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.Filter;
-import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan(basePackages = { "com.phonecompany" })
-public class AppConfig {
+public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {

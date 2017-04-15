@@ -15,6 +15,6 @@ public class Application extends WebMvcConfigurerAdapter {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/")
-                .setViewName("/templates/index.html");
+                .setViewName("/static/index.html");
     }
 }
