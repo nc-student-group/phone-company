@@ -10,8 +10,8 @@
             });
         $routeProvider.when('/admin',
             {
-                templateUrl: 'view/adminPage.html',
-                // controller: 'AdminPageController'
+                templateUrl: 'view/administration.html',
+                controller: 'AdministrationController'
             });
         $routeProvider.when('/client',
             {
@@ -26,6 +26,11 @@
         $routeProvider.when('/pmg',
             {
                 templateUrl: 'view/csrPage.html',
+                // controller: ''
+            });
+        $routeProvider.when('/navbar',
+            {
+                templateUrl: 'view/fragments/navbar/navbar.html',
                 // controller: ''
             });
         $routeProvider.otherwise({redirectTo: '/index'});
@@ -50,8 +55,8 @@
 
     app.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('sessionInjector');
-        // $httpProvider.defaults.useXDomain = true;
-        // delete $httpProvider.defaults.headers.common['X-Requested-With'];
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
         // $httpProvider.interceptors.push(function ($q, $location) {
         //     return {
         //         responseError: function (rejection) {

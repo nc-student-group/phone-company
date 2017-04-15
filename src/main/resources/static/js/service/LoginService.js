@@ -2,7 +2,7 @@
 
 angular.module('phone-company').factory('LoginService', ['$q', '$http', function ($q, $http) {
 
-    var GET_TRY_LOGIN_URL = "http://localhost:8090/api/login/try";
+    var GET_TRY_LOGIN_URL = "/api/login/try";
 
     var factory = {
         tryLogin:tryLogin,
@@ -17,6 +17,8 @@ angular.module('phone-company').factory('LoginService', ['$q', '$http', function
                 deferred.resolve(response.data);
             },
             function (errResponse) {
+                if (!(localStorage.getItem('loginToken') === null))
+                    localStorage.removeItem('loginToken')
                 console.error(errResponse.toString());
                 deferred.reject(errResponse);
             });

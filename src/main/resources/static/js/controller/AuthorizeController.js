@@ -6,10 +6,7 @@ angular.module('phone-company').controller('AuthorizeController', [
     'LoginService',
     function ($scope, $location, SessionService, LoginService) {
         console.log('This is AuthorizeController');
-        $scope.activeTab = 1;
-        $scope.tabClick = function (index) {
-            $scope.activeTab = index;
-        };
+        $scope.selected = 'signIn';
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);

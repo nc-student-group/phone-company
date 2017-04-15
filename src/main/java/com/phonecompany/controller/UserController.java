@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,11 @@ public class UserController {
 
     @RequestMapping(method = GET, value = "/api/users")
     public Collection<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
+        LOG.info("Retrieving all the users contained in the database");
+
+        List<User> users = this.userDao.getAll();
+
+        LOG.info("Users fetched from the database: " + users);
 
         return Collections.unmodifiableCollection(users);
     }
@@ -58,4 +62,5 @@ public class UserController {
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
+
 }

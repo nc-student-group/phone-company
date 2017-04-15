@@ -4,15 +4,19 @@ import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.RoleDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class UserDaoImpl extends CrudDaoImpl<User>
@@ -30,6 +34,9 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private AddressDao addressDao;
 
     @Autowired
+    private ShaPasswordEncoder shaPasswordEncoder;
+
+    @Autowired
     public UserDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
     }
@@ -37,14 +44,14 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Override
     public User findByUsername(String userName) {
         try (Connection conn = DriverManager.getConnection(connStr);
-            PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new EntityNotFoundException(-1l, e);
         }
         return null;
     }
@@ -63,7 +70,8 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, user.getPassword());
+            preparedStatement.setString(7, shaPasswordEncoder
+                    .encodePassword(user.getPassword(), null));
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -98,7 +106,8 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setLong(5, user.getAddress().getId());
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, user.getPassword());
+            preparedStatement.setString(7, shaPasswordEncoder
+                    .encodePassword(user.getPassword(), null));
             preparedStatement.setLong(8, user.getRole().getId());
             preparedStatement.setLong(9, user.getId());
         } catch (SQLException e) {
