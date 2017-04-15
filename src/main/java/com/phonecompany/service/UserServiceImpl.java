@@ -1,7 +1,7 @@
 package com.phonecompany.service;
 
-import com.phonecompany.interfaces.CrudDao;
-import com.phonecompany.interfaces.UserDao;
+import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

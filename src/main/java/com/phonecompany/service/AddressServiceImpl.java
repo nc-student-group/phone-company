@@ -1,6 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.model.Address;
 import com.phonecompany.service.interfaces.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;

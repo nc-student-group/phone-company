@@ -1,6 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.interfaces.AddressDao;
+import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.model.Address;
 import org.junit.Before;
 import org.junit.Test;

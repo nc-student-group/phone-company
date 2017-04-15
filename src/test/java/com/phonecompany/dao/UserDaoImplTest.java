@@ -1,7 +1,5 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.UserDaoImpl;
-import com.phonecompany.dao.AbstractTest;
 import com.phonecompany.model.User;
 import org.junit.Assert;
 import org.junit.Before;

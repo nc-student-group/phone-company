@@ -1,6 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.interfaces.UserDao;
+import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import org.junit.Before;
 import org.junit.Test;

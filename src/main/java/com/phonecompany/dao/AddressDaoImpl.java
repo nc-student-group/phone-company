@@ -1,6 +1,6 @@
-package com.phonecompany;
+package com.phonecompany.dao;
 
-import com.phonecompany.interfaces.AddressDao;
+import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Address;

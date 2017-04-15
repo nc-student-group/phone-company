@@ -1,6 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.interfaces.RoleDao;
+import com.phonecompany.dao.interfaces.RoleDao;
 import com.phonecompany.model.Role;
 import org.junit.Before;
 import org.junit.Test;

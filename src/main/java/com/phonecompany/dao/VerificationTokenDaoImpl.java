@@ -1,7 +1,7 @@
-package com.phonecompany;
+package com.phonecompany.dao;
 
-import com.phonecompany.interfaces.UserDao;
-import com.phonecompany.interfaces.VerificationTokenDao;
+import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.VerificationToken;

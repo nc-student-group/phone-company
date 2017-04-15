@@ -1,6 +1,6 @@
-package com.phonecompany;
+package com.phonecompany.dao;
 
-import com.phonecompany.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
 import org.springframework.beans.factory.annotation.Value;
