@@ -1,0 +1,7 @@
+##
+# Embedded H2 Database Configuration
+##
+spring:
+  datasource:
+    url: jdbc:h2:mem:overseer
+    driver-class-name: org.h2.Driver

@@ -1,0 +1,7 @@
+##
+# Heroku Postgresql Configuration
+##
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
