@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 
 /**
  * Created by Yurii on 14.04.2017.
@@ -34,7 +36,17 @@ public class UserDaoImplTest extends AbstractTest{
 
     @Test
     public void findByUsername() throws Exception {
+        List<User> userList = userDao.getAll();
+        User user = userDao.findByUsername(userList.get(0).getEmail());
+        Assert.assertFalse("User id = null", user.getId() == null);
+    }
 
+    @Test
+    public void getAll() throws Exception {
+        List<User> userList = userDao.getAll();
+        User user = userDao.findByUsername(userList.get(0).getEmail());
+        Assert.assertFalse("User list = null", userList == null);
+        Assert.assertFalse("User = null", user == null);
     }
 
 
