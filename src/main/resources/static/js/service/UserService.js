@@ -8,12 +8,13 @@
         .factory('UserService', UserService);
 
     UserService.$inject = ['$resource'];
+
     function UserService($resource) {
         var userService = {};
 
         // Template for CRUD operations
         userService.perform = function () {
-            return $resource('http://localhost:8090/api/users/:id', null,
+            return $resource('/api/users/:id', null,
                 {
                     'update': {method: 'PUT'}
                 });

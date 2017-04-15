@@ -6,7 +6,7 @@
 
     <groupId>com.netcracker</groupId>
     <artifactId>phone-company</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -14,6 +14,7 @@
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
         <source-code.version>1.8</source-code.version>
         <source-code.encoding>UTF-8</source-code.encoding>
+        <spring.boot.version>1.4.4.RELEASE</spring.boot.version>
     </properties>
 
     <parent>
@@ -37,11 +38,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.7.0</version>
-        </dependency>
 
         <!--any classpath file changes will automatically trigger an application restart-->
         <dependency>
@@ -63,12 +59,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.netcracker</groupId>
-            <artifactId>frontend</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -82,7 +72,18 @@
                     <target>${source-code.version}</target>
                     <encoding>${source-code.encoding}</encoding>
                 </configuration>
-            </plugin>
+            </plugin><plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>${spring.boot.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
         </plugins>
     </build>
 </project>
