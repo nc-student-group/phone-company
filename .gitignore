@@ -1,8 +1,3 @@
 .idea
-/phone-company.iml
-/frontend/frontend.iml
-/backend/backend.iml
-/frontend/node_modules/
-/backend/target/
-/frontend/target/
 /logs/
+/target/
