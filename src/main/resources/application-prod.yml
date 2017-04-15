@@ -3,5 +3,5 @@
 ##
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-54-228-182-57.eu-west-1.compute.amazonaws.com:5432/d7lnt6ggk9rcbt?user=tkacgwphjmxbcr&password=7b30fa8db77649da5b55ee2cd64b3c4399ef8feebc020417391b05121563b024&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
+    url: jdbc:postgresql://ec2-23-23-244-83.compute-1.amazonaws.com:5432/d9860gpavsh57b?user=yzrllkhondutsx&password=99ecc04560666945bc95824b30d33b575478c323076284b6e4ea39362633dd4d&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
     driver-class-name: org.postgresql.Driver
