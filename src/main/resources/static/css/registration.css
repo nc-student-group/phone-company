@@ -1,0 +1,117 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.wrapper {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background: rgba(152, 67, 67, 0.78); /* fallback for old browsers */
+    background: -webkit-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: -moz-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: -o-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: linear-gradient(to right, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    font-family: "Roboto", sans-serif;
+}
+
+.form {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    width: 400px;
+    margin: 100px auto;
+    padding: 80px 45px 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2),
+    0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.form input {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.button-if-form-ok {
+    background: #596cac;
+}
+
+.button-if-invalidForm {
+    background: #ff718f;
+    cursor: default;
+}
+
+.button-if-form-ok, .button-if-form-ok:active, .button-if-form-ok:focus {
+    background: #3d51be;
+    cursor: pointer;
+}
+
+.transition-container {
+    display: inline-block;
+    position: absolute;
+    color: white;
+    font-weight: 400;
+    top: 0;
+    left: 0;
+    background: rgba(41, 69, 147, 0.77);
+}
+
+.active {
+    background: #3d51be;
+}
+
+.error {
+    box-shadow: 0 0 10px #ff2d2d;
+}
+
+.options {
+    padding-left: 0;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+ul li {
+    font-size: 15px;
+    display: table-cell;
+    border: none;
+    width: 1%;
+    padding: 10px;
+}
+
+ul li:hover {
+    cursor: pointer;
+}
+
+.form button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+}
+
+:focus::-webkit-input-placeholder {
+    color: transparent
+}
+
+:focus::-moz-placeholder {
+    color: transparent
+}
+
+:focus:-moz-placeholder {
+    color: transparent
+}
+
+:focus:-ms-input-placeholder {
+    color: transparent
+}
