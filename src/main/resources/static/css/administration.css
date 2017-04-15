@@ -1,0 +1,93 @@
+.header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+.content {
+    margin: 20px 10px 10px 20px;
+}
+
+.hideMe {
+    display: none;
+}
+
+.users {
+    padding: 20px;
+}
+
+.users-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer
+}
+
+.users-close:hover {
+    color: #03598a;
+}
+
+.fa-check-circle:hover {
+    color: #4a7251;
+    cursor: pointer;
+}
+
+.table > tbody > tr:first-child > td {
+    border: none;
+}
+
+table tr {
+    white-space: nowrap;
+}
+
+.user-item {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.add-user-button {
+    background: #0375B4;
+    border-radius: 5px;
+    color: #fff;
+    font-family: Sans-serif, sans-serif;
+    font-size: 14px;
+    height: 30px;
+    width: 75px;
+    line-height: 30px;
+    margin: 10px 10px;
+    text-align: center;
+    border: 0;
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+}
+
+.add-user-button:hover {
+    background: #03598a;
+}
+
+.task-controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.task-controls > a > i {
+    margin: 5px;
+    color: #8e8989;
+}
+
+.task-controls > a > i:hover {
+    margin: 5px;
+    color: #03598a;
+    cursor: pointer;
+}
+
+.form-control:focus {
+    border-color: grey;
+    box-shadow: inset 0 0 0 rgba(239, 229, 229, 0.02), 0 0 0;
+}
+
+.create-user {
+    height: 40px;
+    width: 100px;
+}

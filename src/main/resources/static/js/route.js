@@ -10,8 +10,8 @@
             });
         $routeProvider.when('/admin',
             {
-                templateUrl: 'view/adminPage.html',
-                // controller: 'AdminPageController'
+                templateUrl: 'view/administration.html',
+                controller: 'AdministrationController'
             });
         $routeProvider.when('/client',
             {
@@ -26,6 +26,11 @@
         $routeProvider.when('/pmg',
             {
                 templateUrl: 'view/csrPage.html',
+                // controller: ''
+            });
+        $routeProvider.when('/navbar',
+            {
+                templateUrl: 'view/fragments/navbar/navbar.html',
                 // controller: ''
             });
         $routeProvider.otherwise({redirectTo: '/index'});

@@ -88,7 +88,7 @@ ul li:hover {
     cursor: pointer;
 }
 
-.form button {
+.register-button {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
