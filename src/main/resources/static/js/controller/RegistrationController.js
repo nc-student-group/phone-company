@@ -15,7 +15,7 @@
             , email: ""
         };
 
-        $scope.selected;
+        $scope.selected = 'signIn';
 
         $scope.registerUser = registerUser;
         /**

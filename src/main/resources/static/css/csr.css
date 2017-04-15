@@ -1,0 +1,54 @@
+.button-transitions {
+    -webkit-transition: opacity 0.5s ease-in-out;
+    -moz-transition: opacity 0.5s ease-in-out;
+    -ms-transition: opacity 0.5s ease-in-out;
+    -o-transition: opacity 0.5s ease-in-out;
+}
+
+.hideButton {
+    opacity: 0;
+}
+
+.show-button {
+    opacity: 1;
+}
+
+.fa-tasks {
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+.slider-button {
+    padding-left: 10px;
+}
+
+ul.horizontal {
+    width: inherit;
+    padding: 5px;
+    list-style: none;
+    background-color: white;
+    box-shadow: 0 0 4px #b2b2b2;
+    text-decoration: none;
+}
+
+ul.horizontal li {
+    display: inline-block;
+    font-weight: bold;
+    color: #626263;
+    padding: 4px;
+    cursor: pointer;
+}
+
+ul.horizontal li:first-of-type {
+    padding-left: 10px;
+}
+
+.user-actions {
+    float: right;
+}
+
+ul.horizontal li:hover {
+    color: #282828;
+}

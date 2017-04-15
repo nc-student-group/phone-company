@@ -16,9 +16,9 @@
         <form ng-show="selected === 'signIn'"
               autocomplete="off" novalidate
               ng-submit="">
-            <input ng-model="user.userName" type="text" placeholder="Username"/>
-            <input ng-model="user.password" type="password" placeholder="password"/>
-            <button class="register-button" type="submit">
+            <input ng-model="login" type="text" placeholder="Username"/>
+            <input ng-model="password" type="password" placeholder="password"/>
+            <button type="submit" ng-click="loginClick()">
                 login
             </button>
         </form>
@@ -39,7 +39,7 @@
             <span ng-show="registerForm.confirmPassword.$dirty && frm.confirmPassword.$error.compareTo">
                 Passwords don't match.</span>
             <input ng-model="user.email" type="text" placeholder="email"/>
-            <button class="register-button" type="submit">
+            <button type="submit">
                 login
             </button>
         </form>

@@ -9,15 +9,17 @@ import com.phonecompany.model.User;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Repository
 public class UserDaoImpl extends CrudDaoImpl<User>
         implements UserDao {
+
+    @Value("${spring.datasource.url}")
+    private String connStr;
 
     private QueryLoader queryLoader;
 
@@ -34,6 +36,16 @@ public class UserDaoImpl extends CrudDaoImpl<User>
 
     @Override
     public User findByUsername(String userName) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+            PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                return init(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

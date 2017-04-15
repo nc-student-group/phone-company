@@ -1,6 +1,8 @@
 package com.phonecompany.service;
 
 import com.phonecompany.service.interfaces.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +19,9 @@ import java.util.Set;
  * Created by Yurii on 14.04.2017.
  */
 @Service
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
+    private Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
     @Autowired
     private UserService userService;
 
@@ -28,7 +32,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(login + " not found");
 
         Set<GrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(user.getRole().getName()));
+        roles.add(new SimpleGrantedAuthority("ROLE_"+user.getRole().getName()));
 
         return new User(user.getEmail(), user.getPassword(), roles);
     }

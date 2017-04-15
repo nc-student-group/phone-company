@@ -26,7 +26,7 @@
         };
 
         userService.getUsers = function () {
-            console.log('Retrieving all the users contained in the database');
+            console.log('Getting all the users contained in the database');
             return userService.perform().get();
         };
 
