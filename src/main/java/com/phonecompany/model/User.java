@@ -3,12 +3,12 @@ package com.phonecompany.model;
 
 public class User extends DomainEntity {
 
-    private String password;
     private String email;
+    private String password;
     private Role role;
     private String firstName;
-    private String lastName;
     private String secondName;
+    private String lastName;
     private String phone;
     private Address address;
 
@@ -20,9 +20,9 @@ public class User extends DomainEntity {
         this.email = email;
     }
 
-    public User(String password, String email,
+    public User(String email, String password,
                 Role role, String firstName,
-                String lastName, String secondName,
+                String secondName, String lastName,
                 String phone, Address address) {
         this.password = password;
         this.email = email;

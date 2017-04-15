@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class CrudDaoImpl<T extends DomainEntity>
         implements CrudDao<T> {
 
     @Value("${spring.datasource.url}")
     private String connStr;
+
     private boolean autoCommit = true;
 
     public boolean isAutoCommit() {
@@ -40,8 +42,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             return entity;
         } catch (SQLException e) {
             throw new EntityPersistenceException(entity, e);
-        }
-        finally {
+        } finally {
         }
     }
 
@@ -69,11 +70,13 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getById"))) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return init(rs);
+            if (rs.next()) {
+                return init(rs);
+            }
         } catch (SQLException e) {
             throw new EntityNotFoundException(id, e);
         }
+        return null;
     }
 
     /**
@@ -116,5 +119,24 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
+
+    public ResultSet executeSelect(String query, Map<Integer, Object> params){
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            params.forEach((Integer integer, Object o) -> {
+                try {
+                    ps.setObject(integer, o);
+                } catch (SQLException e) {
+                    throw new CrudException("Failed set parameters. " +
+                            "Check your database connection or whether sql query is right", e);
+                }
+            });
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to execute select. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
 
 }
