@@ -1,4 +1,4 @@
-package com.phonecompany.dao.interfaces;
+package com.phonecompany.interfaces;
 
 import com.phonecompany.model.Role;
 

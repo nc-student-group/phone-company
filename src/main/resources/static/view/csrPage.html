@@ -1,10 +1,217 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div id="header">
+    <div class="shell">
+        <!-- Logo + Top Nav -->
+        <div id="top">
+            <h1><a href="#">PhoneCompany CSR page</a></h1>
+            <div id="top-navigation">
+                Welcome <a href="#"><strong>CSR</strong></a>
+                <span>|</span>
+                <a href="#">Profile Settings</a>
+                <span>|</span>
+                <a href="#">Log out</a>
+            </div>
+        </div>
+        <!-- End Logo + Top Nav -->
+
+        <!-- Main Nav -->
+        <div id="navigation">
+            <ul>
+                <li><a href="#" class="active"><span>Products</span></a></li>
+                <li><a href="#"><span>Order life cycle</span></a></li>
+                <li><a href="#"><span>Complaints</span></a></li>
+                <li><a href="#"><span>Services Control</span></a></li>
+            </ul>
+        </div>
+        <!-- End Main Nav -->
+    </div>
+</div>
+
+<div id="container">
+    <div class="shell">
+        <div id="main">
+            <div class="cl">&nbsp;</div>
+            <div id="content">
+                <!-- Box -->
+                <div class="box">
+                    <!-- Box Head -->
+                    <div class="box-head">
+                        <h2 class="left">Current Products</h2>
+                        <div class="right">
+                            <label>search products</label>
+                            <input type="text" class="field small-field" />
+                            <input type="submit" class="button" value="search" />
+                        </div>
+                    </div>
+                    <!-- End Box Head -->
+
+                    <!-- Table -->
+                    <div class="table">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th width="13"><input type="checkbox" class="checkbox" /></th>
+                                <th>ProductName</th>
+                                <th>Description</th>
+                                <th>Added by</th>
+                                <th>Date of creation</th>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product1</a></h3></td>
+                                <td>Description1</td>
+                                <td><a href="#">CSR1</a></td>
+                                <td>08.04.17</td>
+
+                            </tr>
+                            <tr class="odd">
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product2</a></h3></td>
+                                <td>Description2</td>
+                                <td><a href="#">CSR2</a></td>
+                                <td>09.04.17</td>
+
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product3</a></h3></td>
+                                <td>Description3</td>
+                                <td><a href="#">CSR3</a></td>
+                                <td>09.04.17</td>
+                            </tr>
+                            <tr class="odd">
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product4</a></h3></td>
+                                <td>Description4</td>
+                                <td><a href="#">CSR4</a></td>
+                                <td>09.04.17</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product5</a></h3></td>
+                                <td>Description5</td>
+                                <td><a href="#">CSR5</a></td>
+                                <td>09.04.17</td>
+                            </tr>
+                            <tr class="odd">
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product6</a></h3></td>
+                                <td>Description6</td>
+                                <td><a href="#">CSR6</a></td>
+                                <td>10.04.17</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product7</a></h3></td>
+                                <td>Descriptinon7</td>
+                                <td><a href="#">CSR7</a></td>
+                                <td>11.04.17</td>
+                            </tr>
+                            <tr class="odd">
+                                <td><input type="checkbox" class="checkbox" /></td>
+                                <td><h3><a href="#">Product8</a></h3></td>
+                                <td>Description8</td>
+                                <td><a href="#">CSR8</a></td>
+                                <td>12.04.17</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- Pagging -->
+                        <div class="pagging">
+                            <div class="left">Showing 1-12 of 44</div>
+                            <div class="right">
+                                <a href="#">Previous</a>
+                                <a href="#">1</a>
+                                <a href="#">2</a>
+                                <a href="#">3</a>
+                                <a href="#">4</a>
+                                <a href="#">Next</a>
+                                <a href="#">View all</a>
+                            </div>
+                        </div>
+                        <!-- End Pagging -->
+                    </div>
+                    <!-- Table -->
+
+                </div>
+                <div class="box">
+                    <!-- Box Head -->
+                    <div class="box-head">
+                        <h2>Add New Product</h2>
+                    </div>
+                    <!-- End Box Head -->
+
+                    <form action="" method="post">
+
+                        <!-- Form -->
+                        <div class="form">
+                            <p>
+                                <label>Product name</label>
+                                <input type="text" class="field size1" />
+                            </p>
+                            <p class="inline-field">
+                                <label>Date</label>
+                                <select class="field size2">
+                                    <option value="">23</option>
+                                </select>
+                                <select class="field size3">
+                                    <option value="">April</option>
+                                </select>
+                                <select class="field size3">
+                                    <option value="">2017</option>
+                                </select>
+                            </p>
+
+                            <p>
+
+                                <label>Description</label>
+                                <textarea class="field size1" rows="10" cols="30"></textarea>
+                            </p>
+
+                        </div>
+                        <!-- End Form -->
+
+                        <!-- Form Buttons -->
+                        <div class="buttons">
+                            <input type="submit" class="button" value="Add" />
+                        </div>
+                        <!-- End Form Buttons -->
+                    </form>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar">
+
+                <!-- Box -->
+                <div class="box">
+
+                    <!-- Box Head -->
+                    <div class="box-head">
+                        <h2>Product management</h2>
+                    </div>
+                    <!-- End Box Head-->
+
+                    <div class="box-content">
+                        <!-- Sort -->
+                        <a href="#" class="add-button"><span>Delete selected</span></a>
+                        <div class="cl">&nbsp;</div>
+                        <div class="sort">
+                            <label>Sort by</label>
+                            <select class="field">
+                                <option value="">Name</option>
+                            </select>
+                            <select class="field">
+                                <option value="">Date</option>
+                            </select>
+                            <select class="field">
+                                <option value="">Author</option>
+                            </select>
+                        </div>
+                        <!-- End Sort -->
+                    </div>
+                </div>
+                <!-- End Box -->
+            </div>
+            <!-- End Sidebar -->
+        </div>
+    </div>
+</div>

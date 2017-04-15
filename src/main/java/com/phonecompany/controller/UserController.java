@@ -1,6 +1,6 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.interfaces.UserDao;
 import com.phonecompany.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

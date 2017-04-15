@@ -1,11 +1,9 @@
-package com.phonecompany.dao;
+package com.phonecompany;
 
-import com.phonecompany.dao.interfaces.AddressDao;
-import com.phonecompany.dao.interfaces.RoleDao;
-import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.interfaces.AddressDao;
+import com.phonecompany.interfaces.RoleDao;
+import com.phonecompany.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.EntityPersistenceException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.util.QueryLoader;

@@ -28,7 +28,8 @@ public class LoginController {
 
     @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
     public Role tryLogin(){
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
         User user = userService.findByUsername(securityUser.getUsername());
         return user.getRole();
     }

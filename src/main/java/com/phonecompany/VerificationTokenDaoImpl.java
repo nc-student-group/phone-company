@@ -1,7 +1,7 @@
-package com.phonecompany.dao;
+package com.phonecompany;
 
-import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.dao.interfaces.VerificationTokenDao;
+import com.phonecompany.interfaces.UserDao;
+import com.phonecompany.interfaces.VerificationTokenDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.VerificationToken;
@@ -9,11 +9,9 @@ import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 
 @Repository
 public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken> implements VerificationTokenDao {

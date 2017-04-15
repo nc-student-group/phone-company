@@ -1,6 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.interfaces.CrudDao;
 import com.phonecompany.model.Role;
 import com.phonecompany.service.interfaces.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
