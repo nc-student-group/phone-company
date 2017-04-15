@@ -44,7 +44,12 @@
 </head>
 <body ng-controller="MainController">
 <ng-include src="watchRedirect()"></ng-include>
-<ng-include src="setHeader()"></ng-include>
+<div class="nav" style="width: 100%;">
+    <ul>
+        <li class="home"><a href="#">login</a></li>
+        <li class="home" ng-click="logout()"><a href="">logout</a></li>
+    </ul>
+</div>
 <div ng-view></div>
 </body>
 </html>

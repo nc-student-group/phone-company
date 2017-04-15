@@ -25,7 +25,7 @@ angular.module('phone-company').factory('SessionService', ['$q', function ($q) {
 
     function setLoginToken(log, pass) {
         var loginToken = btoa(log + ":" + pass);
-        console.log(loginToken);
+        console.log("qweqwe");
         localStorage.setItem('loginToken', loginToken);
     }
 

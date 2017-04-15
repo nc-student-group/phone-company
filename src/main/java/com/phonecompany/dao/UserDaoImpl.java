@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.RoleDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.util.QueryLoader;
@@ -42,15 +43,15 @@ public class UserDaoImpl extends CrudDaoImpl<User>
 
     @Override
     public User findByUsername(String userName) {
-        Map<Integer, Object> params = new HashMap<>();
-        params.put(1, userName);
-        ResultSet rs = executeSelect(this.getQuery("getByEmail"),params);
-        try {
-            if(rs.next()) {
+        try (Connection conn = DriverManager.getConnection(connStr);
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
-            throw new EntityInitializationException(e);
+            throw new EntityNotFoundException(-1l, e);
         }
         return null;
     }

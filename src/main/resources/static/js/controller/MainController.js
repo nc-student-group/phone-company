@@ -60,4 +60,9 @@ angular.module('phone-company').controller('MainController', [
             }
         };
 
+        $scope.logout = function () {
+            SessionService.resetLoginToken();
+            $location.path('/index');
+        }
+
     }]);
