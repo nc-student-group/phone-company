@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
+import com.phonecompany.service.interfaces.EMailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class UserController {
     private UserDao userDao;
 
     @Autowired
+    private EMailService mailService;
+
+    @Autowired
     public UserController(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -50,6 +54,7 @@ public class UserController {
         LOG.info("User retrieved from the http request: " + user);
 
         User persistedUser = this.userDao.save(user);
+        mailService.sendMail(user.getEmail(),"Greetings, you were registered in phone-company;"+ " Your password is: " + user.getPassword()+ " we recommend to change it.","Phone company registration by admin");
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

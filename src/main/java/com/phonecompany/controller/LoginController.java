@@ -49,7 +49,4 @@ public class LoginController {
         userService.update(user);
         return user;
     }
-
-
-
 }

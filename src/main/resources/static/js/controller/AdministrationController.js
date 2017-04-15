@@ -1,26 +1,33 @@
-(function () {
-    'use strict';
+'use strict';
+angular.module('phone-company').controller('AdministrationController', [
+    '$scope',
+    '$location',
+    'UserService',
+    function ($scope, $location, UserService) {
+        console.log('This is AdministrationController');
+        $scope.devs=[];
 
-    angular.module('phone-company')
-        .controller('AdministrationController', AdministrationController);
 
-    AdministrationController.$inject = ['$scope', '$log', 'UserService'];
+        UserService.getUsers().then(
+            function(d) {
+                $scope.devs = d;
+            },
+            function(errResponse){
+                console.error('Error while fetching Users');
+            }
+        );
 
-    function AdministrationController($scope, $log, UserService) {
-
-        $scope.developers = UserService.getUsers();
-
-        this.user = { // this.user - property of this controller
-            userName: "",
-            email: "",
-            role: ""
-        };
-
-        /**
-         * Adds user.
-         */
-        function createUser() {
-            $log.debug('Creating user: ' + JSON.stringify($scope.user));
+        $scope.createUser = function(){
+            var user = {
+                    email: $scope.email,
+                    password:$scope.password,
+                    role: $scope.role
+            };
+            UserService.createUser(user).then(
+                    UserService.getUsers(),
+                    function(errResponse){
+                        console.error('Error while creating User');
+                    }
+                );
         }
-    }
-}());
+    }]);

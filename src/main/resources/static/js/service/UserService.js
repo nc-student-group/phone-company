@@ -1,35 +1,47 @@
-/**
+/** var
  * User Service.
  */
-(function () {
-    'use strict';
+'use strict';
+angular.module('phone-company').factory('UserService',['$q', '$http', function ($q, $http) {
 
-    angular.module('phone-company')
-        .factory('UserService', UserService);
+            var REST_SERVICE_GET_ALL_USERS = "/api/users";
+            var REST_SERVICE_CREATE_USER = "/api/users";
 
-    UserService.$inject = ['$resource'];
+            var factory = {
+                getUsers:getUsers,
+                createUser:createUser,
+            };
 
-    function UserService($resource) {
-        var userService = {};
+            return factory;
 
-        // Template for CRUD operations
-        userService.perform = function () {
-            return $resource('/api/users/:id', null,
-                {
-                    'update': {method: 'PUT'}
-                });
-        };
+            function getUsers () {
+                console.log('Getting all the users contained in the database');
+                var deferred = $q.defer();
+                $http.get(REST_SERVICE_GET_ALL_USERS)
+                    .then(
+                        function (response) {
+                            deferred.resolve(response.data);
+                        },
+                        function(errResponse){
+                            console.error('Error while fetching Users');
+                            deferred.reject(errResponse);
+                        }
+                    );
+                return deferred.promise;
+            }
 
-        userService.saveUser = function (user) {
-            console.log('Saving user: ' + JSON.stringify(user));
-            return userService.perform().save(user);
-        };
-
-        userService.getUsers = function () {
-            console.log('Getting all the users contained in the database');
-            return userService.perform().get();
-        };
-
-        return userService;
+    function createUser (user) {
+        var deferred = $q.defer();
+        $http.post(REST_SERVICE_CREATE_USER, user)
+            .then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function(errResponse){
+                    console.error('Error while creating User');
+                    deferred.reject(errResponse);
+                }
+            );
+        return deferred.promise;
     }
-}());
+}]);

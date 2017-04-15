@@ -25,7 +25,7 @@ angular.module('phone-company').factory('SessionService', ['$q', function ($q) {
 
     function setLoginToken(log, pass) {
         var loginToken = btoa(log + ":" + pass);
-        console.log("qweqwe");
+        console.log("SetLoginToken");
         localStorage.setItem('loginToken', loginToken);
     }
 
@@ -33,5 +33,7 @@ angular.module('phone-company').factory('SessionService', ['$q', function ($q) {
         if (!(localStorage.getItem('loginToken') === null))
             localStorage.removeItem('loginToken');
     }
+
+
 
 }]);

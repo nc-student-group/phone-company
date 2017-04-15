@@ -9,6 +9,7 @@ angular.module('phone-company').controller('AuthorizeController', [
         $scope.selected = 'signIn';
 
         $scope.loginClick = function () {
+            console.log('This is loginClick');
             SessionService.setLoginToken($scope.login, $scope.password);
             LoginService.tryLogin().then(function (data) {
                 switch (data.name) {
