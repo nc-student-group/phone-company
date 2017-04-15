@@ -18,8 +18,8 @@ angular.module('phone-company').factory('LoginService', ['$q', '$http', function
             },
             function (errResponse) {
                 if (!(localStorage.getItem('loginToken') === null))
-                    localStorage.removeItem('loginToken')
-                console.error(errResponse.toString());
+                    localStorage.removeItem('loginToken');
+                console.error(JSON.stringify(errResponse));
                 deferred.reject(errResponse);
             });
         return deferred.promise;
