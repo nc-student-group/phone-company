@@ -3,6 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceImplTest {
 

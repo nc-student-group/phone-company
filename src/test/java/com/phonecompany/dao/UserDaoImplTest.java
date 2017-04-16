@@ -3,15 +3,14 @@ package com.phonecompany.dao;
 import com.phonecompany.model.User;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 
-/**
- * Created by Yurii on 14.04.2017.
- */
+@Ignore
 public class UserDaoImplTest extends AbstractTest{
 
     @Autowired
