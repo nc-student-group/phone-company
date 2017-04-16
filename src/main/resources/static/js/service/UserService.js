@@ -27,7 +27,7 @@
 
         userService.getUsers = function () {
             console.log('Getting all the users contained in the database');
-            return userService.perform().get();
+            return userService.perform().query();
         };
 
         return userService;

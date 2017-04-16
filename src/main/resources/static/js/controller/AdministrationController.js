@@ -8,19 +8,29 @@
 
     function AdministrationController($scope, $log, UserService) {
 
-        $scope.developers = UserService.getUsers();
+        $scope.users = UserService.getUsers();
 
         this.user = { // this.user - property of this controller
-            userName: "",
+            firstName: "",
             email: "",
-            role: ""
+            role: {
+                name: ""
+            }
         };
 
+        $scope.createUser = createUser;
         /**
-         * Adds user.
+         * Creates user.
          */
         function createUser() {
-            $log.debug('Creating user: ' + JSON.stringify($scope.user));
+            $log.debug('User: ' + JSON.stringify($scope.user));
+            UserService.saveUser($scope.user).$promise
+                .then(function (createdUser) {
+                    $log.debug("Created user: ", createdUser);
+                    $scope.users.push(createdUser);
+                }, function (error) {
+                    $log.error("Failed to save user", error);
+                });
         }
     }
 }());

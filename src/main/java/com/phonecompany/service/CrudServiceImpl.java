@@ -3,6 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.model.DomainEntity;
 import com.phonecompany.service.interfaces.CrudService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -11,6 +12,10 @@ public abstract class CrudServiceImpl<T extends DomainEntity>
 
     protected CrudDao<T> dao;
 
+    CrudServiceImpl() {
+    }
+
+    @Autowired
     public CrudServiceImpl(CrudDao<T> dao) {
         this.dao = dao;
     }

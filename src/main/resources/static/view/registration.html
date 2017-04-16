@@ -1,0 +1,50 @@
+<div class="wrapper">
+    <div class="form">
+        <div class="transition-container">
+            <ul class="options">
+                <li ng-click="selected = 'signIn'"
+                    ng-class="{'active': selected === 'signIn'}">Sign in
+                </li>
+                <li ng-click="selected = 'register'"
+                    ng-class="{'active': selected === 'register'}">Register
+                </li>
+                <li ng-click="selected = 'restore'"
+                    ng-class="{'active': selected === 'restore'}">Restore
+                </li>
+            </ul>
+        </div>
+        <form ng-show="selected === 'signIn'"
+              autocomplete="off" novalidate
+              ng-submit="loginUser()">
+            <input ng-model="authRequest.firstName" type="text" placeholder="First name"/>
+            <input ng-model="authRequest.password" type="password" placeholder="password"/>
+            <button type="submit" class="login-button">
+                login
+            </button>
+        </form>
+
+        <form name="registerForm" id="registerForm" ng-show="selected === 'register'"
+              autocomplete="off" novalidate
+              ng-submit="registerUser()">
+            <input ng-model="user.firstName" name="firstName" id="firstName" minlength="3"
+                   type="text" placeholder="First name" required/>
+            <span class="error" ng-show="registerForm.firstName.$dirty &&
+                registerForm.firstName.$error.required">Firstname is required.</span>
+            <span class="error" ng-show="registerForm.firstName.$dirty &&
+                registerForm.userName.$error.minlength">Username is too short.</span>
+            <input ng-model="user.password" name="password" id="password"
+                   minlength="5" type="password" placeholder="password" required/>
+            <!--<input ng-model="user.confirmPassword" name="confirmPassword" id="confirmPassword"-->
+                   <!--compare-to="user.password"-->
+                   <!--minlength="5" type="password" placeholder="repeat password" required/>-->
+            <!--<span class="error" ng-show="registerForm.confirmPassword.$dirty || frm.confirmPassword.$error.compareTo">-->
+                <!--Passwords don't match.</span>-->
+            <input ng-model="user.email" type="text" placeholder="email"/>
+            <button ng-class="{unsubmitable : registerForm.$invalid, submitable: !registerForm.$invalid}"
+                    ng-disabled="registerForm.$invalid"
+                    type="submit" class="register-button">
+                Register
+            </button>
+        </form>
+    </div>
+</div>

@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
+import com.phonecompany.service.interfaces.EMailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,13 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private UserDao userDao;
+    private EMailService emailService;
 
     @Autowired
-    public UserController(UserDao userDao) {
+    public UserController(UserDao userDao,
+                          EMailService emailService) {
         this.userDao = userDao;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -57,10 +61,15 @@ public class UserController {
                 .buildAndExpand(persistedUser.getId())
                 .toUri();
 
+        if (user.getEmail() != null) {
+            LOG.info("Sending confirmation email to: " + user.getEmail());
+            this.emailService.sendMail(user.getEmail(),
+                    "Welcome, " + user.getFirstName() + "!",
+                    "Registration confirmation");
+        }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriOfNewResource);
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
-
 }

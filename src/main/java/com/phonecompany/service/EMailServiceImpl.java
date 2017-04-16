@@ -33,7 +33,7 @@ public class EMailServiceImpl implements EMailService {
 
 
     @Override
-    public void sendMail(String recipientEmail,String text, String subject) {
+    public void sendMail(String recipientEmail, String text, String subject) {
         JavaMailSender mailSender = getJavaMailSender();
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);

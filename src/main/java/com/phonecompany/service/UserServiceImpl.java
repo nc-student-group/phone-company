@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.dao.UserDaoImpl;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
@@ -11,16 +12,19 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 @Service
-public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
+public class UserServiceImpl extends CrudServiceImpl<User>
+        implements UserService {
+
+    private UserDao userDao;
 
     @Autowired
-    public UserServiceImpl(CrudDao<User> dao) {
-        super(dao);
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override
     public User findByUsername(String userName) {
-        return ((UserDao)dao).findByUsername(userName);
+        return userDao.findByUsername(userName);
     }
 
     @Override

@@ -1,29 +1,34 @@
-'use strict';
+/**
+ * Login Service.
+ */
+(function () {
+    'use strict';
 
-angular.module('phone-company').factory('LoginService', ['$q', '$http', function ($q, $http) {
+    angular.module('phone-company')
+        .factory('LoginService', LoginService);
 
-    var GET_TRY_LOGIN_URL = "/api/login/try";
+    LoginService.$inject = ['$resource', '$http'];
 
-    var factory = {
-        tryLogin:tryLogin,
-    };
+    function LoginService($resource, $http) {
+        var loginService = {};
 
-    return factory;
+        // Template for CRUD operations
+        loginService.perform = function () {
+            return $resource('/api/login/:id', null,
+                {
+                    'update': {method: 'PUT'}
+                });
+        };
 
-    function tryLogin() {
-        var deferred = $q.defer();
-        $http.get(GET_TRY_LOGIN_URL).then(
-            function (response) {
-                deferred.resolve(response.data);
-            },
-            function (errResponse) {
-                if (!(localStorage.getItem('loginToken') === null))
-                    localStorage.removeItem('loginToken');
-                console.error(JSON.stringify(errResponse));
-                deferred.reject(errResponse);
+        loginService.getUserRole = function (authRequest) {
+            console.log('About to query for userRole');
+            return $http({
+                url: '/api/login',
+                method: "GET",
+                params: authRequest
             });
-        return deferred.promise;
+        };
+
+        return loginService;
     }
-
-
-}]);
+}());

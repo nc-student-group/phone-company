@@ -25,6 +25,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Value("${spring.datasource.url}")
     private String connStr;
 
+    @Autowired
     private QueryLoader queryLoader;
 
     @Autowired
@@ -36,15 +37,12 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Autowired
     private ShaPasswordEncoder shaPasswordEncoder;
 
-    @Autowired
-    public UserDaoImpl(QueryLoader queryLoader) {
-        this.queryLoader = queryLoader;
-    }
-
     @Override
     public User findByUsername(String userName) {
+        String query = this.getQuery("getByName");
+        System.out.println("Query find by name: " + query);
         try (Connection conn = DriverManager.getConnection(connStr);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByName"))) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

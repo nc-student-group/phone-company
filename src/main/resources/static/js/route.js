@@ -3,10 +3,10 @@
     var app = angular.module('phone-company', ['ngRoute', 'ngResource']);
 
     app.config(function ($routeProvider) {
-        $routeProvider.when('/index',
+        $routeProvider.when('/registration',
             {
-                templateUrl: 'view/main.html',
-                controller: 'AuthorizeController'
+                templateUrl: 'view/registration.html',
+                controller: 'RegistrationController'
             });
         $routeProvider.when('/admin',
             {
@@ -28,59 +28,6 @@
                 templateUrl: 'view/csrPage.html',
                 // controller: ''
             });
-        $routeProvider.when('/navbar',
-            {
-                templateUrl: 'view/fragments/navbar/navbar.html',
-                // controller: ''
-            });
-        $routeProvider.otherwise({redirectTo: '/index'});
+        $routeProvider.otherwise({redirectTo: '/registration'});
     });
-
-    app.directive('compareTo', function () {
-        return {
-            require: "ngModel"
-            , scope: {
-                otherModelValue: "=compareTo"
-            }
-            , link: function (scope, element, attributes, ngModel) {
-                ngModel.$validators.compareTo = function (modelValue) {
-                    return modelValue == scope.otherModelValue;
-                };
-                scope.$watch("otherModelValue", function () {
-                    ngModel.$validate();
-                });
-            }
-        };
-    });
-
-    app.config(['$httpProvider', function ($httpProvider) {
-        $httpProvider.interceptors.push('sessionInjector');
-        $httpProvider.defaults.useXDomain = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-        // $httpProvider.interceptors.push(function ($q, $location) {
-        //     return {
-        //         responseError: function (rejection) {
-        //             console.log(rejection.status);
-        //             if (rejection.status === -1) {
-        //                 // window.location.href = '/index';//?redirect=' + window.location.pathname;
-        //                 $location.path("/index");
-        //             }
-        //             return $q.reject(rejection);
-        //         }
-        //     };
-        // });
-    }]);
-
-    app.factory('sessionInjector', ['SessionService', function (SessionService) {
-        return {
-            'request': function (config) {
-                if (SessionService.hasToken()) {
-                    config.headers = config.headers || {};
-                    config.headers.Authorization = 'Basic ' + SessionService.getLoginToken();
-                }
-                return config;
-            }
-        };
-    }]);
-
 }());

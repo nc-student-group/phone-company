@@ -9,3 +9,7 @@ logging:
   level:
     com:
       phonecompany: info
+
+security:
+  basic:
+   enabled: false
