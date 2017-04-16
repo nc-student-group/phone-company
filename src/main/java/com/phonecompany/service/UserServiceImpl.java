@@ -1,7 +1,5 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.UserDaoImpl;
-import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
@@ -19,6 +17,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     @Autowired
     public UserServiceImpl(UserDao userDao) {
+        super(userDao);
         this.userDao = userDao;
     }
 
@@ -30,9 +29,6 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     @Override
     public User resetPassword(User user) {
         user.setPassword(generatePassword());
-
-        //TODO: sending password by email
-
         return update(user);
     }
 

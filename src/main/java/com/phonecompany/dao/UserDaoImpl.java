@@ -39,10 +39,10 @@ public class UserDaoImpl extends CrudDaoImpl<User>
 
     @Override
     public User findByUsername(String userName) {
-        String query = this.getQuery("getByName");
+        String query = this.getQuery("getByEmail");
         System.out.println("Query find by name: " + query);
         try (Connection conn = DriverManager.getConnection(connStr);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByName"))) {
+             PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

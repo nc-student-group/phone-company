@@ -12,9 +12,6 @@ public abstract class CrudServiceImpl<T extends DomainEntity>
 
     protected CrudDao<T> dao;
 
-    CrudServiceImpl() {
-    }
-
     @Autowired
     public CrudServiceImpl(CrudDao<T> dao) {
         this.dao = dao;

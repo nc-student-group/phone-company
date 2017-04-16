@@ -1,18 +1,15 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.EMailService;
+import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -28,13 +25,13 @@ public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
-    private UserDao userDao;
+    private UserService userService;
     private EMailService emailService;
 
     @Autowired
-    public UserController(UserDao userDao,
+    public UserController(UserService userService,
                           EMailService emailService) {
-        this.userDao = userDao;
+        this.userService = userService;
         this.emailService = emailService;
     }
 
@@ -42,7 +39,7 @@ public class UserController {
     public Collection<User> getAllUsers() {
         LOG.info("Retrieving all the users contained in the database");
 
-        List<User> users = this.userDao.getAll();
+        List<User> users = this.userService.getAll();
 
         LOG.info("Users fetched from the database: " + users);
 
@@ -53,7 +50,7 @@ public class UserController {
     public ResponseEntity<?> saveUser(@RequestBody User user) {
         LOG.info("User retrieved from the http request: " + user);
 
-        User persistedUser = this.userDao.save(user);
+        User persistedUser = this.userService.save(user);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -72,4 +69,21 @@ public class UserController {
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
+
+
+    @RequestMapping(method = POST, value = "/api/user/reset")
+    public void resetPassword(@RequestParam(value = "email") String email) {
+        LOG.info("Trying to reset password for user with email: " + email);
+        User user = userService.findByUsername(email);
+        if(user != null) {
+            userService.resetPassword(user);
+            emailService.sendMail(user.getEmail(), "Your new password is " +
+                            user.getPassword(), "Reset password");
+            LOG.info("User's new password " + user.getPassword());
+
+        } else {
+            LOG.info("User with email " + email + " not found!" );
+        }
+    }
+
 }
