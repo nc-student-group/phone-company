@@ -28,6 +28,10 @@ angular.module('phone-company').controller('MainController', [
                 }else{
                     $scope.checkRoleAccess();
                 }
+            }else {
+                if($location.$$path != '/index'){
+                    $location.path('/index');
+                }
             }
         };
 
@@ -61,6 +65,7 @@ angular.module('phone-company').controller('MainController', [
         };
 
         $scope.logout = function () {
+            $rootScope.currentRole = undefined;
             SessionService.resetLoginToken();
             $location.path('/index');
         }

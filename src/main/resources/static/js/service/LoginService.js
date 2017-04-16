@@ -2,7 +2,9 @@
 
 angular.module('phone-company').factory('LoginService', ['$q', '$http', function ($q, $http) {
 
-    var GET_TRY_LOGIN_URL = "/api/login/try";
+    var host = "http://localhost:8090";
+
+    var GET_TRY_LOGIN_URL = host+"/api/login/try";
 
     var factory = {
         tryLogin:tryLogin,

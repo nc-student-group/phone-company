@@ -4,13 +4,15 @@ angular.module('phone-company').controller('AuthorizeController', [
     '$location',
     'SessionService',
     'LoginService',
-    function ($scope, $location, SessionService, LoginService) {
+    '$rootScope',
+    function ($scope, $location, SessionService, LoginService, $rootScope) {
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);
             LoginService.tryLogin().then(function (data) {
+                $rootScope.currentRole = data.name;
                 switch (data.name) {
                     case "ADMIN":
                         $location.path("/admin");

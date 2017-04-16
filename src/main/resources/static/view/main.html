@@ -18,29 +18,32 @@
               ng-submit="">
             <input ng-model="login" type="text" placeholder="Username"/>
             <input ng-model="password" type="password" placeholder="password"/>
-            <button type="submit" ng-click="loginClick()">
+            <button type="submit" class="login-button" ng-click="loginClick()">
                 login
             </button>
         </form>
 
-        <form name="registerForm" ng-show="selected === 'register'"
+        <form name="registerForm" id="registerForm" ng-show="selected === 'register'"
               autocomplete="off" novalidate
               ng-submit="registerUser()">
-            <input ng-model="user.userName" name="userName" id="userName" minlength="3"
-                   type="text" placeholder="Username"/>
-            <span ng-show="registerForm.userName.$dirty &&
-                registerForm.userName.$error.required">Username is required.</span>
-            <span ng-show="registerForm.userName.$dirty &&
+            <input ng-model="user.firstName" name="firstName" id="firstName" minlength="3"
+                   type="text" placeholder="First name" required/>
+            <span class="error" ng-show="registerForm.firstName.$dirty &&
+                registerForm.firstName.$error.required">Firstname is required.</span>
+            <span class="error" ng-show="registerForm.firstName.$dirty &&
                 registerForm.userName.$error.minlength">Username is too short.</span>
             <input ng-model="user.password" name="password" id="password"
-                   minlength="5" type="password" placeholder="password"/>
-            <input ng-model="user.confirmPassword" name="confirmPassword" id="confirmPassword"
-                   minlength="5" type="password" placeholder="repeat password"/>
-            <span ng-show="registerForm.confirmPassword.$dirty && frm.confirmPassword.$error.compareTo">
-                Passwords don't match.</span>
+                   minlength="5" type="password" placeholder="password" required/>
+            <!--<input ng-model="user.confirmPassword" name="confirmPassword" id="confirmPassword"-->
+            <!--compare-to="user.password"-->
+            <!--minlength="5" type="password" placeholder="repeat password" required/>-->
+            <!--<span class="error" ng-show="registerForm.confirmPassword.$dirty || frm.confirmPassword.$error.compareTo">-->
+            <!--Passwords don't match.</span>-->
             <input ng-model="user.email" type="text" placeholder="email"/>
-            <button type="submit">
-                login
+            <button ng-class="{unsubmitable : registerForm.$invalid, submitable: !registerForm.$invalid}"
+                    ng-disabled="registerForm.$invalid"
+                    type="submit" class="register-button">
+                Register
             </button>
         </form>
     </div>

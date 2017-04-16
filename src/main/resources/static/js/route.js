@@ -28,11 +28,6 @@
                 templateUrl: 'view/csrPage.html',
                 // controller: ''
             });
-        $routeProvider.when('/navbar',
-            {
-                templateUrl: 'view/fragments/navbar/navbar.html',
-                // controller: ''
-            });
         $routeProvider.otherwise({redirectTo: '/index'});
     });
 

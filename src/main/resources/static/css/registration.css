@@ -65,7 +65,7 @@
 }
 
 .error {
-    box-shadow: 0 0 10px #ff2d2d;
+    color: #ff2d2d;
 }
 
 .options {
@@ -88,6 +88,22 @@ ul li:hover {
     cursor: pointer;
 }
 
+.submitable {
+    background: #ff8e92;
+    cursor: pointer;
+}
+
+.submitable:hover {
+    background: #7db485;
+    -webkit-transition: background-color 200ms linear;
+    -ms-transition: background-color 200ms linear;
+    transition: background-color 200ms linear;
+}
+
+.unsubmitable {
+    background-color: gray;
+}
+
 .register-button {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
@@ -96,8 +112,31 @@ ul li:hover {
     border: 0;
     padding: 15px;
     font-size: 14px;
-    -webkit-transition: all 0.3 ease;
-    transition: all 0.3 ease;
+    color: #383436;
+    -webkit-transition: all ease;
+    transition: all ease;
+}
+
+.login-button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    font-size: 14px;
+    color: #383436;
+    -webkit-transition: all ease;
+    transition: all ease;
+    background: #ff8e92;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background: #7db485;
+    -webkit-transition: background-color 200ms linear;
+    -ms-transition: background-color 200ms linear;
+    transition: background-color 200ms linear;
 }
 
 :focus::-webkit-input-placeholder {
