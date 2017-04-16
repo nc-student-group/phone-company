@@ -24,19 +24,19 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private String connStr;
 
     private QueryLoader queryLoader;
-
-    @Autowired
     private RoleDao roleDao;
-
-    @Autowired
     private AddressDao addressDao;
-
-    @Autowired
     private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
-    public UserDaoImpl(QueryLoader queryLoader) {
+    public UserDaoImpl(QueryLoader queryLoader,
+                       ShaPasswordEncoder shaPasswordEncoder,
+                       AddressDao addressDao,
+                       RoleDao roleDao) {
         this.queryLoader = queryLoader;
+        this.shaPasswordEncoder = shaPasswordEncoder;
+        this.addressDao = addressDao;
+        this.roleDao = roleDao;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
@@ -13,9 +12,14 @@ import java.security.SecureRandom;
 @Service
 public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
 
+    private UserDao userDao;
+
     @Autowired
-    public UserServiceImpl(CrudDao<User> dao) {
-        super(dao);
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public UserServiceImpl() {
     }
 
     @Override

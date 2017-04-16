@@ -11,9 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.servlet.Filter;
 
-/**
- * Created by Yurii on 14.04.2017.
- */
 @Configuration
 //@EnableWebMvc
 @ComponentScan(basePackages = { "com.phonecompany" })

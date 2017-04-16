@@ -1,6 +1,5 @@
 package com.phonecompany.service;
 
-import com.phonecompany.model.Role;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,17 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Yurii on 14.04.2017.
- */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
     private Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public UserDetailsServiceImpl(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {

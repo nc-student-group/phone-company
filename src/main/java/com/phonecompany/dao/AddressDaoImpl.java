@@ -21,6 +21,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
     public AddressDaoImpl(QueryLoader queryLoader){
         this.queryLoader = queryLoader;
     }
+
     @Override
     public String getQuery(String type) {
         return queryLoader.getQuery("query.address."+type);
