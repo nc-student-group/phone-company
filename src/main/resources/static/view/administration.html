@@ -1,24 +1,26 @@
-
-
-<div >
-    <div>
-        <div>
-            <div  >
-                <table border="2">
-                    <tr ng-repeat="dev in devs">
-                        <td>{{dev.id}}</td>
-                        <td>email: {{dev.email}}</td>
-                        <td>role: {{dev.role.name}}</td>
-                        <td>lasName: {{dev.lastName}}</td>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 user-list">
+            <div class="card users">
+      <span class="fa fa-times close-user">
+      </span>
+                <button class="add-user-button">Add User</button>
+                <table class="table">
+                    <tbody>
+                    <span ng-show="users.length == 0" class="user-item">
+                        Please, wait. Users are being fetched from the remote db</span>
+                    <tr ng-repeat="u in users">
+                        <td>
+                            <span class="fa fa-check-circle fa-lg"></span>
+                            <span class="user-item">{{u.firstName}}, {{u.role.name}}</span>
+                        </td>
                     </tr>
+                    </tbody>
                 </table>
-                <button class="add-user-button">Add new User</button>
-
             </div>
         </div>
 
         <div class="col-md-6 userForm hideMe">
-
             <div class="card">
                 <div class="row">
                     <div class="col-md-12">
@@ -33,35 +35,32 @@
                 </div>
 
                 <div class="content">
-                    <form autocomplete="off"
+                    <form ng-submit="createUser()" autocomplete="off"
                           novalidate>
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <label>User email</label>
-                                    <input ng-model="email" type="text" class="form-control"
-                                           placeholder="User email">
-                                    {{email}}
+                                    <label>User name:</label>
+                                    <input ng-model="user.firstName" type="text" class="form-control"
+                                           placeholder="User name">
                                 </div>
                                 <div class="form-group">
-                                    <label>Password</label>
-                                    <input ng-model="password" type="text" class="form-control"
-                                           placeholder="password">
-                                    {{password}}
+                                    <label>User last name:</label>
+                                    <input ng-model="user.lastName" type="text" class="form-control"
+                                           placeholder="User lastname">
                                 </div>
-                                <div class="form-group">
-                                    <label>User role</label>
-                                    <input ng-model="role" type="text" class="form-control"
-                                           placeholder="User role">
-                                    {{role}}
-                                </div>
+                                User role:
+                                <select ng-model="user.role.name" class="custom-select">
+                                    <option value="USER">User</option>
+                                    <option value="CSR">CSR</option>
+                                    <option value="PMG">PMG</option>
+                                </select>
                             </div>
                         </div>
-                        <button type="submit" ng-click="createUser()"
+                        <button type="submit"
                                 class="add-user-button pull-right">
                             Submit
                         </button>
-
                         <div class="clearfix"></div>
                     </form>
                 </div>

@@ -1,47 +1,35 @@
-/** var
+/**
  * User Service.
  */
-'use strict';
-angular.module('phone-company').factory('UserService',['$q', '$http', function ($q, $http) {
+(function () {
+    'use strict';
 
-            var REST_SERVICE_GET_ALL_USERS = "/api/users";
-            var REST_SERVICE_CREATE_USER = "/api/users";
+    angular.module('phone-company')
+        .factory('UserService', UserService);
 
-            var factory = {
-                getUsers:getUsers,
-                createUser:createUser,
-            };
+    UserService.$inject = ['$resource'];
 
-            return factory;
+    function UserService($resource) {
+        var userService = {};
 
-            function getUsers () {
-                console.log('Getting all the users contained in the database');
-                var deferred = $q.defer();
-                $http.get(REST_SERVICE_GET_ALL_USERS)
-                    .then(
-                        function (response) {
-                            deferred.resolve(response.data);
-                        },
-                        function(errResponse){
-                            console.error('Error while fetching Users');
-                            deferred.reject(errResponse);
-                        }
-                    );
-                return deferred.promise;
-            }
+        // Template for CRUD operations
+        userService.perform = function () {
+            return $resource('/api/users/:id', null,
+                {
+                    'update': {method: 'PUT'}
+                });
+        };
 
-    function createUser (user) {
-        var deferred = $q.defer();
-        $http.post(REST_SERVICE_CREATE_USER, user)
-            .then(
-                function (response) {
-                    deferred.resolve(response.data);
-                },
-                function(errResponse){
-                    console.error('Error while creating User');
-                    deferred.reject(errResponse);
-                }
-            );
-        return deferred.promise;
+        userService.saveUser = function (user) {
+            console.log('Saving user: ' + JSON.stringify(user));
+            return userService.perform().save(user);
+        };
+
+        userService.getUsers = function () {
+            console.log('Getting all the users contained in the database');
+            return userService.perform().query();
+        };
+
+        return userService;
     }
-}]);
+}());

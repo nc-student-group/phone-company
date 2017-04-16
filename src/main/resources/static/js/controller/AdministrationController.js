@@ -1,33 +1,36 @@
-'use strict';
-angular.module('phone-company').controller('AdministrationController', [
-    '$scope',
-    '$location',
-    'UserService',
-    function ($scope, $location, UserService) {
-        console.log('This is AdministrationController');
-        $scope.devs=[];
+(function () {
+    'use strict';
 
+    angular.module('phone-company')
+        .controller('AdministrationController', AdministrationController);
 
-        UserService.getUsers().then(
-            function(d) {
-                $scope.devs = d;
-            },
-            function(errResponse){
-                console.error('Error while fetching Users');
+    AdministrationController.$inject = ['$scope', '$log', 'UserService'];
+
+    function AdministrationController($scope, $log, UserService) {
+
+        $scope.users = UserService.getUsers();
+
+        this.user = { // this.user - property of this controller
+            firstName: "",
+            email: "",
+            role: {
+                name: ""
             }
-        );
+        };
 
-        $scope.createUser = function(){
-            var user = {
-                    email: $scope.email,
-                    password:$scope.password,
-                    role: $scope.role
-            };
-            UserService.createUser(user).then(
-                    UserService.getUsers(),
-                    function(errResponse){
-                        console.error('Error while creating User');
-                    }
-                );
+        $scope.createUser = createUser;
+        /**
+         * Creates user.
+         */
+        function createUser() {
+            $log.debug('User: ' + JSON.stringify($scope.user));
+            UserService.saveUser($scope.user).$promise
+                .then(function (createdUser) {
+                    $log.debug("Created user: ", createdUser);
+                    $scope.users.push(createdUser);
+                }, function (error) {
+                    $log.error("Failed to save user", error);
+                });
         }
-    }]);
+    }
+}());

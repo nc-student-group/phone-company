@@ -29,13 +29,13 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private UserDao userDao;
+    private EMailService emailService;
 
     @Autowired
-    private EMailService mailService;
-
-    @Autowired
-    public UserController(UserDao userDao) {
+    public UserController(UserDao userDao,
+                          EMailService emailService) {
         this.userDao = userDao;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -54,7 +54,6 @@ public class UserController {
         LOG.info("User retrieved from the http request: " + user);
 
         User persistedUser = this.userDao.save(user);
-        mailService.sendMail(user.getEmail(),"Greetings, you were registered in phone-company;"+ " Your password is: " + user.getPassword()+ " we recommend to change it.","Phone company registration by admin");
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -62,10 +61,15 @@ public class UserController {
                 .buildAndExpand(persistedUser.getId())
                 .toUri();
 
+        if (user.getEmail() != null) {
+            LOG.info("Sending confirmation email to: " + user.getEmail());
+            this.emailService.sendMail(user.getEmail(),
+                    "Welcome, " + user.getFirstName() + "!",
+                    "Registration confirmation");
+        }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriOfNewResource);
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
-
 }
