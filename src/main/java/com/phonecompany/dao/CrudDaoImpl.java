@@ -53,6 +53,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public T update(T entity) {
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
+            conn.setAutoCommit(this.autoCommit);
             this.populateUpdateStatement(ps, entity);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -86,6 +87,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public void delete(Long id) {
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
+            conn.setAutoCommit(this.autoCommit);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
