@@ -26,15 +26,12 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private QueryLoader queryLoader;
     private RoleDao roleDao;
     private AddressDao addressDao;
-    private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
     public UserDaoImpl(QueryLoader queryLoader,
-                       ShaPasswordEncoder shaPasswordEncoder,
                        AddressDao addressDao,
                        RoleDao roleDao) {
         this.queryLoader = queryLoader;
-        this.shaPasswordEncoder = shaPasswordEncoder;
         this.addressDao = addressDao;
         this.roleDao = roleDao;
     }
@@ -68,8 +65,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, shaPasswordEncoder
-                    .encodePassword(user.getPassword(), null));
+            preparedStatement.setString(7, user.getPassword());
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -104,8 +100,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setLong(5, user.getAddress().getId());
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, shaPasswordEncoder
-                    .encodePassword(user.getPassword(), null));
+            preparedStatement.setString(7, user.getPassword());
             preparedStatement.setLong(8, user.getRole().getId());
             preparedStatement.setLong(9, user.getId());
         } catch (SQLException e) {
