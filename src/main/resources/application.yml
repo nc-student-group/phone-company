@@ -10,4 +10,6 @@ logging:
     com:
       phonecompany: info
 
-
+security:
+  basic:
+   enabled: false
