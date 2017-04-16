@@ -18,10 +18,13 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
         implements VerificationTokenDao {
 
     private QueryLoader queryLoader;
+    private UserDao userDao;
 
     @Autowired
-    public VerificationTokenDaoImpl(QueryLoader queryLoader) {
+    public VerificationTokenDaoImpl(QueryLoader queryLoader,
+                                    UserDao userDao) {
         this.queryLoader = queryLoader;
+        this.userDao = userDao;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
         VerificationToken verificationToken = new VerificationToken();
         try {
             verificationToken.setId(rs.getLong("id"));
-//            verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
+            verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
             verificationToken.setToken(rs.getString("token"));
             verificationToken.setExpireDate(rs.getDate("expire_date"));
         } catch (SQLException e) {
