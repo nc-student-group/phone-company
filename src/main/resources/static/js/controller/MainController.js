@@ -50,12 +50,14 @@ angular.module('phone-company').controller('MainController', [
             }
             switch ($rootScope.currentRole) {
                 case "ADMIN":
-                    if ($location.$$path == '/client') {
+                    if ($location.$$path == '/client' ||
+                        $location.$$path == '/csr') {
                         $location.path("/admin");
                     }
                     break;
                 case "CLIENT":
-                    if ($location.$$path == '/admin') {
+                    if ($location.$$path == '/admin' ||
+                        $location.$$path == '/csr') {
                         $location.path("/client");
                     }
                     break;
