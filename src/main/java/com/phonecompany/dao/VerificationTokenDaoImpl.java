@@ -14,12 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken> implements VerificationTokenDao {
+public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
+        implements VerificationTokenDao {
 
     private QueryLoader queryLoader;
-
-    @Autowired
-    private UserDao userDao;
 
     @Autowired
     public VerificationTokenDaoImpl(QueryLoader queryLoader) {
@@ -47,7 +45,7 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken> imp
         VerificationToken verificationToken = new VerificationToken();
         try {
             verificationToken.setId(rs.getLong("id"));
-            verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
+//            verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
             verificationToken.setToken(rs.getString("token"));
             verificationToken.setExpireDate(rs.getDate("expire_date"));
         } catch (SQLException e) {

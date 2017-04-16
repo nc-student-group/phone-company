@@ -15,8 +15,6 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Repository
 public class UserDaoImpl extends CrudDaoImpl<User>
