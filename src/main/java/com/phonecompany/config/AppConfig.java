@@ -17,10 +17,6 @@ import javax.servlet.Filter;
 public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl();
-    }
-    @Bean
     public Filter simpleCorsFilter() {
         return new SimpleCORSFilter();
     }
