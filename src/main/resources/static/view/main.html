@@ -60,5 +60,15 @@
                 Register
             </button>
         </form>
+
+        <form ng-show="selected === 'restore'"
+              autocomplete="off" novalidate
+              ng-submit="resetPassword()">
+            <input ng-model="resetRequest.email" type="text" placeholder="Email"/>
+            <button type="submit" class="login-button">
+                Reset
+            </button>
+        </form>
+
     </div>
 </div>

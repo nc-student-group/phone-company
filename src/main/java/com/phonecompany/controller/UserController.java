@@ -32,16 +32,19 @@ public class UserController {
 
     private UserService userService;
     private EmailService emailService;
-    @Qualifier("confirmationEmailCreator")
-    private MailMessageCreator messageCreator;
+    private MailMessageCreator confirmMessageCreator;
+    private MailMessageCreator resetPassMessageCreator;
 
     @Autowired
     public UserController(UserService userService,
                           EmailService emailService,
-                          MailMessageCreator messageCreator) {
+                          @Qualifier("confirmationEmailCreator")
+                                  MailMessageCreator confirmMessageCreator,
+                          @Qualifier("resetPassMessageCreator")
+                                  MailMessageCreator resetPassMessageCreator) {
         this.userService = userService;
         this.emailService = emailService;
-        this.messageCreator = messageCreator;
+        this.confirmMessageCreator = resetPassMessageCreator;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -63,7 +66,7 @@ public class UserController {
 //        LOG.info("User persisted with an id: " + persistedUser.getId());
 
         SimpleMailMessage confirmationMessage =
-                this.messageCreator.constructMessage(user);
+                this.confirmMessageCreator.constructMessage(user);
         System.out.println(confirmationMessage);
         emailService.sendMail(confirmationMessage);
 
@@ -77,5 +80,19 @@ public class UserController {
         httpHeaders.setLocation(uriOfNewResource);
 
         return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = POST, value = "/api/user/reset")
+    public void resetPassword(@RequestBody String email) {
+        LOG.info("Trying to reset password for user with email: " + email);
+        User user = userService.findByUsername(email);
+        if (user != null) {
+            userService.resetPassword(user);
+            SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(user);
+            emailService.sendMail(mailMessage);
+            LOG.info("User's new password " + user.getPassword());
+        } else {
+            LOG.info("User with email " + email + " not found!");
+        }
     }
 }

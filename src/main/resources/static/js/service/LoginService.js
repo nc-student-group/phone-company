@@ -18,8 +18,9 @@ angular.module('phone-company')
                 deferred.resolve(response.data);
             },
             function (errResponse) {
+                toastr.error('Bad credentials', 'Error');
                 if (!(localStorage.getItem('loginToken') === null))
-                    localStorage.removeItem('loginToken')
+                    localStorage.removeItem('loginToken');
                 console.error(errResponse.toString());
                 deferred.reject(errResponse);
             });

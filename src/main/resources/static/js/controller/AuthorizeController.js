@@ -16,6 +16,18 @@ angular.module('phone-company').controller('AuthorizeController', [
             email: ""
         };
 
+        $scope.resetRequest = {
+            email: ""
+        };
+
+        $scope.resetPassword = function () {
+            console.log('Email: ' + JSON.stringify($scope.resetRequest));
+            UserService.resetPassword($scope.resetRequest.email)
+                .then(function (data) {
+                    console.log("Email: ", data);
+                });
+        };
+
         $scope.registerUser = function () {
             console.log('User: ' + JSON.stringify($scope.user));
             UserService.saveUser($scope.user)
@@ -26,6 +38,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);
+            console.log("qqqq");
             LoginService.tryLogin().then(function (data) {
                 $rootScope.currentRole = data.name;
                 switch (data.name) {

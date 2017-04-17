@@ -15,35 +15,23 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         implements UserService {
 
     private UserDao userDao;
-    private ShaPasswordEncoder passwordEncoder;
+    private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao,
-                           ShaPasswordEncoder shaPasswordEncoder) {
+    public UserServiceImpl(UserDao userDao, ShaPasswordEncoder shaPasswordEncoder) {
+        super(userDao);
         this.userDao = userDao;
-        this.passwordEncoder = shaPasswordEncoder;
-    }
-
-    public UserServiceImpl() {
+        this.shaPasswordEncoder = shaPasswordEncoder;
     }
 
     @Override
     public User findByUsername(String userName) {
-        return ((UserDao)dao).findByUsername(userName);
-    }
-
-    @Override
-    public User save(User user) {
-        user.setPassword(passwordEncoder.encodePassword(user.getPassword(), null));
-        return userDao.save(user);
+        return userDao.findByUsername(userName);
     }
 
     @Override
     public User resetPassword(User user) {
         user.setPassword(generatePassword());
-
-        //TODO: sending password by email
-
         return update(user);
     }
 
@@ -51,4 +39,15 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         SecureRandom random = new SecureRandom();
         return new BigInteger(50, random).toString(32);
     }
+
+    public User save(User user){
+        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+        return super.save(user);
+    }
+
+    public User update(User user){
+        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+        return super.update(user);
+    }
+
 }
