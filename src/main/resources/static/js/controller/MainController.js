@@ -4,8 +4,10 @@ angular.module('phone-company').controller('MainController', [
     '$rootScope',
     '$location',
     'SessionService',
+    'UserService',
     'LoginService',
-    function ($scope, $rootScope, $location, SessionService, LoginService) {
+    function ($scope, $rootScope, $location, SessionService,
+              UserService, LoginService) {
         console.log('This is MainController');
         $scope.inProgress = false;
 
@@ -18,18 +20,18 @@ angular.module('phone-company').controller('MainController', [
 
         $scope.watchRedirect = function () {
             if (SessionService.hasToken()) {
-                if($rootScope.currentRole == undefined && $scope.inProgress == false){
+                if ($rootScope.currentRole == undefined && $scope.inProgress == false) {
                     $scope.inProgress = true;
                     LoginService.tryLogin().then(function (data) {
                         $rootScope.currentRole = data.name;
                         $scope.checkRoleAccess();
                         $scope.inProgress = false;
                     });
-                }else{
+                } else {
                     $scope.checkRoleAccess();
                 }
-            }else {
-                if($location.$$path != '/index'){
+            } else {
+                if ($location.$$path != '/index') {
                     $location.path('/index');
                 }
             }

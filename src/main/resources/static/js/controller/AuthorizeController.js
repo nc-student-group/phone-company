@@ -4,10 +4,25 @@ angular.module('phone-company').controller('AuthorizeController', [
     '$location',
     'SessionService',
     'LoginService',
+    'UserService',
     '$rootScope',
-    function ($scope, $location, SessionService, LoginService, $rootScope) {
+    function ($scope, $location, SessionService, LoginService, UserService, $rootScope) {
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
+
+        $scope.user = {
+            userName: "",
+            password: "",
+            email: ""
+        };
+
+        $scope.registerUser = function () {
+            console.log('User: ' + JSON.stringify($scope.user));
+            UserService.saveUser($scope.user)
+                .then(function (data) {
+                    console.log("Created user: ", data);
+                });
+        };
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);

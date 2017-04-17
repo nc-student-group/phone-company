@@ -26,11 +26,11 @@
         <form name="registerForm" id="registerForm" ng-show="selected === 'register'"
               autocomplete="off" novalidate
               ng-submit="registerUser()">
-            <input ng-model="user.firstName" name="firstName" id="firstName" minlength="3"
-                   type="text" placeholder="First name" required/>
-            <span class="error" ng-show="registerForm.firstName.$dirty &&
-                registerForm.firstName.$error.required">Firstname is required.</span>
-            <span class="error" ng-show="registerForm.firstName.$dirty &&
+            <input ng-model="user.userName" name="userName" id="userName" minlength="3"
+                   type="text" placeholder="Username" required/>
+            <span class="error" ng-show="registerForm.userName.$dirty &&
+                registerForm.userName.$error.required">Username is required.</span>
+            <span class="error" ng-show="registerForm.userName.$dirty &&
                 registerForm.userName.$error.minlength">Username is too short.</span>
             <input ng-model="user.password" name="password" id="password"
                    minlength="5" type="password" placeholder="password" required/>
