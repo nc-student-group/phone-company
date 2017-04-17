@@ -4,7 +4,7 @@ angular.module('phone-company')
     .factory('UserService', ['$q', '$http', 'MainFactory',
         function ($q, $http, MainFactory) {
 
-        var SAVE_URL = MainFactory.host + "/api/api/users";
+        var SAVE_URL = MainFactory.host + "api/users";
 
         return {
             saveUser: saveUser
