@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class CrudServiceImpl<T extends DomainEntity>
         implements CrudService<T> {
 
+    @Autowired
     protected CrudDao<T> dao;
 
     @Autowired

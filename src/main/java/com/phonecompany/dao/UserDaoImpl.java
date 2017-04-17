@@ -15,8 +15,6 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Repository
 public class UserDaoImpl extends CrudDaoImpl<User>
@@ -25,24 +23,23 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Value("${spring.datasource.url}")
     private String connStr;
 
-    @Autowired
     private QueryLoader queryLoader;
-
-    @Autowired
     private RoleDao roleDao;
-
-    @Autowired
     private AddressDao addressDao;
 
     @Autowired
-    private ShaPasswordEncoder shaPasswordEncoder;
+    public UserDaoImpl(QueryLoader queryLoader,
+                       AddressDao addressDao,
+                       RoleDao roleDao) {
+        this.queryLoader = queryLoader;
+        this.addressDao = addressDao;
+        this.roleDao = roleDao;
+    }
 
     @Override
     public User findByUsername(String userName) {
-        String query = this.getQuery("getByEmail");
-        System.out.println("Query find by name: " + query);
         try (Connection conn = DriverManager.getConnection(connStr);
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -68,8 +65,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, shaPasswordEncoder
-                    .encodePassword(user.getPassword(), null));
+            preparedStatement.setString(7, user.getPassword());
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -104,8 +100,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(4, user.getSecondName());
             preparedStatement.setLong(5, user.getAddress().getId());
             preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, shaPasswordEncoder
-                    .encodePassword(user.getPassword(), null));
+            preparedStatement.setString(7, user.getPassword());
             preparedStatement.setLong(8, user.getRole().getId());
             preparedStatement.setLong(9, user.getId());
         } catch (SQLException e) {

@@ -1,35 +1,28 @@
-/**
- * User Service.
- */
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('phone-company')
-        .factory('UserService', UserService);
+angular.module('phone-company')
+    .factory('UserService', ['$q', '$http', 'MainFactory',
+        function ($q, $http, MainFactory) {
 
-    UserService.$inject = ['$resource'];
+        var SAVE_URL = MainFactory.host + "api/users";
 
-    function UserService($resource) {
-        var userService = {};
-
-        // Template for CRUD operations
-        userService.perform = function () {
-            return $resource('/api/users/:id', null,
-                {
-                    'update': {method: 'PUT'}
-                });
+        return {
+            saveUser: saveUser
         };
 
-        userService.saveUser = function (user) {
+        function saveUser(user) {
             console.log('Saving user: ' + JSON.stringify(user));
-            return userService.perform().save(user);
-        };
+            var deferred = $q.defer();
+            $http.post(SAVE_URL, user).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+    }]);
 
-        userService.getUsers = function () {
-            console.log('Getting all the users contained in the database');
-            return userService.perform().query();
-        };
 
-        return userService;
-    }
-}());

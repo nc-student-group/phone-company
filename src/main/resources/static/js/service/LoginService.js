@@ -1,34 +1,30 @@
-/**
- * Login Service.
- */
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('phone-company')
-        .factory('LoginService', LoginService);
+angular.module('phone-company')
+    .factory('LoginService', ['$q', '$http', 'MainFactory', function ($q, $http, MainFactory) {
 
-    LoginService.$inject = ['$resource', '$http'];
+    var GET_TRY_LOGIN_URL = MainFactory.host + "api/login/try";
 
-    function LoginService($resource, $http) {
-        var loginService = {};
+    var factory = {
+        tryLogin: tryLogin,
+    };
 
-        // Template for CRUD operations
-        loginService.perform = function () {
-            return $resource('/api/login/:id', null,
-                {
-                    'update': {method: 'PUT'}
-                });
-        };
+    return factory;
 
-        loginService.getUserRole = function (authRequest) {
-            console.log('About to query for userRole');
-            return $http({
-                url: '/api/login',
-                method: "GET",
-                params: authRequest
+    function tryLogin() {
+        var deferred = $q.defer();
+        $http.get(GET_TRY_LOGIN_URL).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                if (!(localStorage.getItem('loginToken') === null))
+                    localStorage.removeItem('loginToken')
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
             });
-        };
-
-        return loginService;
+        return deferred.promise;
     }
-}());
+
+
+}]);

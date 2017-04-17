@@ -14,16 +14,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken> implements VerificationTokenDao {
+public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
+        implements VerificationTokenDao {
 
     private QueryLoader queryLoader;
-
-    @Autowired
     private UserDao userDao;
 
     @Autowired
-    public VerificationTokenDaoImpl(QueryLoader queryLoader) {
+    public VerificationTokenDaoImpl(QueryLoader queryLoader,
+                                    UserDao userDao) {
         this.queryLoader = queryLoader;
+        this.userDao = userDao;
     }
 
     @Override
