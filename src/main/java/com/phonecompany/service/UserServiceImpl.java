@@ -4,7 +4,9 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -15,7 +17,7 @@ public class UserServiceImpl extends CrudServiceImpl<User> implements UserServic
     private UserDao userDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, ShaPasswordEncoder shaPasswordEncoder) {
         this.userDao = userDao;
     }
 

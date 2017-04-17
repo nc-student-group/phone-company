@@ -3,7 +3,7 @@
 angular.module('phone-company')
     .factory('LoginService', ['$q', '$http', 'MainFactory', function ($q, $http, MainFactory) {
 
-    var GET_TRY_LOGIN_URL = MainFactory.host + "/api/login/try";
+    var GET_TRY_LOGIN_URL = MainFactory.host + "api/login/try";
 
     var factory = {
         tryLogin: tryLogin,
