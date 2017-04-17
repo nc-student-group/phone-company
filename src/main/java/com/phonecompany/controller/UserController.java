@@ -1,6 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.User;
+import com.phonecompany.service.interfaces.EMailService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,12 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private UserService userService;
+    private EMailService emailService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EMailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -61,5 +64,21 @@ public class UserController {
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
+
+    @RequestMapping(method = POST, value = "/api/user/reset")
+    public void resetPassword(@RequestBody String email) {
+        LOG.info("Trying to reset password for user with email: " + email);
+        User user = userService.findByUsername(email);
+        if(user != null) {
+            userService.resetPassword(user);
+            emailService.sendMail(user.getEmail(), "Your new password is " +
+                    user.getPassword(), "Reset password");
+            LOG.info("User's new password " + user.getPassword());
+
+        } else {
+            LOG.info("User with email " + email + " not found!" );
+        }
+    }
+
 
 }
