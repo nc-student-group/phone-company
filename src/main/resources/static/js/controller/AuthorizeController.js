@@ -38,6 +38,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);
+            console.log("qqqq");
             LoginService.tryLogin().then(function (data) {
                 $rootScope.currentRole = data.name;
                 switch (data.name) {

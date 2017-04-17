@@ -37,7 +37,8 @@ public class LoginController {
 
     @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
     public Role tryLogin() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder
+        org.springframework.security.core.userdetails.User securityUser = null;
+        securityUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         User user = userService.findByUsername(securityUser.getUsername());
         return user.getRole();
@@ -49,8 +50,8 @@ public class LoginController {
         LOG.info("AuthorizationRequest: {}", firstName);
         User user = userService.findByUsername(firstName);
         LOG.info("User retrieved from the database: {}", user);
-        if(user == null) return null;
-        if(!user.getPassword().equals(password)) return null;
+        if (user == null) return null;
+        if (!user.getPassword().equals(password)) return null;
         LOG.info("User role: {}", user.getRole());
         return user.getRole();
     }

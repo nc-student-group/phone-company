@@ -4,12 +4,14 @@ angular.module('phone-company')
     .factory('UserService', ['$q', '$http', 'MainFactory',
         function ($q, $http, MainFactory) {
 
-        var SAVE_URL = MainFactory.host + "api/users";
+        var SAVE_URL = MainFactory.host + "api/user/save";
+        var GET_ALL_USERS_URL = MainFactory.host + "api/users";
         var RESET_URL = MainFactory.host + "api/user/reset";
 
         return {
             saveUser: saveUser,
-            resetPassword: resetPassword
+            resetPassword: resetPassword,
+            getUsers:getUsers
         };
 
         function saveUser(user) {
@@ -40,6 +42,19 @@ angular.module('phone-company')
                 });
             return deferred.promise;
         }
+
+            function getUsers() {
+                var deferred = $q.defer();
+                $http.get(GET_ALL_USERS_URL).then(
+                    function (response) {
+                        deferred.resolve(response.data);
+                    },
+                    function (errResponse) {
+                        console.error(errResponse.toString());
+                        deferred.reject(errResponse);
+                    });
+                return deferred.promise;
+            }
     }]);
 
 

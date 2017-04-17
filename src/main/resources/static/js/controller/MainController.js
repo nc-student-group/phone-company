@@ -19,20 +19,22 @@ angular.module('phone-company').controller('MainController', [
         };
 
         $scope.watchRedirect = function () {
-            if (SessionService.hasToken()) {
-                if ($rootScope.currentRole == undefined && $scope.inProgress == false) {
-                    $scope.inProgress = true;
-                    LoginService.tryLogin().then(function (data) {
-                        $rootScope.currentRole = data.name;
+            if ($location.$$path != "/index") {
+                if (SessionService.hasToken()) {
+                    if ($rootScope.currentRole == undefined && $scope.inProgress == false) {
+                        $scope.inProgress = true;
+                        LoginService.tryLogin().then(function (data) {
+                            $rootScope.currentRole = data.name;
+                            $scope.checkRoleAccess();
+                            $scope.inProgress = false;
+                        });
+                    } else {
                         $scope.checkRoleAccess();
-                        $scope.inProgress = false;
-                    });
+                    }
                 } else {
-                    $scope.checkRoleAccess();
-                }
-            } else {
-                if ($location.$$path != '/index') {
-                    $location.path('/index');
+                    if ($location.$$path != '/index') {
+                        $location.path('/index');
+                    }
                 }
             }
         };
@@ -55,6 +57,7 @@ angular.module('phone-company').controller('MainController', [
                     if ($location.$$path == '/client' ||
                         $location.$$path == '/csr') {
                         $location.path("/admin");
+                        console.log("admin");
                     }
                     break;
                 case "CLIENT":

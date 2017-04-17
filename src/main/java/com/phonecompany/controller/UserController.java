@@ -47,7 +47,7 @@ public class UserController {
         return Collections.unmodifiableCollection(users);
     }
 
-    @RequestMapping(method = POST, value = "/api/users")
+    @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUser(@RequestBody User user) {
         LOG.info("User retrieved from the http request: " + user);
 

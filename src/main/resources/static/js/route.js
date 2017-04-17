@@ -1,6 +1,8 @@
 (function () {
 
-    var app = angular.module('phone-company', ['ngRoute', 'ngResource']);
+    var app = angular.module('phone-company',
+        ['ngRoute',
+        'ngResource']);
 
     app.config(function ($routeProvider) {
         $routeProvider.when('/index',
@@ -55,11 +57,12 @@
         // $httpProvider.interceptors.push(function ($q, $location) {
         //     return {
         //         responseError: function (rejection) {
-        //             console.log(rejection.status);
-        //             if (rejection.status === -1) {
+        //             console.log(rejection);
+        //             // if (rejection.status === 401) {
+        //
         //                 // window.location.href = '/index';//?redirect=' + window.location.pathname;
-        //                 $location.path("/index");
-        //             }
+        //                 // $location.path("/index");
+        //             // }
         //             return $q.reject(rejection);
         //         }
         //     };
