@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/user/reset")
-    public void resetPassword(@RequestBody String email) {
+    public User resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
         User user = userService.findByUsername(email);
         if (user != null) {
@@ -94,5 +94,6 @@ public class UserController {
         } else {
             LOG.info("User with email " + email + " not found!");
         }
+        return user;
     }
 }
