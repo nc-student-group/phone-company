@@ -1,13 +1,11 @@
 'use strict';
 
-angular.module('phone-company').factory('LoginService', ['$q', '$http', function ($q, $http) {
+angular.module('phone-company').factory('LoginService', ['$q', '$http', 'MainFactory', function ($q, $http, MainFactory) {
 
-    var host = "http://localhost:8090";
-
-    var GET_TRY_LOGIN_URL = host + "/api/login/try";
+    var GET_TRY_LOGIN_URL = MainFactory.host + "/api/login/try";
 
     var factory = {
-        tryLogin:tryLogin,
+        tryLogin: tryLogin,
     };
 
     return factory;
