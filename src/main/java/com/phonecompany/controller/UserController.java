@@ -54,6 +54,9 @@ public class UserController {
         User persistedUser = this.userService.save(user);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
+        emailService.sendMail(user.getEmail(), "Welcome, " + user.getFirstName(),
+                "Registration confirmation");
+
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/{id}")
                 .buildAndExpand(persistedUser.getId())
@@ -64,6 +67,7 @@ public class UserController {
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
+
 
     @RequestMapping(method = POST, value = "/api/user/reset")
     public void resetPassword(@RequestBody String email) {
