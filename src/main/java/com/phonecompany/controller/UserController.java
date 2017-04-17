@@ -1,14 +1,17 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.User;
-import com.phonecompany.service.interfaces.EMailService;
+import com.phonecompany.service.interfaces.EmailService;
+import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,13 +31,17 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private UserService userService;
-    private EMailService eMailService;
+    private EmailService emailService;
+    @Qualifier("confirmationEmailCreator")
+    private MailMessageCreator messageCreator;
 
     @Autowired
     public UserController(UserService userService,
-                          EMailService eMailService) {
+                          EmailService emailService,
+                          MailMessageCreator messageCreator) {
         this.userService = userService;
-        this.eMailService = eMailService;
+        this.emailService = emailService;
+        this.messageCreator = messageCreator;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -52,20 +59,23 @@ public class UserController {
     public ResponseEntity<?> saveUser(@RequestBody User user) {
         LOG.info("User retrieved from the http request: " + user);
 
-        User persistedUser = this.userService.save(user);
-        LOG.info("User persisted with an id: " + persistedUser.getId());
+//        User persistedUser = this.userService.save(user);
+//        LOG.info("User persisted with an id: " + persistedUser.getId());
 
-        eMailService.sendMail(user.getEmail(), "Welcome, " + user.getUserName(),
-                "Registration confirmation");
+        SimpleMailMessage confirmationMessage =
+                this.messageCreator.constructMessage(user);
+        System.out.println(confirmationMessage);
+        emailService.sendMail(confirmationMessage);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/{id}")
-                .buildAndExpand(persistedUser.getId())
+//                .buildAndExpand(persistedUser.getId())
+                .buildAndExpand(1L)
                 .toUri();
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriOfNewResource);
 
-        return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
     }
 }

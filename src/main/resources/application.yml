@@ -13,3 +13,5 @@ logging:
 security:
   basic:
    enabled: false
+
+application-url: http://localhost:8090/api
