@@ -28,13 +28,12 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private UserService userService;
-    private EMailService eMailService;
+    private EMailService emailService;
 
     @Autowired
-    public UserController(UserService userService,
-                          EMailService eMailService) {
+    public UserController(UserService userService, EMailService emailService) {
         this.userService = userService;
-        this.eMailService = eMailService;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -55,7 +54,7 @@ public class UserController {
         User persistedUser = this.userService.save(user);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
-        eMailService.sendMail(user.getEmail(), "Welcome, " + user.getUserName(),
+        emailService.sendMail(user.getEmail(), "Welcome, " + user.getFirstName(),
                 "Registration confirmation");
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -68,4 +67,22 @@ public class UserController {
 
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
+
+
+    @RequestMapping(method = POST, value = "/api/user/reset")
+    public void resetPassword(@RequestBody String email) {
+        LOG.info("Trying to reset password for user with email: " + email);
+        User user = userService.findByUsername(email);
+        if(user != null) {
+            userService.resetPassword(user);
+            emailService.sendMail(user.getEmail(), "Your new password is " +
+                    user.getPassword(), "Reset password");
+            LOG.info("User's new password " + user.getPassword());
+
+        } else {
+            LOG.info("User with email " + email + " not found!" );
+        }
+    }
+
+
 }

@@ -16,6 +16,18 @@ angular.module('phone-company').controller('AuthorizeController', [
             email: ""
         };
 
+        $scope.resetRequest = {
+            email: ""
+        };
+
+        $scope.resetPassword = function () {
+            console.log('Email: ' + JSON.stringify($scope.resetRequest));
+            UserService.resetPassword($scope.resetRequest.email)
+                .then(function (data) {
+                    console.log("Email: ", data);
+                });
+        };
+
         $scope.registerUser = function () {
             console.log('User: ' + JSON.stringify($scope.user));
             UserService.saveUser($scope.user)
