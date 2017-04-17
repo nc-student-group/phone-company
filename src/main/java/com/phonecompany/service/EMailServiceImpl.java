@@ -11,9 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by nik9str on 15.04.2017.
- */
 @Service
 @PropertySource("classpath:mail.properties")
 public class EMailServiceImpl implements EMailService {
@@ -30,7 +27,6 @@ public class EMailServiceImpl implements EMailService {
         mailSender.setProtocol(environment.getProperty("email.protocol"));
         return mailSender;
     }
-
 
     @Override
     public void sendMail(String recipientEmail, String text, String subject) {
