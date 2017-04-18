@@ -45,14 +45,14 @@ public class UserDaoImplTest extends AbstractTest{
     @Test
     public void findByUsername() throws Exception {
         List<User> userList = userDao.getAll();
-        User user = userDao.findByUsername(userList.get(0).getEmail());
+        User user = userDao.findByEmail(userList.get(0).getEmail());
         Assert.assertFalse("User id = null", user.getId() == null);
     }
 
     @Test
     public void getAll() throws Exception {
         List<User> userList = userDao.getAll();
-        User user = userDao.findByUsername(userList.get(0).getEmail());
+        User user = userDao.findByEmail(userList.get(0).getEmail());
         Assert.assertFalse("User list = null", userList == null);
         Assert.assertFalse("User = null", user == null);
     }

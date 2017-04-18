@@ -78,13 +78,13 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     @Override
     public User findByUsername(String userName) {
         Assert.notNull(userName, "Username should not be null");
-        return userDao.findByUsername(userName);
+        return userDao.findByEmail(userName);
     }
 
     @Override
     public User findByEmail(String email) {
         Assert.notNull(email, "Email should not be null");
-        return userDao.findByUsername(email);
+        return userDao.findByEmail(email);
     }
 
     public User save(User user) {

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -34,13 +33,12 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
         LOG.info("Confirmation url: {}", confirmationUrl);
 
-//        Context context = new Context();
-//        context.setVariable("name", recipient.getUserName());
-//        context.setVariable("body", confirmationUrl);
-//
-//        return this.templateEngine
-//                .process("email-template", context);
-        return confirmationUrl;
+        Context context = new Context();
+        context.setVariable("name", recipient.getUserName());
+        context.setVariable("body", confirmationUrl);
+
+        return this.templateEngine
+                .process("email-template", context);
     }
 
     @Override

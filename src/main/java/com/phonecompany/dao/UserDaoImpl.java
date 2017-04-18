@@ -11,7 +11,6 @@ import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -37,10 +36,10 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     }
 
     @Override
-    public User findByUsername(String userName) {
+    public User findByEmail(String email) {
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
-            ps.setString(1, userName);
+            ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return init(rs);
@@ -67,7 +66,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(6, user.getPhone());
             preparedStatement.setString(7, user.getPassword());
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
-            preparedStatement.setString(9, (user.getUserName()));
+            preparedStatement.setString(9, user.getUserName());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -104,7 +103,8 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(6, user.getPhone());
             preparedStatement.setString(7, user.getPassword());
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
-            preparedStatement.setLong(9, user.getId());
+            preparedStatement.setString(9, user.getUserName());
+            preparedStatement.setLong(10, user.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }

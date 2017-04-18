@@ -44,18 +44,18 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
-            function getUsers() {
-                var deferred = $q.defer();
-                $http.get(GET_ALL_USERS_URL).then(
-                    function (response) {
-                        deferred.resolve(response.data);
-                    },
-                    function (errResponse) {
-                        console.error(errResponse.toString());
-                        deferred.reject(errResponse);
-                    });
-                return deferred.promise;
-            }
+        function getUsers() {
+            var deferred = $q.defer();
+            $http.get(GET_ALL_USERS_URL).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
     }]);
 
 

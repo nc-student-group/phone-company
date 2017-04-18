@@ -132,8 +132,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
                             "Check your database connection or whether sql query is right", e);
                 }
             });
-            ResultSet rs = ps.executeQuery();
-            return rs;
+            return ps.executeQuery();
         } catch (SQLException e) {
             throw new CrudException("Failed to execute select. " +
                     "Check your database connection or whether sql query is right", e);

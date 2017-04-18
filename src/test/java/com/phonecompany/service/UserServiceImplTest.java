@@ -60,9 +60,9 @@ public class UserServiceImplTest {
         String lastName = "Smith";
         User user = createUser(id, email, firstName, lastName);
 
-        when(userDao.findByUsername(email)).thenReturn(user);
+        when(userDao.findByEmail(email)).thenReturn(user);
 
-        user = userService.findByUsername(email);
+        user = userService.findByEmail(email);
 
         assertThat(id, equalTo(user.getId()));
         assertThat(email, equalTo(user.getEmail()));

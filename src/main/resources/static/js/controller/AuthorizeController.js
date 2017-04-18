@@ -21,10 +21,18 @@ angular.module('phone-company').controller('AuthorizeController', [
         };
 
         $scope.resetPassword = function () {
-            console.log('Email: ' + JSON.stringify($scope.resetRequest));
+            console.log('Attempting to reset password for user with email: '
+                + JSON.stringify($scope.resetRequest));
             UserService.resetPassword($scope.resetRequest.email)
                 .then(function (data) {
-                    console.log("Email: ", data);
+                    if(data === '') {
+                        toastr.error('User with such email was not found!',
+                            'Error during restoring password!');
+                    } else {
+                        console.log("Password was restored for user with email: ", data);
+                        $scope.selected = 'signIn';
+                        toastr.info('New password has been sent your email!', 'Password was restored!');
+                    }
                 });
         };
 
@@ -38,7 +46,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.loginClick = function () {
             SessionService.setLoginToken($scope.login, $scope.password);
-            console.log("qqqq");
+            console.log("in loginClick()");
             LoginService.tryLogin().then(function (data) {
                 $rootScope.currentRole = data.name;
                 switch (data.name) {
