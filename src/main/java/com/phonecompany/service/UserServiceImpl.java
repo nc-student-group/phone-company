@@ -57,6 +57,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         LOG.info("Sending password reset email to: {}", userToReset.getEmail());
         SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(userToReset);
         emailService.sendMail(mailMessage);
+        userToReset.setPassword(encryptPassword(userToReset.getPassword()));
         return update(userToReset);
     }
 
@@ -95,8 +96,13 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
-        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+
         return super.update(user);
+    }
+
+    @Override
+    public String encryptPassword(String password){
+        return shaPasswordEncoder.encodePassword(password, null);
     }
 
 }

@@ -89,7 +89,7 @@ public class UserController {
         LOG.info("Employee returned from the http request: {}", user);
         User savedUser = this.userService.save(user);
         userService.resetPassword(new ResetPasswordEvent(user));
-        savedUser = this.userService.update(savedUser);
+//        savedUser = this.userService.update(savedUser);
         LOG.info(user.getEmail() + " password "+ user.getPassword());
 
         LOG.info("Saved user: {}", savedUser);
