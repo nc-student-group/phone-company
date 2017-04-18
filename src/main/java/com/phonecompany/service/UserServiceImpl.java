@@ -48,13 +48,6 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         this.confirmMessageCreator = confirmMessageCreator;
     }
 
-    public static void main(String[] args) {
-        String pass = "6k1ff7u9ak";
-        ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder();
-        String encodedPassword = shaPasswordEncoder.encodePassword(pass, null);
-        System.out.println(encodedPassword);
-    }
-
     @Override
     @EventListener
     public User resetPassword(ResetPasswordEvent resetPasswordEvent) {
