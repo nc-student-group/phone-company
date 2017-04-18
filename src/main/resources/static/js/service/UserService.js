@@ -8,6 +8,7 @@ angular.module('phone-company')
             var GET_ALL_USERS_URL = MainFactory.host + "api/users";
             var RESET_URL = MainFactory.host + "api/user/reset";
             var SAVE_BY_ADMIN = MainFactory.host + "api/admin/users";
+            var GET_ALL_ROLES_URL = MainFactory.host + "api/roles";
 
             return {
                 saveUser: saveUser,
@@ -15,7 +16,8 @@ angular.module('phone-company')
                 perform: perform,
                 getUsers: getUsers,
                 saveUserByAdmin: saveUserByAdmin,
-                adminPerform: adminPerform
+                adminPerform: adminPerform,
+                getAllRoles:getAllRoles
             };
 
             function saveUser(user) {
@@ -64,6 +66,19 @@ angular.module('phone-company')
                 console.log('Email: ' + JSON.stringify(email));
                 var deferred = $q.defer();
                 $http.post(RESET_URL, email).then(
+                    function (response) {
+                        deferred.resolve(response.data);
+                    },
+                    function (errResponse) {
+                        console.error(errResponse.toString());
+                        deferred.reject(errResponse);
+                    });
+                return deferred.promise;
+            }
+
+            function getAllRoles() {
+                var deferred = $q.defer();
+                $http.get(GET_ALL_ROLES_URL).then(
                     function (response) {
                         deferred.resolve(response.data);
                     },

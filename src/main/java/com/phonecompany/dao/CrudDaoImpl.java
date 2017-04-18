@@ -138,4 +138,12 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
                     "Check your database connection or whether sql query is right", e);
         }
     }
+
+    public String getConnStr() {
+        return connStr;
+    }
+
+    public void setConnStr(String connStr) {
+        this.connStr = connStr;
+    }
 }

@@ -41,19 +41,19 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>User name:</label>
-                                    <input ng-model="user.firstName" type="text" class="form-control"
+                                    <input ng-model="user.userName" type="text" class="form-control"
                                            placeholder="User name">
                                 </div>
                                 <div class="form-group">
-                                    <label>User last name:</label>
-                                    <input ng-model="user.lastName" type="text" class="form-control"
-                                           placeholder="User lastname">
+                                    <label>Email:</label>
+                                    <input ng-model="user.email" type="text " class="form-control" placeholder="email"/>
+
                                 </div>
                                 User role:
-                                <select ng-model="user.role.name" class="custom-select">
-                                    <option value="USER">User</option>
-                                    <option value="CSR">CSR</option>
-                                    <option value="PMG">PMG</option>
+                                <select ng-model="user.role.id" class="custom-select">
+                                    <option ng-repeat="r in roles" value="{{r.id}}">{{r.name}}</option>
+                                    <!--<option value="CSR">CSR</option>-->
+                                    <!--<option value="PMG">PMG</option>-->
                                 </select>
                             </div>
                         </div>

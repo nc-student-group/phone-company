@@ -27,7 +27,7 @@
             });
         $routeProvider.when('/pmg',
             {
-                templateUrl: 'view/csrPage.html',
+                templateUrl: 'view/pmgPage.html',
                 // controller: ''
             });
         $routeProvider.otherwise({redirectTo: '/index'});
