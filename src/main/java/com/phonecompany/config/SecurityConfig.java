@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
+
     }
 
     @Autowired
@@ -48,6 +49,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .permitAll()
                 .invalidateHttpSession(true);
+        http
+                .authorizeRequests()
+                .antMatchers("/")
+                .permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/console/**").permitAll();
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
     @Bean

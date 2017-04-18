@@ -17,4 +17,5 @@ public class Application extends WebMvcConfigurerAdapter {
         registry.addViewController("/")
                 .setViewName("/static/index.html");
     }
+
 }

@@ -3,5 +3,9 @@
 ##
 spring:
   datasource:
-    url: jdbc:h2:mem:phone-company
     driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/myDB;MV_STORE=false
+    username: root
+    password: root
+    data: data.sql
+    schema: schema.sql
