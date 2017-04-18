@@ -4,8 +4,6 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:D:/myDB
+    url: jdbc:h2:D:/myDB;USER=root;PASSWORD=root
     data: data.sql
     schema: schema.sql
-    password: root
-    username: root

@@ -22,22 +22,20 @@ public class DatabaseConfig {
     public ShaPasswordEncoder shaPasswordEncoder() {
         return new ShaPasswordEncoder();
     }
-/*
-    @Bean
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create()
-                .build();
-    }*/
+
+//    @Bean
+//    @Primary
+//    @ConfigurationProperties(prefix = "spring.datasource")
+//    public DataSource dataSource() {
+//        return DataSourceBuilder.create()
+//                .build();
+//    }
 
     @Bean(name = "spring.dataSource")
     public DriverManagerDataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:D:/myDB");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        dataSource.setUrl("jdbc:h2:D:/myDB;USER=root;PASSWORD=root");
 
         // schema init
         Resource initSchema = new ClassPathResource("schema.sql");

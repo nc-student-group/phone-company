@@ -4,19 +4,24 @@
     angular.module('phone-company')
         .controller('AdministrationController', AdministrationController);
 
-    AdministrationController.$inject = ['$scope', '$log', 'UserService'];
+    AdministrationController.$inject = ['$scope', '$log', 'UserService', '$rootScope'];
 
-    function AdministrationController($scope, $log, UserService) {
+    function AdministrationController($scope, $log, UserService, $rootScope) {
+        console.log('This is AdministrationController');
 
-        $scope.users = UserService.getUsers();
+        if ($rootScope.currentRole == 'ADMIN') {
+            $scope.users = UserService.getUsers();
+            UserService.getAllRoles().then(function (data) {
+                $scope.roles = data;
+                $scope.user = { // this.user - property of this controller
+                    userName: "",
+                    email: "",
+                    role: $scope.roles[0]
+                };
+            });
+        }
 
-        this.user = { // this.user - property of this controller
-            firstName: "",
-            email: "",
-            role: {
-                name: ""
-            }
-        };
+
 
         $scope.createUser = createUser;
         /**
@@ -24,7 +29,7 @@
          */
         function createUser() {
             $log.debug('User: ' + JSON.stringify($scope.user));
-            UserService.saveUser($scope.user).$promise
+            UserService.saveUserByAdmin($scope.user).$promise
                 .then(function (createdUser) {
                     $log.debug("Created user: ", createdUser);
                     $scope.users.push(createdUser);

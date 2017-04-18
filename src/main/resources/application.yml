@@ -3,7 +3,9 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: prod
+  thymeleaf:
+    cache: false
 
 logging:
   level:
@@ -13,3 +15,5 @@ logging:
 security:
   basic:
    enabled: false
+
+application-url: http://localhost:8090/api

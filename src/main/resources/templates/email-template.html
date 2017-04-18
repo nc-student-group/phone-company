@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Template for HTML email with inline image</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="
+    @import url(http://fonts.googleapis.com/css?family=Lato);
+    font-family: 'Lato', sans-serif;
+    background: rgba(152, 67, 67, 0.78); /* fallback for old browsers */
+    background: -webkit-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: -moz-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: -o-linear-gradient(left, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    background: linear-gradient(to right, rgba(152, 67, 67, 0.78), rgba(123, 177, 95, 0.76));
+    ">
+
+<h1 style="font-size: 2em; padding-top: 30px; margin-left: 300px;
+    color: #3f5e63; text-transform: uppercase"
+    th:text="'Dear, ' + ${name}"></h1>
+<div style="margin-left: 20px; margin-right: 20px; font-size: 1.5em">
+    <p style="color: #3f5e63;">
+        Please, follow this link to complete your registration
+    </p>
+    <p th:text="${body}"></p>
+    <p style="margin-left: 290px; color: #3f5e63;
+    padding-bottom: 40px;">
+        Regards, <br/>
+        <em>Phonecompany team</em>
+    </p>
+</div>
+</body>
+</html>

@@ -3,9 +3,6 @@ package com.phonecompany.model;
 import java.sql.Date;
 import java.util.Calendar;
 
-/**
- * Created by Yurii on 14.04.2017.
- */
 public class VerificationToken extends DomainEntity{
     private User user;
     private String token;

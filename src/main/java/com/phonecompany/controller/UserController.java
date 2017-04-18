@@ -1,11 +1,14 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.OnRegistrationCompleteEvent;
+import com.phonecompany.model.ResetPasswordEvent;
+import com.phonecompany.model.Role;
 import com.phonecompany.model.User;
-import com.phonecompany.service.interfaces.EMailService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +29,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    public static final long CLIENT = 1L;
 
     private UserService userService;
-    private EMailService emailService;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public UserController(UserService userService, EMailService emailService) {
+    public UserController(UserService userService,
+                          ApplicationEventPublisher eventPublisher) {
         this.userService = userService;
-        this.emailService = emailService;
+        this.eventPublisher = eventPublisher;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -48,14 +53,14 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/users")
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
-        LOG.info("User retrieved from the http request: " + user);
+    public ResponseEntity<?> saveClient(@RequestBody User client) {
+        LOG.info("User retrieved from the http request: " + client);
 
-        User persistedUser = this.userService.save(user);
+        client.setRole(new Role(CLIENT)); //TODO: Terrible hack that has to be fixed (Role class -> enum)
+        User persistedUser = this.userService.save(client);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
-        emailService.sendMail(user.getEmail(), "Welcome, " + user.getFirstName(),
-                "Registration confirmation");
+        this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedUser));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/users/{id}")
@@ -68,21 +73,34 @@ public class UserController {
         return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
     }
 
-
     @RequestMapping(method = POST, value = "/api/user/reset")
     public void resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
-        User user = userService.findByUsername(email);
-        if(user != null) {
-            userService.resetPassword(user);
-            emailService.sendMail(user.getEmail(), "Your new password is " +
-                    user.getPassword(), "Reset password");
-            LOG.info("User's new password " + user.getPassword());
-
+        User userToReset = userService.findByUsername(email);
+        if (userToReset != null) {
+            this.eventPublisher.publishEvent(new ResetPasswordEvent(userToReset));
         } else {
-            LOG.info("User with email " + email + " not found!" );
+            LOG.info("User with email " + email + " not found!");
         }
     }
 
+    @RequestMapping(method = POST, value = "/api/admin/users") //TODO: has to be one endpoint: /api/users (make Client default enum role)
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+        LOG.info("Employee returned from the http request: {}", user);
+        User savedUser = this.userService.save(user);
+        userService.resetPassword(new ResetPasswordEvent(user));
+//        savedUser = this.userService.update(savedUser);
+        LOG.info(user.getEmail() + " password "+ user.getPassword());
 
+        LOG.info("Saved user: {}", savedUser);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(uriOfNewResource);
+
+        return new ResponseEntity<>(savedUser, httpHeaders, HttpStatus.CREATED);
+    }
 }
