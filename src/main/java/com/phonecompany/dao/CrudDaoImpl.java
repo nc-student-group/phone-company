@@ -138,5 +138,4 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
                     "Check your database connection or whether sql query is right", e);
         }
     }
-
 }
