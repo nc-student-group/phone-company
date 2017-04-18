@@ -30,6 +30,8 @@ angular.module('phone-company')
                         deferred.resolve(response.data);
                     },
                     function (errResponse) {
+                        toastr.error('User with this email already registered!',
+                            'Error during restoring!');
                         console.error(errResponse.toString());
                         deferred.reject(errResponse);
                     });
