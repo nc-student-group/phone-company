@@ -41,12 +41,6 @@
             <span class="error" ng-show="registerForm.password.$dirty &&
                 registerForm.password.$error.minlength">Password is too weak.</span>
 
-            <!--<input ng-model="user.confirmPassword" name="confirmPassword" id="confirmPassword"-->
-            <!--compare-to="user.password"-->
-            <!--minlength="5" type="password" placeholder="repeat password" required/>-->
-            <!--<span class="error" ng-show="registerForm.confirmPassword.$dirty || frm.confirmPassword.$error.compareTo">-->
-            <!--Passwords don't match.</span>-->
-
             <input ng-model="user.email"  name="mailInput" type="email" placeholder="email" required/>
             <div role="alert">
               <span class="error" ng-show="registerForm.mailInput.$dirty && registerForm.mailInput.$error.required">

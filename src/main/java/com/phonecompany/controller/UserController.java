@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.ResetPasswordEvent;
+import com.phonecompany.model.Role;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    public static final long CLIENT = 1L;
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
@@ -51,10 +53,11 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/users")
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
-        LOG.info("User retrieved from the http request: " + user);
+    public ResponseEntity<?> saveClient(@RequestBody User client) {
+        LOG.info("User retrieved from the http request: " + client);
 
-        User persistedUser = this.userService.save(user);
+        client.setRole(new Role(CLIENT)); //TODO: Terrible hack that has to be fixed (Role class -> enum)
+        User persistedUser = this.userService.save(client);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedUser));
@@ -79,5 +82,22 @@ public class UserController {
         } else {
             LOG.info("User with email " + email + " not found!");
         }
+    }
+
+    @RequestMapping(method = POST, value = "/api/admin/users") //TODO: has to be one endpoint: /api/users (make Client default enum role)
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+        LOG.info("Employee returned from the http request: {}", user);
+        User savedUser = this.userService.save(user);
+
+        LOG.info("Saved user: {}", savedUser);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(uriOfNewResource);
+
+        return new ResponseEntity<>(savedUser, httpHeaders, HttpStatus.CREATED);
     }
 }

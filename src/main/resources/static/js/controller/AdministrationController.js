@@ -8,6 +8,7 @@
 
     function AdministrationController($scope, $log, UserService) {
         console.log('This is AdministrationController');
+
         $scope.users = UserService.getUsers();
 
         this.user = { // this.user - property of this controller
@@ -24,7 +25,7 @@
          */
         function createUser() {
             $log.debug('User: ' + JSON.stringify($scope.user));
-            UserService.saveUser($scope.user).$promise
+            UserService.saveUserByAdmin($scope.user).$promise
                 .then(function (createdUser) {
                     $log.debug("Created user: ", createdUser);
                     $scope.users.push(createdUser);

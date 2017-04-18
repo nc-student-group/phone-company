@@ -8,6 +8,10 @@ public class Role extends DomainEntity {
         super();
     }
 
+    public Role(Long id) {
+        super(id);
+    }
+
     public Role(String name) {
         this.name = name;
     }
