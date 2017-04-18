@@ -1,6 +1,5 @@
 package com.phonecompany.config;
 
-
 import com.phonecompany.service.interfaces.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

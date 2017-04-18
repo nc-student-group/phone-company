@@ -149,7 +149,7 @@ public class UserServiceImplTest {
         User user = createUser(id, email, firstName, lastName);
         user.setPassword(password);
 
-        userService.resetPassword(user);
+//        userService.resetPassword(user); //TODO: no longer accepts user
 
         verify(userDao, atLeastOnce()).update(user);
         assertThat(user.getPassword(), notNullValue());

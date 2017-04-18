@@ -30,7 +30,6 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
 
     @Override
     public String getEmailBody(User recipient) {
-        LOG.info("Confirmation email will be sent to: {}", applicationUrl);
         String randomID = UUID.randomUUID().toString();
         String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
         LOG.info("Confirmation url: {}", confirmationUrl);

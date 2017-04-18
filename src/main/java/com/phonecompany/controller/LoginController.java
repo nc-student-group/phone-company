@@ -56,11 +56,6 @@ public class LoginController {
         return user.getRole();
     }
 
-    @RequestMapping(value = "/api/users/all", method = RequestMethod.GET)
-    public List<User> getAllUsers() {
-        return userService.getAll();
-    }
-
     @RequestMapping(value = "/api/user/get", method = RequestMethod.GET)
     public User getUserById(@RequestParam("id") long id) {
         return userService.getById(id);
@@ -71,6 +66,4 @@ public class LoginController {
         userService.update(user);
         return user;
     }
-
-
 }

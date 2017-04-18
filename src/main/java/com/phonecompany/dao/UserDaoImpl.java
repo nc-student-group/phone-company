@@ -67,6 +67,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(6, user.getPhone());
             preparedStatement.setString(7, user.getPassword());
             preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
+            preparedStatement.setString(9, (user.getUserName()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -85,6 +86,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             user.setPhone(rs.getString("phone"));
             user.setPassword(rs.getString("password"));
             user.setRole(roleDao.getById(rs.getLong("role_id")));
+            user.setUserName(rs.getString("username"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -98,10 +100,10 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getFirstName());
             preparedStatement.setString(4, user.getSecondName());
-            preparedStatement.setLong(5, user.getAddress().getId());
+            preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
             preparedStatement.setString(6, user.getPhone());
             preparedStatement.setString(7, user.getPassword());
-            preparedStatement.setLong(8, user.getRole().getId());
+            preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
             preparedStatement.setLong(9, user.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);

@@ -42,7 +42,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             return entity;
         } catch (SQLException e) {
             throw new EntityPersistenceException(entity, e);
-        } finally {
         }
     }
 
