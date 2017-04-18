@@ -48,6 +48,13 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         this.confirmMessageCreator = confirmMessageCreator;
     }
 
+    public static void main(String[] args) {
+        String pass = "6k1ff7u9ak";
+        ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder();
+        String encodedPassword = shaPasswordEncoder.encodePassword(pass, null);
+        System.out.println(encodedPassword);
+    }
+
     @Override
     @EventListener
     public User resetPassword(ResetPasswordEvent resetPasswordEvent) {
@@ -57,7 +64,10 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         LOG.info("Sending password reset email to: {}", userToReset.getEmail());
         SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(userToReset);
         emailService.sendMail(mailMessage);
-        userToReset.setPassword(encryptPassword(userToReset.getPassword()));
+        LOG.info("Resetting password");
+        userToReset.setPassword(shaPasswordEncoder.encodePassword(userToReset.getPassword(), null));
+        LOG.info("Password after reset: {}", userToReset.getPassword());
+//        userToReset.setPassword(encryptPassword(userToReset.getPassword()));
         return update(userToReset);
     }
 
