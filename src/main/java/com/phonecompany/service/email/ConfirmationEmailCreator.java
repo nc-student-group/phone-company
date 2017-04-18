@@ -27,6 +27,9 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         this.templateEngine = templateEngine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getEmailBody(User recipient) {
         String randomID = UUID.randomUUID().toString();
@@ -41,6 +44,9 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
                 .process("email-template", context);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getEmailSubject() {
         return "Registration confirmation";

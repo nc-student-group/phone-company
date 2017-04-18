@@ -10,12 +10,18 @@ import org.springframework.stereotype.Component;
 public class ResetPasswordEmailCreator extends AbstractEmailCreator
         implements MailMessageCreator {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getEmailBody(User recipient) {
         return "Your new password is " +
                 recipient.getPassword();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getEmailSubject() {
         return "Password reset";
