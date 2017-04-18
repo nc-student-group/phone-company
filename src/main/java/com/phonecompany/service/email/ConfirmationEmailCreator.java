@@ -34,12 +34,13 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
         LOG.info("Confirmation url: {}", confirmationUrl);
 
-        Context context = new Context();
-        context.setVariable("name", recipient.getUserName());
-        context.setVariable("body", confirmationUrl);
-
-        return this.templateEngine
-                .process("email-template", context);
+//        Context context = new Context();
+//        context.setVariable("name", recipient.getUserName());
+//        context.setVariable("body", confirmationUrl);
+//
+//        return this.templateEngine
+//                .process("email-template", context);
+        return confirmationUrl;
     }
 
     @Override
