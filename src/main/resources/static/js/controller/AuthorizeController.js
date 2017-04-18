@@ -49,6 +49,7 @@ angular.module('phone-company').controller('AuthorizeController', [
             console.log("in loginClick()");
             LoginService.tryLogin().then(function (data) {
                 $rootScope.currentRole = data.name;
+                localStorage.setItem("r", $rootScope.currentRole);
                 switch (data.name) {
                     case "ADMIN":
                         $location.path("/admin");

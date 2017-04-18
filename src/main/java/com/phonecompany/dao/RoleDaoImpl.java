@@ -1,6 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.RoleDao;
+import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Role;
@@ -8,9 +9,9 @@ import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class RoleDaoImpl extends CrudDaoImpl<Role> implements RoleDao{
@@ -55,6 +56,22 @@ public class RoleDaoImpl extends CrudDaoImpl<Role> implements RoleDao{
             preparedStatement.setLong(2, role.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
+        }
+    }
+
+    @Override
+    public List<Role> getAllForAdmin(){
+        try (Connection conn = DriverManager.getConnection(super.getConnStr());
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllForAdmin"))) {
+            ResultSet rs = ps.executeQuery();
+            List<Role> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
         }
     }
 }

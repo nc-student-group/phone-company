@@ -29,7 +29,7 @@ public class LoginController {
 
     @RequestMapping(value = "/api/roles", method = RequestMethod.GET)
     public List<Role> getAllRoles() {
-        return roleService.getAll();
+        return roleService.getAllForAdmin();
     }
 
     @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)

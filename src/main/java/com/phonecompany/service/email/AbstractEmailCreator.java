@@ -43,7 +43,7 @@ public abstract class AbstractEmailCreator<T extends User>
      */
     private void validateRecipient(T recipient) {
         Assert.notNull(recipient.getEmail(), "Email must not be null");
-        Assert.notNull(recipient.getUserName(), "Username must not be null");
+//        Assert.notNull(recipient.getUserName(), "Username must not be null");
     }
 
     /**

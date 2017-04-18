@@ -139,4 +139,11 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
         }
     }
 
+    public String getConnStr() {
+        return connStr;
+    }
+
+    public void setConnStr(String connStr) {
+        this.connStr = connStr;
+    }
 }

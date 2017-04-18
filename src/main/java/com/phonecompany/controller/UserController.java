@@ -87,6 +87,8 @@ public class UserController {
     @RequestMapping(method = POST, value = "/api/admin/users") //TODO: has to be one endpoint: /api/users (make Client default enum role)
     public ResponseEntity<?> saveUser(@RequestBody User user) {
         LOG.info("Employee returned from the http request: {}", user);
+        userService.resetPassword(new ResetPasswordEvent(user));
+        LOG.info(user.getEmail() + " password "+ user.getPassword());
         User savedUser = this.userService.save(user);
 
         LOG.info("Saved user: {}", savedUser);
