@@ -15,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -29,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
-    public static final long CLIENT = 1L;
+    public static final String USERS_RESOURCE_NAME = "users";
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
@@ -52,27 +51,6 @@ public class UserController {
         return Collections.unmodifiableCollection(users);
     }
 
-    @RequestMapping(method = POST, value = "/api/users")
-    public ResponseEntity<?> saveClient(@RequestBody User client) {
-        LOG.info("User retrieved from the http request: " + client);
-
-        client.setRole(new Role(CLIENT)); //TODO: Terrible hack that has to be fixed (Role class -> enum)
-        User persistedUser = this.userService.save(client);
-        LOG.info("User persisted with an id: " + persistedUser.getId());
-
-        this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedUser));
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/{id}")
-                .buildAndExpand(persistedUser.getId())
-                .toUri();
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(uriOfNewResource);
-
-        return new ResponseEntity<>(persistedUser, httpHeaders, HttpStatus.CREATED);
-    }
-
     @RequestMapping(method = POST, value = "/api/user/reset")
     public void resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
@@ -89,18 +67,12 @@ public class UserController {
         LOG.info("Employee returned from the http request: {}", user);
         User savedUser = this.userService.save(user);
         userService.resetPassword(new ResetPasswordEvent(user));
-//        savedUser = this.userService.update(savedUser);
-        LOG.info(user.getEmail() + " password "+ user.getPassword());
+        LOG.info(user.getEmail() + " password " + user.getPassword());
 
         LOG.info("Saved user: {}", savedUser);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/users/{id}")
-                .buildAndExpand(savedUser.getId())
-                .toUri();
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(uriOfNewResource);
+        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, savedUser.getId());
 
-        return new ResponseEntity<>(savedUser, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedUser, resourceHeaders, HttpStatus.CREATED);
     }
 }
