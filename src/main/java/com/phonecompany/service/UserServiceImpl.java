@@ -29,16 +29,16 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService emailService;
-    private MailMessageCreator resetPassMessageCreator;
-    private MailMessageCreator confirmMessageCreator;
+    private MailMessageCreator<User> resetPassMessageCreator;
+    private MailMessageCreator<User> confirmMessageCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
                            ShaPasswordEncoder shaPasswordEncoder,
                            @Qualifier("resetPassMessageCreator")
-                                   MailMessageCreator resetPassMessageCreator,
+                                   MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
-                                       MailMessageCreator confirmMessageCreator,
+                                       MailMessageCreator<User> confirmMessageCreator,
                            EmailService emailService) {
         super(userDao);
         this.userDao = userDao;
