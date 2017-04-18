@@ -99,6 +99,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public List<T> getAll() {
+
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
             ResultSet rs = ps.executeQuery();

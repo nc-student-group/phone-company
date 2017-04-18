@@ -25,7 +25,7 @@ angular.module('phone-company').controller('AuthorizeController', [
                 + JSON.stringify($scope.resetRequest));
             UserService.resetPassword($scope.resetRequest.email)
                 .then(function (data) {
-                    if(data === '') {
+                    if(data.msg === 'error') {
                         toastr.error('User with such email was not found!',
                             'Error during restoring password!');
                     } else {
@@ -41,6 +41,9 @@ angular.module('phone-company').controller('AuthorizeController', [
             UserService.saveUser($scope.user)
                 .then(function (data) {
                     console.log("Created user: ", data);
+                    $scope.login = $scope.user.email;
+                    $scope.password = $scope.user.password;
+                    $scope.loginClick();
                 });
         };
 
