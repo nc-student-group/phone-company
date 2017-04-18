@@ -1,12 +1,12 @@
-DROP TABLE address;
-DROP TABLE dbuser;
-DROP TABLE role;
-DROP TABLE verification_token;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS dbuser;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS verification_token;
 
-DROP SEQUENCE adrress_id_seq;
-DROP SEQUENCE dbuser_id_seq;
-DROP SEQUENCE role_id_seq;
-DROP SEQUENCE verification_token_id_seq;
+DROP SEQUENCE IF EXISTS adrress_id_seq;
+DROP SEQUENCE IF EXISTS dbuser_id_seq;
+DROP SEQUENCE IF EXISTS role_id_seq;
+DROP SEQUENCE IF EXISTS verification_token_id_seq;
 
 
 CREATE SEQUENCE adrress_id_seq START WITH 1;
