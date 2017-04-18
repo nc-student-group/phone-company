@@ -1,5 +1,6 @@
 package com.phonecompany.service.email;
 
+import com.phonecompany.exception.MailSendException;
 import com.phonecompany.service.interfaces.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -8,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
@@ -30,8 +32,8 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setTo(mailMessage.getTo());
             mimeMessageHelper.setSubject(mailMessage.getSubject());
             mailSender.send(mimeMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagingException e) {
+            throw new MailSendException(e);
         }
     }
 }

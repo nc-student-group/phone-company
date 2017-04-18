@@ -44,7 +44,8 @@ public class UserController {
                                   MailMessageCreator resetPassMessageCreator) {
         this.userService = userService;
         this.emailService = emailService;
-        this.confirmMessageCreator = resetPassMessageCreator;
+        this.confirmMessageCreator = confirmMessageCreator;
+        this.resetPassMessageCreator = resetPassMessageCreator;
     }
 
     @RequestMapping(method = GET, value = "/api/users")
@@ -85,7 +86,7 @@ public class UserController {
     @RequestMapping(method = POST, value = "/api/user/reset")
     public User resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
-        User user = userService.findByUsername(email);
+        User user = userService.findByEmail(email);
         if (user != null) {
             userService.resetPassword(user);
             SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(user);

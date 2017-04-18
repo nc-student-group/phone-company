@@ -7,7 +7,7 @@
     AdministrationController.$inject = ['$scope', '$log', 'UserService'];
 
     function AdministrationController($scope, $log, UserService) {
-
+        console.log('This is AdministrationController');
         $scope.users = UserService.getUsers();
 
         this.user = { // this.user - property of this controller

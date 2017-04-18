@@ -25,8 +25,8 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     }
 
     @Override
-    public User findByUsername(String userName) {
-        return userDao.findByUsername(userName);
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email);
     }
 
     @Override

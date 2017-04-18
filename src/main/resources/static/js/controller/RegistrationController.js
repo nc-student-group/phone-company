@@ -9,6 +9,7 @@
 
     function RegistrationController($scope, $log, $window,
                                     LoginService, UserService) {
+        console.log('This is RegistrationController');
 
         this.user = { // this.user - property of this controller
             firstName: ""
@@ -65,12 +66,15 @@
                     $window.location.href = '/#/admin';
                     break;
                 case 'CSR':
+                    console.log('Redirecting to csr');
                     $window.location.href = '/#/csr';
                     break;
                 case 'PMG':
+                    console.log('Redirecting to pmg');
                     $window.location.href = '/#/pmg';
                     break;
                 case 'USER':
+                    console.log('Redirecting to client');
                     $window.location.href = '/#/client';
                     break;
             }

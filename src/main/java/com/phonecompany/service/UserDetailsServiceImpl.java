@@ -29,14 +29,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        logger.info(login);
-        com.phonecompany.model.User user = userService.findByUsername(login);
+        logger.info("Attempting to load user with email: {}", login);
+        com.phonecompany.model.User user = userService.findByEmail(login);
         if (user == null){
             throw new UsernameNotFoundException(login + " not found");
 //            user = new com.phonecompany.model.User("bad-credentials", "", new Role("NOT_AUTHORIZE"));
         }
 
-        logger.info(user.getEmail());
+        logger.info("Loaded user email: {}", user.getEmail());
         Set<GrantedAuthority> roles = new HashSet<>();
         roles.add(new SimpleGrantedAuthority("ROLE_"+user.getRole().getName()));
 
