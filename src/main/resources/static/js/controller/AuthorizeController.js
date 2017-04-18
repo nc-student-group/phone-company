@@ -25,7 +25,7 @@ angular.module('phone-company').controller('AuthorizeController', [
                 + JSON.stringify($scope.resetRequest));
             UserService.resetPassword($scope.resetRequest.email)
                 .then(function (data) {
-                    if(data === '') {
+                    if(data.msg === 'error') {
                         toastr.error('User with such email was not found!',
                             'Error during restoring password!');
                     } else {

@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -74,14 +72,18 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/user/reset")
-    public void resetPassword(@RequestBody String email) {
+    public Map<String, String> resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
         User userToReset = userService.findByUsername(email);
+        Map<String, String> response = new HashMap<>();
         if (userToReset != null) {
             this.eventPublisher.publishEvent(new ResetPasswordEvent(userToReset));
+            response.put("msg","success");
         } else {
             LOG.info("User with email " + email + " not found!");
+            response.put("msg", "error");
         }
+        return response;
     }
 
     @RequestMapping(method = POST, value = "/api/admin/users") //TODO: has to be one endpoint: /api/users (make Client default enum role)
