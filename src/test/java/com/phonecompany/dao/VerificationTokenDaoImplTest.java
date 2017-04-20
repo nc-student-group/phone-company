@@ -36,7 +36,7 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
         VerificationToken vt = new VerificationToken();
         vt.setUser(userDao.getAll().get(8)); // userId in table verification-token id not duplicate
         vt.setToken("token1");
-        vt.setExpireDate(new Date(0));
+        vt.setExpireDate(new Date(0).toLocalDate());
         VerificationToken newVerificationToken = vtDao.save(vt);
         assertNotNull("VerificationToken id = null", newVerificationToken.getId());
         assertEquals("VerificationToken field \"User\" is not change",
@@ -54,7 +54,7 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
         vt.setId(testId);
         vt.setUser(userDao.getAll().get(0));
         vt.setToken("token1");
-        vt.setExpireDate(new Date(0));
+        vt.setExpireDate(new Date(0).toLocalDate());
         VerificationToken newVerificationToken = vtDao.update(vt);
         assertNotNull("VerificationToken id = null", vt.getId());
         assertEquals("VerificationToken field \"User\" is not change",
@@ -77,7 +77,7 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
         VerificationToken vt = new VerificationToken();
         vt.setUser(userDao.getAll().get(0));
         vt.setToken("token1");
-        vt.setExpireDate(new Date(0));
+        vt.setExpireDate(new Date(0).toLocalDate());
         vt = vtDao.save(vt);
 
         Long testId = vt.getId();
