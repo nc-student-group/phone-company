@@ -2,7 +2,6 @@ package com.phonecompany.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,26 +14,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
-    private ShaPasswordEncoder passwordEncoder;
+    private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService,
-                          ShaPasswordEncoder passwordEncoder) {
+                          ShaPasswordEncoder shaPasswordEncoder) {
         this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
+        this.shaPasswordEncoder = shaPasswordEncoder;
     }
 
     @Autowired
     public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+                .passwordEncoder(shaPasswordEncoder);
     }
 
     @Autowired
     private RESTAuthenticationEntryPoint authenticationEntryPoint;
+
     @Autowired
     private RESTAuthenticationFailureHandler authenticationFailureHandler;
+
     @Autowired
     private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
 

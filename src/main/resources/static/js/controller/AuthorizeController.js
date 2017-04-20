@@ -77,6 +77,9 @@ angular.module('phone-company').controller('AuthorizeController', [
                             break;
                     }
                 });
+            },
+            function (data) {
+                toastr.error('Bad credentials', 'Error');
             });
         };
     }
