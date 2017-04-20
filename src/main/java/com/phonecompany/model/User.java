@@ -37,6 +37,24 @@ public class User extends DomainEntity {
         this.status = status;
     }
 
+    public User(Long id, String email, String password,
+                UserRole role, String firstName, String secondName,
+                String lastName, String phone, Address address,
+                Corporate corporate, Boolean isRepresentative, Status status) {
+        super(id);
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.address = address;
+        this.corporate = corporate;
+        this.isRepresentative = isRepresentative;
+        this.status = status;
+    }
+
     public String getEmail() {
         return email;
     }
