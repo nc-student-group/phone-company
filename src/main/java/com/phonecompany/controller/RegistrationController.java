@@ -11,11 +11,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.phonecompany.controller.UserController.USERS_RESOURCE_NAME;
+import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -36,16 +38,29 @@ public class RegistrationController {
 
     @RequestMapping(method = POST, value = "/api/users")
     public ResponseEntity<?> saveUser(@RequestBody User client) {
-        LOG.info("User retrieved from the http request: " + client);
+        LOG.debug("User retrieved from the http request: " + client);
 
-        client.setRole(UserRole.CLIENT);
+        client.setRole(CLIENT);
         User persistedUser = this.userService.save(client);
-        LOG.info("User persisted with an id: " + persistedUser.getId());
+        LOG.debug("User persisted with an id: " + persistedUser.getId());
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedUser));
 
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
 
         return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/api/confirmRegistration")
+    public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
+            throws URISyntaxException {
+        LOG.debug("Token retrieved from the request: {}", token);
+        this.userService.activateUserByToken(token);
+
+        URI registration = new URI("http://localhost:4200/api/successful_registration");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(registration);
+
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
     }
 }

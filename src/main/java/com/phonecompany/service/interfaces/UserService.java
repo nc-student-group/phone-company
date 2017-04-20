@@ -10,4 +10,5 @@ public interface UserService extends CrudService<User> {
     void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent);
     User findByEmail(String email);
     String encryptPassword(String password);
+    void activateUserByToken(String token);
 }

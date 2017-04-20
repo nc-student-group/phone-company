@@ -8,14 +8,14 @@ public class User extends DomainEntity {
     private String email;
     private String password;
     private UserRole role;
-    private Representative representative;
+    private Customer representative;
     private Status status;
 
     public User() {
     }
 
     public User(String email, String password,
-                UserRole role, Representative representative,
+                UserRole role, Customer representative,
                 Status status) {
         this.email = email;
         this.password = password;
@@ -48,11 +48,11 @@ public class User extends DomainEntity {
         this.role = role;
     }
 
-    public Representative getRepresentative() {
+    public Customer getRepresentative() {
         return representative;
     }
 
-    public void setRepresentative(Representative representative) {
+    public void setRepresentative(Customer representative) {
         this.representative = representative;
     }
 

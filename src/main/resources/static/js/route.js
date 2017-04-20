@@ -2,7 +2,7 @@
 
     var app = angular.module('phone-company',
         ['ngRoute',
-        'ngResource']);
+            'ngResource']);
 
     app.config(function ($routeProvider) {
         $routeProvider.when('/index',

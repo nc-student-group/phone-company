@@ -4,4 +4,5 @@ import com.phonecompany.model.User;
 
 public interface UserDao extends CrudDao<User> {
     User findByEmail(String email);
+    User getUserByVerificationToken(String token);
 }

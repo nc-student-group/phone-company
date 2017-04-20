@@ -26,8 +26,10 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
     private VerificationTokenDao verificationTokenDao;
 
     @Autowired
-    public ConfirmationEmailCreator(TemplateEngine templateEngine) {
+    public ConfirmationEmailCreator(TemplateEngine templateEngine,
+                                    VerificationTokenDao verificationTokenDao) {
         this.templateEngine = templateEngine;
+        this.verificationTokenDao = verificationTokenDao;
     }
 
     /**

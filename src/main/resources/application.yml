@@ -10,7 +10,7 @@ spring:
 logging:
   level:
     com:
-      phonecompany: info
+      phonecompany: debug
 
 security:
   basic:

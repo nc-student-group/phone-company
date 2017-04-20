@@ -10,15 +10,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Transactional
+@Transactional //will be replaced (it is just for 2 days)
 public class UserDaoTest {
 
     @Autowired
@@ -41,5 +42,15 @@ public class UserDaoTest {
         assertThat(user.getPassword(), is(userToBeSaved.getPassword()));
         assertThat(user.getRole(), is(userToBeSaved.getRole()));
         assertThat(user.getStatus(), is(userToBeSaved.getStatus()));
+    }
+
+    @Test
+    public void shouldGetById() {
+        //given
+
+
+        //when
+
+        //then
     }
 }

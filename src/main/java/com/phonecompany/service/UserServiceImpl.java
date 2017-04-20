@@ -8,6 +8,7 @@ import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.service.interfaces.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
     private MailMessageCreator<User> confirmMessageCreator;
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -40,13 +42,15 @@ public class UserServiceImpl extends CrudServiceImpl<User>
                                    MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<User> confirmMessageCreator,
-                           EmailService emailService) {
+                           EmailService emailService,
+                           VerificationTokenService verificationTokenService) {
         super(userDao);
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @Override
@@ -79,6 +83,11 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         LOG.info("Confirmation message: {}", confirmationMessage.getText());
         LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
         emailService.sendMail(confirmationMessage);
+    }
+
+    @Override
+    public void activateUserByToken(String token) {
+        User user =this.verificationTokenService.getUserByToken(token);
     }
 
     @Override

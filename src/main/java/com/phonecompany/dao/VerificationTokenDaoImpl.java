@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.model.User;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
