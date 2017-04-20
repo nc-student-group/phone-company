@@ -2,6 +2,7 @@ package com.phonecompany.service.email;
 
 import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.model.User;
+import com.phonecompany.model.VerificationToken;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         String randomID = UUID.randomUUID().toString();
         String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
         LOG.info("Confirmation url: {}", confirmationUrl);
+
+        this.verificationTokenDao.save(new VerificationToken(recipient, randomID)); //TODO: remove this side effect
 
         Context context = new Context();
         context.setVariable("body", confirmationUrl);
