@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.ResetPasswordEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
@@ -29,16 +30,16 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService emailService;
-    private MailMessageCreator resetPassMessageCreator;
-    private MailMessageCreator confirmMessageCreator;
+    private MailMessageCreator<User> resetPassMessageCreator;
+    private MailMessageCreator<User> confirmMessageCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
                            ShaPasswordEncoder shaPasswordEncoder,
                            @Qualifier("resetPassMessageCreator")
-                                   MailMessageCreator resetPassMessageCreator,
+                                   MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
-                                       MailMessageCreator confirmMessageCreator,
+                                       MailMessageCreator<User> confirmMessageCreator,
                            EmailService emailService) {
         super(userDao);
         this.userDao = userDao;
@@ -57,7 +58,10 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         LOG.info("Sending password reset email to: {}", userToReset.getEmail());
         SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(userToReset);
         emailService.sendMail(mailMessage);
+        LOG.info("Resetting password");
         userToReset.setPassword(shaPasswordEncoder.encodePassword(userToReset.getPassword(), null));
+        LOG.info("Password after reset: {}", userToReset.getPassword());
+//        userToReset.setPassword(encryptPassword(userToReset.getPassword()));
         return update(userToReset);
     }
 
@@ -72,6 +76,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         User persistedUser = registrationCompleteEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
                 this.confirmMessageCreator.constructMessage(persistedUser);
+        LOG.info("Confirmation message: {}", confirmationMessage.getText());
         LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
         emailService.sendMail(confirmationMessage);
     }
@@ -90,6 +95,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     public User save(User user) {
         Assert.notNull(user, "User should not be null");
+        user.setStatus(Status.INACTIVE); //TODO: whether all the users are stored as inactive
         user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         return super.save(user);
     }
@@ -102,7 +108,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     @Override
     public String encryptPassword(String password){
-        return "";
+        return shaPasswordEncoder.encodePassword(password, null);
     }
 
 }

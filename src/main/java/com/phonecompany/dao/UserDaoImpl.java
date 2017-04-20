@@ -1,14 +1,17 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AddressDao;
-import com.phonecompany.dao.interfaces.RoleDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.model.Address;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import javafx.print.PageOrientation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -23,16 +26,13 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private String connStr;
 
     private QueryLoader queryLoader;
-    private RoleDao roleDao;
     private AddressDao addressDao;
 
     @Autowired
     public UserDaoImpl(QueryLoader queryLoader,
-                       AddressDao addressDao,
-                       RoleDao roleDao) {
+                       AddressDao addressDao) {
         this.queryLoader = queryLoader;
         this.addressDao = addressDao;
-        this.roleDao = roleDao;
     }
 
     @Override
@@ -56,17 +56,13 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     }
 
     @Override
-    public void populateSaveStatement(PreparedStatement preparedStatement, User user){
+    public void populateSaveStatement(PreparedStatement statement, User user){
         try {
-            preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getFirstName());
-            preparedStatement.setString(4, user.getSecondName());
-            preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
-            preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, user.getPassword());
-            preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
-            preparedStatement.setString(9, user.getUserName());
+            statement.setString(1, user.getEmail());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getRole().name());
+            statement.setObject(4, TypeMapper.getNullableId(user.getRepresentative()));
+            statement.setString(5, user.getStatus().name());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -78,14 +74,11 @@ public class UserDaoImpl extends CrudDaoImpl<User>
         try {
             user.setId(rs.getLong("id"));
             user.setEmail(rs.getString("email"));
-            user.setLastName(rs.getString("lastname"));
-            user.setFirstName(rs.getString("firstname"));
-            user.setSecondName(rs.getString("secondname"));
-            user.setAddress(addressDao.getById(rs.getLong("address")));
-            user.setPhone(rs.getString("phone"));
             user.setPassword(rs.getString("password"));
-            user.setRole(roleDao.getById(rs.getLong("role_id")));
-            user.setUserName(rs.getString("username"));
+            user.setRole(UserRole.valueOf(rs.getString("role")));
+//            user.getRepresentative(representativeDao.getById( //TODO: set representative
+//                    rs.getLong("representative_id")));
+            user.setStatus(Status.valueOf(rs.getString("status")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -94,19 +87,5 @@ public class UserDaoImpl extends CrudDaoImpl<User>
 
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, User user) {
-        try {
-            preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getFirstName());
-            preparedStatement.setString(4, user.getSecondName());
-            preparedStatement.setObject(5, TypeMapper.getNullableId(user.getAddress()));
-            preparedStatement.setString(6, user.getPhone());
-            preparedStatement.setString(7, user.getPassword());
-            preparedStatement.setObject(8, TypeMapper.getNullableId(user.getRole()));
-            preparedStatement.setString(9, user.getUserName());
-            preparedStatement.setLong(10, user.getId());
-        } catch (SQLException e) {
-            throw new PreparedStatementPopulationException(e);
-        }
     }
 }

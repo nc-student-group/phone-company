@@ -1,5 +1,10 @@
 package com.phonecompany.model;
 
+/**
+ * Gets emitted on user's reset password request
+ *
+ * @see com.phonecompany.service.UserServiceImpl
+ */
 public final class ResetPasswordEvent {
 
     private final User userToReset;

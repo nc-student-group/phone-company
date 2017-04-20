@@ -122,24 +122,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     public abstract T init(ResultSet resultSet);
 
-    public ResultSet executeSelect(String query, Map<Integer, Object> params){
-        try (Connection conn = DriverManager.getConnection(connStr);
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            params.forEach((Integer integer, Object o) -> {
-                try {
-                    ps.setObject(integer, o);
-                } catch (SQLException e) {
-                    throw new CrudException("Failed set parameters. " +
-                            "Check your database connection or whether sql query is right", e);
-                }
-            });
-            return ps.executeQuery();
-        } catch (SQLException e) {
-            throw new CrudException("Failed to execute select. " +
-                    "Check your database connection or whether sql query is right", e);
-        }
-    }
-
     public String getConnStr() {
         return connStr;
     }

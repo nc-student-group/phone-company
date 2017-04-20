@@ -6,6 +6,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -35,9 +36,9 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, VerificationToken vt) {
         try {
-            preparedStatement.setLong(1, vt.getUser().getId());
-            preparedStatement.setString(2, vt.getToken());
-            preparedStatement.setDate(3, vt.getExpireDate());
+            preparedStatement.setString(1, vt.getToken());
+            preparedStatement.setDate(2, TypeMapper.toSqlDate(vt.getExpireDate()));
+            preparedStatement.setLong(3, TypeMapper.getNullableId(vt.getUser()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -50,7 +51,7 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
             verificationToken.setId(rs.getLong("id"));
             verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
             verificationToken.setToken(rs.getString("token"));
-            verificationToken.setExpireDate(rs.getDate("expire_date"));
+            verificationToken.setExpireDate(TypeMapper.toLocalDate(rs.getDate("expire_date")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -59,13 +60,6 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
 
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, VerificationToken vt) {
-        try {
-            preparedStatement.setLong(1, vt.getUser().getId());
-            preparedStatement.setString(2, vt.getToken());
-            preparedStatement.setDate(3, vt.getExpireDate());
-            preparedStatement.setLong(4, vt.getId());
-        } catch (SQLException e) {
-            throw new PreparedStatementPopulationException(e);
-        }
+
     }
 }

@@ -15,6 +15,7 @@
         <source-code.version>1.8</source-code.version>
         <source-code.encoding>UTF-8</source-code.encoding>
         <spring.boot.version>1.4.4.RELEASE</spring.boot.version>
+        <jacoco.plugin.version>0.7.4.201502262128</jacoco.plugin.version>
     </properties>
 
     <parent>
@@ -96,6 +97,30 @@
                     <target>${source-code.version}</target>
                     <encoding>${source-code.encoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <configuration>
+                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

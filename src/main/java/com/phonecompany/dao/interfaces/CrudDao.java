@@ -1,9 +1,7 @@
 package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.DomainEntity;
-import com.phonecompany.model.Role;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**

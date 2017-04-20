@@ -1,21 +1,33 @@
 package com.phonecompany.model;
 
-import java.sql.Date;
-import java.util.Calendar;
+import java.time.LocalDate;
 
-public class VerificationToken extends DomainEntity{
+public class VerificationToken extends DomainEntity {
+
     private User user;
     private String token;
-    private Date expireDate;
+    private LocalDate expireDate;
 
     public VerificationToken() {
         super();
     }
 
-    public VerificationToken(User user, String token, Date expireDate) {
+    public VerificationToken(User user, String token) {
+        this.user = user;
+        this.token = token;
+        this.expireDate = this.calculateExpiryDate();
+    }
+
+    public VerificationToken(Long id, User user, String token,
+                             LocalDate expireDate) {
+        super(id);
         this.user = user;
         this.token = token;
         this.expireDate = expireDate;
+    }
+
+    private LocalDate calculateExpiryDate() {
+        return LocalDate.now().plusDays(1);
     }
 
     public User getUser() {
@@ -34,11 +46,11 @@ public class VerificationToken extends DomainEntity{
         this.token = token;
     }
 
-    public Date getExpireDate() {
+    public LocalDate getExpireDate() {
         return expireDate;
     }
 
-    public void setExpireDate(Date expireDate) {
+    public void setExpireDate(LocalDate expireDate) {
         this.expireDate = expireDate;
     }
 }

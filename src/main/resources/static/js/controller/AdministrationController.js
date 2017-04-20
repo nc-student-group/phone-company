@@ -19,7 +19,6 @@
             };
         });
 
-
         $scope.createUser = createUser;
         /**
          * Creates user.
