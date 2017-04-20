@@ -33,57 +33,19 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
 
     @Test
     public void save() throws Exception{
-        VerificationToken vt = new VerificationToken();
-        vt.setUser(userDao.getAll().get(8)); // userId in table verification-token id not duplicate
-        vt.setToken("token1");
-        vt.setExpireDate(new Date(0).toLocalDate());
-        VerificationToken newVerificationToken = vtDao.save(vt);
-        assertNotNull("VerificationToken id = null", newVerificationToken.getId());
-        assertEquals("VerificationToken field \"User\" is not change",
-                vt.getUser(), newVerificationToken.getUser());
-        assertEquals("VerificationToken field \"Token\" is not change",
-                vt.getToken(), newVerificationToken.getToken());
-        assertEquals("VerificationToken field \"ExpireDate\" is not change",
-                vt.getExpireDate(), newVerificationToken.getExpireDate());
     }
 
     @Test
     public void update() throws Exception{
-        VerificationToken vt = new VerificationToken();
-        Long testId = vtDao.getAll().get(8).getId();
-        vt.setId(testId);
-        vt.setUser(userDao.getAll().get(0));
-        vt.setToken("token1");
-        vt.setExpireDate(new Date(0).toLocalDate());
-        VerificationToken newVerificationToken = vtDao.update(vt);
-        assertNotNull("VerificationToken id = null", vt.getId());
-        assertEquals("VerificationToken field \"User\" is not change",
-                vt.getUser(), newVerificationToken.getUser());
-        assertEquals("VerificationToken field \"Token\" is not change",
-                vt.getToken(), newVerificationToken.getToken());
-        assertEquals("VerificationToken field \"ExpireDate\" is not change",
-                vt.getExpireDate(), newVerificationToken.getExpireDate());
     }
 
     @Test
     public void getById() throws Exception {
-        Long testId = vtDao.getAll().get(0).getId();
-        VerificationToken vt = vtDao.getById(testId);
-        assertNotNull("VerificationToken by id = null", vt);
     }
 
     @Test
     public void delete() throws Exception {
-        VerificationToken vt = new VerificationToken();
-        vt.setUser(userDao.getAll().get(0));
-        vt.setToken("token1");
-        vt.setExpireDate(new Date(0).toLocalDate());
-        vt = vtDao.save(vt);
 
-        Long testId = vt.getId();
-        vtDao.delete(testId);
-        vt = vtDao.getById(testId);
-        Assert.assertNull("VerificationToken is not deleted", vt);
     }
 
     @Test
