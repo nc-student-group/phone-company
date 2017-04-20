@@ -13,19 +13,4 @@ import javax.servlet.Filter;
 @Configuration
 @ComponentScan(basePackages = { "com.phonecompany" })
 public class AppConfig extends WebMvcConfigurerAdapter {
-
-    @Bean
-    public Filter simpleCorsFilter() {
-        return new SimpleCORSFilter();
-    }
-
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-        registrationBean.setFilter(characterEncodingFilter);
-        return registrationBean;
-    }
 }

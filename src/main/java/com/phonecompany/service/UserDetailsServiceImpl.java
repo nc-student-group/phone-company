@@ -33,7 +33,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         com.phonecompany.model.User user = userService.findByUsername(login);
         if (user == null) {
             throw new UsernameNotFoundException(login + " not found");
-//            user = new com.phonecompany.model.User("bad-credentials", "", new Role("NOT_AUTHORIZE"));
         }
 
         logger.info(user.getEmail());

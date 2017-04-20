@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,12 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
-
-    }
-
     @Autowired
     public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -38,32 +31,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder);
     }
 
+    @Autowired
+    private RESTAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private RESTAuthenticationFailureHandler authenticationFailureHandler;
+    @Autowired
+    private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .httpBasic()
-                .and()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/api/login/try").permitAll()
-                .antMatchers("/api/user/reset").permitAll()
-//                .antMatchers("/api/users").hasRole("ADMIN")
-                .antMatchers("/api/users").permitAll()
-                .antMatchers("/api/user/save").permitAll()
-                .antMatchers("/api/user/reset").permitAll()
-                .and()
-                .logout()
-                .permitAll()
-                .invalidateHttpSession(true);
-        http
-                .authorizeRequests()
-                .antMatchers("/")
-                .permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/console/**").permitAll();
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/view/**").permitAll()
+                .antMatchers("/api/users").hasRole("ADMIN")
+                .antMatchers("/api/roles").hasRole("ADMIN")
+                .antMatchers("/csr").hasRole("CSR")
+                .anyRequest().authenticated();
+
         http.csrf().disable();
-        http.headers().frameOptions().disable();
+        http.formLogin().loginPage("/login").permitAll()
+        .and().logout().logoutSuccessUrl("/#/index").permitAll();
+        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        http.formLogin().successHandler(authenticationSuccessHandler);
+        http.formLogin().failureHandler(authenticationFailureHandler);
     }
 }

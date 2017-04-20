@@ -25,7 +25,7 @@ angular.module('phone-company').controller('AuthorizeController', [
                 + JSON.stringify($scope.resetRequest));
             UserService.resetPassword($scope.resetRequest.email)
                 .then(function (data) {
-                    if(data.msg === 'error') {
+                    if (data.msg === 'error') {
                         toastr.error('User with such email was not found!',
                             'Error during restoring password!');
                     } else {
@@ -48,27 +48,27 @@ angular.module('phone-company').controller('AuthorizeController', [
         };
 
         $scope.loginClick = function () {
-            SessionService.setLoginToken($scope.login, $scope.password);
-            console.log("in loginClick()");
-            LoginService.tryLogin().then(function (data) {
-                $rootScope.currentRole = data.name;
-                localStorage.setItem("r", $rootScope.currentRole);
-                switch (data.name) {
-                    case "ADMIN":
-                        $location.path("/admin");
-                        break;
-                    case "CLIENT":
-                        $location.path("/client");
-                        break;
-                    case "CSR":
-                        $location.path("/csr");
-                        break;
-                    case "PMG":
-                        $location.path("/pmg");
-                        break;
-                    default:
-                        break;
-                }
+            LoginService.login("username=" + $scope.login + "&password=" + $scope.password).then(function (data) {
+                LoginService.tryLogin().then(function (data) {
+                    $rootScope.currentRole = data.name;
+                    switch (data.name) {
+                        case "ADMIN":
+                            $location.path("/admin");
+                            break;
+                        case "CLIENT":
+                            $location.path("/client");
+                            break;
+                        case "CSR":
+                            $location.path("/csr");
+                            break;
+                        case "PMG":
+                            $location.path("/pmg");
+                            break;
+                        default:
+                            break;
+                    }
+                });
             });
         };
-    }]);
+    }
+]);

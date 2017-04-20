@@ -2,9 +2,10 @@
 
     var app = angular.module('phone-company',
         ['ngRoute',
-        'ngResource']);
+            'ngResource']);
 
-    app.config(function ($routeProvider) {
+    app.config(function ($routeProvider, $locationProvider) {
+        // $locationProvider.html5Mode(true);
         $routeProvider.when('/index',
             {
                 templateUrl: 'view/main.html',
@@ -30,6 +31,11 @@
                 templateUrl: 'view/pmgPage.html',
                 // controller: ''
             });
+        $routeProvider.when('/403',
+            {
+                templateUrl: 'view/403.html',
+                // controller: ''
+            });
         $routeProvider.otherwise({redirectTo: '/index'});
     });
 
@@ -52,6 +58,7 @@
 
     app.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('sessionInjector');
+        $httpProvider.interceptors.push('responseObserver');
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
         // $httpProvider.interceptors.push(function ($q, $location) {
@@ -80,5 +87,24 @@
             }
         };
     }]);
+
+    app.factory('responseObserver', function responseObserver($q, $location) {
+        return {
+            'responseError': function (errorResponse) {
+                switch (errorResponse.status) {
+                    case 403:
+                        $location.path('/403');
+                        break;
+                    case 401:
+                        $location.path('/');
+                        break;
+                    case 500:
+                        $window.location = './500.html';
+                        break;
+                }
+                return $q.reject(errorResponse);
+            }
+        };
+    });
 
 }());
