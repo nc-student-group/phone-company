@@ -11,9 +11,8 @@ angular.module('phone-company').controller('AuthorizeController', [
         $scope.selected = 'signIn';
 
         $scope.user = {
-            userName: "",
-            password: "",
-            email: ""
+            email: "",
+            password: ""
         };
 
         $scope.resetRequest = {
@@ -36,14 +35,24 @@ angular.module('phone-company').controller('AuthorizeController', [
                 });
         };
 
-        $scope.registerUser = function () {
-            console.log('User: ' + JSON.stringify($scope.user));
-            UserService.saveUser($scope.user)
-                .then(function (data) {
+        function registerUser() {
+            $log.debug('User: ' + JSON.stringify($scope.user));
+            UserService.saveUser($scope.user).$promise
+                .then(function (createdUser) {
+                    $log.debug("Created user: ", createdUser);
                     console.log("Created user: ", data);
                     $scope.login = $scope.user.email;
                     $scope.password = $scope.user.password;
                     $scope.loginClick();
+                }, function (error) {
+                    $log.error("Failed to save user", error);
+                });
+        }
+
+        $scope.registerUser = function () {
+            console.log('User: ' + JSON.stringify($scope.user));
+            UserService.saveUser($scope.user)
+                .then(function (data) {
                 });
         };
 

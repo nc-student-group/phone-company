@@ -1,5 +1,6 @@
 package com.phonecompany.service.email;
 
+import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
     @Value("${application-url}")
     private String applicationUrl;
     private TemplateEngine templateEngine;
+    private VerificationTokenDao verificationTokenDao;
 
     @Autowired
     public ConfirmationEmailCreator(TemplateEngine templateEngine) {
@@ -37,7 +39,6 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         LOG.info("Confirmation url: {}", confirmationUrl);
 
         Context context = new Context();
-//        context.setVariable("name", recipient.getUserName());
         context.setVariable("body", confirmationUrl);
 
         return this.templateEngine

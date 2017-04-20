@@ -20,12 +20,7 @@
         };
 
         UserService.saveUser = function (user) {
-            UserService.perform().save(user).$promise
-                .then(function (response) {
-                    $log.debug("Saved user", response.data);
-                }, function (error) {
-                    $log.error("Failed to add projectManager to company", error);
-                });
+            UserService.perform().save(user);
         };
 
         return UserService;

@@ -32,15 +32,6 @@
         /**
          * Registers user.
          */
-        function registerUser() {
-            $log.debug('User: ' + JSON.stringify($scope.user));
-            UserService.saveUser($scope.user).$promise
-                .then(function (createdUser) {
-                    $log.debug("Created user: ", createdUser);
-                }, function (error) {
-                    $log.error("Failed to save user", error);
-                });
-        }
 
         function loginUser() {
             $log.debug('Authentication request: ' +

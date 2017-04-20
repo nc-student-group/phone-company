@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class RegistrationController {
     public ResponseEntity<?> saveUser(@RequestBody User client) {
         LOG.info("User retrieved from the http request: " + client);
 
+        client.setRole(UserRole.CLIENT);
         User persistedUser = this.userService.save(client);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
