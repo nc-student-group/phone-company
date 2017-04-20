@@ -76,6 +76,14 @@
     margin-bottom: 0;
 }
 
+.registrations {
+    padding-left: 0;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 ul li {
     font-size: 15px;
     display: table-cell;

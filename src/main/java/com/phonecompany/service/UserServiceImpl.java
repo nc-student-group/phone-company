@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.ResetPasswordEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
@@ -93,6 +94,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     public User save(User user) {
         Assert.notNull(user, "User should not be null");
+        user.setStatus(Status.INACTIVE); //TODO: whether all the users are stored as inactive
         user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         return super.save(user);
     }

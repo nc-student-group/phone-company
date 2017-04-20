@@ -9,5 +9,5 @@ public interface UserService extends CrudService<User> {
     User resetPassword(ResetPasswordEvent resetPasswordEvent);
     void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent);
     User findByEmail(String email);
-    public String encryptPassword(String password);
+    String encryptPassword(String password);
 }

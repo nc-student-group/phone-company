@@ -27,6 +27,7 @@ public abstract class AbstractTest {
 
     private final String BEGIN_TRANSACTION = "BEGIN;";
     private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
+
     @Before
     public void setUp(){
         try(Connection conn = DriverManager.getConnection(connStr);

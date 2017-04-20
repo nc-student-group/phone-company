@@ -6,6 +6,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 public class RestUtil {
+
     public static HttpHeaders getResourceHeaders(String resourceName, Long resourceId) {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/" + resourceName + "/{id}")
@@ -14,6 +15,7 @@ public class RestUtil {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriOfNewResource);
+
         return httpHeaders;
     }
 }

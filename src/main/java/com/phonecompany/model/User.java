@@ -1,44 +1,27 @@
 package com.phonecompany.model;
 
+import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.enums.UserRole;
 
 public class User extends DomainEntity {
 
     private String email;
     private String password;
-    private Role role;
-    private String firstName;
-    private String secondName;
-    private String lastName;
-    private String phone;
-    private Address address;
-    private String userName;
+    private UserRole role;
+    private Representative representative;
+    private Status status;
 
     public User() {
     }
 
-    public User(String password, String email) {
-        this.password = password;
-        this.email = email;
-    }
-
-    public User(String email, String password, Role role) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
     public User(String email, String password,
-                Role role, String firstName,
-                String secondName, String lastName,
-                String phone, Address address) {
-        this.password = password;
+                UserRole role, Representative representative,
+                Status status) {
         this.email = email;
+        this.password = password;
         this.role = role;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.secondName = secondName;
-        this.phone = phone;
-        this.address = address;
+        this.representative = representative;
+        this.status = status;
     }
 
     public String getEmail() {
@@ -57,60 +40,28 @@ public class User extends DomainEntity {
         this.password = password;
     }
 
-    public Role getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Representative getRepresentative() {
+        return representative;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setRepresentative(Representative representative) {
+        this.representative = representative;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -119,12 +70,7 @@ public class User extends DomainEntity {
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
-                ", firstName='" + firstName + '\'' +
-                ", secondName='" + secondName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address=" + address +
-                ", userName='" + userName + '\'' +
+                ", status=" + status +
                 "} " + super.toString();
     }
 }

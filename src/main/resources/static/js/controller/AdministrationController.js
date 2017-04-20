@@ -9,19 +9,15 @@
     function AdministrationController($scope, $log, UserService, $rootScope) {
         console.log('This is AdministrationController');
 
-        if ($rootScope.currentRole == 'ADMIN') {
-            $scope.users = UserService.getUsers();
-            UserService.getAllRoles().then(function (data) {
-                $scope.roles = data;
-                $scope.user = { // this.user - property of this controller
-                    userName: "",
-                    email: "",
-                    role: $scope.roles[0]
-                };
-            });
-        }
-
-
+        $scope.users = UserService.getUsers();
+        UserService.getAllRoles().then(function (data) {
+            $scope.roles = data;
+            $scope.user = { // this.user - property of this controller
+                userName: "",
+                email: "",
+                role: $scope.roles[0]
+            };
+        });
 
         $scope.createUser = createUser;
         /**

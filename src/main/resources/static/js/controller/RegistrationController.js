@@ -23,6 +23,7 @@
             password: ""
         };
 
+        $scope.registration_selected = 'representative';
         $scope.selected = 'signIn';
 
         $scope.registerUser = registerUser;

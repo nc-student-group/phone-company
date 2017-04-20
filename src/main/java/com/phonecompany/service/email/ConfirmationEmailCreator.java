@@ -37,7 +37,7 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator
         LOG.info("Confirmation url: {}", confirmationUrl);
 
         Context context = new Context();
-        context.setVariable("name", recipient.getUserName());
+//        context.setVariable("name", recipient.getUserName());
         context.setVariable("body", confirmationUrl);
 
         return this.templateEngine

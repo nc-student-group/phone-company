@@ -1,7 +1,6 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.OnRegistrationCompleteEvent;
-import com.phonecompany.model.Role;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RestController
 public class RegistrationController {
 
-    public static final long CLIENT = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(RegistrationController.class);
 
     private UserService userService;
@@ -36,10 +34,9 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = POST, value = "/api/users")
-    public ResponseEntity<?> saveClient(@RequestBody User client) {
+    public ResponseEntity<?> saveUser(@RequestBody User client) {
         LOG.info("User retrieved from the http request: " + client);
 
-        client.setRole(new Role(CLIENT)); //TODO: hack that has to be fixed (Role class -> enum)
         User persistedUser = this.userService.save(client);
         LOG.info("User persisted with an id: " + persistedUser.getId());
 
@@ -49,6 +46,4 @@ public class RegistrationController {
 
         return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
     }
-    
-    
 }

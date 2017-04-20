@@ -33,14 +33,21 @@
               autocomplete="off" novalidate
               ng-submit="registerUser()">
 
-            <input ng-model="user.userName" name="userName" id="userName" minlength="3"
-                   type="text" placeholder="User name" required/>
-            <span class="error" ng-show="registerForm.userName.$dirty &&
-                registerForm.userName.$error.required">Username is required.</span>
-            <span class="error" ng-show="registerForm.userName.$dirty &&
-                registerForm.userName.$error.minlength">Username is too short.</span>
-
-            <input ng-model="user.email"  name="mailInput" type="email" placeholder="email" required/>
+            <ul class="registrations">
+                <li ng-click="registration_selected = 'representative'"
+                    ng-class="{'active': registration_selected === 'representative'}">
+                    Representative
+                </li>
+                <li ng-click="registration_selected = 'residential_customer'"
+                    ng-class="{'active': registration_selected === 'residential_customer'}">
+                    Residential
+                </li>
+                <li ng-click="registration_selected = 'business_customer'"
+                    ng-class="{'active': registration_selected === 'business_customer'}">
+                    Business
+                </li>
+            </ul>
+            <input ng-model="user.email" name="mailInput" type="email" placeholder="email" required/>
             <div role="alert">
               <span class="error" ng-show="registerForm.mailInput.$dirty && registerForm.mailInput.$error.required">
                 Email required!</span>
@@ -54,6 +61,13 @@
                 Password required!</span>
             <span class="error" ng-show="registerForm.password.$dirty &&
                 registerForm.password.$error.minlength">Password is too weak.</span>
+
+            <input ng-show="registration_selected === 'representative'"
+                   ng-model="user.secretKey" name="secretKey" id="secret_key" minlength="5"
+                   type="password" placeholder="Customer secret key" required/>
+            <span class="error" ng-show="registerForm.secretKey.$dirty
+            && registerForm.secretKey.$error.required">
+                You have to specify a secret key from your customer!</span>
 
             <button ng-class="{unsubmitable : registerForm.$invalid, submitable: !registerForm.$invalid}"
                     ng-disabled="registerForm.$invalid"
