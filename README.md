@@ -1,3 +1,4 @@
 # phone-company
 
-![ERD](http://joxi.net/Y2LQM7WFKvZgA6)
+
+![erd](http://i.imgur.com/FlFeFj9.jpg)
