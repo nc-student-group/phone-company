@@ -8,16 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-/**
- * Created by Oksanka on 15.04.2017.
- */
 public class AddressDaoImplTest extends AbstractTest {
+
     @Autowired
     private AddressDaoImpl addressDao;
 
     @Before
     public void setUp() {
-        super.setUp();
         addressDao.setAutoCommit(false);
     }
 
