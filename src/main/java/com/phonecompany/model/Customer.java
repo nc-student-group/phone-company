@@ -7,13 +7,18 @@ import javax.validation.constraints.NotNull;
 
 public class Customer extends User {
 
+    @NotNull(message = "First name must not be null")
     private String firstName;
+    @NotNull(message = "Second name must not be null")
     private String secondName;
+    @NotNull(message = "Last name must not be null")
     private String lastName;
+    @NotNull(message = "Phone must not be null")
     private String phone;
     @NotNull(message = "Address must not be null")
     private Address address;
     private Corporate corporate;
+    @NotNull(message = "isRepresentative must not be null")
     private Boolean isRepresentative;
 
     public Customer() {

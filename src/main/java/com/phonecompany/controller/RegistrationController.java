@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@PreAuthorize("permitAll()")
 @RestController
 public class RegistrationController {
 
@@ -58,7 +60,7 @@ public class RegistrationController {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.userService.activateUserByToken(token);
 
-        URI registration = new URI("http://localhost:8090/api/successful_registration");
+        URI registration = new URI("http://localhost:8090/#/user/profile/success");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
 

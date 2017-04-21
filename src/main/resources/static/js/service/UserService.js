@@ -40,6 +40,20 @@
             return deferred.promise;
         };
 
+        UserService.resetPassword = function (email) {
+            console.log('Email: ' + JSON.stringify(email));
+            var deferred = $q.defer();
+            $http.post("api/user/reset", email).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
         return UserService;
     }
 }());

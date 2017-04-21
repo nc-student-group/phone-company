@@ -13,7 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
+public class AddressDaoImpl extends CrudDaoImpl<Address>
+        implements AddressDao {
 
     private QueryLoader queryLoader;
 
@@ -30,12 +31,10 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Address address) {
         try {
-            preparedStatement.setString(1, address.getCountry());
-            preparedStatement.setString(2, address.getRegion());
-//            preparedStatement.setString(3, address.getSettlement());
-            preparedStatement.setString(4, address.getStreet());
-            preparedStatement.setString(5, address.getHouseNumber());
-            preparedStatement.setString(6, address.getApartmentNumber());
+            preparedStatement.setLong(1, address.getRegionId());
+            preparedStatement.setString(2, address.getStreet());
+            preparedStatement.setLong(3, address.getHouseNumber());
+            preparedStatement.setString(4, address.getApartmentNumber());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -46,12 +45,11 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
         Address address = new Address();
         try {
             address.setId(rs.getLong("id"));
-            address.setCountry(rs.getString("country"));
-            address.setRegion(rs.getString("region"));
+            address.setRegionId(rs.getLong("regionId"));
 //            address.setSettlement(rs.getString("settlement"));
             address.setStreet(rs.getString("street"));
-            address.setHouseNumber(rs.getString("house_number"));
-            address.setApartmentNumber(rs.getString("apartment"));
+            address.setHouseNumber(rs.getLong("house_number"));
+            address.setApartmentNumber(rs.getString("apartment_number"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -61,13 +59,12 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Address address) {
         try {
-            preparedStatement.setString(1, address.getCountry());
-            preparedStatement.setString(2, address.getRegion());
-//            preparedStatement.setString(3, address.getSettlement());
-            preparedStatement.setString(4, address.getStreet());
-            preparedStatement.setString(5, address.getHouseNumber());
-            preparedStatement.setString(6, address.getApartmentNumber());
-            preparedStatement.setLong(7, address.getId());
+            preparedStatement.setLong(1, address.getRegionId());
+            preparedStatement.setString(2, address.getStreet());
+            preparedStatement.setString(3, address.getStreet());
+            preparedStatement.setLong(4, address.getHouseNumber());
+            preparedStatement.setString(5, address.getApartmentNumber());
+            preparedStatement.setLong(6, address.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
