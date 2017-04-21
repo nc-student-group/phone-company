@@ -16,10 +16,10 @@
         <form name="loginForm" id="loginForm" ng-show="selected === 'signIn'"
               autocomplete="off" novalidate
               ng-submit="">
-            <input ng-model="login" name="login" type="text" placeholder="email" required/>
+            <input ng-model="user.email" type="email" name="email" type="text" placeholder="email" required/>
             <span class="error" ng-show="loginForm.login.$dirty &&
                 loginForm.login.$error.required">Username is required.</span>
-            <input ng-model="password" name="password" type="password" placeholder="password" required/>
+            <input ng-model="user.password" name="password" type="password" placeholder="password" required/>
             <span class="error" ng-show="loginForm.password.$dirty && loginForm.password.$error.required">
                 Password required!</span>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
@@ -33,7 +33,8 @@
               autocomplete="off" novalidate
               ng-submit="registerUser()">
 
-            <input ng-model="user.email" name="mailInput" type="email" placeholder="email" required/>
+            <input ng-model="user.email"
+                   name="mailInput" type="email" placeholder="email" required/>
             <div role="alert">
               <span class="error" ng-show="registerForm.mailInput.$dirty && registerForm.mailInput.$error.required">
                 Email required!</span>

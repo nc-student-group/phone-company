@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('phone-company').controller('AuthorizeController', [
     '$scope',
     '$location',
@@ -6,7 +7,7 @@ angular.module('phone-company').controller('AuthorizeController', [
     'LoginService',
     'UserService',
     '$rootScope',
-    function ($scope, $location, SessionService, LoginService, UserService) {
+    function ($scope, $location, SessionService, LoginService, UserService, $rootScope) {
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
 
@@ -41,4 +42,21 @@ angular.module('phone-company').controller('AuthorizeController', [
                     }
                 });
         };
+
+        $scope.loginClick = function () {
+            LoginService.login("username=" + $scope.user.email +
+                "&password=" + $scope.user.password).then(function (data) {
+                    LoginService.tryLogin().then(function (response) {
+                        var loggedInRole = '/' + response.replace(/['"]+/g, '');
+                        console.log('Currently logged in role is: ' + loggedInRole);
+                        var redirectionUrl = loggedInRole.toLowerCase();
+                        console.log('Redirecting to: ' + redirectionUrl);
+                        $location.path(redirectionUrl);
+                    });
+                },
+                function (data) {
+                    toastr.error('Bad credentials', 'Error');
+                });
+        };
+
     }]);

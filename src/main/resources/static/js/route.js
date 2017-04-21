@@ -43,7 +43,6 @@
         $httpProvider.interceptors.push('responseObserver');
     }]);
 
-
     app.factory('responseObserver', function responseObserver($q, $location) {
         return {
             'responseError': function (errorResponse) {

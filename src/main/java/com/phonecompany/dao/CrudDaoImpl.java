@@ -3,6 +3,7 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
+import com.phonecompany.util.DbManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +18,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     private static final Logger LOG = LoggerFactory.getLogger(CrudDaoImpl.class);
 
-    @Value("${spring.datasource.url}")
-    private String connStr;
+    DbManager dbManager = DbManager.getInstance();
 
     private boolean autoCommit = true;
 
@@ -35,7 +35,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public T save(T entity) {
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
             conn.setAutoCommit(this.autoCommit);
             this.populateSaveStatement(ps, entity);
@@ -55,7 +55,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     @Override
     public T update(T entity) {
         LOG.debug("Getting query: {}", this.getQuery("update"));
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
             conn.setAutoCommit(this.autoCommit);
             this.populateUpdateStatement(ps, entity);
@@ -71,7 +71,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public T getById(Long id) {
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getById"))) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
@@ -89,7 +89,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public void delete(Long id) {
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
             conn.setAutoCommit(this.autoCommit);
             preparedStatement.setLong(1, id);
@@ -105,7 +105,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     @Override
     public List<T> getAll() {
 
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
             ResultSet rs = ps.executeQuery();
             List<T> result = new ArrayList<>();
@@ -126,12 +126,4 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
-
-    public String getConnStr() {
-        return connStr;
-    }
-
-    public void setConnStr(String connStr) {
-        this.connStr = connStr;
-    }
 }

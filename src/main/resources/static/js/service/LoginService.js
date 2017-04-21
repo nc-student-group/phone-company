@@ -3,35 +3,36 @@
 angular.module('phone-company')
     .factory('LoginService', ['$q', '$http', function ($q, $http) {
 
-    var GET_TRY_LOGIN_URL = "api/login/try";
-    var GET_LOGIN_URL = "/login";
-    var GET_LOGOUT_URL = "/logout";
+        var GET_TRY_LOGIN_URL = "api/login/try";
+        var GET_LOGIN_URL = "/login";
+        var GET_LOGOUT_URL = "/logout";
 
-    var factory = {
-        tryLogin: tryLogin,
-        login:login,
-        logout:logout
-    };
+        var factory = {
+            tryLogin: tryLogin,
+            login: login,
+            logout: logout
+        };
 
-    return factory;
+        return factory;
 
-    function tryLogin() {
-        var deferred = $q.defer();
-        $http.get(GET_TRY_LOGIN_URL).then(
-            function (response) {
-                deferred.resolve(response.data);
-            },
-            function (errResponse) {
-                console.error(errResponse.toString());
-                deferred.reject(errResponse);
-            });
-        return deferred.promise;
-    }
+        function tryLogin() {
+            var deferred = $q.defer();
+            $http.get(GET_TRY_LOGIN_URL).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
 
         function login(data) {
             var deferred = $q.defer();
-            $http.post(GET_LOGIN_URL+"?"+data).then(
+            $http.post(GET_LOGIN_URL + "?" + data).then(
                 function (response) {
+                    console.log(response.data);
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
@@ -45,14 +46,15 @@ angular.module('phone-company')
             var deferred = $q.defer();
             $http.post(GET_LOGOUT_URL).then(
                 function (response) {
+                    console.log('Logging out');
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
-                    console.error(errResponse.toString());
+                    console.error(JSON.stringify(errResponse));
                     deferred.reject(errResponse);
                 });
             return deferred.promise;
         }
 
 
-}]);
+    }]);

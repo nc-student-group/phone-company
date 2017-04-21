@@ -23,6 +23,19 @@
             UserService.perform().save(user);
         };
 
+        UserService.getAllRoles = function () {
+            var deferred = $q.defer();
+            $http.get('api/roles').then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
         return UserService;
     }
 }());

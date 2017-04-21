@@ -1,24 +1,16 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.model.VerificationToken;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by Oksanka on 15.04.2017.
- */
 public class VerificationTokenDaoImplTest extends AbstractTest {
+
     @Autowired
     private VerificationTokenDaoImpl vtDao;
 
@@ -27,7 +19,6 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
 
     @Before
     public void setUp(){
-        super.setUp();
         vtDao.setAutoCommit(false);
     }
 

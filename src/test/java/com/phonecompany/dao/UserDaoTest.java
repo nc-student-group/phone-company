@@ -4,25 +4,19 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
-import org.junit.Assert;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Transactional //will be replaced (it is just for 2 days)
-@Rollback
-public class UserDaoTest {
+public class UserDaoTest extends AbstractTest {
 
     @Autowired
     private UserDao userDao;

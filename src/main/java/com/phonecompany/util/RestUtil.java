@@ -1,6 +1,7 @@
 package com.phonecompany.util;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
