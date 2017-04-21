@@ -33,7 +33,6 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
     private MailMessageCreator<User> confirmMessageCreator;
-    private VerificationTokenService verificationTokenService;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -41,16 +40,14 @@ public class UserServiceImpl extends CrudServiceImpl<User>
                            @Qualifier("resetPassMessageCreator")
                                    MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
-                                       MailMessageCreator<User> confirmMessageCreator,
-                           EmailService emailService,
-                           VerificationTokenService verificationTokenService) {
+                                   MailMessageCreator<User> confirmMessageCreator,
+                           EmailService emailService) {
         super(userDao);
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
-        this.verificationTokenService = verificationTokenService;
     }
 
     @Override
@@ -87,7 +84,11 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     @Override
     public void activateUserByToken(String token) {
-        User user =this.verificationTokenService.getUserByToken(token);
+        User user = this.userDao.getUserByVerificationToken(token);
+        LOG.debug("User fetched by verification token: {}", user);
+        user.setStatus(Status.ACTIVATED);
+        this.userDao.update(user);
+        LOG.debug("User has been activated");
     }
 
     @Override
@@ -116,7 +117,7 @@ public class UserServiceImpl extends CrudServiceImpl<User>
     }
 
     @Override
-    public String encryptPassword(String password){
+    public String encryptPassword(String password) {
         return shaPasswordEncoder.encodePassword(password, null);
     }
 

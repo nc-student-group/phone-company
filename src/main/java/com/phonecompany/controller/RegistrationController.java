@@ -2,7 +2,6 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.User;
-import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class RegistrationController {
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
-        LOG.debug("Token retrieved from the request: {}", token);
+        LOG.debug("Token retrieved from the request parameter: {}", token);
         this.userService.activateUserByToken(token);
 
         URI registration = new URI("http://localhost:4200/api/successful_registration");
