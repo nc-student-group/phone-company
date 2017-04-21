@@ -2,18 +2,20 @@
 
 angular.module('phone-company').controller('AuthorizeController', [
     '$scope',
+    '$q',
+    '$http',
     '$location',
     'SessionService',
     'LoginService',
     'UserService',
     '$rootScope',
     '$routeParams',
-    function ($scope, $location, SessionService, LoginService,
+    function ($scope, $q, $http, $location, SessionService, LoginService,
               UserService, $rootScope, $routeParams) {
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
 
-        if($routeParams['success'] === 'success') {
+        if ($routeParams['success'] === 'success') {
             toastr.success('U have successfully completed registration. ' +
                 'You can login');
         }
@@ -28,10 +30,18 @@ angular.module('phone-company').controller('AuthorizeController', [
         };
 
         $scope.registerUser = function () {
-            console.log('User: ' + JSON.stringify($scope.user));
-            UserService.saveUser($scope.user)
-                .then(function (data) {
+            var deferred = $q.defer();
+            $http.post("/api/users", $scope.user).then(
+                function (response) {
+                    console.log(JSON.stringify(response.data));
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(JSON.stringify(errResponse.data));
+                    toastr.error(errResponse.data);
+                    deferred.reject(errResponse);
                 });
+            return deferred.promise;
         };
 
         $scope.resetPassword = function () {

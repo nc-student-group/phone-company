@@ -6,6 +6,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Address;
 import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,23 +23,24 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
 
     @Autowired
     public AddressDaoImpl(QueryLoader queryLoader,
-                          RegionDao regionDao){
+                          RegionDao regionDao) {
         this.queryLoader = queryLoader;
         this.regionDao = regionDao;
     }
 
     @Override
     public String getQuery(String type) {
-        return queryLoader.getQuery("query.address."+type);
+        return queryLoader.getQuery("query.address." + type);
     }
 
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Address address) {
         try {
-            preparedStatement.setLong(1, address.getRegion().getId());
-            preparedStatement.setString(2, address.getStreet());
-            preparedStatement.setLong(3, address.getHouseNumber());
-            preparedStatement.setString(4, address.getApartmentNumber());
+            preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
+            preparedStatement.setString(2, address.getLocality());
+            preparedStatement.setString(3, address.getStreet());
+            preparedStatement.setLong(4, address.getHouseNumber());
+            preparedStatement.setString(5, address.getApartmentNumber());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -50,7 +52,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
         try {
             address.setId(rs.getLong("id"));
             address.setRegion(regionDao.getById(rs.getLong("region_id")));
-//            address.setSettlement(rs.getString("settlement"));
+            address.setLocality(rs.getString("locality"));
             address.setStreet(rs.getString("street"));
             address.setHouseNumber(rs.getLong("house_number"));
             address.setApartmentNumber(rs.getString("apartment_number"));
@@ -63,8 +65,8 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Address address) {
         try {
-//            preparedStatement.setLong(1, address.getRegionId());
-            preparedStatement.setString(2, address.getStreet());
+            preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
+            preparedStatement.setString(2, address.getLocality());
             preparedStatement.setString(3, address.getStreet());
             preparedStatement.setLong(4, address.getHouseNumber());
             preparedStatement.setString(5, address.getApartmentNumber());

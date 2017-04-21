@@ -9,7 +9,7 @@ public class Complaint extends DomainEntity {
     private String type;
     private User user;
 
-    private Complaint(){}
+    public Complaint(){}
 
     public Complaint(String status, Date date, String text, String type, User user) {
         this.status = status;
