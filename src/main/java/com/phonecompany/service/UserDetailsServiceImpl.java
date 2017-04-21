@@ -38,14 +38,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> roles = new HashSet<>();
 
-//        LOG.debug("User role: {}", user.getRole());
-//        LOG.debug("user.getRole().name().equals(\"ADMIN\"): {}",
-//                user.getRole().name().equals("ADMIN"));
-//        if(user.getRole().name().equals("ADMIN")) {
-//            roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//            roles.add(new SimpleGrantedAuthority("ROLE_CSR"));
-//            roles.add(new SimpleGrantedAuthority("ROLE_PMG"));
-//        }
+        LOG.debug("User role: {}", user.getRole().name());
+
         roles.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         return new User(user.getEmail(), user.getPassword(), roles);
