@@ -19,7 +19,7 @@
         $routeProvider.when('/client',
             {
                 templateUrl: 'view/clientPage.html',
-                // controller: ''
+                controller: 'ClientController'
             });
         $routeProvider.when('/csr',
             {
