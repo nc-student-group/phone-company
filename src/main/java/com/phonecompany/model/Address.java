@@ -4,24 +4,33 @@ public class Address extends DomainEntity{
 
     private String country;
     private String region;
-    private String settlement;
     private String street;
     private String houseNumber;
-    private String apartment;
+    private String apartmentNumber;
 
     public Address() {
         super();
     }
 
     public Address(String country, String region,
-                   String settlement, String street,
-                   String houseNumber, String apartment) {
+                   String street, String houseNumber,
+                   String apartmentNumber) {
         this.country = country;
         this.region = region;
-        this.settlement = settlement;
         this.street = street;
         this.houseNumber = houseNumber;
-        this.apartment = apartment;
+        this.apartmentNumber = apartmentNumber;
+    }
+
+    public Address(Long id, String country,
+                   String region, String street,
+                   String houseNumber, String apartmentNumber) {
+        super(id);
+        this.country = country;
+        this.region = region;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.apartmentNumber = apartmentNumber;
     }
 
     public String getCountry() {
@@ -40,14 +49,6 @@ public class Address extends DomainEntity{
         this.region = region;
     }
 
-    public String getSettlement() {
-        return settlement;
-    }
-
-    public void setSettlement(String settlement) {
-        this.settlement = settlement;
-    }
-
     public String getStreet() {
         return street;
     }
@@ -64,12 +65,12 @@ public class Address extends DomainEntity{
         this.houseNumber = houseNumber;
     }
 
-    public String getApartment() {
-        return apartment;
+    public String getApartmentNumber() {
+        return apartmentNumber;
     }
 
-    public void setApartment(String apartment) {
-        this.apartment = apartment;
+    public void setApartmentNumber(String apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
     }
 
     @Override
@@ -77,10 +78,9 @@ public class Address extends DomainEntity{
         return "Address{" +
                 "country='" + country + '\'' +
                 ", region='" + region + '\'' +
-                ", settlement='" + settlement + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
-                ", apartment='" + apartment + '\'' +
+                ", apartmentNumber='" + apartmentNumber + '\'' +
                 "} " + super.toString();
     }
 }

@@ -1,10 +1,8 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.EntityPersistenceException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -24,13 +22,10 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     private String connStr;
 
     private QueryLoader queryLoader;
-    private AddressDao addressDao;
 
     @Autowired
-    public UserDaoImpl(QueryLoader queryLoader,
-                       AddressDao addressDao) {
+    public UserDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
-        this.addressDao = addressDao;
     }
 
     @Override
@@ -82,8 +77,6 @@ public class UserDaoImpl extends CrudDaoImpl<User>
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
             user.setRole(TypeMapper.getUserRoleByDatabaseId(rs.getLong("role_id")));
-//            user.getRepresentative(representativeDao.getById( //TODO: set representative
-//                    rs.getLong("representative_id")));
             user.setStatus(Status.valueOf(rs.getString("status")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
@@ -92,7 +85,16 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     }
 
     @Override
-    public void populateUpdateStatement(PreparedStatement preparedStatement, User user) {
+    public void populateUpdateStatement(PreparedStatement statement, User user) {
+        try {
+            statement.setString(1, user.getEmail());
+            statement.setString(2, user.getPassword());
+            statement.setLong(3, user.getRole().getDatabaseId());
+            statement.setString(4, user.getStatus().name());
+            statement.setLong(5, user.getId());
+        } catch (SQLException e) {
+            throw new PreparedStatementPopulationException(e);
+        }
     }
 
     private String getUserByVerificationTokenQuery() {

@@ -2,6 +2,10 @@
 
 angular.module('phone-company').factory('MainFactory', [function () {
     return {
-        host:"https://phone-company.herokuapp.com/"
+
+        // host:"http://localhost:8090/",
+        // host:'https://phone-company.herokuapp.com/',
+        host:''
     }
+
 }]);

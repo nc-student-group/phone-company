@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional //will be replaced (it is just for 2 days)
+@Rollback
 public class UserDaoTest {
 
     @Autowired
@@ -29,7 +31,7 @@ public class UserDaoTest {
     public void shouldPersistUser() {
         //given
         User userToBeSaved = new User("test@mail.com", "pass1",
-                UserRole.CLIENT, null, Status.INACTIVE);
+                UserRole.CLIENT, Status.INACTIVE);
 
         //when
         User persistedUser = userDao.save(userToBeSaved);

@@ -56,7 +56,7 @@ public class RegistrationController {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.userService.activateUserByToken(token);
 
-        URI registration = new URI("http://localhost:4200/api/successful_registration");
+        URI registration = new URI("http://localhost:8090/api/successful_registration");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
 

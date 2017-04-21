@@ -3,6 +3,8 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.*;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 public abstract class CrudDaoImpl<T extends DomainEntity>
         implements CrudDao<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CrudDaoImpl.class);
 
     @Value("${spring.datasource.url}")
     private String connStr;
@@ -50,6 +54,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public T update(T entity) {
+        LOG.debug("Getting query: {}", this.getQuery("update"));
         try (Connection conn = DriverManager.getConnection(connStr);
              PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
             conn.setAutoCommit(this.autoCommit);

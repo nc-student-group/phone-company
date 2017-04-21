@@ -18,6 +18,7 @@ public class DatabaseConfig {
         return new ShaPasswordEncoder();
     }
 
+    //TODO: delete
     @Bean(name = "spring.dataSource")
     public DriverManagerDataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

@@ -32,10 +32,10 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
         try {
             preparedStatement.setString(1, address.getCountry());
             preparedStatement.setString(2, address.getRegion());
-            preparedStatement.setString(3, address.getSettlement());
+//            preparedStatement.setString(3, address.getSettlement());
             preparedStatement.setString(4, address.getStreet());
             preparedStatement.setString(5, address.getHouseNumber());
-            preparedStatement.setString(6, address.getApartment());
+            preparedStatement.setString(6, address.getApartmentNumber());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -48,10 +48,10 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
             address.setId(rs.getLong("id"));
             address.setCountry(rs.getString("country"));
             address.setRegion(rs.getString("region"));
-            address.setSettlement(rs.getString("settlement"));
+//            address.setSettlement(rs.getString("settlement"));
             address.setStreet(rs.getString("street"));
             address.setHouseNumber(rs.getString("house_number"));
-            address.setApartment(rs.getString("apartment"));
+            address.setApartmentNumber(rs.getString("apartment"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -63,10 +63,10 @@ public class AddressDaoImpl extends CrudDaoImpl<Address> implements AddressDao {
         try {
             preparedStatement.setString(1, address.getCountry());
             preparedStatement.setString(2, address.getRegion());
-            preparedStatement.setString(3, address.getSettlement());
+//            preparedStatement.setString(3, address.getSettlement());
             preparedStatement.setString(4, address.getStreet());
             preparedStatement.setString(5, address.getHouseNumber());
-            preparedStatement.setString(6, address.getApartment());
+            preparedStatement.setString(6, address.getApartmentNumber());
             preparedStatement.setLong(7, address.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);

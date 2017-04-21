@@ -1,10 +1,7 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.CustomerCategory;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
-
-import java.util.List;
 
 public class Customer extends User {
 
@@ -12,20 +9,25 @@ public class Customer extends User {
     private String secondName;
     private String lastName;
     private String phone;
-    private List<Customer> representatives;
-    private CustomerCategory customerCategory;
+    private Address address;
+    private Corporate corporate;
+    private Boolean isRepresentative;
 
-    public Customer(String email, String password,
-                    UserRole role, Customer representative,
-                    Status status, String firstName,
-                    String secondName, String lastName,
-                    String phone, List<Customer> representatives) {
-        super(email, password, role, representative, status);
+    public Customer() {
+    }
+
+    public Customer(String email, String password, UserRole role,
+                    Status status, String firstName, String secondName,
+                    String lastName, String phone, Address address,
+                    Corporate corporate, Boolean isRepresentative) {
+        super(email, password, role, status);
         this.firstName = firstName;
         this.secondName = secondName;
         this.lastName = lastName;
         this.phone = phone;
-        this.representatives = representatives;
+        this.address = address;
+        this.corporate = corporate;
+        this.isRepresentative = isRepresentative;
     }
 
     public String getFirstName() {
@@ -60,11 +62,27 @@ public class Customer extends User {
         this.phone = phone;
     }
 
-    public List<Customer> getRepresentatives() {
-        return representatives;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setRepresentatives(List<Customer> representatives) {
-        this.representatives = representatives;
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Corporate getCorporate() {
+        return corporate;
+    }
+
+    public void setCorporate(Corporate corporate) {
+        this.corporate = corporate;
+    }
+
+    public Boolean getRepresentative() {
+        return isRepresentative;
+    }
+
+    public void setRepresentative(Boolean representative) {
+        isRepresentative = representative;
     }
 }

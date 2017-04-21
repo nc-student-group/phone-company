@@ -1,12 +1,16 @@
 'use strict';
 
 angular.module('phone-company')
-    .factory('LoginService', ['$q', '$http', 'MainFactory', function ($q, $http, MainFactory) {
+    .factory('LoginService', ['$q', '$http', function ($q, $http) {
 
-    var GET_TRY_LOGIN_URL = MainFactory.host + "api/login/try";
+    var GET_TRY_LOGIN_URL = "api/login/try";
+    var GET_LOGIN_URL = "/login";
+    var GET_LOGOUT_URL = "/logout";
 
     var factory = {
         tryLogin: tryLogin,
+        login:login,
+        logout:logout
     };
 
     return factory;
@@ -18,14 +22,37 @@ angular.module('phone-company')
                 deferred.resolve(response.data);
             },
             function (errResponse) {
-                toastr.error('Bad credentials', 'Error');
-                if (!(localStorage.getItem('loginToken') === null))
-                    localStorage.removeItem('loginToken');
                 console.error(errResponse.toString());
                 deferred.reject(errResponse);
             });
         return deferred.promise;
     }
+
+        function login(data) {
+            var deferred = $q.defer();
+            $http.post(GET_LOGIN_URL+"?"+data).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function logout() {
+            var deferred = $q.defer();
+            $http.post(GET_LOGOUT_URL).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
 
 
 }]);
