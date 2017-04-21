@@ -50,7 +50,6 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
         try {
             address.setId(rs.getLong("id"));
             address.setRegion(regionDao.getById(rs.getLong("region_id")));
-//            address.setSettlement(rs.getString("settlement"));
             address.setStreet(rs.getString("street"));
             address.setHouseNumber(rs.getLong("house_number"));
             address.setApartmentNumber(rs.getString("apartment_number"));
