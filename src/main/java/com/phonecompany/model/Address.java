@@ -2,12 +2,11 @@ package com.phonecompany.model;
 
 import javax.validation.constraints.NotNull;
 
-public class Address extends DomainEntity{
-
-    @NotNull(message = "Country must not be null")
-    private String country;
+public class Address extends DomainEntity {
     @NotNull(message = "Region must not be null")
     private String region;
+    @NotNull(message = "Locality must not be null")
+    private String locality;
     @NotNull(message = "Street must not be null")
     private String street;
     @NotNull(message = "House number must not be null")
@@ -19,33 +18,14 @@ public class Address extends DomainEntity{
         super();
     }
 
-    public Address(String country, String region,
+    public Address(String region, String locality,
                    String street, String houseNumber,
                    String apartmentNumber) {
-        this.country = country;
         this.region = region;
+        this.locality = locality;
         this.street = street;
         this.houseNumber = houseNumber;
         this.apartmentNumber = apartmentNumber;
-    }
-
-    public Address(Long id, String country,
-                   String region, String street,
-                   String houseNumber, String apartmentNumber) {
-        super(id);
-        this.country = country;
-        this.region = region;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.apartmentNumber = apartmentNumber;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 
     public String getRegion() {
@@ -80,11 +60,18 @@ public class Address extends DomainEntity{
         this.apartmentNumber = apartmentNumber;
     }
 
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
     @Override
     public String toString() {
         return "Address{" +
-                "country='" + country + '\'' +
-                ", region='" + region + '\'' +
+                "region='" + region + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
                 ", apartmentNumber='" + apartmentNumber + '\'' +

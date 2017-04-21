@@ -3,12 +3,15 @@ package com.phonecompany.model;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
 
+import javax.validation.constraints.NotNull;
+
 public class Customer extends User {
 
     private String firstName;
     private String secondName;
     private String lastName;
     private String phone;
+    @NotNull(message = "Address must not be null")
     private Address address;
     private Corporate corporate;
     private Boolean isRepresentative;
