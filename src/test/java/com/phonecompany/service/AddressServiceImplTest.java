@@ -46,8 +46,6 @@ public class AddressServiceImplTest {
         address = addressService.getById(id);
 
         assertThat(id, equalTo(address.getId()));
-        assertThat(country, equalTo(address.getCountry()));
-        assertThat(region, equalTo(address.getRegion()));
     }
 
     @Test
@@ -103,21 +101,14 @@ public class AddressServiceImplTest {
         addressService.getAll();
 
         assertThat(id1, equalTo(address1.getId()));
-        assertThat(country1, equalTo(address1.getCountry()));
-        assertThat(region1, equalTo(address1.getRegion()));
 
         assertThat(id2, equalTo(address2.getId()));
-        assertThat(country2, equalTo(address2.getCountry()));
-        assertThat(region2, equalTo(address2.getRegion()));
-
     }
 
 
     private Address createAddress(Long id, String country, String region) {
         Address address = new Address();
         address.setId(id);
-        address.setCountry(country);
-        address.setRegion(region);
         return address;
     }
 

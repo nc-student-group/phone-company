@@ -11,6 +11,11 @@
                 templateUrl: 'view/main.html',
                 controller: 'AuthorizeController'
             });
+        $routeProvider.when('/index/:success',
+            {
+                templateUrl: 'view/main.html',
+                controller: 'AuthorizeController'
+            });
         $routeProvider.when('/admin',
             {
                 templateUrl: 'view/administration.html',
@@ -30,6 +35,11 @@
             {
                 templateUrl: 'view/pmgPage.html',
                 // controller: ''
+            });
+        $routeProvider.when('/user/profile/:success',
+            {
+                templateUrl: 'view/userProfile.html',
+                controller: 'UserProfileController'
             });
         $routeProvider.when('/403',
             {
@@ -51,8 +61,11 @@
                         $location.path('/403');
                         break;
                     case 401:
+                    {
+                        console.log('Unauthorized');
                         $location.path('/');
                         break;
+                    }
                     case 500:
                         $window.location = './500.html';
                         break;

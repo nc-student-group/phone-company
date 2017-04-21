@@ -6,9 +6,9 @@ public class Corporate extends DomainEntity {
 
     @NotNull(message = "Personal account number must not be null")
     private String personalAccountNumber;
-    @NotNull(message = "Corporate name number must not be null")
+    @NotNull(message = "Corporate name name must not be null")
     private String corporateName;
-    @NotNull(message = "Corporate name number must not be null")
+    @NotNull(message = "Number of corporate subscribers must not be null")
     private Integer numberOfCorporateSubscribers;
 
     public Corporate() {

@@ -77,7 +77,6 @@ public class UserServiceImpl extends CrudServiceImpl<User>
         User persistedUser = registrationCompleteEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
                 this.confirmMessageCreator.constructMessage(persistedUser);
-        LOG.info("Confirmation message: {}", confirmationMessage.getText());
         LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
         emailService.sendMail(confirmationMessage);
     }
