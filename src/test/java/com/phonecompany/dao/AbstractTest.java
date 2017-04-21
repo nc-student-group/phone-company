@@ -1,6 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.Application;
+import com.phonecompany.util.DbManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -22,15 +23,13 @@ import java.sql.SQLException;
 @SpringApplicationConfiguration(classes = Application.class)
 public abstract class AbstractTest {
 
-    @Value("${spring.datasource.url}")
-    private String connStr;
-
+    private DbManager dbManager = DbManager.getInstance();
     private final String BEGIN_TRANSACTION = "BEGIN;";
     private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
 
     @Before
     public void setUp(){
-        try(Connection conn = DriverManager.getConnection(connStr);
+        try(Connection conn = dbManager.getConnection();
             PreparedStatement ps = conn.prepareStatement(BEGIN_TRANSACTION)) {
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -40,7 +39,7 @@ public abstract class AbstractTest {
 
     @After
     public final void tearDown() {
-        try(Connection conn = DriverManager.getConnection(connStr);
+        try(Connection conn = dbManager.getConnection();
             PreparedStatement ps = conn.prepareStatement(ROLLBACK_TRANSACTION)) {
             ps.executeUpdate();
         } catch (SQLException e) {

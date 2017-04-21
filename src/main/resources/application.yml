@@ -1,12 +1,6 @@
 server:
   port: 8090
 
-spring:
-  profiles:
-    active: prod
-  thymeleaf:
-    cache: false
-
 logging:
   level:
     com:
