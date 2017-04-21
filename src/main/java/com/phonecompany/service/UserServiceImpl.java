@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.exception.EmailAlreadyPresentException;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.ResetPasswordEvent;
 import com.phonecompany.model.User;
@@ -104,6 +105,10 @@ public class UserServiceImpl extends CrudServiceImpl<User>
 
     public User save(User user) {
         Assert.notNull(user, "User should not be null");
+        User userByEmail = this.findByEmail(user.getEmail());
+        if(userByEmail != null) {
+            throw new EmailAlreadyPresentException(user.getEmail());
+        }
         user.setStatus(Status.INACTIVE); //TODO: whether all the users are stored as inactive
         user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         return super.save(user);
