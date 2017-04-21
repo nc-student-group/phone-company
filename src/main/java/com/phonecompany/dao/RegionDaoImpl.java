@@ -1,6 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.RegionDao;
+import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Region;
 import com.phonecompany.util.QueryLoader;
@@ -39,14 +40,21 @@ public class RegionDaoImpl extends CrudDaoImpl<Region> implements RegionDao {
     public void populateUpdateStatement(PreparedStatement preparedStatement, Region entity) {
         try {
             preparedStatement.setString(1, entity.getNameRegion());
-            preparedStatement.setLong(1, entity.getId());
+            preparedStatement.setLong(2, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
     }
 
     @Override
-    public Region init(ResultSet resultSet) {
-        return null;
+    public Region init(ResultSet rs) {
+        Region region = new Region();
+        try {
+            region.setId(rs.getLong("id"));
+            region.setNameRegion(rs.getString("name_region"));
+        } catch (SQLException e) {
+            throw new EntityInitializationException(e);
+        }
+        return region;
     }
 }

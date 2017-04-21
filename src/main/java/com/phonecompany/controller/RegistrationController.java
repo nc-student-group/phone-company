@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,11 +24,17 @@ import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@PreAuthorize("permitAll()")
 @RestController
 public class RegistrationController {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegistrationController.class);
+
+    public static void main(String[] args) {
+        ShaPasswordEncoder encoder = new ShaPasswordEncoder();
+        String root = encoder.encodePassword("root", null);
+
+        System.out.println(root);
+    }
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
