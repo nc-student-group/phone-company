@@ -7,8 +7,8 @@
     angular.module('phone-company')
         .factory('UserService', UserService);
 
-    UserService.$inject = ['$log', '$resource'];
-    function UserService($log, $resource) {
+    UserService.$inject = ['$http', '$q', '$log', '$resource'];
+    function UserService($http, $q, $log, $resource) {
         var UserService = {};
 
         // Basic CRUD operations
@@ -17,6 +17,10 @@
                 {
                     'update': {method: 'PUT'}
                 });
+        };
+
+        UserService.getUsers = function () {
+            return UserService.perform().query();
         };
 
         UserService.saveUser = function (user) {

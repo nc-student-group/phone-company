@@ -1,11 +1,18 @@
 package com.phonecompany.model;
 
+import javax.validation.constraints.NotNull;
+
 public class Address extends DomainEntity{
 
+    @NotNull(message = "Country must not be null")
     private String country;
+    @NotNull(message = "Region must not be null")
     private String region;
+    @NotNull(message = "Street must not be null")
     private String street;
+    @NotNull(message = "House number must not be null")
     private String houseNumber;
+    @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
 
     public Address() {

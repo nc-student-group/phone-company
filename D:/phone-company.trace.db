@@ -1,0 +1,3 @@
+2017-04-21 17:54:37 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Table "DBUSER" not found; SQL statement:
+INSERT INTO dbuser(email, password, role_id, status) VALUES (?, ?, ?, ?) RETURNING id; [42102-193]

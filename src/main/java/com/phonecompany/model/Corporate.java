@@ -1,9 +1,14 @@
 package com.phonecompany.model;
 
+import javax.validation.constraints.NotNull;
+
 public class Corporate extends DomainEntity {
 
+    @NotNull(message = "Personal account number must not be null")
     private String personalAccountNumber;
+    @NotNull(message = "Corporate name number must not be null")
     private String corporateName;
+    @NotNull(message = "Corporate name number must not be null")
     private Integer numberOfCorporateSubscribers;
 
     public Corporate() {
