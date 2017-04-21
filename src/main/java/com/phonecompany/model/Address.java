@@ -5,7 +5,9 @@ import javax.validation.constraints.NotNull;
 public class Address extends DomainEntity {
 
     @NotNull(message = "Region must not be null")
-    private Long regionId;
+    private Region region;
+    @NotNull(message = "Locality must not be null")
+    private String locality;
     @NotNull(message = "Street must not be null")
     private String street;
     @NotNull(message = "House number must not be null")
@@ -17,21 +19,28 @@ public class Address extends DomainEntity {
         super();
     }
 
-    public Address(Long regionId,
-                   String street, Long houseNumber,
-                   String apartmentNumber) {
-        this.regionId = regionId;
+    public Address(Region region, String locality, String street, Long houseNumber, String apartmentNumber) {
+        this.region = region;
+        this.locality = locality;
         this.street = street;
         this.houseNumber = houseNumber;
         this.apartmentNumber = apartmentNumber;
     }
 
-    public Long getRegionId() {
-        return regionId;
+    public String getLocality() {
+        return locality;
     }
 
-    public void setRegionId(Long regionId) {
-        this.regionId = regionId;
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 
     public String getStreet() {

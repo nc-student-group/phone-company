@@ -3,7 +3,6 @@ package com.phonecompany.model;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
 import org.hibernate.validator.constraints.Email;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 import javax.validation.constraints.NotNull;
 
