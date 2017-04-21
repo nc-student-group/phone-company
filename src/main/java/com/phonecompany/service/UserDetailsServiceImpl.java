@@ -18,7 +18,7 @@ import java.util.Set;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private UserService userService;
 
@@ -29,15 +29,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        logger.info("Try login: "+login);
+        LOG.debug("Try login: " + login);
         com.phonecompany.model.User user = userService.findByUsername(login);
+        LOG.debug("User found by email: {}", user);
         if (user == null) {
             throw new UsernameNotFoundException(login + " not found");
         }
 
-        logger.info(user.getEmail());
         Set<GrantedAuthority> roles = new HashSet<>();
-//        roles.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
+
+        LOG.debug("User role: {}", user.getRole().name());
+
+        roles.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         return new User(user.getEmail(), user.getPassword(), roles);
     }

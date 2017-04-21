@@ -42,19 +42,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/js/**").permitAll()
                 .antMatchers("/view/**").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/api/users").permitAll()
-                .antMatchers("/api/roles").permitAll()
+                .antMatchers("/api/user/reset").permitAll()
+                .antMatchers("/api/confirmRegistration").permitAll()
+                .antMatchers("/api/roles").hasRole("ADMIN")
                 .antMatchers("/csr").hasRole("CSR")
                 .anyRequest().authenticated();
 
         http.csrf().disable();
-        http.formLogin().loginPage("/login").permitAll()
-        .and().logout().logoutSuccessUrl("/#/index").permitAll();
+        http
+                .formLogin().loginPage("/login").permitAll()
+                .and()
+                .logout().logoutSuccessUrl("/#/index").permitAll();
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
         http.formLogin().successHandler(authenticationSuccessHandler);
         http.formLogin().failureHandler(authenticationFailureHandler);

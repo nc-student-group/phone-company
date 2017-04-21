@@ -7,8 +7,8 @@
     angular.module('phone-company')
         .factory('UserService', UserService);
 
-    UserService.$inject = ['$log', '$resource'];
-    function UserService($log, $resource) {
+    UserService.$inject = ['$http', '$q', '$log', '$resource'];
+    function UserService($http, $q, $log, $resource) {
         var UserService = {};
 
         // Basic CRUD operations
@@ -19,8 +19,39 @@
                 });
         };
 
+        UserService.getUsers = function () {
+            return UserService.perform().query();
+        };
+
         UserService.saveUser = function (user) {
             UserService.perform().save(user);
+        };
+
+        UserService.getAllRoles = function () {
+            var deferred = $q.defer();
+            $http.get('api/roles').then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        UserService.resetPassword = function (email) {
+            console.log('Email: ' + JSON.stringify(email));
+            var deferred = $q.defer();
+            $http.post("api/user/reset", email).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
         };
 
         return UserService;

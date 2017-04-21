@@ -10,6 +10,7 @@
         console.log('This is AdministrationController');
 
         $scope.users = UserService.getUsers();
+
         UserService.getAllRoles().then(function (data) {
             $scope.roles = data;
             $scope.user = { // this.user - property of this controller
@@ -18,7 +19,6 @@
                 role: $scope.roles[0]
             };
         });
-
         $scope.createUser = createUser;
         /**
          * Creates user.

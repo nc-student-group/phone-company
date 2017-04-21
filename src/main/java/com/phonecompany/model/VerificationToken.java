@@ -1,11 +1,15 @@
 package com.phonecompany.model;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class VerificationToken extends DomainEntity {
 
+    @NotNull(message = "User must not be null")
     private User user;
+    @NotNull(message = "Token must not be null")
     private String token;
+    @NotNull(message = "Expire date must not be null")
     private LocalDate expireDate;
 
     public VerificationToken() {
@@ -52,5 +56,14 @@ public class VerificationToken extends DomainEntity {
 
     public void setExpireDate(LocalDate expireDate) {
         this.expireDate = expireDate;
+    }
+
+    @Override
+    public String toString() {
+        return "VerificationToken{" +
+                "user=" + user +
+                ", token='" + token + '\'' +
+                ", expireDate=" + expireDate +
+                "} " + super.toString();
     }
 }

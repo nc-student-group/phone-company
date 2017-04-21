@@ -18,9 +18,6 @@ import java.sql.*;
 public class UserDaoImpl extends CrudDaoImpl<User>
         implements UserDao {
 
-    @Value("${spring.datasource.url}")
-    private String connStr;
-
     private QueryLoader queryLoader;
 
     @Autowired
@@ -30,7 +27,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
 
     @Override
     public User findByEmail(String email) {
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
@@ -46,7 +43,7 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Override
     public User getUserByVerificationToken(String token) {
         String userByVerificationTokenQuery = this.getUserByVerificationTokenQuery();
-        try (Connection conn = DriverManager.getConnection(connStr);
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(userByVerificationTokenQuery)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();

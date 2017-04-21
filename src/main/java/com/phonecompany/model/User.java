@@ -2,12 +2,20 @@ package com.phonecompany.model;
 
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
+import org.hibernate.validator.constraints.Email;
+
+import javax.validation.constraints.NotNull;
 
 public class User extends DomainEntity {
 
+    @NotNull(message = "User have to have email")
+    @Email
     private String email;
+    @NotNull(message = "User has to have a password")
     private String password;
+    @NotNull(message = "User has to have a role")
     private UserRole role;
+    @NotNull(message = "User has to have a status")
     private Status status;
 
     public User() {

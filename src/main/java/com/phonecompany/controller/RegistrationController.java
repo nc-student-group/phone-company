@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -20,6 +23,7 @@ import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@PreAuthorize("permitAll()")
 @RestController
 public class RegistrationController {
 
@@ -56,10 +60,21 @@ public class RegistrationController {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.userService.activateUserByToken(token);
 
-        URI registration = new URI("http://localhost:8090/api/successful_registration");
+        URI registration = new URI("http://localhost:8090/#/user/profile/success");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
 
         return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+    }
+
+    @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
+    public ResponseEntity<?> tryLogin() {
+        LOG.debug("About to fetch currently logged in role");
+        org.springframework.security.core.userdetails.User securityUser = null;
+        securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        User user = userService.findByEmail(securityUser.getUsername());
+        return new ResponseEntity<>(user.getRole(), HttpStatus.OK);
     }
 }

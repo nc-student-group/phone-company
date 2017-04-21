@@ -1,51 +1,45 @@
 package com.phonecompany.model;
 
-public class Address extends DomainEntity{
+import javax.validation.constraints.NotNull;
 
-    private String country;
-    private String region;
+public class Address extends DomainEntity {
+
+    @NotNull(message = "Region must not be null")
+    private Region region;
+    @NotNull(message = "Locality must not be null")
+    private String locality;
+    @NotNull(message = "Street must not be null")
     private String street;
-    private String houseNumber;
+    @NotNull(message = "House number must not be null")
+    private Long houseNumber;
+    @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
 
     public Address() {
         super();
     }
 
-    public Address(String country, String region,
-                   String street, String houseNumber,
-                   String apartmentNumber) {
-        this.country = country;
+    public Address(Region region, String locality, String street, Long houseNumber, String apartmentNumber) {
         this.region = region;
+        this.locality = locality;
         this.street = street;
         this.houseNumber = houseNumber;
         this.apartmentNumber = apartmentNumber;
     }
 
-    public Address(Long id, String country,
-                   String region, String street,
-                   String houseNumber, String apartmentNumber) {
-        super(id);
-        this.country = country;
-        this.region = region;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.apartmentNumber = apartmentNumber;
+    public String getLocality() {
+        return locality;
     }
 
-    public String getCountry() {
-        return country;
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getRegion() {
+    public Region getRegion() {
         return region;
     }
 
-    public void setRegion(String region) {
+    public void setRegion(Region region) {
         this.region = region;
     }
 
@@ -57,11 +51,11 @@ public class Address extends DomainEntity{
         this.street = street;
     }
 
-    public String getHouseNumber() {
+    public Long getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public void setHouseNumber(Long houseNumber) {
         this.houseNumber = houseNumber;
     }
 
@@ -76,8 +70,6 @@ public class Address extends DomainEntity{
     @Override
     public String toString() {
         return "Address{" +
-                "country='" + country + '\'' +
-                ", region='" + region + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
                 ", apartmentNumber='" + apartmentNumber + '\'' +

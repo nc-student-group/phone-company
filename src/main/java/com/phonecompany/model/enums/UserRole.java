@@ -32,4 +32,8 @@ public enum UserRole {
         static final long PMG_DATABASE_ID = 3;
         static final long CLIENT_DATABASE_ID = 4;
     }
+
+    public String toString() {
+        return this.name();
+    }
 }
