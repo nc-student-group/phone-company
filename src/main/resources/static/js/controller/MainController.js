@@ -7,6 +7,8 @@ angular.module('phone-company').controller('MainController', [
     function ($scope, $rootScope, $location, LoginService) {
         console.log('This is MainController');
 
+        $scope.preloader = {send: false};
+
         $scope.logout = function () {
             LoginService.logout().then(function () {
                 $location.path("/");

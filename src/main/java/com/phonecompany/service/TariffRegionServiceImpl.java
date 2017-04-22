@@ -23,4 +23,9 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion> imple
     public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
         return this.tariffRegionDao.getAllTariffsByRegionId(regionId, page, size);
     }
+
+    @Override
+    public Integer getCountTariffsByRegionId(Long regionId){
+        return this.tariffRegionDao.getCountTariffsByRegionId(regionId);
+    }
 }

@@ -90,7 +90,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(method = POST, value = "/api/user/save/by/admin")
+    @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
         LOG.info(user.toString());
 

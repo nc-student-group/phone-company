@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TariffRegionDao extends CrudDao<TariffRegion> {
     public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size);
+    public Integer getCountTariffsByRegionId(Long regionId);
 }
