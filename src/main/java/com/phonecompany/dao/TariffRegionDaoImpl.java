@@ -78,18 +78,21 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     }
 
     @Override
-    public List<TariffRegion> getAllTariffsByRegionId(Long regionId){
+    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
         List<TariffRegion> tariffRegions = new ArrayList<>();
+        String query = this.getQuery("getAll");
+        if(regionId != 0){
+            query += " WHERE region_id = ? ";
+        }
+        query += "LIMIT ? OFFSET ?";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByRegionId"))) {
+             PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setLong(1, regionId);
+            ps.setInt(2, size);
+            ps.setInt(3, page*size);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                TariffRegion tariffRegion = new TariffRegion();
-                tariffRegion.setId(rs.getLong("id"));
-                tariffRegion.setTariff(tariffDao.getById(rs.getLong("tariff_id")));
-                tariffRegion.setPrice(rs.getDouble("price"));
-                tariffRegions.add(tariffRegion);
+                tariffRegions.add(init(rs));
             }
         } catch (SQLException e) {
             throw new EntityNotFoundException(regionId, e);

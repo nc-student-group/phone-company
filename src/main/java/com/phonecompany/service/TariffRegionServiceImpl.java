@@ -20,7 +20,7 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion> imple
     }
 
     @Override
-    public List<TariffRegion> getAllTariffsByRegionId(Long regionId){
-        return this.tariffRegionDao.getAllTariffsByRegionId(regionId);
+    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
+        return this.tariffRegionDao.getAllTariffsByRegionId(regionId, page, size);
     }
 }

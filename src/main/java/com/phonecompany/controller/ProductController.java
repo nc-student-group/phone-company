@@ -35,10 +35,12 @@ public class ProductController {
         return regionService.getAll();
     }
 
-    @RequestMapping(value = "/api/tariffs/get/by/region/{id}", method = RequestMethod.GET)
-    public List<TariffRegion> getTariffsByRegionId(@PathVariable("id") Long regionId) {
+    @RequestMapping(value = "/api/tariffs/get/by/region/{id}/{page}/{size}", method = RequestMethod.GET)
+    public List<TariffRegion> getTariffsByRegionId(@PathVariable("id") Long regionId,
+                                                   @PathVariable("page") int page,
+                                                   @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffRegionService.getAllTariffsByRegionId(regionId);
+        return tariffRegionService.getAllTariffsByRegionId(regionId, page, size);
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)

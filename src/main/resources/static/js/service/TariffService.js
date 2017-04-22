@@ -27,9 +27,9 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
         return deferred.promise;
     }
 
-    function getTariffsByRegionId(regionId) {
+    function getTariffsByRegionId(regionId, page, size) {
         var deferred = $q.defer();
-        $http.get(GET_TARIFFS_BY_REGION_ID_URL+regionId).then(
+        $http.get(GET_TARIFFS_BY_REGION_ID_URL+regionId+"/"+page+"/"+size).then(
             function (response) {
                 deferred.resolve(response.data);
             },
