@@ -33,6 +33,7 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setText(mailMessage.getText(), true); // true = isHtml
             mimeMessageHelper.setTo(mailMessage.getTo());
             mimeMessageHelper.setSubject(mailMessage.getSubject());
+            mimeMessageHelper.setFrom("nc.phone.company.project@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new MailSendException(e);

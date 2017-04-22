@@ -6,6 +6,8 @@ import com.phonecompany.service.interfaces.TariffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements TariffService {
 
@@ -16,4 +18,5 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         super(tariffDao);
         this.tariffDao = tariffDao;
     }
+
 }

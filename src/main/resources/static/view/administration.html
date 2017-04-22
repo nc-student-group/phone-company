@@ -42,26 +42,23 @@
                 </div>
 
                 <div class="content">
-                    <form ng-submit="createUser()" autocomplete="off"
-                          novalidate>
+
+                    <form ng-submit="createUser()" >
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>First name</label>
-                                        <input ng-model="user.userName">
-                                    </md-input-container>
-                                </div>
-                                <div class="form-group">
                                     <label>Email:</label>
                                     <input ng-model="user.email" type="text " class="form-control" placeholder="email"/>
-
+                                </div>
+                                <div class="form-group">
+                                    <label>Password:</label>
+                                    <input ng-model="user.password" type="text " class="form-control" placeholder="password"/>
                                 </div>
                                 User role:
-                                <select ng-model="user.role.id" class="custom-select">
-                                    <option ng-repeat="r in roles" value="{{r.id}}">{{r.name}}</option>
-                                    <!--<option value="CSR">CSR</option>-->
-                                    <!--<option value="PMG">PMG</option>-->
+                                <select ng-model="user.role" class="custom-select">
+                                    <option value="CSR" selected>CSR</option>
+                                    <option value="PMG">PMG</option>
+                                    <option value="CLIENT">CLIENT</option>
                                 </select>
                             </div>
                         </div>

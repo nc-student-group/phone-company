@@ -1,0 +1,232 @@
+<div class="wrapper">
+    <div class="sidebar" data-color="purple">
+
+        <div class="sidebar-wrapper" data-color="azure">
+            <div class="logo">
+                <a href="/#/index" class="simple-text">
+                    Phone Company
+                </a>
+            </div>
+
+            <ul class="nav">
+                <li>
+                    <a href="/#/csr">
+                        <i class="pe-7s-user"></i>
+                        <p>User Profile</p>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/#/csr/tariffs">
+                        <i class="pe-7s-note2"></i>
+                        <p>Tariffs</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/csr/services">
+                        <i class="pe-7s-cart"></i>
+                        <p>Services</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <h3 class="navbar-brand">CSR page</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#">
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Tariffs</h4>
+                                <p class="category">All tariffs</p>
+                            </div>
+                            <hr/>
+                            <div class="content table-responsive">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="dataTables_length" id="tariffTable_length">
+                                            <label>Show entries:</label>
+                                            <select name="tariffTable_length" style="width: 100px;"
+                                                    aria-controls="tariffTable"
+                                                    class="form-control input-sm" ng-model="size" ng-change="updateData()">
+                                                <option value="1">1</option>
+                                                <option value="10">10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select></div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="dataTables_length">
+                                            <label>Region entries:</label>
+                                            <select ng-model="currentRegion" class="form-control input-sm">
+                                                <option value="0">All Regions</option>
+                                                <option ng-repeat="r in regions" value="{{r.id}}">{{r.nameRegion}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div id="tariffTable_filter" class="dataTables_filter"><label>Search:<input
+                                                type="search"
+                                                class="form-control input-sm"
+                                                placeholder=""
+                                                aria-controls="tariffTable"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="tariffTable" class="table table-striped table-bordered table-hover"
+                                       cellspacing="0" width="100%">
+                                    <thead>
+                                    <th>Name</th>
+                                    <th>Region</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Internet</th>
+                                    <th>Calls in Network</th>
+                                    <th>Calls on other numbers</th>
+                                    <th>SMS</th>
+                                    <th>MMS</th>
+                                    <th>Roaming</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="t in tariffs">
+                                        <td>{{t.tariff.tariffName}}</td>
+                                        <td>{{r.region.nameRegion}}</td>
+                                        <td>{{t.price}}</td>
+                                        <td>{{t.tariff.productStatus}}</td>
+                                        <td>{{t.tariff.internet}}</td>
+                                        <td>{{t.tariff.callsInNetwork}}</td>
+                                        <td>{{t.tariff.callsOnOtherNumbers}}</td>
+                                        <td>{{t.tariff.sms}}</td>
+                                        <td>{{t.tariff.mms}}</td>
+                                        <td>{{t.tariff.roaming}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <div class="dataTables_paginate paging_simple_numbers"
+                                             id="tariffTable_paginate">
+                                            <ul class="pagination">
+                                                <li class="paginate_button previous disabled" id="tariffTable_previous">
+                                                    <a aria-controls="tariffTable" data-dt-idx="0"
+                                                       tabindex="0">Previous</a></li>
+                                                <li class="paginate_button active"><a
+                                                        aria-controls="tariffTable"
+                                                        data-dt-idx="1" tabindex="0">1</a>
+                                                </li>
+                                                <li class="paginate_button next disabled" id="tariffTable_next"><a
+                                                        aria-controls="tariffTable" data-dt-idx="2"
+                                                        tabindex="0" ng-click="nextPage()">Next</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Add tariff</h4>
+                            </div>
+                            <div class="content">
+                                <form>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Tariff name</label>
+                                            <input type="text" class="form-control" placeholder="Tariff name"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Internet</label>
+                                            <input type="text" class="form-control" placeholder="Internet"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Calls in network</label>
+                                            <input type="text" class="form-control" placeholder="Calls in network"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>SMS</label>
+                                            <input type="text" class="form-control" placeholder="SMS"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>MMS</label>
+                                            <input type="text" class="form-control" placeholder="MMS"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Roaming</label>
+                                            <input type="text" class="form-control" placeholder="Roaming"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Region</label>
+                                            <input type="text" class="form-control" placeholder="Region"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Price</label>
+                                            <input type="number" class="form-control" min="0" placeholder="Number"/>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-info btn-fill pull-left">Add tariff</button>
+
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+
+    </div>
+</div>
