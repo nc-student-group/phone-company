@@ -11,13 +11,18 @@
 
         $scope.users = UserService.getUsers();
 
+        $scope.user ={
+            email: '',
+            password: '',
+            role:''
+        }
         $scope.createUser = createUser;
         /**
          * Creates user.
          */
         function createUser() {
             $log.debug('User: ' + JSON.stringify($scope.user));
-            UserService.saveUserByAdmin($scope.user).$promise
+            UserService.saveUserByAdmin($scope.user)
                 .then(function (createdUser) {
                     $log.debug("Created user: ", createdUser);
                     $scope.users.push(createdUser);

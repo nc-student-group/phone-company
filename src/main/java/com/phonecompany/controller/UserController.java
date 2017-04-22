@@ -1,6 +1,10 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.service.email.EmailServiceImpl;
+import com.phonecompany.service.email.PasswordAssignmentEmail;
+import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +13,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,5 +87,16 @@ public class UserController {
                         .getContext().getAuthentication().getPrincipal();
         User user = userService.findByEmail(securityUser.getUsername());
         return new ResponseEntity<>(user.getRole(), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(method = POST, value = "/api/user/save/by/admin")
+    public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
+        LOG.info(user.toString());
+
+        User persistedUser = this.userService.save(user);
+        eventPublisher.publishEvent(new OnUserCreationEvent(persistedUser));
+        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
+        return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
     }
 }
