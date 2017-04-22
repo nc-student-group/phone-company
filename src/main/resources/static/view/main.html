@@ -13,11 +13,13 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input ng-class="{invalid-registration: registerForm.$invalid}"
+                                    <input ng-class="{'error-registration-form': registerForm.email.$error.required
+                                    && registerForm.email.$dirty}"
                                            id="email" name="email" ng-model="user.email"
                                            ng-pattern="emailPattern"
                                            type="email" class="form-control"
-                                           placeholder="Email" required>
+                                           placeholder="Email" required
+                                           autocomplete="off">
                                     <span class="error"
                                           ng-show="registerForm.email.$dirty &&
                 registerForm.email.$error.required">Email is required.</span>
@@ -29,12 +31,19 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <input ng-model="user.password" ng-minlength="8" ng-pattern="passwordPattern"
+                                    <input ng-class="{'error-registration-form': registerForm.password.$error.required
+                                    && registerForm.password.$dirty}"
+                                           ng-model="user.password" ng-minlength="8" ng-pattern="passwordPattern"
                                            type="password" name="password" id="password"
-                                           class="form-control" placeholder="Password" required>
+                                           class="form-control" placeholder="Password"
+                                           required autocomplete="off">
                                     <span class="error" ng-show="registerForm.password.$error.minlength
-                                    || registerForm.password.$error.required">
+                                    && registerForm.password.$dirty">
                                         Password should be 8 characters long.
+                                    </span>
+                                    <span class="error" ng-show="registerForm.password.$error.required
+                                    && registerForm.password.$dirty">
+                                        Password is required
                                     </span>
                                     <span class="error" ng-show="registerForm.password.$error.pattern">
                                         Password should contain a special character.
@@ -44,11 +53,18 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Phone number</label>
-                                    <input ng-model="user.phone" ng-pattern="phonePattern"
+                                    <input ng-class="{'error-registration-form': registerForm.phone.$error.required
+                                    && registerForm.phone.$dirty}"
+                                           ng-model="user.phone" ng-pattern="phonePattern"
                                            type="text" name="phone" id="phone"
-                                           class="form-control" placeholder="Phone number" required>
+                                           class="form-control"
+                                           placeholder="Phone number" required>
                                     <span class="error" ng-show="registerForm.phone.$error.pattern">
                                         Example: +380990076563
+                                    </span>
+                                    <span class="error" ng-show="registerForm.phone.$error.required
+                                    && registerForm.phone.$dirty">
+                                        Phone is required
                                     </span>
                                 </div>
                             </div>
