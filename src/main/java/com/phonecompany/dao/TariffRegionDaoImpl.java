@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.RegionDao;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
@@ -13,9 +14,12 @@ import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements TariffRegionDao {
@@ -71,5 +75,28 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
             throw new EntityInitializationException(e);
         }
         return tariffRegion;
+    }
+
+    @Override
+    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
+        List<TariffRegion> tariffRegions = new ArrayList<>();
+        String query = this.getQuery("getAll");
+        if(regionId != 0){
+            query += " WHERE region_id = ? ";
+        }
+        query += "LIMIT ? OFFSET ?";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, regionId);
+            ps.setInt(2, size);
+            ps.setInt(3, page*size);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                tariffRegions.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+        return tariffRegions;
     }
 }

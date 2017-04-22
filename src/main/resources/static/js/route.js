@@ -46,6 +46,16 @@
                 templateUrl: 'view/userProfile.html',
                 controller: 'UserProfileController'
             });
+        $routeProvider.when('/csr/tariffs',
+            {
+                templateUrl: 'view/csr/tariffs.html',
+                controller: 'TariffsController'
+            });
+        $routeProvider.when('/csr/services',
+            {
+                templateUrl: 'view/csr/services.html',
+                // controller: 'TariffsController'
+            });
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
