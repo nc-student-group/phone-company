@@ -4,7 +4,7 @@ import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
-@Component("resetPassMessageCreator")
+@Component("passwordAssignmentMessageCreator")
 public class PasswordAssignmentEmail extends AbstractEmailCreator
         implements MailMessageCreator {
 
