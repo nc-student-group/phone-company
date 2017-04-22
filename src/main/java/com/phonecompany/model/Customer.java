@@ -93,4 +93,17 @@ public class Customer extends User {
     public void setRepresentative(Boolean representative) {
         isRepresentative = representative;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address=" + address +
+                ", corporate=" + corporate +
+                ", isRepresentative=" + isRepresentative +
+                "} " + super.toString();
+    }
 }

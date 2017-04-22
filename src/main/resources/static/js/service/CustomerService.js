@@ -5,25 +5,25 @@
     'use strict';
 
     angular.module('phone-company')
-        .factory('UserService', UserService);
+        .factory('CustomerService', CustomerService);
 
-    UserService.$inject = ['$http', '$q', '$log', '$resource'];
-    function UserService($http, $q, $log, $resource) {
-        var UserService = {};
+    CustomerService.$inject = ['$http', '$q', '$log', '$resource'];
+    function CustomerService($http, $q, $log, $resource) {
+        var CustomerService = {};
 
         // Basic CRUD operations
-        UserService.perform = function () {
-            return $resource('api/users/:id', null,
+        CustomerService.perform = function () {
+            return $resource('api/customers/:id', null,
                 {
                     'update': {method: 'PUT'}
                 });
         };
 
-        UserService.getUsers = function () {
-            return UserService.perform().query();
+        CustomerService.saveCustomer = function (user) {
+            CustomerService.perform().save(user);
         };
 
-        UserService.resetPassword = function (email) {
+        CustomerService.resetPassword = function (email) {
             console.log('Email: ' + JSON.stringify(email));
             var deferred = $q.defer();
             $http.post("api/user/reset", email).then(

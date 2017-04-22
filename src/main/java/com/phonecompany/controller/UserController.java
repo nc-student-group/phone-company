@@ -1,6 +1,5 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -72,5 +72,14 @@ public class UserController {
         return user;
     }
 
-
+    @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
+    public ResponseEntity<?> tryLogin() {
+        LOG.debug("About to fetch currently logged in role");
+        org.springframework.security.core.userdetails.User securityUser = null;
+        securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder
+                        .getContext().getAuthentication().getPrincipal();
+        User user = userService.findByEmail(securityUser.getUsername());
+        return new ResponseEntity<>(user.getRole(), HttpStatus.OK);
+    }
 }

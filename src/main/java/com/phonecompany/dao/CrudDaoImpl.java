@@ -104,7 +104,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public List<T> getAll() {
-
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
             ResultSet rs = ps.executeQuery();

@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         LOG.debug("Try login: " + login);
-        com.phonecompany.model.User user = userService.findByUsername(login);
+        com.phonecompany.model.User user = userService.findByEmail(login);
         LOG.debug("User found by email: {}", user);
         if (user == null) {
             throw new UsernameNotFoundException(login + " not found");

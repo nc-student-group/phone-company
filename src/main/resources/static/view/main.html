@@ -1,79 +1,101 @@
-<div class="wrapper">
-    <div class="form">
-        <div class="transition-container">
-            <ul class="options">
-                <li ng-click="selected = 'signIn'"
-                    ng-class="{'active': selected === 'signIn'}">Sign in
-                </li>
-                <li ng-click="selected = 'register'"
-                    ng-class="{'active': selected === 'register'}">Register
-                </li>
-                <li ng-click="selected = 'restore'"
-                    ng-class="{'active': selected === 'restore'}">Restore
-                </li>
-            </ul>
+<div class="container-fluid registration-wrapper">
+    <div class="row registration-form">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="header">
+                    <h4 class="title">Register</h4>
+                </div>
+                <div class="content">
+                    <form name="registerForm" id="registerForm"
+                          autocomplete="off" novalidate
+                          ng-submit="registerUser()">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input ng-model="user.email" type="text" class="form-control"
+                                           placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input ng-model="user.password" type="password"
+                                           class="form-control" placeholder="Password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>First name</label>
+                                    <input ng-model="user.firstName" type="text" class="form-control"
+                                           placeholder="First name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Second name</label>
+                                    <input ng-model="user.secondName" type="text" class="form-control" placeholder="Second name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Last name</label>
+                                    <input ng-model="user.lastName" type="text" class="form-control"
+                                           placeholder="Last name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Region</label>
+                                    <input ng-model="user.region" type="text"
+                                           class="form-control" placeholder="Region">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Locality</label>
+                                    <input ng-model="user.locality" type="text"
+                                           class="form-control" placeholder="Locality">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Street</label>
+                                    <input ng-model="user.street" type="text"
+                                           class="form-control" placeholder="Street">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>House number</label>
+                                    <input ng-model="user.houseNumber" type="number" class="form-control"
+                                           placeholder="House number">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="row"></div>
+                                <label>Apartment number</label>
+                                <div class="form-group">
+                                    <input ng-model="user.apartmentNumber" type="number" class="form-control"
+                                           placeholder="Apartment number">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-info btn-fill pull-right">
+                            Submit
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <form name="loginForm" id="loginForm" ng-show="selected === 'signIn'"
-              autocomplete="off" novalidate
-              ng-submit="">
-            <input ng-model="user.email" type="email" name="email" type="text" placeholder="email" required/>
-            <span class="error" ng-show="loginForm.login.$dirty &&
-                loginForm.login.$error.required">Username is required.</span>
-            <input ng-model="user.password" name="password" type="password" placeholder="password" required/>
-            <span class="error" ng-show="loginForm.password.$dirty && loginForm.password.$error.required">
-                Password required!</span>
-            <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
-                    ng-disabled="loginForm.$invalid"
-                    type="submit" class="register-button" ng-click="loginClick()">
-                login
-            </button>
-        </form>
-
-        <form name="registerForm" id="registerForm" ng-show="selected === 'register'"
-              autocomplete="off" novalidate
-              ng-submit="registerUser()">
-
-            <input ng-model="user.email"
-                   name="mailInput" type="email" placeholder="email" required/>
-            <div role="alert">
-              <span class="error" ng-show="registerForm.mailInput.$dirty && registerForm.mailInput.$error.required">
-                Email required!</span>
-                <span class="error" ng-show="registerForm.mailInput.$error.email">
-                Not valid email!</span>
-            </div>
-
-            <input ng-model="user.password" name="password" id="password" minlength="5"
-                   type="password" placeholder="password" required/>
-            <span class="error" ng-show="registerForm.password.$dirty
-            && registerForm.password.$error.required">
-                Password required!</span>
-            <span class="error" ng-show="registerForm.password.$dirty &&
-                registerForm.password.$error.minlength">Password is too weak.</span>
-
-            <button ng-class="{unsubmitable : registerForm.$invalid, submitable: !registerForm.$invalid}"
-                    ng-disabled="registerForm.$invalid"
-                    type="submit" class="register-button">
-                Register
-            </button>
-        </form>
-
-        <form name="restoreForm" id="restoreForm" ng-show="selected === 'restore'"
-              autocomplete="off" novalidate
-              ng-submit="resetPassword()">
-            <input ng-model="resetRequest.email" name="emailInput" type="email" placeholder="Email"
-                required />
-            <div role="alert">
-              <span class="error" ng-show="restoreForm.emailInput.$dirty && restoreForm.emailInput.$error.required">
-                Email required!</span>
-                <span class="error" ng-show="restoreForm.emailInput.$error.email">
-                Not valid email!</span>
-            </div>
-            <button  ng-class="{unsubmitable : restoreForm.$invalid, submitable: !restoreForm.$invalid}"
-                     ng-disabled="restoreForm.$invalid"
-                     type="submit" class="register-button">
-                Reset
-            </button>
-        </form>
-
     </div>
 </div>

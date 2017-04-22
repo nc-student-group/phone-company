@@ -1,19 +1,19 @@
 package com.phonecompany.model;
 
 /**
- * Gets emitted on user's reset password request
+ * Gets emitted on reset password request
  *
- * @see com.phonecompany.service.UserServiceImpl
+ * @see com.phonecompany.service.CustomerServiceImpl
  */
-public final class ResetPasswordEvent {
+public final class ResetPasswordEvent<T> {
 
-    private final User userToReset;
+    private final T userToReset;
 
-    public ResetPasswordEvent(User userToReset) {
+    public ResetPasswordEvent(T userToReset) {
         this.userToReset = userToReset;
     }
 
-    public User getUserToReset() {
+    public T getUserToReset() {
         return userToReset;
     }
 

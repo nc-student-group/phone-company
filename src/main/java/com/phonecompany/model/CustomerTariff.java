@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 public class CustomerTariff extends DomainEntity {
+
     private Customer customer;
     private Corporate corporate;
     @NotNull(message = "Order date must not be null")

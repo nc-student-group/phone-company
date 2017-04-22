@@ -16,13 +16,24 @@ angular.module('phone-company').controller('AuthorizeController', [
         $scope.selected = 'signIn';
 
         if ($routeParams['success'] === 'success') {
-            toastr.success('U have successfully completed registration. ' +
-                'You can login');
+            toastr.success('You have successfully completed registration. ' +
+                'Please, log in');
         }
 
         $scope.user = {
             email: "",
-            password: ""
+            password: "",
+            fistName: "",
+            secondName: "",
+            lastName: "",
+            phone: "",
+            address: {
+                region: "",
+                locality: "",
+                street: "",
+                houseNumber: "",
+                apartmentNumber: ""
+            }
         };
 
         $scope.resetRequest = {
@@ -31,7 +42,8 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.registerUser = function () {
             var deferred = $q.defer();
-            $http.post("/api/users", $scope.user).then(
+            console.log('Persisting user: ' + JSON.stringify($scope.user));
+            $http.post("/api/customers", $scope.user).then(
                 function (response) {
                     console.log(JSON.stringify(response.data));
                     deferred.resolve(response.data);

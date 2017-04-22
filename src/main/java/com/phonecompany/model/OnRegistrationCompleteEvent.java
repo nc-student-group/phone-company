@@ -5,15 +5,15 @@ package com.phonecompany.model;
  *
  * @see com.phonecompany.service.UserServiceImpl
  */
-public final class OnRegistrationCompleteEvent {
+public final class OnRegistrationCompleteEvent<T> {
 
-    private final User persistedUser;
+    private final T persistedUser;
 
-    public OnRegistrationCompleteEvent(User persistedUser) {
+    public OnRegistrationCompleteEvent(T persistedUser) {
         this.persistedUser = persistedUser;
     }
 
-    public User getPersistedUser() {
+    public T getPersistedUser() {
         return persistedUser;
     }
 
