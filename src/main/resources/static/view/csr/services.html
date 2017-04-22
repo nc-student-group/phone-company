@@ -31,13 +31,69 @@
 <body>
 
 <script>
+    function format (data) {
+        // `d` is the original data object for the row
+        return '<div class="content">' +
+            '<form>' +
+            '<div class="row\">' +
+            '<div class="form-group col-md-4" >' +
+            '<label>Category name</label>' +
+            '<input type="text" class="form-control" placeholder="Category name" value="' + data[0] + '"/>' +
+            '</div>' +
+            '</div>' +
+
+            '<div class=\"row">' +
+            '<div class="form-group col-md-4">' +
+            '<label>Service name</label>' +
+            '<input type="text" class="form-control" placeholder="Service name" />' +
+            '</div>' +
+            '</div>' +
+            '<div class=\"row">' +
+            '<div class="form-group col-md-4">' +
+            '<label>Units</label>' +
+            '<input type="text" class="form-control" placeholder="Units" />' +
+            '</div>' +
+            '</div>' +
+            '<div class=\"row">' +
+            '<div class="form-group col-md-4">' +
+            '<label>Price</label>' +
+            '<input type="text" class="form-control" placeholder="Price" />' +
+            '</div>' +
+            '</div>' +
+
+            '<button type=\"submit\" class=\"btn btn-info btn-fill pull-left\">Update service</button>' +
+
+            '<div class="clearfix"></div></form></div>'
+    }
+
     $(document).ready(function(){
-        $('#servicesTable').DataTable({
+     var table =   $('#servicesTable').DataTable({
             "columnDefs": [
-                { "orderable": false, "targets": [2, 3, 4] }
+                { "orderable": false, "targets": [2, 3, 4] },
+                {"targets": -1,
+                    "data": null,
+                    "defaultContent": "<button class='btn btn-info btn-fill'>Edit</button>"}
             ]
         });
+
+        $('#servicesTable tbody').on('click', 'button', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+            }
+        } );
     });
+
+
 </script>
 
 <div class="wrapper">
@@ -119,6 +175,7 @@
                                     <th>Price</th>
                                     <th>Status</th>
                                     <th>Category</th>
+                                    <th>Category</th>
                                     </thead>
                                     <tbody>
                                     <tr>
@@ -127,70 +184,72 @@
                                         <td>25 uah/30 days</td>
                                         <td>ACTIVE</td>
                                         <td>Internet package</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3G ONLINE 1GB</td>
-                                        <td>REGION</td>
-                                        <td>30 uah/30 days</td>
-                                        <td>ACTIVE</td>
                                         <td>Internet package</td>
                                     </tr>
-                                    <tr>
-                                        <td>3G ONLINE 2GB</td>
-                                        <td>REGION</td>
-                                        <td>39 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>Internet package</td>
-                                    </tr>
-                                    <tr>
-                                        <td>100 SMS</td>
-                                        <td>REGION</td>
-                                        <td>15 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>SMS/MMS</td>
-                                    </tr>
-                                    <tr>
-                                        <td>250 SMS</td>
-                                        <td>REGION</td>
-                                        <td>35 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>SMS/MMS</td>
-                                    </tr>
-                                    <tr>
-                                        <td>500 SMS</td>
-                                        <td>REGION</td>
-                                        <td>50 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>SMS/MMS</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bulk SMS</td>
-                                        <td>REGION</td>
-                                        <td>100 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>SMS/MMS</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Calling Line Identification Restriction (CLIR)</td>
-                                        <td>REGION</td>
-                                        <td>21 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>Useful services</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hidden number identifier</td>
-                                        <td>REGION</td>
-                                        <td>30 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>Useful services</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Meloring</td>
-                                        <td>REGION</td>
-                                        <td>15 uah/30 days</td>
-                                        <td>ACTIVE</td>
-                                        <td>Useful services</td>
-                                    </tr>
+                                    <!--<tr>-->
+                                        <!--<td>3G ONLINE 1GB</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>30 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>Internet package</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3G ONLINE 2GB</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>39 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>Internet package</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>100 SMS</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>15 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>SMS/MMS</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>250 SMS</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>35 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>SMS/MMS</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>500 SMS</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>50 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>SMS/MMS</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>Bulk SMS</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>100 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>SMS/MMS</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>Calling Line Identification Restriction (CLIR)</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>21 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>Useful services</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>Hidden number identifier</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>30 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>Useful services</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>Meloring</td>-->
+                                        <!--<td>REGION</td>-->
+                                        <!--<td>15 uah/30 days</td>-->
+                                        <!--<td>ACTIVE</td>-->
+                                        <!--<td>Useful services</td>-->
+                                    <!--</tr>-->
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
