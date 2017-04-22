@@ -22,7 +22,18 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.user = {
             email: "",
-            password: ""
+            password: "",
+            fistName: "",
+            secondName: "",
+            lastName: "",
+            phone: "",
+            address: {
+                region: "",
+                locality: "",
+                street: "",
+                houseNumber: "",
+                apartmentNumber: ""
+            }
         };
 
         $scope.resetRequest = {
@@ -31,6 +42,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.registerUser = function () {
             var deferred = $q.defer();
+            console.log('Persisting user: ' + JSON.stringify($scope.user));
             $http.post("/api/users", $scope.user).then(
                 function (response) {
                     console.log(JSON.stringify(response.data));

@@ -3,6 +3,7 @@ package com.phonecompany.model;
 import javax.validation.constraints.NotNull;
 
 public class ProductCategory extends DomainEntity {
+
     @NotNull(message = "Category name must not be null")
     private String nameCategory;
     @NotNull(message = "Units must not be null")

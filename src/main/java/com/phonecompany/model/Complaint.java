@@ -3,6 +3,7 @@ package com.phonecompany.model;
 import java.sql.Date;
 
 public class Complaint extends DomainEntity {
+
     private String status;
     private Date date;
     private String text;

@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.UserRole;
@@ -47,11 +48,11 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = POST, value = "/api/users")
-    public ResponseEntity<?> saveUser(@RequestBody User client) {
-        LOG.debug("User retrieved from the http request: " + client);
+    public ResponseEntity<?> saveUser(@RequestBody Customer customer) {
+        LOG.debug("Customer retrieved from the http request: " + customer);
 
-        client.setRole(CLIENT);
-        User persistedUser = this.userService.save(client);
+        customer.setRole(CLIENT);
+        User persistedUser = this.userService.save(customer);
         LOG.debug("User persisted with an id: " + persistedUser.getId());
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedUser));

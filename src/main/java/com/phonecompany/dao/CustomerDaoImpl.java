@@ -12,7 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 @Repository
-public class CustomerDaoImpl extends CrudDaoImpl<Customer> implements CustomerDao{
+public class CustomerDaoImpl extends CrudDaoImpl<Customer>
+        implements CustomerDao{
 
     private QueryLoader queryLoader;
     private AddressDao addressDao;
