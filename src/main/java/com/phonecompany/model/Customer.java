@@ -4,6 +4,7 @@ import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Customer extends User {
 
