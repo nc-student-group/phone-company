@@ -11,6 +11,11 @@
                 templateUrl: 'view/main.html',
                 controller: 'AuthorizeController'
             });
+        $routeProvider.when('/login',
+            {
+                templateUrl: 'view/login.html',
+                controller: 'LoginController'
+            });
         $routeProvider.when('/index/:success',
             {
                 templateUrl: 'view/main.html',
