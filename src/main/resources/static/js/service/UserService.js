@@ -41,7 +41,7 @@
         UserService.saveUserByAdmin = function (user) {
             console.log('User: ' + JSON.stringify(user));
             var deferred = $q.defer();
-            $http.post("api/user/save/by/admin", user).then(
+            $http.post("/api/user/save", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

@@ -10,7 +10,6 @@
         console.log('This is AdministrationController');
 
         $scope.users = UserService.getUsers();
-
         $scope.user ={
             email: '',
             password: '',
@@ -30,5 +29,6 @@
                     $log.error("Failed to save user", error);
                 });
         }
+        $scope.users = UserService.getUsers();
     }
 }());
