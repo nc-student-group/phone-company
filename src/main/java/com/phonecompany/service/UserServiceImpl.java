@@ -2,6 +2,9 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EmailAlreadyPresentException;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.OnRegistrationCompleteEvent;
+import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
@@ -11,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.event.EventListener;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -26,6 +31,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
     private MailMessageCreator<User> confirmMessageCreator;
+    private MailMessageCreator<User> passwordAssigmentCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -34,12 +40,24 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                                    MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
                                    MailMessageCreator<User> confirmMessageCreator,
+                           @Qualifier("passwordAssignmentMessageCreator")
+                                       MailMessageCreator<User> passwordAssigmentCreator,
                            EmailService emailService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
+        this.passwordAssigmentCreator = passwordAssigmentCreator;
+    }
+
+    @EventListener
+    public void confirmRegistration(OnUserCreationEvent onUserCreationEvent) {
+        User persistedUser = onUserCreationEvent.getPersistedUser();
+        SimpleMailMessage confirmationMessage =
+                this.passwordAssigmentCreator.constructMessage(persistedUser);
+        LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
+        emailService.sendMail(confirmationMessage);
     }
 
     @Override

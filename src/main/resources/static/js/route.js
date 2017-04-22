@@ -33,12 +33,12 @@
             });
         $routeProvider.when('/csr',
             {
-                templateUrl: 'view/csrPage.html',
+                templateUrl: 'view/csr/csrProfile.html'
                 // controller: ''
             });
         $routeProvider.when('/pmg',
             {
-                templateUrl: 'view/pmgPage.html',
+                templateUrl: 'view/pmgPage.html'
                 // controller: ''
             });
         $routeProvider.when('/user/profile/:success',
