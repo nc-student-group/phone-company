@@ -44,7 +44,7 @@ public class CustomerController {
         Customer persistedCustomer = this.customerService.save(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
 
-        this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent<>(persistedCustomer));
+        this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
 
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
 

@@ -3,17 +3,17 @@ package com.phonecompany.model;
 /**
  * Gets emitted when user finishes his registration
  *
- * @see com.phonecompany.service.UserServiceImpl
+ * @see com.phonecompany.service.CustomerServiceImpl
  */
-public final class OnRegistrationCompleteEvent<T> {
+public final class OnRegistrationCompleteEvent {
 
-    private final T persistedUser;
+    private final Customer persistedUser;
 
-    public OnRegistrationCompleteEvent(T persistedUser) {
+    public OnRegistrationCompleteEvent(Customer persistedUser) {
         this.persistedUser = persistedUser;
     }
 
-    public T getPersistedUser() {
+    public Customer getPersistedUser() {
         return persistedUser;
     }
 
