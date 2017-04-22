@@ -17,13 +17,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class ComplaintsDaoImpl extends CrudDaoImpl<Complaint> implements ComplaintDao {
+public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements ComplaintDao {
 
     private QueryLoader queryLoader;
     private UserDao userDao;
 
     @Autowired
-    public ComplaintsDaoImpl(QueryLoader queryLoader, UserDao userDao){
+    public ComplaintDaoImpl(QueryLoader queryLoader, UserDao userDao){
         this.queryLoader = queryLoader;
         this.userDao = userDao;
     }
