@@ -53,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/reset").permitAll()
                 .antMatchers("/api/confirmRegistration").permitAll()
                 .antMatchers("/api/roles").hasRole("ADMIN")
-                .antMatchers("/csr").hasRole("CSR")
+                .antMatchers("/api/regions/get").hasRole("CSR")
+                .antMatchers("/api/tariffs/get/by/region/**").hasRole("CSR")
+                .antMatchers("/api/tariff/new/get").hasRole("CSR")
                 .anyRequest().authenticated();
 
         http.csrf().disable();

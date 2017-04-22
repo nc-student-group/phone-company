@@ -2,6 +2,7 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.Tariff;
@@ -11,9 +12,12 @@ import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
@@ -83,4 +87,5 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
         }
         return tariff;
     }
+
 }
