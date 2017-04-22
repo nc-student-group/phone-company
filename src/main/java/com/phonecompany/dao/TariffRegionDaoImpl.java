@@ -82,14 +82,19 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
         List<TariffRegion> tariffRegions = new ArrayList<>();
         String query = this.getQuery("getAll");
         if(regionId != 0){
-            query += " WHERE region_id = ? ";
+            query += " WHERE region_id = ?";
         }
-        query += "LIMIT ? OFFSET ?";
+        query += " LIMIT ? OFFSET ?";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setLong(1, regionId);
-            ps.setInt(2, size);
-            ps.setInt(3, page*size);
+            if(regionId != 0) {
+                ps.setLong(1, regionId);
+                ps.setInt(2, size);
+                ps.setInt(3, page*size);
+            }else {
+                ps.setInt(1, size);
+                ps.setInt(2, page * size);
+            }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 tariffRegions.add(init(rs));
@@ -98,5 +103,25 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
             throw new EntityNotFoundException(regionId, e);
         }
         return tariffRegions;
+    }
+
+    @Override
+    public Integer getCountTariffsByRegionId(Long regionId) {
+        List<TariffRegion> tariffRegions = new ArrayList<>();
+        String query = this.getQuery("getCount");
+        if (regionId != 0) {
+            query += " WHERE region_id = ? ";
+        }
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            if (regionId != 0) {
+                ps.setLong(1, regionId);
+            }
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
     }
 }

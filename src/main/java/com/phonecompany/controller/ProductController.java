@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ProductController {
@@ -36,11 +38,14 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/api/tariffs/get/by/region/{id}/{page}/{size}", method = RequestMethod.GET)
-    public List<TariffRegion> getTariffsByRegionId(@PathVariable("id") Long regionId,
+    public Map<String,Object> getTariffsByRegionId(@PathVariable("id") Long regionId,
                                                    @PathVariable("page") int page,
                                                    @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffRegionService.getAllTariffsByRegionId(regionId, page, size);
+        Map<String, Object> response = new HashMap<>();
+        response.put("tariffs", tariffRegionService.getAllTariffsByRegionId(regionId, page, size));
+        response.put("tariffsSelected", tariffRegionService.getCountTariffsByRegionId(regionId));
+        return response;
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
