@@ -13,6 +13,7 @@
 
         // Basic CRUD operations
         UserService.perform = function () {
+            console.log('Performing on api users');
             return $resource('api/users/:id', null,
                 {
                     'update': {method: 'PUT'}
