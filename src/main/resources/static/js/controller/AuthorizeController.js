@@ -40,6 +40,11 @@ angular.module('phone-company').controller('AuthorizeController', [
             email: ""
         };
 
+        $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
+        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z])/;
+        $scope.phonePattern=/^\+[0-9]{12}$/;
+        $scope.textFieldPattern=/^[a-zA-Z]+$/;
+
         $scope.registerUser = function () {
             var deferred = $q.defer();
             console.log('Persisting user: ' + JSON.stringify($scope.user));

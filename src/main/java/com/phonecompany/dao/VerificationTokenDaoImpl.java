@@ -52,7 +52,7 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
             verificationToken.setId(rs.getLong("id"));
             verificationToken.setUser(userDao.getById(rs.getLong("user_id")));
             verificationToken.setToken(rs.getString("token"));
-            verificationToken.setExpireDate(TypeMapper.toLocalDate(rs.getDate("expire_date")));
+            verificationToken.setExpireDate(TypeMapper.toLocalDate(rs.getDate("expiry_date")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

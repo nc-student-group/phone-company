@@ -5,12 +5,14 @@ import com.phonecompany.model.enums.UserRole;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class User extends DomainEntity {
 
-    @NotNull(message = "User have to have email")
+    @NotNull(message = "User has to have an email")
     @Email
     private String email;
+    @Pattern(regexp = "^(?=.*[\\W])(?=[a-zA-Z]).{8,}$")
     @NotNull(message = "User has to have a password")
     private String password;
     @NotNull(message = "User has to have a role")

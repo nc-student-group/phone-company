@@ -9,11 +9,15 @@ import javax.validation.constraints.Pattern;
 public class Customer extends User {
 
     @NotNull(message = "First name must not be null")
+    @Pattern(regexp = "[a-zA-Z]{3,}")
     private String firstName;
+    @Pattern(regexp = "[a-zA-Z]{3,}")
     @NotNull(message = "Second name must not be null")
     private String secondName;
+    @Pattern(regexp = "[a-zA-Z]{3,}")
     @NotNull(message = "Last name must not be null")
     private String lastName;
+    @Pattern(regexp = "^\\+[0-9]{12}$")
     @NotNull(message = "Phone must not be null")
     private String phone;
     @NotNull(message = "Address must not be null")
