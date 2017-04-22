@@ -37,9 +37,9 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, VerificationToken vt) {
         try {
-            preparedStatement.setString(1, vt.getToken());
-            preparedStatement.setDate(2, TypeMapper.toSqlDate(vt.getExpireDate()));
-            preparedStatement.setLong(3, TypeMapper.getNullableId(vt.getUser()));
+            preparedStatement.setLong(1, TypeMapper.getNullableId(vt.getUser()));
+            preparedStatement.setString(2, vt.getToken());
+            preparedStatement.setDate(3, TypeMapper.toSqlDate(vt.getExpireDate()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -61,6 +61,13 @@ public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
 
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, VerificationToken vt) {
-
+        try {
+            preparedStatement.setLong(1, TypeMapper.getNullableId(vt.getUser()));
+            preparedStatement.setString(2, vt.getToken());
+            preparedStatement.setDate(3, TypeMapper.toSqlDate(vt.getExpireDate()));
+            preparedStatement.setLong(4, vt.getId());
+        } catch (SQLException e) {
+            throw new PreparedStatementPopulationException(e);
+        }
     }
 }

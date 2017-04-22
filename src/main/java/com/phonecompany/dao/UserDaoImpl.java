@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 
 @Repository
-public class UserDaoImpl extends CrudDaoImpl<User>
+public class UserDaoImpl extends AbstractUserDaoImpl<User>
         implements UserDao {
 
     private QueryLoader queryLoader;
@@ -23,35 +23,6 @@ public class UserDaoImpl extends CrudDaoImpl<User>
     @Autowired
     public UserDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return init(rs);
-            }
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(-1l, e);
-        }
-        return null;
-    }
-
-    @Override
-    public User getUserByVerificationToken(String token) {
-        String userByVerificationTokenQuery = this.getUserByVerificationTokenQuery();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(userByVerificationTokenQuery)) {
-            ps.setString(1, token);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return this.init(rs);
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(token, e);
-        }
     }
 
     @Override

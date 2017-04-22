@@ -19,11 +19,14 @@ public class Tariff extends DomainEntity {
     private String sms;
     @NotNull(message = "Mms must not be null")
     private String mms;
+    @NotNull(message = "Roaming must not be null")
+    private String roaming;
 
     public Tariff() {
     }
 
-    public Tariff(String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms) {
+    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming) {
+        super(id);
         this.tariffName = tariffName;
         this.productStatus = productStatus;
         this.internet = internet;
@@ -31,6 +34,15 @@ public class Tariff extends DomainEntity {
         this.callsOnOtherNumbers = callsOnOtherNumbers;
         this.sms = sms;
         this.mms = mms;
+        this.roaming = roaming;
+    }
+
+    public String getRoaming() {
+        return roaming;
+    }
+
+    public void setRoaming(String roaming) {
+        this.roaming = roaming;
     }
 
     public String getTariffName() {

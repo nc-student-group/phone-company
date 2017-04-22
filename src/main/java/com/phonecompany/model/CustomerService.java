@@ -12,7 +12,7 @@ public class CustomerService extends DomainEntity{
     @NotNull(message = "Service must not be null")
     private Service service;
     @NotNull(message = "Date must not be null")
-    private Date date;
+    private Date orderDate;
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Order status must not be null")
@@ -20,10 +20,10 @@ public class CustomerService extends DomainEntity{
 
     public CustomerService(){}
 
-    public CustomerService(Customer customer, Service service, Date date, double price, OrderStatus orderStatus) {
+    public CustomerService(Customer customer, Service service, Date orderDate, double price, OrderStatus orderStatus) {
         this.customer = customer;
         this.service = service;
-        this.date = date;
+        this.orderDate = orderDate;
         this.price = price;
         this.orderStatus = orderStatus;
     }
@@ -44,12 +44,12 @@ public class CustomerService extends DomainEntity{
         this.service = service;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getOrderDate() {
+        return orderDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
     }
 
     public double getPrice() {
