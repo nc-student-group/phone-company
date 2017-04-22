@@ -51,7 +51,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     @Override
     @EventListener
-    public void confirmRegistration(OnRegistrationCompleteEvent<Customer> registrationCompleteEvent) {
+    public void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent) {
         Customer persistedCustomer = registrationCompleteEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
                 this.confirmMessageCreator.constructMessage(persistedCustomer);
@@ -61,7 +61,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     @Override
     public void activateUserByToken(String token) {
-        Customer customer = this.customerDao.getUserByVerificationToken(token);
+        Customer customer = this.customerDao.getByVerificationToken(token);
         LOG.debug("Customer fetched by verification token: {}", customer);
         customer.setStatus(Status.ACTIVATED);
         this.customerDao.update(customer);

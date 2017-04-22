@@ -5,5 +5,5 @@ import com.phonecompany.model.OnRegistrationCompleteEvent;
 
 public interface CustomerService extends CrudService<Customer>, AbstractUserService<Customer> {
     void activateUserByToken(String token);
-    void confirmRegistration(OnRegistrationCompleteEvent<Customer> registrationCompleteEvent);
+    void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent);
 }

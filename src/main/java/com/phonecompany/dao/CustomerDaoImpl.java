@@ -7,10 +7,11 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,8 @@ import java.sql.SQLException;
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerDaoImpl.class);
+
     private QueryLoader queryLoader;
     private AddressDao addressDao;
     private CorporateDao corporateDao;
@@ -34,11 +37,6 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         this.queryLoader = queryLoader;
         this.addressDao = addressDao;
         this.corporateDao = corporateDao;
-    }
-
-    @Override
-    public String getQuery(String type) {
-        return queryLoader.getQuery("query.customer." + type);
     }
 
     @Override
@@ -66,16 +64,15 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             statement.setString(1, customer.getEmail());
             statement.setString(2, customer.getPassword());
             statement.setLong(3, customer.getRole().getDatabaseId());
-            statement.setString(4, customer.getStatus().name());
-            statement.setString(5, customer.getFirstName());
-            statement.setString(6, customer.getSecondName());
-            statement.setString(7, customer.getLastName());
-            statement.setString(8, customer.getPhone());
-            statement.setLong(9, TypeMapper.getNullableId(customer.getAddress()));
-            statement.setLong(10, TypeMapper.getNullableId(customer.getCorporate()));
-            statement.setBoolean(11, customer.getRepresentative());
-            statement.setString(12, customer.getStatus().name());
-            statement.setLong(13, customer.getId());
+            statement.setString(4, customer.getFirstName());
+            statement.setString(5, customer.getSecondName());
+            statement.setString(6, customer.getLastName());
+            statement.setString(7, customer.getPhone());
+            statement.setObject(8, TypeMapper.getNullableId(customer.getAddress()));
+            statement.setObject(9, TypeMapper.getNullableId(customer.getCorporate()));
+            statement.setObject(10, customer.getRepresentative());
+            statement.setString(11, customer.getStatus().name());
+            statement.setLong(12, customer.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -105,10 +102,11 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     }
 
     @Override
-    public Customer getUserByVerificationToken(String token) {
-        String userByVerificationTokenQuery = this.getUserByVerificationTokenQuery();
+    public Customer getByVerificationToken(String token) {
+        String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
+        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery );
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(userByVerificationTokenQuery)) {
+             PreparedStatement ps = conn.prepareStatement(customerByVerificationTokenQuery)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -118,8 +116,13 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
-    private String getUserByVerificationTokenQuery() {
-        return this.getQuery("get.user.by.verification.token");
+    private String getByVerificationTokenQuery() {
+        return this.getQuery("by.verification.token");
+    }
+
+    @Override
+    public String getQuery(String type) {
+        return queryLoader.getQuery("query.customer." + type);
     }
 
 }
