@@ -162,3 +162,25 @@
 :focus:-ms-input-placeholder {
     color: transparent
 }
+
+.preloader {
+    position: fixed;
+    z-index: 300000;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.6;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.preloader img {
+    left: 50%;
+    top: 50%;
+    position: relative;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}

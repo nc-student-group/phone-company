@@ -28,22 +28,29 @@ angular.module('phone-company').controller('TariffsController', [
             }
             console.log($scope.regionsToAdd);
         });
+        $scope.preloader.send = true;
         TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
             .then(function (data) {
                 $scope.tariffs = data.tariffs;
                 $scope.tariffsSelected = data.tariffsSelected;
-                console.log($scope.tariffs);
+                $scope.preloader.send = false;
+            }, function () {
+                $scope.preloader.send = false;
             });
 
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.tariffsSelected) {
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
+                $scope.preloader.send = true;
                 TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
             }
         };
@@ -52,21 +59,29 @@ angular.module('phone-company').controller('TariffsController', [
             if ($scope.page > 0 && $scope.inProgress == false) {
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
+                $scope.preloader.send = true;
                 TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
             }
         };
 
         $scope.updateData = function () {
             $scope.page = 0;
+            $scope.preloader.send = true;
             TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
                 .then(function (data) {
                     $scope.tariffs = data.tariffs;
                     $scope.tariffsSelected = data.tariffsSelected;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
                 });
         };
 
@@ -80,7 +95,34 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.addTariff = function () {
             console.log($scope.currentTariff);
-            console.log($scope.regionsToSave);
+            if ($scope.currentTariff.tariffName == undefined || $scope.currentTariff.tariffName.length < 1) {
+                toastr.error('Tariff name field length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.internet == undefined || $scope.currentTariff.internet.length < 1) {
+                toastr.error('Internet filed length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.callsInNetwork == undefined || $scope.currentTariff.callsInNetwork.length < 1) {
+                toastr.error('Calls in network field length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.callsOnOtherNumbers == undefined || $scope.currentTariff.callsOnOtherNumbers.length < 1) {
+                toastr.error('Calls on other numbers field length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.sms == undefined || $scope.currentTariff.sms.length < 1) {
+                toastr.error('SMS field length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.mms == undefined || $scope.currentTariff.mms.length < 1) {
+                toastr.error('MMS field length must be greater than zero', 'Error');
+                return;
+            }
+            if ($scope.currentTariff.roaming == undefined || $scope.currentTariff.roaming.length < 1) {
+                toastr.error('Roaming field length must be greater than zero', 'Error');
+                return;
+            }
             for (var i = 0; i < $scope.regionsToSave.length; i++) {
                 $scope.regionsToSave[i].tariff = $scope.currentTariff;
                 if ($scope.regionsToSave[i].price <= 0) {
@@ -88,6 +130,7 @@ angular.module('phone-company').controller('TariffsController', [
                     return;
                 }
             }
+            $scope.preloader.send = true;
             TariffService.addTariff($scope.regionsToSave).then(function (data) {
                     toastr.success('Your tariff "' + $scope.currentTariff.tariffName + '" added successfully!');
                     console.log("Tariff added");
@@ -102,8 +145,10 @@ angular.module('phone-company').controller('TariffsController', [
                         });
                     }
                     $scope.updateData();
+                    $scope.preloader.send = false;
                 },
                 function (data) {
+                    $scope.preloader.send = false;
                     toastr.error('Error during tariff creating. Try again!', 'Error');
                 }
             );
