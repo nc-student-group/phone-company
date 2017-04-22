@@ -3,11 +3,9 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Complaint;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
-import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +39,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(6, entity.getSms());
             preparedStatement.setString(7, entity.getMms());
             preparedStatement.setString(8, entity.getRoaming());
+            preparedStatement.setBoolean(9, entity.getIsCorporate());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -57,6 +56,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(6, entity.getSms());
             preparedStatement.setString(7, entity.getMms());
             preparedStatement.setString(8, entity.getRoaming());
+            preparedStatement.setBoolean(9, entity.getIsCorporate());
 
             preparedStatement.setLong(9, entity.getId());
         } catch (SQLException e) {
@@ -78,6 +78,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             tariff.setSms(rs.getString("sms"));
             tariff.setMms(rs.getString("mms"));
             tariff.setRoaming(rs.getString("roaming"));
+            tariff.setIsCorporate(rs.getBoolean("is_corporate"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

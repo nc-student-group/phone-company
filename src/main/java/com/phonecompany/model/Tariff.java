@@ -21,11 +21,13 @@ public class Tariff extends DomainEntity {
     private String mms;
     @NotNull(message = "Roaming must not be null")
     private String roaming;
+    @NotNull(message = "IsCorporate must not be null")
+    private boolean isCorporate;
 
     public Tariff() {
     }
 
-    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming) {
+    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming, boolean isCorporate) {
         super(id);
         this.tariffName = tariffName;
         this.productStatus = productStatus;
@@ -35,7 +37,11 @@ public class Tariff extends DomainEntity {
         this.sms = sms;
         this.mms = mms;
         this.roaming = roaming;
+        this.isCorporate = isCorporate;
     }
+    public boolean getIsCorporate() {  return isCorporate; }
+
+    public void setIsCorporate(boolean corporate) { this.isCorporate = corporate; }
 
     public String getRoaming() {
         return roaming;
