@@ -37,7 +37,7 @@
             return deferred.promise;
         };
 
-        return UserService;
+        return CustomerService;
     }
 }());
 
