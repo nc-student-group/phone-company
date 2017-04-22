@@ -16,10 +16,10 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
-        $routeProvider.when('/index/:success',
+        $routeProvider.when('/login/:success',
             {
-                templateUrl: 'view/main.html',
-                controller: 'AuthorizeController'
+                templateUrl: 'view/login.html',
+                controller: 'LoginController'
             });
         $routeProvider.when('/admin',
             {

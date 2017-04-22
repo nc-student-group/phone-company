@@ -57,7 +57,7 @@ public class CustomerController {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.customerService.activateUserByToken(token);
 
-        URI registration = new URI("http://localhost:8090/#/user/profile/success");
+        URI registration = new URI("http://localhost:8090/#/login/success");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
 

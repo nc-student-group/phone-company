@@ -124,7 +124,7 @@
     transition: all ease;
 }
 
-.login-button {
+.login-page-button{
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
@@ -136,14 +136,14 @@
     -webkit-transition: all ease;
     transition: all ease;
     background: #ff8e92;
-    cursor: pointer;
 }
 
-.login-button:hover {
+.login-page-button:hover {
     background: #7db485;
     -webkit-transition: background-color 200ms linear;
     -ms-transition: background-color 200ms linear;
     transition: background-color 200ms linear;
+    cursor: pointer;
 }
 
 :focus::-webkit-input-placeholder {

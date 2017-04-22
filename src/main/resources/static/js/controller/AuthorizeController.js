@@ -15,11 +15,6 @@ angular.module('phone-company').controller('AuthorizeController', [
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
 
-        if ($routeParams['success'] === 'success') {
-            toastr.success('You have successfully completed registration. ' +
-                'Please, log in');
-        }
-
         $scope.user = {
             email: "",
             password: "",
