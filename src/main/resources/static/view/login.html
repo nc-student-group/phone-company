@@ -1,0 +1,48 @@
+<div class="wrapper">
+    <div class="form">
+        <div class="transition-container">
+            <ul class="options">
+                <li ng-click="selected = 'signIn'"
+                    ng-class="{'active': selected === 'signIn'}">Sign in
+                </li>
+                <li ng-click="selected = 'restore'"
+                    ng-class="{'active': selected === 'restore'}">Restore
+                </li>
+            </ul>
+        </div>
+        <form name="loginForm" id="loginForm" ng-show="selected === 'signIn'"
+              autocomplete="off" novalidate
+              ng-submit="">
+            <input ng-model="user.email" type="email" name="email" type="text" placeholder="email" required/>
+            <span class="error" ng-show="loginForm.login.$dirty &&
+                loginForm.login.$error.required">Username is required.</span>
+            <input ng-model="user.password" name="password" type="password" placeholder="password" required/>
+            <span class="error" ng-show="loginForm.password.$dirty && loginForm.password.$error.required">
+                Password required!</span>
+            <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
+                    ng-disabled="loginForm.$invalid"
+                    type="submit" class="register-button" ng-click="loginClick()">
+                login
+            </button>
+        </form>
+
+        <form name="restoreForm" id="restoreForm" ng-show="selected === 'restore'"
+              autocomplete="off" novalidate
+              ng-submit="resetPassword()">
+            <input ng-model="resetRequest.email" name="emailInput" type="email" placeholder="Email"
+                   required />
+            <div role="alert">
+              <span class="error" ng-show="restoreForm.emailInput.$dirty && restoreForm.emailInput.$error.required">
+                Email required!</span>
+                <span class="error" ng-show="restoreForm.emailInput.$error.email">
+                Not valid email!</span>
+            </div>
+            <button  ng-class="{unsubmitable : restoreForm.$invalid, submitable: !restoreForm.$invalid}"
+                     ng-disabled="restoreForm.$invalid"
+                     type="submit" class="register-button">
+                Reset
+            </button>
+        </form>
+
+    </div>
+</div>
