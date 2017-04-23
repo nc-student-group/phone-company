@@ -51,7 +51,6 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
         assertNotNull("Query \"getById\" is not found", vtDao.getQuery("getById"));
         assertNotNull("Query \"save\" is not found", vtDao.getQuery("save"));
         assertNotNull("Query \"update\" is not found", vtDao.getQuery("update"));
-        assertNotNull("Query \"delete\" is not found", vtDao.getQuery("delete"));
         assertNotNull("Query \"getAll\" is not found", vtDao.getQuery("getAll"));
     }
 

@@ -1,11 +1,11 @@
 <div class="container-fluid registration-wrapper">
-    <div class="row registration-form">
-        <div class="col-md-8">
+    <div class="registration-form">
+        <div class="col-lg-8 col-lg-offset-2 centered">
             <div class="card">
-                <div class="header">
-                    <h4 class="title">Register</h4>
-                </div>
                 <div class="content">
+                    <div class="row text-center">
+                        <h4>Register</h4>
+                    </div>
                     <form name="registerForm" id="registerForm"
                           autocomplete="off" novalidate
                           ng-submit="registerUser()">
@@ -13,15 +13,59 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input ng-model="user.email" type="text" class="form-control"
-                                           placeholder="Email">
+                                    <input ng-class="{'error-registration-form': registerForm.email.$error.required
+                                    && registerForm.email.$dirty}"
+                                           id="email" name="email" ng-model="user.email"
+                                           ng-pattern="emailPattern"
+                                           type="email" class="form-control"
+                                           placeholder="Email" required
+                                           autocomplete="off">
+                                    <span class="error"
+                                          ng-show="registerForm.email.$dirty &&
+                registerForm.email.$error.required">Email is required.</span>
+                                    <span class="error" ng-show="registerForm.email.$error.pattern">
+                                        Enter a valid email.
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <input ng-model="user.password" type="password"
-                                           class="form-control" placeholder="Password">
+                                    <input ng-class="{'error-registration-form': registerForm.password.$error.required
+                                    && registerForm.password.$dirty}"
+                                           ng-model="user.password" ng-minlength="8" ng-pattern="passwordPattern"
+                                           type="password" name="password" id="password"
+                                           class="form-control" placeholder="Password"
+                                           required autocomplete="off">
+                                    <span class="error" ng-show="registerForm.password.$error.minlength
+                                    && registerForm.password.$dirty">
+                                        Password should be 8 characters long.
+                                    </span>
+                                    <span class="error" ng-show="registerForm.password.$error.required
+                                    && registerForm.password.$dirty">
+                                        Password is required
+                                    </span>
+                                    <span class="error" ng-show="registerForm.password.$error.pattern">
+                                        Password should contain a special character.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phone number</label>
+                                    <input ng-class="{'error-registration-form': registerForm.phone.$error.required
+                                    && registerForm.phone.$dirty}"
+                                           ng-model="user.phone" ng-pattern="phonePattern"
+                                           type="text" name="phone" id="phone"
+                                           class="form-control"
+                                           placeholder="Phone number" required>
+                                    <span class="error" ng-show="registerForm.phone.$error.pattern">
+                                        Example: +380990076563
+                                    </span>
+                                    <span class="error" ng-show="registerForm.phone.$error.required
+                                    && registerForm.phone.$dirty">
+                                        Phone is required
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -30,22 +74,44 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>First name</label>
-                                    <input ng-model="user.firstName" type="text" class="form-control"
+                                    <input ng-model="user.firstName"
+                                           name="firstName" id="firstName"
+                                           ng-pattern="textFieldPattern"
+                                           type="text" class="form-control"
                                            placeholder="First name">
+                                    <span class="error"
+                                          ng-show="registerForm.firstName.$error.pattern">
+                                        This field should only contain letters
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Second name</label>
-                                    <input ng-model="user.secondName" type="text" class="form-control" placeholder="Second name">
+                                    <input ng-model="user.secondName"
+                                           ng-pattern="textFieldPattern"
+                                           name="secondName" id="secondName"
+                                           type="text" class="form-control"
+                                           placeholder="Second name">
                                 </div>
+                                <span class="error"
+                                      ng-show="registerForm.secondName.$error.pattern">
+                                        This field should only contain letters
+                                </span>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Last name</label>
-                                    <input ng-model="user.lastName" type="text" class="form-control"
+                                    <input ng-model="user.lastName"
+                                           ng-pattern="textFieldPattern"
+                                           name="lastName" id="lastName"
+                                           type="text" class="form-control"
                                            placeholder="Last name">
                                 </div>
+                                <span class="error"
+                                      ng-show="registerForm.lastName.$error.pattern">
+                                        This field should only contain letters
+                                </span>
                             </div>
                         </div>
 
@@ -88,8 +154,11 @@
                             </div>
                         </div>
 
-                        <button type="submit"
-                                class="btn btn-info btn-fill pull-right">
+                        <button ng-class="{unsubmitable : registerForm.$invalid,
+                        submitable: !registerForm.$invalid}"
+                                ng-disabled="registerForm.$invalid"
+                                style="width: 300px;"
+                                type="submit" class="center-block register-button">
                             Submit
                         </button>
                         <div class="clearfix"></div>

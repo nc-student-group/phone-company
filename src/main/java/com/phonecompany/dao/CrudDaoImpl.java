@@ -38,6 +38,7 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
             conn.setAutoCommit(this.autoCommit);
+            LOG.debug("Saving entity: {}", entity);
             this.populateSaveStatement(ps, entity);
             ResultSet rs = ps.executeQuery();
             rs.next();

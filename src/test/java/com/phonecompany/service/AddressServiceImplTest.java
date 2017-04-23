@@ -3,7 +3,6 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.model.Address;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AddressServiceImplTest {
 
@@ -58,18 +56,6 @@ public class AddressServiceImplTest {
         addressService.update(address);
 
         verify(addressDao, atLeastOnce()).update(address);
-    }
-
-    @Test
-    public void shouldDeleteAddress() {
-        String country = "Ukraine";
-        String region = "Kiev";
-        long id = 1L;
-        Address address = createAddress(id, country, region);
-
-        addressService.delete(address.getId());
-
-        verify(addressDao, atLeastOnce()).delete(address.getId());
     }
 
     @Test

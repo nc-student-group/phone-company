@@ -1,12 +1,8 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.model.Address;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 public class AddressDaoImplTest extends AbstractTest {
 
@@ -37,9 +33,6 @@ public class AddressDaoImplTest extends AbstractTest {
 
     @Test
     public void getAll() throws Exception {
-        List<Address> addresses = addressDao.getAll();
-
-        Assert.assertNotNull("Address table is empty", addresses);
     }
 
     @Test

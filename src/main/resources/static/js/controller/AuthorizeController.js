@@ -15,11 +15,6 @@ angular.module('phone-company').controller('AuthorizeController', [
         console.log('This is AuthorizeController');
         $scope.selected = 'signIn';
 
-        if ($routeParams['success'] === 'success') {
-            toastr.success('You have successfully completed registration. ' +
-                'Please, log in');
-        }
-
         $scope.user = {
             email: "",
             password: "",
@@ -39,6 +34,11 @@ angular.module('phone-company').controller('AuthorizeController', [
         $scope.resetRequest = {
             email: ""
         };
+
+        $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
+        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z])/;
+        $scope.phonePattern=/^\+[0-9]{12}$/;
+        $scope.textFieldPattern=/^[a-zA-Z]+$/;
 
         $scope.registerUser = function () {
             var deferred = $q.defer();

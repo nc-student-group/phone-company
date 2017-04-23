@@ -9,7 +9,7 @@
             </div>
 
             <ul class="nav">
-                <li class="active">
+                <li>
                     <a href="/#/csr">
                         <i class="pe-7s-user"></i>
                         <p>User Profile</p>
@@ -33,7 +33,7 @@
                         <p>Orders</p>
                     </a>
                 </li>
-                <li>
+                <li class="active">
                     <a href="/#/csr/complaints">
                         <i class="pe-7s-attention"></i>
                         <p>Complaints</p>
@@ -73,49 +73,39 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Edit Profile</h4>
+                                <h4 class="title">Complaints</h4>
+                                <p class="category">All complaints</p>
                             </div>
-                            <div class="content">
-                                <form>
-                                    <div class="row">
-                                        <div class="form-group col-md-4" >
-                                            <label>Email Address</label>
-                                            <input type="text" class="form-control" disabled value="CSR Email" />
-                                        </div>
-                                    </div>
+                            <hr />
 
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Current Password</label>
-                                                <input type="password" class="form-control" placeholder="Password" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>New Password</label>
-                                                <input type="password" class="form-control" placeholder="Password" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Confirm Password</label>
-                                                <input type="password" class="form-control" placeholder="Password" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
-
-                                    <div class="clearfix"></div>
-                                </form>
+                            <div class="content table-responsive ">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Topic</th>
+                                        <th>Status</th>
+                                        <th>Content</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>какой-то айди</td>
+                                            <td>какое-то клинт</td>
+                                            <td>какая-то дата</td>
+                                            <td>какая-то тема</td>
+                                            <td>какой-то статус</td>
+                                            <td><textarea readonly style="resize: vertical">и очень осмысленные данные, каких еще очнь много. главное раскрыть смысл</textarea></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+
         <footer class="footer">
             <div class="container-fluid">
                 <p class="copyright">
