@@ -23,7 +23,7 @@ import java.util.List;
 public class ConfigManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
-    private static final String APPLICATION_CONFIG = "/datasource-config.yml";
+    private static final String APPLICATION_CONFIG = "datasource-config.yml";
 
     private static ConfigManager configManager;
     private DataSourceInfo dataSourceInfo;
