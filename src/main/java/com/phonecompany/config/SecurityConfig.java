@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/view/**").permitAll()
                 .antMatchers("/assets/**").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/index").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/api/users").hasRole("ADMIN")
                 .antMatchers("/api/customers").permitAll()
