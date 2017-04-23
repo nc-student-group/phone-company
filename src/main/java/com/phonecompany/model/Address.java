@@ -1,17 +1,23 @@
 package com.phonecompany.model;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Address extends DomainEntity {
 
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Region can only contain letters")
     @NotNull(message = "Region must not be null")
     private Region region;
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Locality can only contain letters")
     @NotNull(message = "Locality must not be null")
     private String locality;
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Street can only contain letters")
     @NotNull(message = "Street must not be null")
     private String street;
+    @Pattern(regexp = "^[0-9]+$", message = "House number should only be a positive integer")
     @NotNull(message = "House number must not be null")
     private Long houseNumber;
+    @Pattern(regexp = "^[0-9]+$", message = "Apartment number should only be a positive integer")
     @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
 

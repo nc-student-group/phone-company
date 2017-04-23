@@ -9,10 +9,12 @@ import javax.validation.constraints.Pattern;
 
 public class User extends DomainEntity {
 
+    @Pattern(regexp = "^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\\.(([a-zA-Z]){2,6})$",
+            message = "Email should be properly formatted")
     @NotNull(message = "User has to have an email")
-    @Email
     private String email;
-    @Pattern(regexp = "^(?=.*[\\W])(?=[a-zA-Z]).{8,}$")
+    @Pattern(regexp = "^(?=.*[\\W])(?=[a-zA-Z]).{8,}$",
+            message = "Password should be 8 characters long and contain at least 1 special character")
     @NotNull(message = "User has to have a password")
     private String password;
     @NotNull(message = "User has to have a role")

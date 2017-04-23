@@ -13,12 +13,31 @@
         <form name="loginForm" id="loginForm" ng-show="selected === 'signIn'"
               autocomplete="off" novalidate
               ng-submit="">
-            <input ng-model="user.email" type="email" name="email" type="text" placeholder="email" required/>
-            <span class="error" ng-show="loginForm.login.$dirty &&
-                loginForm.login.$error.required">Username is required.</span>
-            <input ng-model="user.password" name="password" type="password" placeholder="password" required/>
-            <span class="error" ng-show="loginForm.password.$dirty && loginForm.password.$error.required">
-                Password required!</span>
+            <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
+                <label>Email</label>
+                <input name="email" type="text" id="email"
+                       ng-model="user.email"
+                       ng-pattern="emailPattern">
+
+                <div ng-messages="loginForm.email.$error" role="alert" multiple>
+                    <div ng-message="pattern">
+                        It doesn't look like a valid email
+                    </div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
+                <label>Password</label>
+                <input name="password" type="password" id="password"
+                       ng-model="user.password"
+                       ng-pattern="passwordPattern">
+
+                <div ng-messages="loginForm.password.$error" role="alert" multiple>
+                    <div ng-message="pattern">
+                        It doesn't look like a password
+                    </div>
+                </div>
+            </md-input-container>
+            <p class="login-message">Not registered? <a ng-href="#/index">Create an account</a></p>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
                     ng-disabled="loginForm.$invalid"
                     type="submit" class="login-page-button" ng-click="loginClick()">
@@ -29,14 +48,18 @@
         <form name="restoreForm" id="restoreForm" ng-show="selected === 'restore'"
               autocomplete="off" novalidate
               ng-submit="resetPassword()">
-            <input ng-model="resetRequest.email" name="emailInput" type="email" placeholder="Email"
-                   required />
-            <div role="alert">
-              <span class="error" ng-show="restoreForm.emailInput.$dirty && restoreForm.emailInput.$error.required">
-                Email required!</span>
-                <span class="error" ng-show="restoreForm.emailInput.$error.email">
-                Not valid email!</span>
-            </div>
+            <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
+                <label>Email</label>
+                <input name="email" type="text"
+                       ng-model="user.email"
+                       ng-pattern="emailPattern">
+
+                <div ng-messages="restoreForm.email.$error" role="alert" multiple>
+                    <div ng-message="pattern">
+                        It doesn't look like a valid email
+                    </div>
+                </div>
+            </md-input-container>
             <button  ng-class="{unsubmitable : restoreForm.$invalid, submitable: !restoreForm.$invalid}"
                      ng-disabled="restoreForm.$invalid"
                      type="submit" class="login-page-button">

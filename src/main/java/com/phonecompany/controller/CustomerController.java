@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
+import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
@@ -13,12 +14,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.security.SecureRandom;
 
 import static com.phonecompany.controller.UserController.USERS_RESOURCE_NAME;
 import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -51,6 +58,16 @@ public class CustomerController {
         return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
     }
 
+    @RequestMapping(method = GET, value = "/api/customers")
+    public Collection<Customer> getAllCustomers() {
+        LOG.info("Retrieving all the users contained in the database");
+
+        List<Customer> customers = this.customerService.getAll();
+
+        LOG.info("Users fetched from the database: " + customers);
+
+        return Collections.unmodifiableCollection(customers);
+    }
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
@@ -62,5 +79,16 @@ public class CustomerController {
         httpHeaders.setLocation(registration);
 
         return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+    }
+
+    @RequestMapping(method = POST, value = "/api/customer/save")
+    public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
+        LOG.info(customer.toString());
+        customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+        eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+        Customer persistedCustomer = this.customerService.save(customer);
+
+        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
+        return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
     }
 }

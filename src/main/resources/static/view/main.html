@@ -4,153 +4,183 @@
             <div class="card">
                 <div class="content">
                     <div class="row text-center">
-                        <h4>Register</h4>
+                        <h4 style="font-weight: 500; font-size: 32px; text-transform: uppercase">Registration</h4>
                     </div>
                     <form name="registerForm" id="registerForm"
                           autocomplete="off" novalidate
                           ng-submit="registerUser()">
                         <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group">
+                            <div class="col-md-4">
+
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Email</label>
-                                    <input ng-class="{'error-registration-form': registerForm.email.$error.required
-                                    && registerForm.email.$dirty}"
-                                           id="email" name="email" ng-model="user.email"
-                                           ng-pattern="emailPattern"
-                                           type="email" class="form-control"
-                                           placeholder="Email" required
-                                           autocomplete="off">
-                                    <span class="error"
-                                          ng-show="registerForm.email.$dirty &&
-                registerForm.email.$error.required">Email is required.</span>
-                                    <span class="error" ng-show="registerForm.email.$error.pattern">
-                                        Enter a valid email.
-                                    </span>
-                                </div>
+                                    <input name="email" id="email" ng-model="user.email"
+                                           required ng-pattern="emailPattern">
+
+
+                                    <div ng-messages="registerForm.email.$error" role="alert" multiple>
+                                        <div ng-message="required" class="my-message">Email is required.</div>
+                                        <div ng-message="pattern" class="my-message">That doesn't look like a valid
+                                            email.
+                                        </div>
+                                    </div>
+                                </md-input-container>
+
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
+                            <div class="col-md-4">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Password</label>
-                                    <input ng-class="{'error-registration-form': registerForm.password.$error.required
-                                    && registerForm.password.$dirty}"
-                                           ng-model="user.password" ng-minlength="8" ng-pattern="passwordPattern"
-                                           type="password" name="password" id="password"
-                                           class="form-control" placeholder="Password"
-                                           required autocomplete="off">
-                                    <span class="error" ng-show="registerForm.password.$error.minlength
-                                    && registerForm.password.$dirty">
-                                        Password should be 8 characters long.
-                                    </span>
-                                    <span class="error" ng-show="registerForm.password.$error.required
-                                    && registerForm.password.$dirty">
-                                        Password is required
-                                    </span>
-                                    <span class="error" ng-show="registerForm.password.$error.pattern">
-                                        Password should contain a special character.
-                                    </span>
-                                </div>
+                                    <input name="password" type="password" id="password"
+                                           ng-model="user.password"
+                                           md-minlength="8"
+                                           required ng-pattern="passwordPattern">
+
+
+                                    <div ng-messages="registerForm.password.$error" role="alert" multiple>
+
+                                        <div ng-message-exp="['required', 'minlength', 'pattern']">
+                                            Password is required and should be at least 8 characters long with one
+                                            special character.
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
+
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Phone number</label>
-                                    <input ng-class="{'error-registration-form': registerForm.phone.$error.required
-                                    && registerForm.phone.$dirty}"
-                                           ng-model="user.phone" ng-pattern="phonePattern"
-                                           type="text" name="phone" id="phone"
-                                           class="form-control"
-                                           placeholder="Phone number" required>
-                                    <span class="error" ng-show="registerForm.phone.$error.pattern">
-                                        Example: +380990076563
-                                    </span>
-                                    <span class="error" ng-show="registerForm.phone.$error.required
-                                    && registerForm.phone.$dirty">
-                                        Phone is required
-                                    </span>
-                                </div>
+                                    <input name="phone" type="text" id="phone"
+                                           ng-model="user.phone"
+                                           required ng-pattern="phonePattern">
+
+                                    <div ng-messages="registerForm.phone.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            Example: +380990076563
+                                        </div>
+                                        <div ng-message="required">
+                                            Phone is required
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>First name</label>
-                                    <input ng-model="user.firstName"
-                                           name="firstName" id="firstName"
-                                           ng-pattern="textFieldPattern"
-                                           type="text" class="form-control"
-                                           placeholder="First name">
-                                    <span class="error"
-                                          ng-show="registerForm.firstName.$error.pattern">
-                                        This field should only contain letters
-                                    </span>
-                                </div>
+                                    <input name="firstName" type="text" id="firstName"
+                                           ng-model="user.firstName"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.firstName.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Second name</label>
-                                    <input ng-model="user.secondName"
-                                           ng-pattern="textFieldPattern"
-                                           name="secondName" id="secondName"
-                                           type="text" class="form-control"
-                                           placeholder="Second name">
-                                </div>
-                                <span class="error"
-                                      ng-show="registerForm.secondName.$error.pattern">
-                                        This field should only contain letters
-                                </span>
+                                    <input name="secondName" type="text" id="secondName"
+                                           ng-model="user.secondName"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.secondName.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Last name</label>
-                                    <input ng-model="user.lastName"
-                                           ng-pattern="textFieldPattern"
-                                           name="lastName" id="lastName"
-                                           type="text" class="form-control"
-                                           placeholder="Last name">
-                                </div>
-                                <span class="error"
-                                      ng-show="registerForm.lastName.$error.pattern">
-                                        This field should only contain letters
-                                </span>
+                                    <input name="lastName" type="text" id="lastName"
+                                           ng-model="user.lastName"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.lastName.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                         </div>
 
                         <div class="row">
+
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Region</label>
-                                    <input ng-model="user.region" type="text"
-                                           class="form-control" placeholder="Region">
-                                </div>
+                                    <input name="region" type="text" id="region"
+                                           ng-model="user.region"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.region.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Locality</label>
-                                    <input ng-model="user.locality" type="text"
-                                           class="form-control" placeholder="Locality">
-                                </div>
+                                    <input name="locality" type="text" id="locality"
+                                           ng-model="user.locality"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.locality.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Street</label>
-                                    <input ng-model="user.street" type="text"
-                                           class="form-control" placeholder="Street">
-                                </div>
+                                    <input name="street" type="text" id="street"
+                                           ng-model="user.street"
+                                           ng-pattern="textFieldPattern">
+
+                                    <div ng-messages="registerForm.street.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain letters
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>House number</label>
-                                    <input ng-model="user.houseNumber" type="number" class="form-control"
-                                           placeholder="House number">
-                                </div>
+                                    <input name="houseNumber" type="text" id="houseNumber"
+                                           ng-model="user.houseNumber"
+                                           ng-pattern="numberPattern">
+
+                                    <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain positive numbers
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                             <div class="col-md-3">
-                                <div class="row"></div>
-                                <label>Apartment number</label>
-                                <div class="form-group">
-                                    <input ng-model="user.apartmentNumber" type="number" class="form-control"
-                                           placeholder="Apartment number">
-                                </div>
+                                <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
+                                    <label>Apartment number</label>
+                                    <input name="apartmentNumber" type="number" id="apartmentNumber"
+                                           ng-model="user.apartmentNumber"
+                                           ng-pattern="numberPattern">
+
+                                    <div ng-messages="registerForm.apartmentNumber.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field can only contain positive numbers
+                                        </div>
+                                    </div>
+                                </md-input-container>
                             </div>
                         </div>
 

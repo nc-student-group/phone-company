@@ -37,6 +37,34 @@
             return deferred.promise;
         };
 
+        CustomerService.getAllCustomer = function() {
+            var deferred = $q.defer();
+            $http.get("api/customers").then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        CustomerService.saveCustomerByAdmin = function (customer) {
+            console.log('customer: ' + JSON.stringify(customer));
+            var deferred = $q.defer();
+            $http.post("api/customer/save", customer).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+
         return CustomerService;
     }
 }());

@@ -3,6 +3,7 @@
     var app = angular.module('phone-company',
         ['ngRoute',
             "ngMaterial",
+            'ngMessages',
             'ngResource']);
 
     app.config(function ($routeProvider, $locationProvider) {
@@ -17,6 +18,11 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
+        $routeProvider.when('/frontPage',
+            {
+                templateUrl: 'view/frontPage.html'
+                // controller: ''
+            });
         $routeProvider.when('/login/:success',
             {
                 templateUrl: 'view/login.html',
@@ -24,8 +30,8 @@
             });
         $routeProvider.when('/admin',
             {
-                templateUrl: 'view/administration.html',
-                controller: 'AdministrationController'
+                templateUrl: 'view/admin/users.html',
+                controller: 'UserController'
             });
         $routeProvider.when('/client',
             {
@@ -67,12 +73,22 @@
                 templateUrl: 'view/csr/services.html',
                 // controller: 'TariffsController'
             });
+        $routeProvider.when('/admin/users',
+            {
+                templateUrl: 'view/admin/users.html',
+                controller: 'UserController'
+            });
+        $routeProvider.when('/admin/customers',
+            {
+                templateUrl: 'view/admin/customers.html',
+                controller: 'CustomerController'
+            });
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
                 // controller: ''
             });
-        $routeProvider.otherwise({redirectTo: '/index'});
+        $routeProvider.otherwise({redirectTo: '/login'});
     });
 
     app.config(['$httpProvider', function ($httpProvider) {

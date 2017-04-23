@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 public class Tariff extends DomainEntity {
+
     @NotNull(message = "Tariff name must not be null")
     private String tariffName;
     @NotNull(message = "Product status must not be null")

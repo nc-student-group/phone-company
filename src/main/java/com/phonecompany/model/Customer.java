@@ -8,16 +8,16 @@ import javax.validation.constraints.Pattern;
 
 public class Customer extends User {
 
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
     @NotNull(message = "First name must not be null")
-    @Pattern(regexp = "[a-zA-Z]{3,}")
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z]{3,}")
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
     @NotNull(message = "Second name must not be null")
     private String secondName;
-    @Pattern(regexp = "[a-zA-Z]{3,}")
+    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
     @NotNull(message = "Last name must not be null")
     private String lastName;
-    @Pattern(regexp = "^\\+[0-9]{12}$")
+    @Pattern(regexp = "^\\+38[0-9]{10}$", message = "Phone should be in format of +38##########")
     @NotNull(message = "Phone must not be null")
     private String phone;
     @NotNull(message = "Address must not be null")

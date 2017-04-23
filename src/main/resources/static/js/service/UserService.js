@@ -46,6 +46,7 @@
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
+                    toastr.error(errResponse.data.message);
                     console.error(errResponse.toString());
                     deferred.reject(errResponse);
                 });

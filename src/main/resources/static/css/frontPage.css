@@ -1,0 +1,101 @@
+.frontpage-jumbotron {
+    background: url("pexels-photo-157055.jpeg") center center no-repeat;
+    background-size: cover;
+    height: 560px;
+    text-align: center;
+}
+
+.frontpage-jumbotron h1 {
+    /*background-color: rgba(255, 255, 255, 0.4);*/
+    color: #292929;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    margin-left: 210px;
+    margin-top: 150px;
+    margin-bottom: 35px;
+    font-size: 55px;
+    width: 700px;
+    padding: 10px 20px;
+}
+
+.front-page-button {
+    background-color: #6a6562;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-size: 18px;
+    padding: 16px 30px;
+    font-weight: 600;
+    transition: all 0.7s ease;
+    outline: none;
+}
+
+.front-page-button:hover {
+    background-color: #699c70;
+    color: white;
+}
+
+.front-page-button:visited {
+    color: white;
+    outline: none;
+}
+
+.supporting {
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.supporting .col {
+    float: left;
+    width: 33%;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+}
+
+.supporting img {
+    height: 32px;
+}
+
+.supporting h2 {
+    font-weight: 600;
+    font-size: 23px;
+    text-transform: uppercase;
+}
+
+.supporting p {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0 50px;
+    margin-bottom: 40px;
+}
+
+.col-btn {
+    background: white;
+    color: #333;
+    border-style: none;
+    border: 1px solid #333;
+    padding: 8px 28px;
+    font-family: 'Raleway', sans-serif;
+}
+
+.col-btn:hover {
+    background: #333;
+    border: 1px solid white;
+    color: white;
+}
+
+.front-page-footer {
+    margin-top: 80px;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    list-style-type: none;
+    margin: 40px 0;
+    font-size: 12px;
+}
+
+@media (max-width: 500px) {
+    .frontpage-jumbotron h1 {
+        font-size: 50px;
+        padding: 0 40px;
+    }
+}
