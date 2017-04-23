@@ -3,9 +3,11 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.RegionDao;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.dao.interfaces.TariffRegionDao;
+import com.phonecompany.exception.EntityDeletionException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.model.Region;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
@@ -78,50 +80,34 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     }
 
     @Override
-    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size) {
+    public List<TariffRegion> getAllByTariffId(Long tariffId) {
         List<TariffRegion> tariffRegions = new ArrayList<>();
-        String query = this.getQuery("getAll");
-        if (regionId != 0) {
-            query += " WHERE region_id = ?";
-        }
-        query += " LIMIT ? OFFSET ?";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-                ps.setInt(2, size);
-                ps.setInt(3, page * size);
-            } else {
-                ps.setInt(1, size);
-                ps.setInt(2, page * size);
-            }
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffId"))) {
+            ps.setLong(1, tariffId);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                tariffRegions.add(init(rs));
+            while(rs.next()){
+                TariffRegion tariffRegion = new TariffRegion();
+                tariffRegion.setId(rs.getLong("tr_id"));
+                tariffRegion.setRegion(new Region(rs.getLong("region_id"), rs.getString("name_region")));
+                tariffRegion.setTariff(null);
+                tariffRegion.setPrice(rs.getDouble("price"));
+                tariffRegions.add(tariffRegion);
             }
         } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
+            throw new EntityNotFoundException(tariffId, e);
         }
         return tariffRegions;
     }
 
     @Override
-    public Integer getCountTariffsByRegionId(Long regionId) {
-        List<TariffRegion> tariffRegions = new ArrayList<>();
-        String query = this.getQuery("getCount");
-        if (regionId != 0) {
-            query += " WHERE region_id = ? ";
-        }
+    public void deleteByTariffId(long tariffId){
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-            }
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
+             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("deleteByTariffId"))) {
+            preparedStatement.setLong(1, tariffId);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
+            throw new EntityDeletionException(tariffId, e);
         }
     }
 }

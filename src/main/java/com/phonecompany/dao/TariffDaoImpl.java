@@ -2,9 +2,11 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityModificationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Tariff;
+import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
 
     @Override
     public String getQuery(String type) {
-        return queryLoader.getQuery("query.tariff."+type);
+        return queryLoader.getQuery("query.tariff." + type);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(7, entity.getMms());
             preparedStatement.setString(8, entity.getRoaming());
             preparedStatement.setBoolean(9, entity.getIsCorporate());
+            preparedStatement.setDate(10, entity.getCreationDate());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -61,8 +64,9 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(7, entity.getMms());
             preparedStatement.setString(8, entity.getRoaming());
             preparedStatement.setBoolean(9, entity.getIsCorporate());
+            preparedStatement.setDate(10, entity.getCreationDate());
 
-            preparedStatement.setLong(9, entity.getId());
+            preparedStatement.setLong(11, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -70,7 +74,6 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
 
     @Override
     public Tariff init(ResultSet rs) {
-
         Tariff tariff = new Tariff();
         try {
             tariff.setId(rs.getLong("id"));
@@ -83,10 +86,86 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             tariff.setMms(rs.getString("mms"));
             tariff.setRoaming(rs.getString("roaming"));
             tariff.setIsCorporate(rs.getBoolean("is_corporate"));
+            tariff.setCreationDate(rs.getDate("creation_date"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
         return tariff;
+    }
+
+    @Override
+    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
+        List<Tariff> tariffs = new ArrayList<>();
+        String query = this.getQuery("getAll");
+        if (regionId != 0) {
+            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+        }
+        query += " ORDER BY t.creation_date DESC ";
+        query += " LIMIT ? OFFSET ?";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            if (regionId != 0) {
+                ps.setLong(1, regionId);
+                ps.setInt(2, size);
+                ps.setInt(3, page * size);
+            } else {
+                ps.setInt(1, size);
+                ps.setInt(2, page * size);
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                tariffs.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+        return tariffs;
+    }
+
+    @Override
+    public Integer getCountByRegionIdAndPaging(long regionId) {
+        String query = this.getQuery("getCount");
+        if (regionId != 0) {
+            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+        }
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            if (regionId != 0) {
+                ps.setLong(1, regionId);
+            }
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+    }
+
+    @Override
+    public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
+            ps.setString(1, productStatus.name());
+            ps.setLong(2, tariffId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new EntityModificationException(tariffId, e);
+        }
+    }
+
+    @Override
+    public Tariff findByTariffName(String tariffName) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("findByTariffName"))) {
+            ps.setString(1, tariffName);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return init(rs);
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(tariffName, e);
+        }
+        return null;
     }
 
 }

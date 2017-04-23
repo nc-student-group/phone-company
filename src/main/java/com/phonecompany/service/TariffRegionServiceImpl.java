@@ -20,12 +20,12 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion> imple
     }
 
     @Override
-    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
-        return this.tariffRegionDao.getAllTariffsByRegionId(regionId, page, size);
+    public List<TariffRegion> getAllByTariffId(Long tariffId){
+        return tariffRegionDao.getAllByTariffId(tariffId);
     }
 
     @Override
-    public Integer getCountTariffsByRegionId(Long regionId){
-        return this.tariffRegionDao.getCountTariffsByRegionId(regionId);
+    public void deleteByTariffId(long tariffId){
+        this.tariffRegionDao.deleteByTariffId(tariffId);
     }
 }
