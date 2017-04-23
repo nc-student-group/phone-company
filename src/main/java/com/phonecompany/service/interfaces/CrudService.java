@@ -1,8 +1,5 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.model.ResetPasswordEvent;
-import com.phonecompany.model.User;
-
 import java.util.List;
 
 /**

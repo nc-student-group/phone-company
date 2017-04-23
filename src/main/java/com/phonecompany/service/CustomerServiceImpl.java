@@ -38,7 +38,6 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<Customer> confirmMessageCreator,
                                EmailService emailService) {
-        super(customerDao);
         this.customerDao = (CustomerDao)customerDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;

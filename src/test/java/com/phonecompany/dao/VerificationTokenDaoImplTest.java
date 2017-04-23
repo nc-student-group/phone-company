@@ -2,6 +2,7 @@ package com.phonecompany.dao;
 
 import com.phonecompany.model.VerificationToken;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 public class VerificationTokenDaoImplTest extends AbstractTest {
 
     @Autowired
