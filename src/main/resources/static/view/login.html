@@ -19,6 +19,7 @@
             <input ng-model="user.password" name="password" type="password" placeholder="password" required/>
             <span class="error" ng-show="loginForm.password.$dirty && loginForm.password.$error.required">
                 Password required!</span>
+            <p class="login-message">Not registered? <a ng-href="#/index">Create an account</a></p>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
                     ng-disabled="loginForm.$invalid"
                     type="submit" class="login-page-button" ng-click="loginClick()">

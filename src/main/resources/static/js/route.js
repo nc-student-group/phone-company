@@ -18,6 +18,11 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
+        $routeProvider.when('/frontPage',
+            {
+                templateUrl: 'view/frontPage.html'
+                // controller: ''
+            });
         $routeProvider.when('/login/:success',
             {
                 templateUrl: 'view/login.html',
@@ -83,7 +88,7 @@
                 templateUrl: 'view/403.html',
                 // controller: ''
             });
-        $routeProvider.otherwise({redirectTo: '/index'});
+        $routeProvider.otherwise({redirectTo: '/login'});
     });
 
     app.config(['$httpProvider', function ($httpProvider) {

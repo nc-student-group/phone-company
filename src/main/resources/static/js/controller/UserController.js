@@ -4,7 +4,7 @@
     angular.module('phone-company')
         .controller('UserController', UserController);
 
-    AdministrationController.$inject = ['$scope', '$log', 'UserService', '$rootScope'];
+    UserController.$inject = ['$scope', '$log', 'UserService', '$rootScope'];
 
     function UserController($scope, $log, UserService, $rootScope) {
         console.log('This is UserController');

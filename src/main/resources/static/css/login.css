@@ -77,6 +77,22 @@
     margin-bottom: 0;
 }
 
+.login-message {
+    color: #b3b3b3;
+    font-size: 12px;
+    margin: 20px 0 5px;
+}
+
+.login-message a {
+    color: #6e71af;
+    text-decoration: none;
+}
+
+.login-message a:hover {
+    color: #4854af;
+    text-decoration: none;
+}
+
 .registrations {
     padding-left: 0;
     display: table;
@@ -85,10 +101,16 @@
     margin-bottom: 20px;
 }
 
+.options {
+    border: none;
+    outline: none;
+}
+
 .login-header-item {
     font-size: 15px;
     display: table-cell;
     border: none;
+    outline: none;
     width: 1%;
     padding: 10px;
 }
