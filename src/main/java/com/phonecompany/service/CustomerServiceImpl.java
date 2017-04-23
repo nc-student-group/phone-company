@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnRegistrationCompleteEvent;
@@ -30,14 +31,15 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private EmailService emailService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerDao customerDao,
+    public CustomerServiceImpl(CrudDao<Customer> customerDao,
                                ShaPasswordEncoder shaPasswordEncoder,
                                @Qualifier("resetPassMessageCreator")
                                        MailMessageCreator<Customer> resetPassMessageCreator,
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<Customer> confirmMessageCreator,
                                EmailService emailService) {
-        this.customerDao = customerDao;
+        super(customerDao);
+        this.customerDao = (CustomerDao)customerDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.confirmMessageCreator = confirmMessageCreator;
