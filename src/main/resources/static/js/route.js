@@ -51,6 +51,16 @@
                 templateUrl: 'view/csr/tariffs.html',
                 controller: 'TariffsController'
             });
+        $routeProvider.when('/csr/orders',
+            {
+                templateUrl: 'view/csr/orders.html',
+                // controller: 'TariffsController'
+            });
+        $routeProvider.when('/csr/complaints',
+            {
+                templateUrl: 'view/csr/complaints.html',
+                // controller: 'TariffsController'
+            });
         $routeProvider.when('/csr/services',
             {
                 templateUrl: 'view/csr/services.html',

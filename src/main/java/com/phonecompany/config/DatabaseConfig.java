@@ -18,19 +18,19 @@ public class DatabaseConfig {
         return new ShaPasswordEncoder();
     }
 
-    //TODO: delete
-    @Bean(name = "spring.dataSource")
-    public DriverManagerDataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:D:/myDB;USER=root;PASSWORD=root");
-
-        // schema init
-        Resource initSchema = new ClassPathResource("schema.sql");
-        Resource initData = new ClassPathResource("data.sql");
-        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initData);
-        DatabasePopulatorUtils.execute(databasePopulator, dataSource);
-
-        return dataSource;
-    }
+//    //TODO: delete
+//    @Bean(name = "spring.dataSource")
+//    public DriverManagerDataSource dataSource() {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("org.h2.Driver");
+//        dataSource.setUrl("jdbc:h2:D:/myDB;USER=root;PASSWORD=root");
+//
+//        // schema init
+//        Resource initSchema = new ClassPathResource("schema.sql");
+//        Resource initData = new ClassPathResource("data.sql");
+//        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initData);
+//        DatabasePopulatorUtils.execute(databasePopulator, dataSource);
+//
+//        return dataSource;
+//    }
 }
