@@ -52,7 +52,7 @@ angular.module('phone-company').controller('LoginController', [
                         toastr.error('User with such email was not found!',
                             'Error during restoring password!');
                     } else {
-                        console.log("Password was restored for user with email: ", data);
+                        console.log("Password was restored for user with email: ", data.email);
                         $scope.selected = 'signIn';
                         toastr.info('New password has been sent your email!', 'Password was restored!');
                     }

@@ -1,9 +1,6 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.EmailAlreadyPresentException;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -19,6 +16,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -75,6 +75,28 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
 
+        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+
         return super.update(user);
+    }
+    @Override
+    public User resetPassword(User user) {
+
+        user.setPassword(generatePassword());
+        sendResetPasswordMessage(user);
+        return update(user);
+    }
+
+    private void sendResetPasswordMessage(User user)
+    {
+        SimpleMailMessage resetPasswordMessage =
+                this.resetPassMessageCreator.constructMessage(user);
+        LOG.info("Sending email reset password to: {}", user.getEmail());
+        emailService.sendMail(resetPasswordMessage);
+    }
+
+    private String generatePassword() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(50, random).toString(32);
     }
 }
