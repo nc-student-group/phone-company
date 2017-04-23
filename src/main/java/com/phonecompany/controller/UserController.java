@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -92,10 +94,11 @@ public class UserController {
 
     @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
-        LOG.info(user.toString());
 
+        user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+        eventPublisher.publishEvent(new OnUserCreationEvent(user));
         User persistedUser = this.userService.save(user);
-        eventPublisher.publishEvent(new OnUserCreationEvent(persistedUser));
+
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
         return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
     }

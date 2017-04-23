@@ -23,8 +23,8 @@
             });
         $routeProvider.when('/admin',
             {
-                templateUrl: 'view/administration.html',
-                controller: 'AdministrationController'
+                templateUrl: 'view/admin/users.html',
+                controller: 'UserController'
             });
         $routeProvider.when('/client',
             {
@@ -65,6 +65,16 @@
             {
                 templateUrl: 'view/csr/services.html',
                 // controller: 'TariffsController'
+            });
+        $routeProvider.when('/admin/users',
+            {
+                templateUrl: 'view/admin/users.html',
+                controller: 'UserController'
+            });
+        $routeProvider.when('/admin/customers',
+            {
+                templateUrl: 'view/admin/customers.html',
+                controller: 'CustomerController'
             });
         $routeProvider.when('/403',
             {

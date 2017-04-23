@@ -2,17 +2,16 @@
     'use strict';
 
     angular.module('phone-company')
-        .controller('AdministrationController', AdministrationController);
+        .controller('UserController', UserController);
 
     AdministrationController.$inject = ['$scope', '$log', 'UserService', '$rootScope'];
 
-    function AdministrationController($scope, $log, UserService, $rootScope) {
-        console.log('This is AdministrationController');
+    function UserController($scope, $log, UserService, $rootScope) {
+        console.log('This is UserController');
 
         $scope.users = UserService.getUsers();
         $scope.user ={
             email: '',
-            password: '',
             role:'CSR'
         }
         $scope.createUser = createUser;
