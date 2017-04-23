@@ -348,7 +348,8 @@ angular.module('phone-company').controller('TariffsController', [
             $scope.preloader.send = true;
             TariffService.changeTariffStatus($scope.tariffs[index].tariff.id, 'ACTIVATED').then(function () {
                 $scope.tariffs[index].tariff.productStatus = "ACTIVATED";
-                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.nameTariff + ' " activated!', 'Success activation');
+                console.log($scope.tariffs[index].tariff);
+                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.tariffName + ' " activated!', 'Success activation');
                 $scope.preloader.send = false;
             }, function () {
                 toastr.error('Some problems with tariff activation, try again!', 'Error');
@@ -359,7 +360,7 @@ angular.module('phone-company').controller('TariffsController', [
             $scope.preloader.send = true;
             TariffService.changeTariffStatus($scope.tariffs[index].tariff.id, 'DEACTIVATED').then(function () {
                 $scope.tariffs[index].tariff.productStatus = "DEACTIVATED";
-                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.nameTariff + ' " deactivated!', 'Success deactivation');
+                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.tariffName + ' " deactivated!', 'Success deactivation');
                 $scope.preloader.send = false;
             }, function () {
                 toastr.error('Some problems with tariff deactivation, try again!', 'Error');
