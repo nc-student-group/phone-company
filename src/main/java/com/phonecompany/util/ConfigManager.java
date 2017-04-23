@@ -5,11 +5,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.phonecompany.model.config.Config;
 import com.phonecompany.model.config.DataSourceInfo;
 import com.phonecompany.model.config.Profile;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -49,15 +49,15 @@ public class ConfigManager {
     private void loadDataSourceInfo() {
         try {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            URL configUrl = ConfigManager.class.getResource(APPLICATION_CONFIG);
-            File file = new File(configUrl.toURI());
-            LOG.debug("Getting configuration from file: " + file.toString());
-            Config config = mapper.readValue(file, Config.class);
+            InputStream resourceAsStream = this.getClass()
+                    .getClassLoader().getResourceAsStream(APPLICATION_CONFIG);
+            LOG.debug("Getting configuration from file: " + APPLICATION_CONFIG);
+            Config config = mapper.readValue(resourceAsStream, Config.class);
             Profile activeProfile = this.findActiveProfile(config);
             LOG.debug("Active profile was set to: {}", activeProfile.getName());
             dataSourceInfo = activeProfile.getDataSource();
             LOG.debug("The following profile settings have been read: {}", dataSourceInfo);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
