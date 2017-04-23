@@ -1,8 +1,5 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.model.ResetPasswordEvent;
-import com.phonecompany.model.User;
-
 import java.util.List;
 
 /**
@@ -35,13 +32,6 @@ public interface CrudService<T> {
      * @return entity found by the provided identifier
      */
     T getById(Long id);
-
-    /**
-     * Deletes entity by the given id
-     *
-     * @param id identifier of the entity that has to be deleted
-     */
-    void delete(Long id);
 
     /**
      * Gets all the entities

@@ -1,9 +1,6 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.EmailAlreadyPresentException;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnRegistrationCompleteEvent;
 import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;

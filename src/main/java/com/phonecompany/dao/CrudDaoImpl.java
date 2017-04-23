@@ -89,21 +89,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public void delete(Long id) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
-            conn.setAutoCommit(this.autoCommit);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new EntityDeletionException(id, e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<T> getAll() {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {

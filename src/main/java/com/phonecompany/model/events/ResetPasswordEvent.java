@@ -1,4 +1,4 @@
-package com.phonecompany.model;
+package com.phonecompany.model.events;
 
 /**
  * Gets emitted on reset password request

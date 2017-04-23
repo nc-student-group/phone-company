@@ -1,7 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnRegistrationCompleteEvent;
+import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.CustomerService;

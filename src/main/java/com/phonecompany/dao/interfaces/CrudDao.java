@@ -34,12 +34,6 @@ public interface CrudDao<T extends DomainEntity> {
      */
     T getById(Long id);
 
-    /**
-     * Deletes entity by the given id
-     *
-     * @param id identifier of the entity that has to be deleted
-     */
-    void delete(Long id);
 
     /**
      * Gets all the entities
