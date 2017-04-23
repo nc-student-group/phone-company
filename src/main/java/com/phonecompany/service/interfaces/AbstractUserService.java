@@ -1,6 +1,6 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.model.ResetPasswordEvent;
+import com.phonecompany.model.events.ResetPasswordEvent;
 
 public interface AbstractUserService<T> {
     T resetPassword(ResetPasswordEvent<T> resetPasswordEvent);

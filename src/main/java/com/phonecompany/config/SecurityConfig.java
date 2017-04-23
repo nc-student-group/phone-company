@@ -56,13 +56,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/confirmRegistration").permitAll()
                 .antMatchers("/api/roles").hasRole("ADMIN")
                 .antMatchers("/api/regions/get").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariffs/get/by/region/**").hasRole("CSR")
-                .antMatchers("/api/tariff/new/get").hasRole("CSR")
-                .antMatchers("/api/tariff/add").hasRole("CSR")
-                .antMatchers("/api/tariff/add/single").hasRole("CSR")
-                .antMatchers("api/tariff/update").hasRole("CSR")
-                .antMatchers("/api/tariff/update/single").hasRole("CSR")
-                .antMatchers("/api/tariff/get/*").hasRole("CSR")
+                .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/add/single").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/update").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
                 .anyRequest().authenticated();
 
         http.csrf().disable();

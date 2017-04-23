@@ -2,7 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.EmailAlreadyPresentException;
-import com.phonecompany.model.ResetPasswordEvent;
+import com.phonecompany.model.events.ResetPasswordEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.AbstractUserService;

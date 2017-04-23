@@ -22,6 +22,10 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     private boolean autoCommit = true;
 
+    private final String BEGIN_TRANSACTION = "BEGIN;";
+    private final String COMMIT_TRANSACTION = "COMMIT;";
+    private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
+
     public boolean isAutoCommit() {
         return autoCommit;
     }
@@ -89,21 +93,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      * {@inheritDoc}
      */
     @Override
-    public void delete(Long id) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("delete"))) {
-            conn.setAutoCommit(this.autoCommit);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new EntityDeletionException(id, e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<T> getAll() {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
@@ -126,4 +115,34 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
+
+    @Override
+    public void beginTransaction(){
+        try(Connection conn = dbManager.getConnection();
+            PreparedStatement ps = conn.prepareStatement(BEGIN_TRANSACTION)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new TransactionBeginException(e);
+        }
+    }
+
+    @Override
+    public void commit(){
+        try(Connection conn = dbManager.getConnection();
+            PreparedStatement ps = conn.prepareStatement(COMMIT_TRANSACTION)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new TransactionCommitException(e);
+        }
+    }
+
+    @Override
+    public void rollback(){
+        try(Connection conn = dbManager.getConnection();
+            PreparedStatement ps = conn.prepareStatement(ROLLBACK_TRANSACTION)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new TransactionCommitException(e);
+        }
+    }
 }

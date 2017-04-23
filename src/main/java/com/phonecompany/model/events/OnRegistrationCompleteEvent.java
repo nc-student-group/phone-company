@@ -1,4 +1,6 @@
-package com.phonecompany.model;
+package com.phonecompany.model.events;
+
+import com.phonecompany.model.Customer;
 
 /**
  * Gets emitted when user finishes his registration
