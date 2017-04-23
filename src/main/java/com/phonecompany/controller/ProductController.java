@@ -15,9 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 
 @RestController
 public class ProductController {
@@ -45,10 +44,7 @@ public class ProductController {
                                                     @PathVariable("page") int page,
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("tariffs", tariffRegionService.getAllTariffsByRegionId(regionId, page, size));
-        response.put("tariffsSelected", tariffRegionService.getCountTariffsByRegionId(regionId));
-        return response;
+        return tariffService.getTariffsTable(regionId, page, size);
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
@@ -57,21 +53,86 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/api/tariff/add", method = RequestMethod.POST)
-    public ResponseEntity<Void> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
-
+    public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff tariff = tariffRegions.get(0).getTariff();
+            if(tariffService.findByTariffName(tariff.getTariffName()) != null){
+                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+            }
             tariff.setProductStatus(ProductStatus.ACTIVATED);
+            tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
             Tariff savedTariff = tariffService.save(tariff);
-            LOGGER.debug("Tariff added {}", tariff);
+            LOGGER.debug("Tariff added {}", savedTariff);
             tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if(tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
                     tariffRegion.setTariff(savedTariff);
                     tariffRegionService.save(tariffRegion);
                     LOGGER.debug("Tariff-region added {}", tariffRegion);
                 }
             });
         }
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariff/add/single", method = RequestMethod.POST)
+    public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
+        if(tariffService.findByTariffName(tariff.getTariffName()) != null){
+            return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+        }
+        tariff.setProductStatus(ProductStatus.ACTIVATED);
+        tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        Tariff savedTariff = tariffService.save(tariff);
+        LOGGER.debug("Tariff added {}", savedTariff);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "api/tariff/update", method = RequestMethod.POST)
+    public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
+        if (tariffRegions.size() > 0) {
+            Tariff tariff = tariffRegions.get(0).getTariff();
+            Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
+            if(temp != null && temp.getId() != tariff.getId()){
+                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+            }
+            Tariff savedTariff = tariffService.update(tariff);
+            LOGGER.debug("Tariff added {}", tariff);
+            tariffRegionService.deleteByTariffId(savedTariff.getId());
+            tariffRegions.forEach((TariffRegion tariffRegion) -> {
+                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                    tariffRegion.setTariff(savedTariff);
+                    tariffRegionService.save(tariffRegion);
+                    LOGGER.debug("Tariff-region added {}", tariffRegion);
+                }
+            });
+        }
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariff/update/single", method = RequestMethod.POST)
+    public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
+        Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
+        if(temp != null && temp.getId() != tariff.getId()){
+            return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+        }
+        LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());
+        Tariff updatedTariff = tariffService.update(tariff);
+        tariffRegionService.deleteByTariffId(updatedTariff.getId());
+        LOGGER.debug("Tariff added {}", updatedTariff);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariff/get/{id}", method = RequestMethod.GET)
+    public Map<String, Object> getTariffToEditById(@PathVariable("id") long tariffId) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("tariff", tariffService.getById(tariffId));
+        response.put("regions", tariffRegionService.getAllByTariffId(tariffId));
+        return response;
+    }
+
+    @RequestMapping(value = "/api/tariff/update/status/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
+                                                   @PathVariable("status") ProductStatus productStatus) {
+        this.tariffService.updateTariffStatus(tariffId, productStatus);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

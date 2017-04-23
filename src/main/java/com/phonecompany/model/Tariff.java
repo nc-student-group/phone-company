@@ -1,8 +1,10 @@
 package com.phonecompany.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 
 public class Tariff extends DomainEntity {
     @NotNull(message = "Tariff name must not be null")
@@ -22,12 +24,15 @@ public class Tariff extends DomainEntity {
     @NotNull(message = "Roaming must not be null")
     private String roaming;
     @NotNull(message = "IsCorporate must not be null")
+    @JsonProperty(value = "isCorporate")
     private boolean isCorporate;
+    @NotNull(message = "Creation date must not be null")
+    private Date creationDate;
 
     public Tariff() {
     }
 
-    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming, boolean isCorporate) {
+    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming, boolean isCorporate, Date creationDate) {
         super(id);
         this.tariffName = tariffName;
         this.productStatus = productStatus;
@@ -38,6 +43,7 @@ public class Tariff extends DomainEntity {
         this.mms = mms;
         this.roaming = roaming;
         this.isCorporate = isCorporate;
+        this.creationDate = creationDate;
     }
     public boolean getIsCorporate() {  return isCorporate; }
 
@@ -105,5 +111,21 @@ public class Tariff extends DomainEntity {
 
     public void setMms(String mms) {
         this.mms = mms;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public boolean isCorporate() {
+        return isCorporate;
+    }
+
+    public void setCorporate(boolean corporate) {
+        isCorporate = corporate;
     }
 }
