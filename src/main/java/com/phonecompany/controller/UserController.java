@@ -101,14 +101,13 @@ public class UserController {
     @RequestMapping(method = POST, value = "api/user/reset")
     public ResponseEntity<?> resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
-        User persistedUser = this.userService.findByEmail(email);
+        User persistedUser = userService.findByEmail(email);
         if (persistedUser != null) {
             userService.resetPassword(persistedUser);
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
         }
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
-        return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(persistedUser, HttpStatus.OK);
     }
 }

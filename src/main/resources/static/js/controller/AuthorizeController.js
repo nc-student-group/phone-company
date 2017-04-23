@@ -57,22 +57,6 @@ angular.module('phone-company').controller('AuthorizeController', [
             return deferred.promise;
         };
 
-        $scope.resetPassword = function () {
-            console.log('Attempting to reset password for user with email: '
-                + JSON.stringify($scope.resetRequest));
-            UserService.resetPassword($scope.resetRequest.email)
-                .then(function (data) {
-                    if (data.msg === 'error') {
-                        toastr.error('User with such email was not found!',
-                            'Error during restoring password!');
-                    } else {
-                        console.log("Password was restored for user with email: ", data);
-                        $scope.selected = 'signIn';
-                        toastr.info('New password has been sent your email!', 'Password was restored!');
-                    }
-                });
-        };
-
         $scope.loginClick = function () {
             console.log('Trying to login');
             LoginService.login("username=" + $scope.user.email +

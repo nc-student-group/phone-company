@@ -45,10 +45,10 @@ angular.module('phone-company').controller('LoginController', [
 
         $scope.resetPassword = function () {
             console.log('Attempting to reset password for user with email: '
-                + JSON.stringify($scope.resetRequest));
-            UserService.resetPassword($scope.resetRequest.email)
+                + JSON.stringify($scope.user.email));
+            UserService.resetPassword($scope.user.email)
                 .then(function (data) {
-                    if (data.email === '') {
+                    if (data === '') {
                         toastr.error('User with such email was not found!',
                             'Error during restoring password!');
                     } else {

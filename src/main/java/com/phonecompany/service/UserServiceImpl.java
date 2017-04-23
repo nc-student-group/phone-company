@@ -81,7 +81,6 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     }
     @Override
     public User resetPassword(User user) {
-
         user.setPassword(generatePassword());
         sendResetPasswordMessage(user);
         return update(user);
@@ -95,8 +94,13 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         emailService.sendMail(resetPasswordMessage);
     }
 
-    private String generatePassword() {
+    public String generatePassword() {
         SecureRandom random = new SecureRandom();
-        return new BigInteger(50, random).toString(32);
+        String password = new BigInteger(50, random).toString(32);
+        char[] specSymb = "!@#$%^&_".toCharArray();
+        char[] passwordWithSS = password.toCharArray();
+        passwordWithSS[random.nextInt(passwordWithSS.length)] = specSymb[random.nextInt(specSymb.length)];
+        password = String.valueOf(passwordWithSS);
+        return password;
     }
 }
