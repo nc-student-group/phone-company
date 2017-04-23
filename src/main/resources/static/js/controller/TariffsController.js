@@ -96,37 +96,41 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.addTariff = function () {
             console.log($scope.currentTariff);
             if ($scope.currentTariff.tariffName == undefined || $scope.currentTariff.tariffName.length < 1) {
-                toastr.error('Tariff name field length must be greater than zero', 'Error');
+                toastr.error('Tariff name field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.internet == undefined || $scope.currentTariff.internet.length < 1) {
-                toastr.error('Internet filed length must be greater than zero', 'Error');
+                toastr.error('Internet filed length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.callsInNetwork == undefined || $scope.currentTariff.callsInNetwork.length < 1) {
-                toastr.error('Calls in network field length must be greater than zero', 'Error');
+                toastr.error('Calls in network field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.callsOnOtherNumbers == undefined || $scope.currentTariff.callsOnOtherNumbers.length < 1) {
-                toastr.error('Calls on other numbers field length must be greater than zero', 'Error');
+                toastr.error('Calls on other numbers field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.sms == undefined || $scope.currentTariff.sms.length < 1) {
-                toastr.error('SMS field length must be greater than zero', 'Error');
+                toastr.error('SMS field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.mms == undefined || $scope.currentTariff.mms.length < 1) {
-                toastr.error('MMS field length must be greater than zero', 'Error');
+                toastr.error('MMS field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             if ($scope.currentTariff.roaming == undefined || $scope.currentTariff.roaming.length < 1) {
-                toastr.error('Roaming field length must be greater than zero', 'Error');
+                toastr.error('Roaming field length must be greater than zero and less than 150', 'Error');
                 return;
             }
             for (var i = 0; i < $scope.regionsToSave.length; i++) {
                 $scope.regionsToSave[i].tariff = $scope.currentTariff;
-                if ($scope.regionsToSave[i].price <= 0) {
-                    toastr.error('Price must be greater than zero for ' + $scope.regionsToSave[i].region.nameRegion, 'Error');
+                if($scope.regionsToSave[i].price == undefined){
+                    toastr.error('Bad price for ' + $scope.regionsToSave[i].region.nameRegion, 'Error');
+                    return;
+                }
+                if ($scope.regionsToSave[i].price <= 0 ||  $scope.regionsToSave[i].price > 2000) {
+                    toastr.error('Price must be greater than zero and less than 2000 for ' + $scope.regionsToSave[i].region.nameRegion, 'Error');
                     return;
                 }
             }
@@ -178,6 +182,15 @@ angular.module('phone-company').controller('TariffsController', [
                 return idx > -1;
             }
             return false;
+        };
+
+        $scope.checkPrice = function (r) {
+            if (r.price < 0) {
+                r.price = 0;
+            }
+            if (r.price > 2000) {
+                r.price = 2000;
+            }
         };
 
 // $scope.addRegionToList = function () {

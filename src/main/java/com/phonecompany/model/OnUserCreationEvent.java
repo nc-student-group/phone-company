@@ -1,7 +1,7 @@
 package com.phonecompany.model;
 
-
 public class OnUserCreationEvent {
+
     private final User persistedUser;
 
     public OnUserCreationEvent(User persistedUser) {

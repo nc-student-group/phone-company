@@ -65,6 +65,7 @@
 }
 
 .error {
+    font-size: 12px;
     color: #ff2d2d;
 }
 
@@ -162,6 +163,8 @@
     color: transparent
 }
 
+
+/*PRELOADER CSS*/
 .preloader {
     position: fixed;
     z-index: 300000;
@@ -183,3 +186,14 @@
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+/*PRELOADER CSS END*/
+
+/*TARIFF PAGE CSS*/
+#tariffTable{
+    table-layout: fixed;
+}
+.tariff-td td{
+    word-wrap:break-word;
+}
+/*TARIFF PAGE CSS END*/

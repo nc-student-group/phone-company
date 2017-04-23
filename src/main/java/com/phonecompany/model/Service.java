@@ -5,6 +5,7 @@ import com.phonecompany.model.enums.ProductStatus;
 import javax.validation.constraints.NotNull;
 
 public class Service extends DomainEntity {
+
     @NotNull(message = "Product category must not be null")
     private ProductCategory productCategory;
     @NotNull(message = "Service name must not be null")

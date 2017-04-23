@@ -2,6 +2,8 @@
 
     var app = angular.module('phone-company',
         ['ngRoute',
+            "ngMaterial",
+            'ngMessages',
             'ngResource']);
 
     app.config(function ($routeProvider, $locationProvider) {
@@ -95,8 +97,7 @@
                     case 403:
                         $location.path('/403');
                         break;
-                    case 401:
-                    {
+                    case 401: {
                         console.log('Unauthorized');
                         $location.path('/');
                         break;

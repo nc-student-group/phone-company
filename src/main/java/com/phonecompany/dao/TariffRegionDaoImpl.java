@@ -37,7 +37,7 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
 
     @Override
     public String getQuery(String type) {
-        return queryLoader.getQuery("query.tariff_region."+type);
+        return queryLoader.getQuery("query.tariff_region." + type);
     }
 
     @Override
@@ -78,20 +78,20 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     }
 
     @Override
-    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size){
+    public List<TariffRegion> getAllTariffsByRegionId(Long regionId, int page, int size) {
         List<TariffRegion> tariffRegions = new ArrayList<>();
         String query = this.getQuery("getAll");
-        if(regionId != 0){
+        if (regionId != 0) {
             query += " WHERE region_id = ?";
         }
         query += " LIMIT ? OFFSET ?";
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            if(regionId != 0) {
+            if (regionId != 0) {
                 ps.setLong(1, regionId);
                 ps.setInt(2, size);
-                ps.setInt(3, page*size);
-            }else {
+                ps.setInt(3, page * size);
+            } else {
                 ps.setInt(1, size);
                 ps.setInt(2, page * size);
             }
