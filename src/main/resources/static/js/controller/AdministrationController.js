@@ -14,7 +14,7 @@
             email: '',
             password: '',
             role:'CSR'
-        }
+        };
         $scope.createUser = createUser;
         /**
          * Creates user.
