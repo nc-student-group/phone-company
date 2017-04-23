@@ -71,28 +71,38 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="dataTables_length" id="tariffTable_length">
-                                            <label>Show entries:</label>
-                                            <select name="tariffTable_length" style="width: 100px;"
-                                                    aria-controls="tariffTable"
-                                                    class="form-control " ng-model="size"
-                                                    ng-change="updateData()">
-                                                <option value="3">3</option>
-                                                <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select></div>
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Show entries:</label>
+                                                <md-select ng-model="size" md-on-close="updateData()">
+                                                    <md-option value="5">5</md-option>
+                                                    <md-option value="10">10</md-option>
+                                                    <md-option value="25">25</md-option>
+                                                    <md-option value="50">50</md-option>
+                                                    <md-option value="100">100</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                            <!--<select name="tariffTable_length" style="width: 100px;"-->
+                                                    <!--aria-controls="tariffTable"-->
+                                                    <!--class="form-control " ng-model="size"-->
+                                                    <!--ng-change="updateData()">-->
+                                                <!--<option value="3">3</option>-->
+                                                <!--<option value="5">5</option>-->
+                                                <!--<option value="10">10</option>-->
+                                                <!--<option value="25">25</option>-->
+                                                <!--<option value="50">50</option>-->
+                                                <!--<option value="100">100</option>-->
+                                            <!--</select>-->
+                                        </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="dataTables_length">
-                                            <label>Region entries:</label>
-                                            <select ng-model="currentRegion" class="form-control"
-                                                    ng-change="updateData()">
-                                                <option value="0">All Regions</option>
-                                                <option ng-repeat="r in regions" value="{{r.id}}">{{r.nameRegion}}
-                                                </option>
-                                            </select>
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Region:</label>
+                                                <md-select ng-model="currentRegion" md-on-close="updateData()">
+                                                    <md-option value="0">All Regions</md-option>
+                                                    <md-option ng-repeat="r in regions" value="{{r.id}}">{{r.nameRegion}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <!--<div class="col-sm-4">-->
@@ -120,7 +130,7 @@
                                     <th>Corporate</th>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="t in tariffs">
+                                    <tr ng-repeat="t in tariffs" class="tariff-td">
                                         <td>{{t.tariff.tariffName}}</td>
                                         <td>{{t.region.nameRegion}}</td>
                                         <td>{{t.price}}</td>
@@ -145,14 +155,16 @@
                                             <ul class="pagination">
                                                 <li class="paginate_button previous" id="tariffTable_previous">
                                                     <a aria-controls="tariffTable" data-dt-idx="0"
-                                                       tabindex="0" ng-click="previousPage()">Previous</a></li>
+                                                       tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                </li>
                                                 <li class="paginate_button active"><a
                                                         aria-controls="tariffTable"
                                                         data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                 </li>
                                                 <li class="paginate_button next" id="tariffTable_next"><a
                                                         aria-controls="tariffTable" data-dt-idx="2"
-                                                        tabindex="0" ng-click="nextPage()">Next</a></li>
+                                                        tabindex="0" ng-show="(page + 1)*size < tariffsSelected"
+                                                        ng-click="nextPage()">Next</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -172,82 +184,101 @@
                             <div class="content">
                                 <form>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Tariff name</label>
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="Tariff name"
-                                                   ng-model="currentTariff.tariffName" required/>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Tariff name</label>-->
+                                        <!--</div>-->
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" placeholder="Tariff name"
+                                                       ng-model="currentTariff.tariffName" md-maxlength="150" required/>
+                                            </md-input-container>
+
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Internet</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Internet</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="Internet"
-                                                   ng-model="currentTariff.internet" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control" placeholder="Internet"
+                                                       ng-model="currentTariff.internet" md-maxlength="150" required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Calls in network</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Calls in network</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="Calls in network"
-                                                   ng-model="currentTariff.callsInNetwork" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control" placeholder="Calls in network"
+                                                       ng-model="currentTariff.callsInNetwork" md-maxlength="150"
+                                                       required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Calls on other numbers</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Calls on other numbers</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="Calls on other number"
-                                                   ng-model="currentTariff.callsOnOtherNumbers" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control"
+                                                       placeholder="Calls on other number"
+                                                       ng-model="currentTariff.callsOnOtherNumbers" md-maxlength="150"
+                                                       required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>SMS</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>SMS</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="SMS"
-                                                   ng-model="currentTariff.sms" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control" placeholder="SMS"
+                                                       ng-model="currentTariff.sms" md-maxlength="150" required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>MMS</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>MMS</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="MMS"
-                                                   ng-model="currentTariff.mms" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control" placeholder="MMS"
+                                                       ng-model="currentTariff.mms" md-maxlength="150" required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Roaming</label>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Roaming</label>-->
 
-                                        </div>
-                                        <div class="form-group col-md-7">
-                                            <input type="text" class="form-control" placeholder="Roaming"
-                                                   ng-model="currentTariff.roaming" required/>
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" class="form-control" placeholder="Roaming"
+                                                       ng-model="currentTariff.roaming" md-maxlength="150" required/>
+                                            </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Is corporate</label>
-                                        </div>
-                                        <div class="form-group col-md-1">
-                                            <input type="checkbox" class="form-control"
-                                                   ng-model="currentTariff.isCorporate"/>
+                                        <!--<div class="form-group col-md-4">-->
+                                        <!--<label>Is corporate</label>-->
+                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-checkbox type="checkbox" class="md-block"
+                                                         ng-model="currentTariff.isCorporate">Is corporate
+                                            </md-checkbox>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -255,7 +286,7 @@
                                             <label>Regions & prices</label>
                                         </div>
                                         <div class="form-group col-md-8">
-                                            <div class="row" >
+                                            <div class="row">
                                                 <div class="col-md-6">
                                                     <label>Region</label>
                                                 </div>
@@ -265,11 +296,19 @@
                                             </div>
                                             <div class="row" ng-repeat="r in regionsToAdd">
                                                 <div class="col-md-6">
-                                                    <input type="checkbox" ng-click="toggle(r, regionsToSave)" ng-checked="exists(r, regionsToSave)">
-                                                    <label>{{r.region.nameRegion}}</label>
+                                                    <md-checkbox type="checkbox" class="md-block"
+                                                                 ng-click="toggle(r, regionsToSave)"
+                                                                 ng-checked="exists(r, regionsToSave)"><label>{{r.region.nameRegion}}</label>
+                                                    </md-checkbox>
+                                                    <!--<input type="checkbox" ng-click="toggle(r, regionsToSave)" ng-checked="exists(r, regionsToSave)">-->
+                                                    <!--<label>{{r.region.nameRegion}}</label>-->
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="number" ng-model="r.price" class="form-control">
+                                                    <md-input-container ng-show="exists(r, regionsToSave)" style="margin: 0 0; padding: 0;">
+                                                        <input type="number"
+                                                               ng-model="r.price" class="form-control"
+                                                               ng-change="checkPrice(r)" md-maxlength="4">
+                                                    </md-input-container>
                                                 </div>
                                             </div>
                                             <!--<div class="row">-->
@@ -304,7 +343,7 @@
                                             <!--</div>-->
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-left"
+                                    <button class="btn btn-info btn-fill pull-left"
                                             ng-click="addTariff()">Add tariff
                                     </button>
                                     <div class="clearfix"></div>
