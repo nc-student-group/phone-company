@@ -11,15 +11,32 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+
 @ControllerAdvice
 class UserControllerAdvice {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserControllerAdvice.class);
-    private final MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error");
 
     @ExceptionHandler(EmailAlreadyPresentException.class)
-    ResponseEntity<?> emailAlreadyPresentException(EmailAlreadyPresentException e) {
+    public ResponseEntity<?> emailAlreadyPresentException(EmailAlreadyPresentException e) {
         LOG.debug("e.getMessage: {}", e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    private static final class Response {
+
+        private String message;
+
+        public Response() {
+        }
+
+        public Response(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

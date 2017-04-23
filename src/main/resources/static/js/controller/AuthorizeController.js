@@ -37,7 +37,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
-        $scope.phonePattern=/^\+[0-9]{12}$/;
+        $scope.phonePattern=/^\+38[0-9]{10}$/;
         $scope.textFieldPattern=/^[a-zA-Z]+$/;
         $scope.numberPattern=/^[0-9]+$/;
 
@@ -46,13 +46,13 @@ angular.module('phone-company').controller('AuthorizeController', [
             console.log('Persisting user: ' + JSON.stringify($scope.user));
             $http.post("/api/customers", $scope.user).then(
                 function (response) {
-                    console.log(JSON.stringify(response.data));
                     deferred.resolve(response.data);
+                    console.log(JSON.stringify(response.data));
                 },
                 function (errResponse) {
-                    console.error(JSON.stringify(errResponse.data));
-                    toastr.error(errResponse.data);
                     deferred.reject(errResponse);
+                    console.log(errResponse);
+                    toastr.error(errResponse.data.message);
                 });
             return deferred.promise;
         };

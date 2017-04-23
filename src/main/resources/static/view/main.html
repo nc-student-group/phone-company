@@ -17,6 +17,7 @@
                                     <input name="email" id="email" ng-model="user.email"
                                            required ng-pattern="emailPattern">
 
+
                                     <div ng-messages="registerForm.email.$error" role="alert" multiple>
                                         <div ng-message="required" class="my-message">Email is required.</div>
                                         <div ng-message="pattern" class="my-message">That doesn't look like a valid
@@ -31,7 +32,9 @@
                                     <label>Password</label>
                                     <input name="password" type="password" id="password"
                                            ng-model="user.password"
-                                           required ng-pattern="passwordPattern" md-minlength="8">
+                                           md-minlength="8"
+                                           required ng-pattern="passwordPattern">
+
 
                                     <div ng-messages="registerForm.password.$error" role="alert" multiple>
 
