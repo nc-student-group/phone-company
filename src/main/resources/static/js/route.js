@@ -3,6 +3,7 @@
     var app = angular.module('phone-company',
         ['ngRoute',
             "ngMaterial",
+            'ngMessages',
             'ngResource']);
 
     app.config(function ($routeProvider, $locationProvider) {

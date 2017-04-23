@@ -17,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 @PropertySource("classpath:mail.properties")
 public class EmailServiceImpl implements EmailService {
 
+    public static final String PHONE_COMPANY_EMAIL = "nc.phone.company.project@gmail.com";
     private JavaMailSender mailSender;
 
     @Autowired
@@ -33,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper.setText(mailMessage.getText(), true); // true = isHtml
             mimeMessageHelper.setTo(mailMessage.getTo());
             mimeMessageHelper.setSubject(mailMessage.getSubject());
-            mimeMessageHelper.setFrom("nc.phone.company.project@gmail.com");
+            mimeMessageHelper.setFrom(PHONE_COMPANY_EMAIL);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new MailSendException(e);
