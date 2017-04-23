@@ -40,6 +40,9 @@ angular.module('phone-company').controller('LoginController', [
             email: ""
         };
 
+        $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
+        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
+
         $scope.resetPassword = function () {
             console.log('Attempting to reset password for user with email: '
                 + JSON.stringify($scope.resetRequest));
