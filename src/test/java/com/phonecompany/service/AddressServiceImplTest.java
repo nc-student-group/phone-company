@@ -3,6 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.model.Address;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AddressServiceImplTest {
 
