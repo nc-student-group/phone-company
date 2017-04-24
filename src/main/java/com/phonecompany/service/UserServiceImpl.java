@@ -17,6 +17,9 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
         implements UserService {
@@ -72,6 +75,32 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
 
+        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+
         return super.update(user);
+    }
+    @Override
+    public User resetPassword(User user) {
+        user.setPassword(generatePassword());
+        sendResetPasswordMessage(user);
+        return update(user);
+    }
+
+    private void sendResetPasswordMessage(User user)
+    {
+        SimpleMailMessage resetPasswordMessage =
+                this.resetPassMessageCreator.constructMessage(user);
+        LOG.info("Sending email reset password to: {}", user.getEmail());
+        emailService.sendMail(resetPasswordMessage);
+    }
+
+    public String generatePassword() {
+        SecureRandom random = new SecureRandom();
+        String password = new BigInteger(50, random).toString(32);
+        char[] specSymb = "!@#$%^&_".toCharArray();
+        char[] passwordWithSS = password.toCharArray();
+        passwordWithSS[random.nextInt(passwordWithSS.length)] = specSymb[random.nextInt(specSymb.length)];
+        password = String.valueOf(passwordWithSS);
+        return password;
     }
 }
