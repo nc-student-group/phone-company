@@ -24,6 +24,7 @@ class UserControllerAdvice {
         return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.CONFLICT);
     }
 
+    //TODO: replace with new Error()
     private static final class Response {
 
         private String message;

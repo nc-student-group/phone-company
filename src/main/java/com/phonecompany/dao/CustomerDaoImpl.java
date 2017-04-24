@@ -3,6 +3,7 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
+import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
@@ -19,7 +20,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
@@ -104,16 +110,18 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     @Override
     public Customer getByVerificationToken(String token) {
         String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
-        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery );
+        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(customerByVerificationTokenQuery)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return this.init(rs);
+            if (rs.next()) {
+                return this.init(rs);
+            }
         } catch (SQLException e) {
             throw new EntityNotFoundException(token, e);
         }
+        return null;
     }
 
     private String getByVerificationTokenQuery() {
@@ -125,4 +133,60 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return queryLoader.getQuery("query.customer." + type);
     }
 
+    public List<Customer> getAllCustomersPaging(int page, int size, long rId, String status){
+        List<Object> params = new ArrayList<>();
+        String query  = buildQuery(this.getQuery("getAllByRegionAndStatus"), params, rId,status);
+        query+=" LIMIT ? OFFSET ?";
+        params.add(size);
+        params.add(page*size);
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            for(int i=0;i<params.size();i++){
+                ps.setObject(i+1,params.get(i));
+            }
+            LOG.info(query);
+            ResultSet rs = ps.executeQuery();
+            List<Customer> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    private String buildQuery(String query, List params, long rId, String status){
+        String where = " WHERE dbu.role_id=4";
+        if(rId > 0){
+            query+=" INNER JOIN address as a on dbu.address_id = a.id ";
+            where+=" and a.region_id = ?";
+            params.add(rId);
+        }
+        if(!status.equals("ALL")){
+            where+=" and dbu.status=?";
+            params.add(status);
+        }
+        query+=where;
+        return query;
+    }
+    public int getCountCustomers(long rId, String status){
+        List<Object> params = new ArrayList<>();
+        String query  = buildQuery(this.getQuery("getCount"),params, rId,status);
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            for(int i=0;i<params.size();i++){
+                ps.setObject(i+1,params.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
 }

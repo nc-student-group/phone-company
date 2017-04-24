@@ -13,7 +13,7 @@ public class User extends DomainEntity {
             message = "Email should be properly formatted")
     @NotNull(message = "User has to have an email")
     private String email;
-    @Pattern(regexp = "^(?=.*[\\W])(?=[a-zA-Z]).{8,}$",
+    @Pattern(regexp = "^(?=.*[\\W_])(?=[a-zA-Z]).{8,}$",
             message = "Password should be 8 characters long and contain at least 1 special character")
     @NotNull(message = "User has to have a password")
     private String password;

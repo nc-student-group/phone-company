@@ -1,10 +1,12 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.Tariff;
 import com.phonecompany.model.User;
+import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
+import org.codehaus.groovy.runtime.metaclass.ConcurrentReaderHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.security.SecureRandom;
 
 import static com.phonecompany.controller.UserController.USERS_RESOURCE_NAME;
@@ -53,21 +53,30 @@ public class CustomerController {
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
 
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
-
-        return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = GET, value = "/api/customers")
-    public Collection<Customer> getAllCustomers() {
+    @GetMapping(value = "/api/customers/new")
+    public Customer getEmptyCustomer() {
+        return new Customer();
+    }
+
+    @RequestMapping(method = GET, value = "/api/customers/{page}/{size}/{rId}/{status}")
+    public Map<String, Object> getAllCustomers(@PathVariable("page") int page, @PathVariable("size") int size,
+                                               @PathVariable("rId") long rId, @PathVariable("status") String status) {
         LOG.info("Retrieving all the users contained in the database");
 
-        List<Customer> customers = this.customerService.getAll();
+        List<Customer> customers = this.customerService.getAllCustomersPaging(page,size,rId,status);
 
         LOG.info("Users fetched from the database: " + customers);
-
-        return Collections.unmodifiableCollection(customers);
+        Map<String,Object> response = new HashMap<>();
+        response.put("customers",customers);
+        response.put("customersSelected",customerService.getCountCustomers(rId,status));
+        return response;
     }
+
+
+
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {

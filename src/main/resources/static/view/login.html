@@ -28,14 +28,7 @@
             <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                 <label>Password</label>
                 <input name="password" type="password" id="password"
-                       ng-model="user.password"
-                       ng-pattern="passwordPattern">
-
-                <div ng-messages="loginForm.password.$error" role="alert" multiple>
-                    <div ng-message="pattern">
-                        It doesn't look like a password
-                    </div>
-                </div>
+                       ng-model="user.password">
             </md-input-container>
             <p class="login-message">Not registered? <a ng-href="#/index">Create an account</a></p>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"

@@ -1,7 +1,7 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.EmailAlreadyPresentException;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.model.events.ResetPasswordEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -39,10 +39,6 @@ public abstract class AbstractUserServiceImpl<T extends User>
     private MailMessageCreator<User> confirmMessageCreator;
 
     public AbstractUserServiceImpl() {
-    }
-
-    public AbstractUserServiceImpl(CrudDao dao) {
-        super(dao);
     }
 
     @Override

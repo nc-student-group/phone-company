@@ -21,9 +21,9 @@ import java.sql.Date;
 import java.util.*;
 
 @RestController
-public class ProductController {
+public class TariffController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TariffController.class);
 
     @Autowired
     private RegionService regionService;

@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 public class Service extends DomainEntity {
 
-    @NotNull(message = "Product category must not be null")
-    private ProductCategory productCategory;
     @NotNull(message = "Service name must not be null")
     private String serviceName;
     @NotNull(message = "Price must not be null")
@@ -16,6 +14,8 @@ public class Service extends DomainEntity {
     private ProductStatus productStatus;
     @NotNull(message = "Discount must not be null")
     private double discount;
+    @NotNull(message = "Product category must not be null")
+    private ProductCategory productCategory;
 
     public Service(){}
 
@@ -65,5 +65,16 @@ public class Service extends DomainEntity {
 
     public void setDiscount(double discount) {
         this.discount = discount;
+    }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "productCategory=" + productCategory +
+                ", serviceName='" + serviceName + '\'' +
+                ", price=" + price +
+                ", productStatus=" + productStatus +
+                ", discount=" + discount +
+                "} " + super.toString();
     }
 }

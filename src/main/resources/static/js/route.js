@@ -71,7 +71,7 @@
         $routeProvider.when('/csr/services',
             {
                 templateUrl: 'view/csr/services.html',
-                // controller: 'TariffsController'
+                controller: 'ServicesController'
             });
         $routeProvider.when('/admin/users',
             {
@@ -114,6 +114,7 @@
                         break;
                     case 401: {
                         console.log('Unauthorized');
+                        console.log($location.$$path);
                         $location.path('/');
                         break;
                     }
