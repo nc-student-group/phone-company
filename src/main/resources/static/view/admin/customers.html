@@ -63,7 +63,7 @@
                             </div>
                             <hr />
 
-                            <div class="row" style="padding: 10px">
+                            <div class="row" style="padding: 15px">
                                 <div class="col-md-2">
                                     <md-input-container class="md-block" flex-gt-sm>
                                         <label>Show entries:</label>
@@ -121,7 +121,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="row" style="padding: 10px">
+                            <div class="row" style="padding: 15px">
                                 <div class="col-sm-7">
                                     <div class="dataTables_paginate paging_simple_numbers"
                                          id="tariffTable_paginate">
@@ -154,8 +154,8 @@
                             </div>
                             <div class="content">
                                 <form name="customerForm" ng-submit="createCustomer()">
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Phone number</label>
                                             <input name="phone" type="text" id="phone"
                                                    ng-model="customer.phone"
@@ -171,8 +171,8 @@
                                             </div>
                                         </md-input-container>
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Email</label>
                                             <input name="email" id="email" ng-model="customer.email"
                                                    required ng-pattern="emailPattern">
@@ -186,8 +186,8 @@
                                             </div>
                                         </md-input-container>
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>First name</label>
                                             <input name="firstName" type="text" id="firstName"
                                                    ng-model="customer.firstName"
@@ -200,8 +200,8 @@
                                             </div>
                                         </md-input-container>
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Second name</label>
                                             <input name="secondName" type="text" id="secondName"
                                                    ng-model="customer.secondName"
@@ -215,8 +215,8 @@
                                         </md-input-container>
 
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Last name</label>
                                             <input name="lastName" type="text" id="lastName"
                                                    ng-model="customer.lastName"
@@ -230,8 +230,8 @@
                                         </md-input-container>
                                     </div>
 
-                                    <div class="row">
-                                            <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                            <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                                 <label>Region</label>
                                                 <md-select ng-model="customer.address.region" required>
                                                     <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
@@ -240,8 +240,8 @@
                                                 </md-select>
                                             </md-input-container>
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Locality</label>
                                             <input name="locality" type="text" id="locality"
                                                    ng-model="customer.address.locality"
@@ -254,8 +254,8 @@
                                             </div>
                                         </md-input-container>
                                     </div>
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Street</label>
                                             <input name="street" type="text" id="street"
                                                    ng-model="customer.address.street"
@@ -269,8 +269,8 @@
                                         </md-input-container>
                                     </div>
 
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>House number</label>
                                             <input name="houseNumber" type="text" id="houseNumber"
                                                    ng-model="customer.address.houseNumber"
@@ -285,8 +285,8 @@
 
                                     </div>
 
-                                    <div class="row">
-                                        <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="row" style="padding: 15px">
+                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
                                             <label>Apartment number</label>
                                             <input name="apartmentNumber" type="number" id="apartmentNumber"
                                                    ng-model="customer.address.apartmentNumber"
