@@ -3,6 +3,7 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityModificationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Service;
@@ -108,6 +109,18 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
         }
 
         return services;
+    }
+
+    @Override
+    public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
+            ps.setString(1, productStatus.name());
+            ps.setLong(2, serviceId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new EntityModificationException(serviceId, e);
+        }
     }
 
     @Override

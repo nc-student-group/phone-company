@@ -115,5 +115,39 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.preloader.send = false;
             $scope.gotoAnchor("servicesTable");
         };
+
+        $scope.gotoAnchor = function(x) {
+            if ($location.hash() !== x) {
+                $location.hash(x);
+            } else {
+                $anchorScroll();
+            }
+        };
+
+        $scope.activateService = function (index) {
+            $scope.preloader.send = true;
+            ServicesService.changeServiceStatus($scope.services[index].id, 'ACTIVATED').then(function () {
+                $scope.services[index].productStatus = "ACTIVATED";
+                let activatedService = JSON.stringify($scope.services[index]);
+                console.log(`Activated service: ${activatedService}`);
+                toastr.success(`Service ${$scope.services[index].serviceName} has been successfully activated!`);
+                $scope.preloader.send = false;
+            }, function () {
+                toastr.error('Error with service activation, please, try again!', 'Error');
+                $scope.preloader.send = false;
+            })
+        };
+
+        $scope.deactivateService = function (index) {
+            $scope.preloader.send = true;
+            ServicesService.changeServiceStatus($scope.services[index].id, 'DEACTIVATED').then(function () {
+                $scope.services[index].productStatus = "DEACTIVATED";
+                toastr.success(`Service ${$scope.services[index].serviceName} has been deactivated!`);
+                $scope.preloader.send = false;
+            }, function () {
+                toastr.error('Error with service deactivation, please, try again!', 'Error');
+                $scope.preloader.send = false;
+            })
+        };
     }
 ]);

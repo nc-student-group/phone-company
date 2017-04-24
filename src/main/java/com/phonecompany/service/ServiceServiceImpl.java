@@ -69,4 +69,9 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private boolean isExist(Service service) {
         return this.serviceDao.isExist(service);
     }
+
+    @Override
+    public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
+        this.serviceDao.updateServiceStatus(serviceId, productStatus);
+    }
 }

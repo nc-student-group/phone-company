@@ -57,10 +57,24 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function changeServiceStatus(id, status) {
+            let deferred = $q.defer();
+            $http.put(`${SERVICES}/${id}`, status).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         return {
             getServicesByProductCategoryId: getServicesByProductCategoryId,
             getNewService: getNewService,
             addService: addService,
-            getAllCategories: getAllCategories
+            getAllCategories: getAllCategories,
+            changeServiceStatus: changeServiceStatus
         };
     }]);

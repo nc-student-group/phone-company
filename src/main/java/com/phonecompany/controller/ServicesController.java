@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
+import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.ProductCategoryService;
 import com.phonecompany.service.interfaces.ServiceService;
 import org.slf4j.Logger;
@@ -54,5 +55,13 @@ public class ServicesController {
     @GetMapping(value = "/new")
     public Service getEmptyService() {
         return new Service();
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long id,
+                                                 @RequestBody String status) { //TODO: must be enum
+        LOG.debug("Service id to update: {}, status: {}", id, status);
+        this.serviceService.updateServiceStatus(id, ProductStatus.valueOf(status));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

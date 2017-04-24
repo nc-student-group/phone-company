@@ -21,7 +21,8 @@ public class Service extends DomainEntity {
 
     public Service(){}
 
-    public Service(ProductCategory productCategory, String serviceName, double price, ProductStatus productStatus, double discount) {
+    public Service(ProductCategory productCategory, String serviceName,
+                   double price, ProductStatus productStatus, double discount) {
         this.productCategory = productCategory;
         this.serviceName = serviceName;
         this.price = price;
