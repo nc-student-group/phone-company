@@ -91,12 +91,12 @@
         $routeProvider.when('/client',
             {
                 templateUrl: 'view/client/clientProfile.html',
-                controller: 'CustomerTariffController'
+                controller: 'CustomerInfoController'
             });
         $routeProvider.when('/client/tariffs',
             {
                 templateUrl: 'view/client/tariffs.html',
-                controller: 'CustomerTariffController'
+                controller: 'CustomerInfoController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });

@@ -37,6 +37,9 @@ public class CustomerController {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
+    private UserController userController;
+
+    @Autowired
     public CustomerController(CustomerService customerService,
                               ApplicationEventPublisher eventPublisher) {
         this.customerService = customerService;
@@ -99,5 +102,11 @@ public class CustomerController {
 
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
         return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = GET, value = "/api/customer/get")
+    public Customer getCustomerByCurrentUserId() {
+        LOG.debug("Retrieving customer by current logged in user");
+        return customerService.getById(userController.getUser().getId());
     }
 }

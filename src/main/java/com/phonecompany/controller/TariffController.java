@@ -1,10 +1,7 @@
 package com.phonecompany.controller;
 
 
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Region;
-import com.phonecompany.model.Tariff;
-import com.phonecompany.model.TariffRegion;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.CustomerTariffService;
 import com.phonecompany.service.interfaces.RegionService;
@@ -38,7 +35,7 @@ public class TariffController {
     private CustomerTariffService customerTariffService;
 
     @Autowired
-    private UserController userController;
+    private CustomerController customerController;
 
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
@@ -53,6 +50,13 @@ public class TariffController {
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
         return tariffService.getTariffsTable(regionId, page, size);
+    }
+
+    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
+    public List<Tariff> getCustomerTariffs() {
+        Customer customer = customerController.getCustomerByCurrentUserId();
+        LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
+        return tariffService.getByRegion(customer.getAddress().getRegion().getId());
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
@@ -140,7 +144,7 @@ public class TariffController {
 
     @RequestMapping(value = "/api/tariffs/get/by/customer", method = RequestMethod.GET)
     public List<CustomerTariff> getTariffsByCustomerId() {
-        Long customerId = userController.getUser().getId();
+        Long customerId = customerController.getCustomerByCurrentUserId().getId();
         LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customerId);
         return this.customerTariffService.getByCustomerId(customerId);
     }

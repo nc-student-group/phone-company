@@ -124,6 +124,24 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
     }
 
     @Override
+    public List<Tariff> getByRegionId(long regionId) {
+        List<Tariff> tariffs = new ArrayList<>();
+        String query = this.getQuery("getAll");
+        query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                tariffs.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+        return tariffs;
+    }
+
+    @Override
     public Integer getCountByRegionIdAndPaging(long regionId) {
         String query = this.getQuery("getCount");
         if (regionId != 0) {
