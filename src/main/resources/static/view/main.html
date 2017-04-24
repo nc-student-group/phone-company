@@ -113,12 +113,19 @@
                             <div class="col-md-2">
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Region:</label>
-                                    <md-select ng-model="customer.address.region.id">
+                                    <md-select multiple required name="region"
+                                               ng-model="customer.address.region.id">
                                         <md-option>Choose region</md-option>
-                                        <md-option ng-repeat="r in regions" value="{{r.id}}">
+                                        <md-option ng-repeat="r in regions" ng-value="{{r.id}}">
                                             {{r.nameRegion}}
                                         </md-option>
                                     </md-select>
+
+                                    <div ng-messages="registerForm.region.$error" role="alert" multiple>
+                                        <div ng-message="required">
+                                            Sorry, region has to be specified
+                                        </div>
+                                    </div>
                                 </md-input-container>
                             </div>
                             <div class="col-md-2">

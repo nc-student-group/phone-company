@@ -9,7 +9,7 @@ Red
 
 .error-body {
     position: absolute;
-    background: #F44336;
+    background: rgba(184, 11, 244, 0.6);
     font-family: 'Lato', serif;
     color: #fff;
     margin: 0;

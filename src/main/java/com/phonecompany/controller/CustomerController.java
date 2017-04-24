@@ -2,11 +2,9 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnUserCreationEvent;
-import com.phonecompany.model.Tariff;
 import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
-import org.codehaus.groovy.runtime.metaclass.ConcurrentReaderHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.phonecompany.controller.UserController.USERS_RESOURCE_NAME;
 import static com.phonecompany.model.enums.UserRole.CLIENT;
@@ -46,7 +46,6 @@ public class CustomerController {
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-
         customer.setRole(CLIENT);
         Customer persistedCustomer = this.customerService.save(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
@@ -65,13 +64,13 @@ public class CustomerController {
     public Map<String, Object> getAllCustomers(@PathVariable("page") int page, @PathVariable("size") int size,
                                                @PathVariable("rId") long rId, @PathVariable("status") String status) {
         LOG.info("Retrieving all the users contained in the database");
-
         List<Customer> customers = this.customerService.getAllCustomersPaging(page, size, rId, status);
-
         LOG.info("Users fetched from the database: " + customers);
+
         Map<String, Object> response = new HashMap<>();
         response.put("customers", customers);
         response.put("customersSelected", customerService.getCountCustomers(rId, status));
+
         return response;
     }
 
@@ -90,7 +89,7 @@ public class CustomerController {
 
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
-        LOG.info(customer.toString());
+        LOG.debug("Customer retrieved from the http request: " + customer);
         customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
         eventPublisher.publishEvent(new OnUserCreationEvent(customer));
         Customer persistedCustomer = this.customerService.save(customer);
