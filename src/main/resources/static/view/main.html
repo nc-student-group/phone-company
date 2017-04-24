@@ -113,9 +113,8 @@
                             <div class="col-md-2">
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Region:</label>
-                                    <md-select multiple required name="region"
+                                    <md-select required name="region"
                                                ng-model="customer.address.region.id">
-                                        <md-option>Choose region</md-option>
                                         <md-option ng-repeat="r in regions" ng-value="{{r.id}}">
                                             {{r.nameRegion}}
                                         </md-option>
