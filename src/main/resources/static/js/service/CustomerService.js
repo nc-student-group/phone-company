@@ -9,9 +9,9 @@
 
     CustomerService.$inject = ['$http', '$q', '$log', '$resource'];
     function CustomerService($http, $q, $log, $resource) {
-
         var CustomerService = {};
 
+        var GET_ALL_CUSTOMERS_URL = "api/customers/";
         CustomerService.saveCustomerByAdmin = function (customer) {
             console.log('customer: ' + JSON.stringify(customer));
             var deferred = $q.defer();
@@ -91,9 +91,9 @@
             return deferred.promise;
         };
 
-        CustomerService.getAllCustomer = function() {
+        CustomerService.getAllCustomer = function(page, size,selectedRegion,selectedStatus) {
             var deferred = $q.defer();
-            $http.get("api/customers").then(
+            $http.get(GET_ALL_CUSTOMERS_URL+page+'/'+size+"/"+selectedRegion+"/"+selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -114,9 +114,11 @@
                 function (errResponse) {
                     console.error(errResponse.toString());
                     deferred.reject(errResponse);
+
                 });
             return deferred.promise;
         };
+
 
         return CustomerService;
     }

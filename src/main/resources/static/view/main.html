@@ -153,14 +153,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>House number</label>
                                     <input name="houseNumber" type="text" id="houseNumber"
-                                           ng-model="customer.address.houseNumber"
-                                           ng-pattern="numberPattern">
-
-                                    <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
-                                        <div ng-message="pattern">
-                                            This field can only contain positive numbers
-                                        </div>
-                                    </div>
+                                           ng-model="customer.address.houseNumber">
                                 </md-input-container>
                             </div>
                             <div class="col-md-3">

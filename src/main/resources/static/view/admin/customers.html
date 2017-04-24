@@ -62,6 +62,41 @@
                                 <h4 class="title">Customer list</h4>
                             </div>
                             <hr />
+
+                            <div class="row" style="padding: 10px">
+                                <div class="col-md-2">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Show entries:</label>
+                                        <md-select ng-model="size" md-on-close="updateData()">
+                                            <md-option value="5">5</md-option>
+                                            <md-option value="10">10</md-option>
+                                            <md-option value="25">25</md-option>
+                                            <md-option value="50">50</md-option>
+                                            <md-option value="100">100</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Region:</label>
+                                        <md-select ng-model="selectedRegion" md-on-close="updateData()">
+                                            <md-option value="0">All regions</md-option>
+                                            <md-option ng-repeat="r in regions" ng-value="{{r.id}}">{{r.nameRegion}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Status:</label>
+                                        <md-select ng-model="selectedStatus" md-on-close="updateData()">
+                                            <md-option value="ALL">ALL</md-option>
+                                            <md-option value="ACTIVATED">ACTIVATED</md-option>
+                                            <md-option value="INACTIVE">INACTIVE</md-option>
+                                            <md-option value="DEACTIVATED">DEACTIVATED</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                            </div>
                             <div class="content table-responsive">
                                 <table id="servicesTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                                     <thead>
@@ -70,6 +105,8 @@
                                     <th>Second name</th>
                                     <th>Last name</th>
                                     <th>Phone name</th>
+                                    <th>Region</th>
+                                    <th>Status</th>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="c in customers">
@@ -78,9 +115,37 @@
                                         <td>{{c.secondName}}</td>
                                         <td>{{c.lastName}}</td>
                                         <td>{{c.phone}}</td>
+                                        <td>{{c.address.region.nameRegion}}</td>
+                                        <td>{{c.status}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="row" style="padding: 10px">
+                                <div class="col-sm-7">
+                                    <div class="dataTables_paginate paging_simple_numbers"
+                                         id="tariffTable_paginate">
+                                        <ul class="pagination">
+                                            <li class="paginate_button previous" id="tariffTable_previous">
+                                                <a aria-controls="tariffTable" data-dt-idx="0"
+                                                   tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                            </li>
+                                            <li class="paginate_button active"><a
+                                                    aria-controls="tariffTable"
+                                                    data-dt-idx="1" tabindex="0">{{page+1}}</a>
+                                            </li>
+                                            <li class="paginate_button next" id="tariffTable_next"><a
+                                                    aria-controls="tariffTable" data-dt-idx="2"
+                                                    tabindex="0" ng-show="(page + 1)*size < customersSelected"
+                                                    ng-click="nextPage()">Next</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div>
+                                        <label><b>Customers selected: {{customersSelected}}</b></label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="card">
@@ -88,75 +153,160 @@
                                 <h4 class="title">Add Customer</h4>
                             </div>
                             <div class="content">
-                                <form>
+                                <form name="customerForm" ng-submit="createCustomer()">
                                     <div class="row">
-                                        <div class="col-md-1"><label>Email</label></div>
-                                        <div class="form-group col-md-7" >
-                                            <input ng-model="customer.email" type="text " class="form-control" placeholder="email" />
-                                        </div>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Phone number</label>
+                                            <input name="phone" type="text" id="phone"
+                                                   ng-model="customer.phone"
+                                                   required ng-pattern="phonePattern">
+
+                                            <div ng-messages="customerForm.phone.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    Example: +380990076563
+                                                </div>
+                                                <div ng-message="required">
+                                                    Phone is required
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-1"><label>Phone number</label></div>
-                                        <div class="form-group col-md-7" >
-                                            <input ng-model="customer.phone" type="text " class="form-control" placeholder="phone" />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-1"><label>First name</label></div>
-                                        <div class="form-group col-md-7" >
-                                            <input ng-model="customer.firstName" type="text " class="form-control" placeholder="first name" />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-1"><label>Second name</label></div>
-                                        <div class="form-group col-md-7" >
-                                            <input ng-model="customer.secondName" type="text " class="form-control" placeholder="second name" />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-1"><label>Last name</label></div>
-                                        <div class="form-group col-md-7">
-                                            <input ng-model="customer.lastName" type="text " class="form-control" placeholder="last name" />
-                                        </div>
-                                    </div>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Email</label>
+                                            <input name="email" id="email" ng-model="customer.email"
+                                                   required ng-pattern="emailPattern">
 
 
-                                    <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Region</label>
-                                            <select ng-model="customer.address.region" class="custom-select form-control">
-                                                <option ng-repeat="r in regions" value={{r.nameRegion}} >{{r.nameRegion}}</option>
-                                            </select>
-                                        </div>
+                                            <div ng-messages="customerForm.email.$error" role="alert" multiple>
+                                                <div ng-message="required" class="my-message">Email is required.</div>
+                                                <div ng-message="pattern" class="my-message">That doesn't look like a valid
+                                                    email.
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-1"><label>Locality</label></div>
-                                        <div class="form-group col-md-7">
-                                            <input ng-model="customer.address.locality" type="text " class="form-control" placeholder="locality" />
-                                        </div>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>First name</label>
+                                            <input name="firstName" type="text" id="firstName"
+                                                   ng-model="customer.firstName"
+                                                   ng-pattern="textFieldPattern">
+
+                                            <div ng-messages="customerForm.firstName.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-1"><label>Street</label></div>
-                                        <div class="form-group col-md-7">
-                                            <input ng-model="customer.address.street" type="text " class="form-control" placeholder="street" />
-                                        </div>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Second name</label>
+                                            <input name="secondName" type="text" id="secondName"
+                                                   ng-model="customer.secondName"
+                                                   ng-pattern="textFieldPattern">
+
+                                            <div ng-messages="customerForm.secondName.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters
+                                                </div>
+                                            </div>
+                                        </md-input-container>
+
+                                    </div>
+                                    <div class="row">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Last name</label>
+                                            <input name="lastName" type="text" id="lastName"
+                                                   ng-model="customer.lastName"
+                                                   ng-pattern="textFieldPattern">
+
+                                            <div ng-messages="customerForm.lastName.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-1"><label>House</label></div>
-                                        <div class="form-group col-md-7">
-                                            <input ng-model="customer.address.houseNumber" type="text " class="form-control" placeholder="house" />
-                                        </div>
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Region</label>
+                                                <md-select ng-model="customer.address.region" required>
+                                                    <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
+                                                        {{r.nameRegion}}
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                    </div>
+                                    <div class="row">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Locality</label>
+                                            <input name="locality" type="text" id="locality"
+                                                   ng-model="customer.address.locality"
+                                                   ng-pattern="textFieldPattern">
+
+                                            <div ng-messages="customerForm.locality.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters
+                                                </div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="row">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Street</label>
+                                            <input name="street" type="text" id="street"
+                                                   ng-model="customer.address.street"
+                                                   ng-pattern="textFieldPattern">
+
+                                            <div ng-messages="customerForm.street.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-1"><label>Apartment</label></div>
-                                        <div class="form-group col-md-7">
-                                            <input ng-model="customer.address.apartmentNumber" type="text " class="form-control" placeholder="apartment" />
-                                        </div>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>House number</label>
+                                            <input name="houseNumber" type="text" id="houseNumber"
+                                                   ng-model="customer.address.houseNumber"
+                                                   ng-pattern="textFieldPatternWithNumbers">
+
+                                            <div ng-messages="customerForm.houseNumber.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain letters and numbers
+                                                </div>
+                                            </div>
+                                        </md-input-container>
+
                                     </div>
 
-                                    <button ng-click="createCustomer()" type="submit" class="btn btn-info btn-fill pull-left">Add customer</button>
+                                    <div class="row">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Apartment number</label>
+                                            <input name="apartmentNumber" type="number" id="apartmentNumber"
+                                                   ng-model="customer.address.apartmentNumber"
+                                                   ng-pattern="numberPattern">
+
+                                            <div ng-messages="customerForm.apartmentNumber.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain positive numbers
+                                                </div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <button  ng-class="{unsubmitable : customerForm.$invalid,
+                        submitable: !customerForm.$invalid}"
+                                            ng-disabled="customerForm.$invalid"
+                                            style="width: 300px;"
+                                            type="submit" class="center-block register-button">
+                                        Add customer
+                                    </button>
+
                                     <div class="clearfix"></div>
                                 </form>
                             </div>

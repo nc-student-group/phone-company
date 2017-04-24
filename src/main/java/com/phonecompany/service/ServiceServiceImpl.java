@@ -5,6 +5,7 @@ import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
+import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.ServiceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
