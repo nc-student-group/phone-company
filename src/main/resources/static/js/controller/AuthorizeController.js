@@ -8,53 +8,44 @@ angular.module('phone-company').controller('AuthorizeController', [
     'SessionService',
     'LoginService',
     'UserService',
+    'TariffService', /* to fetch all the regions */
+    'CustomerService',
     '$rootScope',
     '$routeParams',
     function ($scope, $q, $http, $location, SessionService, LoginService,
-              UserService, $rootScope, $routeParams) {
+              UserService, TariffService, CustomerService) {
         console.log('This is AuthorizeController');
+
         $scope.selected = 'signIn';
 
-        $scope.user = {
-            email: "",
-            password: "",
-            fistName: "",
-            secondName: "",
-            lastName: "",
-            phone: "",
-            address: {
-                region: "",
-                locality: "",
-                street: "",
-                houseNumber: "",
-                apartmentNumber: ""
-            }
-        };
-
-        $scope.resetRequest = {
-            email: ""
-        };
-
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
-        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
-        $scope.phonePattern=/^\+38[0-9]{10}$/;
-        $scope.textFieldPattern=/^[a-zA-Z]+$/;
-        $scope.numberPattern=/^[0-9]+$/;
+        $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
+        $scope.phonePattern = /^\+380[0-9]{9}$/;
+        $scope.textFieldPattern = /^[a-zA-Z]+$/;
+        $scope.numberPattern = /^[0-9]+$/;
 
-        $scope.registerUser = function () {
-            var deferred = $q.defer();
-            console.log('Persisting user: ' + JSON.stringify($scope.user));
-            $http.post("/api/customers", $scope.user).then(
-                function (response) {
-                    deferred.resolve(response.data);
-                    console.log(JSON.stringify(response.data));
-                },
-                function (errResponse) {
-                    deferred.reject(errResponse);
-                    console.log(errResponse);
-                    toastr.error(errResponse.data.message);
+        $scope.getNewCustomer = function () {
+            CustomerService.getNewCustomer().then(function (data) {
+                $scope.customer = data;
+            });
+        };
+
+        $scope.getNewCustomer();
+
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+            console.log($scope.regionsToAdd);
+        });
+
+        $scope.registerCustomer = function () {
+            console.log('Registering customer');
+            CustomerService.registerCustomer($scope.customer)
+                .then(function (response) {
+                    console.log(response.data);
+                    toastr.success(`Customer with an email ${response.data.email} has been successfully created. Please, check your email for the activation link`);
+                }, function (errorResponse) {
+                    toastr.error(errorResponse.data.message);
                 });
-            return deferred.promise;
         };
 
         $scope.loginClick = function () {

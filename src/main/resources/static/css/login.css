@@ -194,3 +194,6 @@
 }
 
 /*TARIFF PAGE CSS END*/
+.paginate_button {
+    cursor: pointer;
+}

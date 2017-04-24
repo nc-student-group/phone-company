@@ -17,7 +17,7 @@ public class Customer extends User {
     @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
     @NotNull(message = "Last name must not be null")
     private String lastName;
-    @Pattern(regexp = "^\\+38[0-9]{10}$", message = "Phone should be in format of +38##########")
+    @Pattern(regexp = "^\\+380[0-9]{9}$", message = "Phone should be in format of +380#########")
     @NotNull(message = "Phone must not be null")
     private String phone;
     @NotNull(message = "Address must not be null")

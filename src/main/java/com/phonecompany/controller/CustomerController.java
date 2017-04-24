@@ -1,9 +1,10 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.Tariff;
 import com.phonecompany.model.User;
+import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.codehaus.groovy.runtime.metaclass.ConcurrentReaderHashMap;
 import org.slf4j.Logger;
@@ -52,9 +53,12 @@ public class CustomerController {
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
 
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
+        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+    }
 
-        return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+    @GetMapping(value = "/api/customers/new")
+    public Customer getEmptyCustomer() {
+        return new Customer();
     }
 
     @RequestMapping(method = GET, value = "/api/customers/{page}/{size}/{rId}/{status}")
@@ -70,6 +74,9 @@ public class CustomerController {
         response.put("customersSelected",customerService.getCountCustomers(rId,status));
         return response;
     }
+
+
+
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
