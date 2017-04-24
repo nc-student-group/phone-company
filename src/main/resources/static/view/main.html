@@ -8,15 +8,14 @@
                     </div>
                     <form name="registerForm" id="registerForm"
                           autocomplete="off" novalidate
-                          ng-submit="registerUser()">
+                          ng-submit="registerCustomer()">
                         <div class="row">
                             <div class="col-md-4">
 
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Email</label>
-                                    <input name="email" id="email" ng-model="user.email"
+                                    <input name="email" id="email" ng-model="customer.email"
                                            required ng-pattern="emailPattern">
-
 
                                     <div ng-messages="registerForm.email.$error" role="alert" multiple>
                                         <div ng-message="required" class="my-message">Email is required.</div>
@@ -31,7 +30,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Password</label>
                                     <input name="password" type="password" id="password"
-                                           ng-model="user.password"
+                                           ng-model="customer.password"
                                            md-minlength="8"
                                            required ng-pattern="passwordPattern">
 
@@ -50,7 +49,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Phone number</label>
                                     <input name="phone" type="text" id="phone"
-                                           ng-model="user.phone"
+                                           ng-model="customer.phone"
                                            required ng-pattern="phonePattern">
 
                                     <div ng-messages="registerForm.phone.$error" role="alert" multiple>
@@ -70,7 +69,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>First name</label>
                                     <input name="firstName" type="text" id="firstName"
-                                           ng-model="user.firstName"
+                                           ng-model="customer.firstName"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.firstName.$error" role="alert" multiple>
@@ -84,7 +83,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Second name</label>
                                     <input name="secondName" type="text" id="secondName"
-                                           ng-model="user.secondName"
+                                           ng-model="customer.secondName"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.secondName.$error" role="alert" multiple>
@@ -98,7 +97,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Last name</label>
                                     <input name="lastName" type="text" id="lastName"
-                                           ng-model="user.lastName"
+                                           ng-model="customer.lastName"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.lastName.$error" role="alert" multiple>
@@ -116,7 +115,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Region</label>
                                     <input name="region" type="text" id="region"
-                                           ng-model="user.region"
+                                           ng-model="customer.address.region"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.region.$error" role="alert" multiple>
@@ -130,7 +129,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Locality</label>
                                     <input name="locality" type="text" id="locality"
-                                           ng-model="user.locality"
+                                           ng-model="customer.address.locality"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.locality.$error" role="alert" multiple>
@@ -144,7 +143,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Street</label>
                                     <input name="street" type="text" id="street"
-                                           ng-model="user.street"
+                                           ng-model="customer.address.street"
                                            ng-pattern="textFieldPattern">
 
                                     <div ng-messages="registerForm.street.$error" role="alert" multiple>
@@ -158,7 +157,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>House number</label>
                                     <input name="houseNumber" type="text" id="houseNumber"
-                                           ng-model="user.houseNumber"
+                                           ng-model="customer.address.houseNumber"
                                            ng-pattern="numberPattern">
 
                                     <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
@@ -172,7 +171,7 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Apartment number</label>
                                     <input name="apartmentNumber" type="number" id="apartmentNumber"
-                                           ng-model="user.apartmentNumber"
+                                           ng-model="customer.address.apartmentNumber"
                                            ng-pattern="numberPattern">
 
                                     <div ng-messages="registerForm.apartmentNumber.$error" role="alert" multiple>

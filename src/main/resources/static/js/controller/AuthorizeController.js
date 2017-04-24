@@ -8,68 +8,34 @@ angular.module('phone-company').controller('AuthorizeController', [
     'SessionService',
     'LoginService',
     'UserService',
+    'CustomerService',
     '$rootScope',
     '$routeParams',
     function ($scope, $q, $http, $location, SessionService, LoginService,
-              UserService, $rootScope, $routeParams) {
+              UserService, CustomerService) {
         console.log('This is AuthorizeController');
+
         $scope.selected = 'signIn';
-
-        $scope.user = {
-            email: "",
-            password: "",
-            fistName: "",
-            secondName: "",
-            lastName: "",
-            phone: "",
-            address: {
-                region: "",
-                locality: "",
-                street: "",
-                houseNumber: "",
-                apartmentNumber: ""
-            }
-        };
-
-        $scope.resetRequest = {
-            email: ""
-        };
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
-        $scope.phonePattern=/^\+380[0-9]{9}$/;
-        $scope.textFieldPattern=/^[a-zA-Z]+$/;
-        $scope.numberPattern=/^[0-9]+$/;
+        $scope.phonePattern = /^\+380[0-9]{9}$/;
+        $scope.textFieldPattern = /^[a-zA-Z]+$/;
+        $scope.numberPattern = /^[0-9]+$/;
 
-        $scope.registerUser = function () {
-            var deferred = $q.defer();
-            console.log('Persisting user: ' + JSON.stringify($scope.user));
-            $http.post("/api/customers", $scope.user).then(
-                function (response) {
-                    deferred.resolve(response.data);
-                    console.log(JSON.stringify(response.data));
-                },
-                function (errResponse) {
-                    deferred.reject(errResponse);
-                    console.log(errResponse);
-                    toastr.error(errResponse.data.message);
-                });
-            return deferred.promise;
+        $scope.getNewService = function () {
+            CustomerService.getNewCustomer().then(function (data) {
+                $scope.customer = data;
+            });
         };
 
-        $scope.resetPassword = function () {
-            console.log('Attempting to reset password for user with email: '
-                + JSON.stringify($scope.resetRequest));
-            UserService.resetPassword($scope.resetRequest.email)
+        $scope.registerCustomer = function () {
+            console.log('Registering customer');
+            CustomerService.registerCustomer($scope.customer)
                 .then(function (data) {
-                    if (data.msg === 'error') {
-                        toastr.error('User with such email was not found!',
-                            'Error during restoring password!');
-                    } else {
-                        console.log("Password was restored for user with email: ", data);
-                        $scope.selected = 'signIn';
-                        toastr.info('New password has been sent your email!', 'Password was restored!');
-                    }
+                    toastr.success(`Customer ${data} has been successfully created`);
+                }, function (errorResponse) {
+                    toastr.error(errorResponse.data.message);
                 });
         };
 

@@ -34,17 +34,15 @@ public interface CrudService<T> {
     T getById(Long id);
 
     /**
-     * Deletes entity by the given id
-     *
-     * @param id identifier of the entity that has to be deleted
-     */
-    void delete(Long id);
-
-    /**
      * Gets all the entities
      *
      * @return all entities
      */
     List<T> getAll();
+
+    void beginTransaction();
+    void commit();
+    void rollback();
+    public void setAutoCommit(boolean autoCommit);
 }
 

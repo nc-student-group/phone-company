@@ -2,10 +2,15 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.model.Tariff;
+import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.TariffRegionService;
 import com.phonecompany.service.interfaces.TariffService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +20,8 @@ import java.util.Map;
 
 @Service
 public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements TariffService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
     private TariffDao tariffDao;
     private TariffRegionService tariffRegionService;
@@ -60,6 +67,37 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public Tariff findByTariffName(String tariffName){
         return this.tariffDao.findByTariffName(tariffName);
+    }
+
+    @Override
+    public ResponseEntity<?> updateTariffAndRegions(List<TariffRegion> tariffRegions){
+        if (tariffRegions.size() > 0) {
+            Tariff tariff = tariffRegions.get(0).getTariff();
+            Tariff temp = this.findByTariffName(tariff.getTariffName());
+            if(temp != null && temp.getId() != tariff.getId()){
+                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+            }
+            this.setAutoCommit(false);
+            this.beginTransaction();
+            try {
+                Tariff savedTariff = this.update(tariff);
+                LOGGER.debug("Tariff added {}", tariff);
+                tariffRegionService.deleteByTariffId(savedTariff.getId());
+                tariffRegions.forEach((TariffRegion tariffRegion) -> {
+                    if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                        tariffRegion.setTariff(savedTariff);
+                        tariffRegionService.save(tariffRegion);
+                        LOGGER.debug("Tariff-region added {}", tariffRegion);
+                    }
+                });
+                this.rollback();
+            }catch (Exception e){
+                this.rollback();
+            }finally {
+                this.setAutoCommit(true);
+            }
+        }
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

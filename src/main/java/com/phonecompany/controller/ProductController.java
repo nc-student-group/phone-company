@@ -61,15 +61,24 @@ public class ProductController {
             }
             tariff.setProductStatus(ProductStatus.ACTIVATED);
             tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            Tariff savedTariff = tariffService.save(tariff);
-            LOGGER.debug("Tariff added {}", savedTariff);
-            tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                    tariffRegion.setTariff(savedTariff);
-                    tariffRegionService.save(tariffRegion);
-                    LOGGER.debug("Tariff-region added {}", tariffRegion);
-                }
-            });
+            tariffService.setAutoCommit(false);
+            tariffService.beginTransaction();
+            try {
+                Tariff savedTariff = tariffService.save(tariff);
+                LOGGER.debug("Tariff added {}", savedTariff);
+                tariffRegions.forEach((TariffRegion tariffRegion) -> {
+                    if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                        tariffRegion.setTariff(savedTariff);
+                        tariffRegionService.save(tariffRegion);
+                        LOGGER.debug("Tariff-region added {}", tariffRegion);
+                    }
+                });
+                tariffService.commit();
+            }catch (Exception e){
+                tariffService.rollback();
+            }finally {
+                tariffService.setAutoCommit(true);
+            }
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -88,24 +97,7 @@ public class ProductController {
 
     @RequestMapping(value = "api/tariff/update", method = RequestMethod.POST)
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        if (tariffRegions.size() > 0) {
-            Tariff tariff = tariffRegions.get(0).getTariff();
-            Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
-            if(temp != null && temp.getId() != tariff.getId()){
-                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
-            }
-            Tariff savedTariff = tariffService.update(tariff);
-            LOGGER.debug("Tariff added {}", tariff);
-            tariffRegionService.deleteByTariffId(savedTariff.getId());
-            tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                    tariffRegion.setTariff(savedTariff);
-                    tariffRegionService.save(tariffRegion);
-                    LOGGER.debug("Tariff-region added {}", tariffRegion);
-                }
-            });
-        }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return tariffService.updateTariffAndRegions(tariffRegions);
     }
 
     @RequestMapping(value = "/api/tariff/update/single", method = RequestMethod.POST)
@@ -115,9 +107,18 @@ public class ProductController {
             return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());
-        Tariff updatedTariff = tariffService.update(tariff);
-        tariffRegionService.deleteByTariffId(updatedTariff.getId());
-        LOGGER.debug("Tariff added {}", updatedTariff);
+        tariffService.setAutoCommit(false);
+        tariffService.beginTransaction();
+        try {
+            Tariff updatedTariff = tariffService.update(tariff);
+            tariffRegionService.deleteByTariffId(updatedTariff.getId());
+            LOGGER.debug("Tariff added {}", updatedTariff);
+            tariffService.commit();
+        }catch (Exception e){
+            tariffService.rollback();
+        }finally {
+            tariffService.setAutoCommit(true);
+        }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
