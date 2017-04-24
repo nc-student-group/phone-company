@@ -104,7 +104,7 @@
                                     <th>First name</th>
                                     <th>Second name</th>
                                     <th>Last name</th>
-                                    <th>Phone name</th>
+                                    <th>Phone</th>
                                     <th>Region</th>
                                     <th>Status</th>
                                     </thead>
@@ -154,8 +154,24 @@
                             </div>
                             <div class="content">
                                 <form name="customerForm" ng-submit="createCustomer()">
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block">
+                                                <label>Email</label>
+                                                <input name="email" id="email" ng-model="customer.email"
+                                                       required ng-pattern="emailPattern">
+                                                <div ng-messages="customerForm.email.$error" role="alert" multiple>
+                                                    <div ng-message="required" class="my-message">Email is required.</div>
+                                                    <div ng-message="pattern" class="my-message">That doesn't look like a valid
+                                                        email.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" >
                                             <label>Phone number</label>
                                             <input name="phone" type="text" id="phone"
                                                    ng-model="customer.phone"
@@ -170,24 +186,11 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
-                                            <label>Email</label>
-                                            <input name="email" id="email" ng-model="customer.email"
-                                                   required ng-pattern="emailPattern">
-
-
-                                            <div ng-messages="customerForm.email.$error" role="alert" multiple>
-                                                <div ng-message="required" class="my-message">Email is required.</div>
-                                                <div ng-message="pattern" class="my-message">That doesn't look like a valid
-                                                    email.
-                                                </div>
-                                            </div>
-                                        </md-input-container>
-                                    </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>First name</label>
                                             <input name="firstName" type="text" id="firstName"
                                                    ng-model="customer.firstName"
@@ -199,9 +202,11 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>Second name</label>
                                             <input name="secondName" type="text" id="secondName"
                                                    ng-model="customer.secondName"
@@ -213,10 +218,11 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
-
+                                        </div>
                                     </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>Last name</label>
                                             <input name="lastName" type="text" id="lastName"
                                                    ng-model="customer.lastName"
@@ -228,10 +234,12 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
 
-                                    <div class="row" style="padding: 15px">
-                                            <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Region</label>
                                                 <md-select ng-model="customer.address.region" required>
                                                     <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
@@ -239,9 +247,11 @@
                                                     </md-option>
                                                 </md-select>
                                             </md-input-container>
+                                        </div>
                                     </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>Locality</label>
                                             <input name="locality" type="text" id="locality"
                                                    ng-model="customer.address.locality"
@@ -253,9 +263,11 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>Street</label>
                                             <input name="street" type="text" id="street"
                                                    ng-model="customer.address.street"
@@ -267,10 +279,12 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
 
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>House number</label>
                                             <input name="houseNumber" type="text" id="houseNumber"
                                                    ng-model="customer.address.houseNumber"
@@ -282,11 +296,12 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
-
+                                        </div>
                                     </div>
 
-                                    <div class="row" style="padding: 15px">
-                                        <md-input-container class="md-block col-sm-11" flex-gt-sm>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                        <md-input-container class="md-block" flex-gt-sm>
                                             <label>Apartment number</label>
                                             <input name="apartmentNumber" type="number" id="apartmentNumber"
                                                    ng-model="customer.address.apartmentNumber"
@@ -298,6 +313,7 @@
                                                 </div>
                                             </div>
                                         </md-input-container>
+                                        </div>
                                     </div>
                                     <button  ng-class="{unsubmitable : customerForm.$invalid,
                         submitable: !customerForm.$invalid}"
