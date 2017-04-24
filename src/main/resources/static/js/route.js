@@ -104,6 +104,7 @@
                         break;
                     case 401: {
                         console.log('Unauthorized');
+                        console.log($location.$$path);
                         $location.path('/');
                         break;
                     }

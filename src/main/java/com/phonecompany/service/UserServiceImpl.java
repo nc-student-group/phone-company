@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -19,6 +20,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.List;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -86,6 +88,8 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return update(user);
     }
 
+
+
     private void sendResetPasswordMessage(User user)
     {
         SimpleMailMessage resetPasswordMessage =
@@ -102,5 +106,16 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         passwordWithSS[random.nextInt(passwordWithSS.length)] = specSymb[random.nextInt(specSymb.length)];
         password = String.valueOf(passwordWithSS);
         return password;
+    }
+
+
+    @Override
+    public List<User> getAllUsersPaging(int page, int size, int role, String status) {
+        return userDao.getAllUsersPaging(page,size,role,status);
+    }
+
+    @Override
+    public int getCountUsers(int role, String status) {
+        return userDao.getCountUsers(role,status);
     }
 }

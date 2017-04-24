@@ -11,6 +11,7 @@
     function UserService($http, $q, $log, $resource) {
         var UserService = {};
 
+        var GET_ALL_USERS_URL = "api/users/";
         // Basic CRUD operations
         UserService.perform = function () {
             console.log('Performing on api users');
@@ -28,6 +29,19 @@
             console.log('Email: ' + JSON.stringify(email));
             var deferred = $q.defer();
             $http.post("api/user/reset", email).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        UserService.getAllUsers = function(page, size,selectedRole,selectedStatus) {
+            var deferred = $q.defer();
+            $http.get(GET_ALL_USERS_URL+page+'/'+size+"/"+selectedRole+"/"+selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
