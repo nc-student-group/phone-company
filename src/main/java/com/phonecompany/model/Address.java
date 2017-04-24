@@ -13,9 +13,8 @@ public class Address extends DomainEntity {
     @Pattern(regexp = "[a-zA-Z]{3,}", message = "Street can only contain letters")
     @NotNull(message = "Street must not be null")
     private String street;
-    @Pattern(regexp = "^[0-9]+$", message = "House number should only be a positive integer")
     @NotNull(message = "House number must not be null")
-    private Long houseNumber;
+    private String houseNumber;
     @Pattern(regexp = "^[0-9]+$", message = "Apartment number should only be a positive integer")
     @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
@@ -24,7 +23,8 @@ public class Address extends DomainEntity {
         super();
     }
 
-    public Address(Region region, String locality, String street, Long houseNumber, String apartmentNumber) {
+    public Address(Region region, String locality, String street, String houseNumber,
+                   String apartmentNumber) {
         this.region = region;
         this.locality = locality;
         this.street = street;
@@ -56,11 +56,11 @@ public class Address extends DomainEntity {
         this.street = street;
     }
 
-    public Long getHouseNumber() {
+    public String getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(Long houseNumber) {
+    public void setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
     }
 

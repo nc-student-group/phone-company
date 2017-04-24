@@ -51,11 +51,11 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/user/update")
-    public ResponseEntity<?> updateUser(@RequestBody User client) {
-        LOG.info(client.toString());
-        userService.update(client);
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
+        LOG.info("User parsed from the request body: " + user);
+        userService.update(user);
 
-        User persistedUser = this.userService.save(client);
+        User persistedUser = this.userService.save(user);
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
         return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
     }
@@ -83,7 +83,6 @@ public class UserController {
         return new ResponseEntity<>(user.getRole(), HttpStatus.OK);
     }
 
-
     @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
 
@@ -107,17 +106,18 @@ public class UserController {
         }
         return new ResponseEntity<>(persistedUser, HttpStatus.OK);
     }
+
     @RequestMapping(method = GET, value = "/api/users/{page}/{size}/{role}/{status}")
     public Map<String, Object> getAllUsers(@PathVariable("page") int page, @PathVariable("size") int size,
                                            @PathVariable("role") int userRole, @PathVariable("status") String status) {
         LOG.info("Retrieving all the users contained in the database");
 
-        List<User> users = this.userService.getAllUsersPaging(page,size,userRole,status);
+        List<User> users = this.userService.getAllUsersPaging(page, size, userRole, status);
 
         LOG.info("Users fetched from the database: " + users);
-        Map<String,Object> response = new HashMap<>();
-        response.put("users",users);
-        response.put("usersSelected",userService.getCountUsers(userRole,status));
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("usersSelected", userService.getCountUsers(userRole, status));
         return response;
     }
 }

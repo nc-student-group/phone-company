@@ -85,7 +85,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
         List<Service> services = new ArrayList<>();
         String getAllQuery = this.getQuery("getAll");
         if (productCategoryId != 0) {
-            getAllQuery += " INNER JOIN product_category AS pc ON pc.id = s.product_category_id WHERE product_category_id = ?";
+            getAllQuery += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
         }
         getAllQuery += " LIMIT ? OFFSET ?";
 

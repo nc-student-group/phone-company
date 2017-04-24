@@ -14,10 +14,10 @@
               autocomplete="off" novalidate
               ng-submit="">
             <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
-                <label>Email</label>
+                <!--<label>Email</label>-->
                 <input name="email" type="text" id="email"
                        ng-model="user.email"
-                       ng-pattern="emailPattern">
+                       ng-pattern="emailPattern" placeholder="Email">
 
                 <div ng-messages="loginForm.email.$error" role="alert" multiple>
                     <div ng-message="pattern">
@@ -26,9 +26,9 @@
                 </div>
             </md-input-container>
             <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
-                <label>Password</label>
+                <!--<label>Password</label>-->
                 <input name="password" type="password" id="password"
-                       ng-model="user.password">
+                       ng-model="user.password" placeholder="Password">
             </md-input-container>
             <p class="login-message">Not registered? <a ng-href="#/index">Create an account</a></p>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
