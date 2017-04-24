@@ -94,6 +94,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                            <div class="dataTables_length">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Category:</label>
+                                    <md-select ng-model="currentCategory" md-on-close="updateData()">
+                                        <md-option value="0">All Categories</md-option>
+                                        <md-option ng-repeat="c in categories" value="{{c.id}}">
+                                            {{c.categoryName}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </div>
                         <div class="content table-responsive">
                             <table id="servicesTable" class="table table-striped table-bordered table-hover">
                                 <thead>
@@ -156,7 +169,6 @@
                                             <input type="text" placeholder="Service name"
                                                    ng-model="currentService.serviceName" md-maxlength="150" required/>
                                         </md-input-container>
-
                                     </div>
                                 </div>
 
@@ -170,14 +182,6 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="form-group col-md-12">
-                                        <md-input-container class="md-block">
-                                            <input type="text" class="form-control" placeholder="Status"
-                                                   ng-model="currentService.productStatus" md-maxlength="150" required/>
-                                        </md-input-container>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         <md-input-container class="md-block">

@@ -66,16 +66,14 @@ public class CustomerController {
                                                @PathVariable("rId") long rId, @PathVariable("status") String status) {
         LOG.info("Retrieving all the users contained in the database");
 
-        List<Customer> customers = this.customerService.getAllCustomersPaging(page,size,rId,status);
+        List<Customer> customers = this.customerService.getAllCustomersPaging(page, size, rId, status);
 
         LOG.info("Users fetched from the database: " + customers);
-        Map<String,Object> response = new HashMap<>();
-        response.put("customers",customers);
-        response.put("customersSelected",customerService.getCountCustomers(rId,status));
+        Map<String, Object> response = new HashMap<>();
+        response.put("customers", customers);
+        response.put("customersSelected", customerService.getCountCustomers(rId, status));
         return response;
     }
-
-
 
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)

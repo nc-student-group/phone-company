@@ -14,6 +14,12 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.page = 0;
         $scope.size = 5;
 
+        ServicesService.getAllCategories().then(function (data) {
+            $scope.categories = data;
+            let allCategories = JSON.stringify($scope.categories);
+            console.log(`All categories: ${allCategories}`);
+        });
+
         $scope.preloader.send = true;
         ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
             .then(function (data) {

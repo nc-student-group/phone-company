@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
     private JavaMailSender mailSender;
 
     @Autowired

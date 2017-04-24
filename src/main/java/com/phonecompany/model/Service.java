@@ -11,7 +11,7 @@ public class Service extends DomainEntity {
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Product status must not be null")
-    private ProductStatus productStatus;
+    private ProductStatus productStatus = ProductStatus.ACTIVATED; //product ACTIVATED by default
     @NotNull(message = "Discount must not be null")
     private double discount;
     @NotNull(message = "Product category must not be null")

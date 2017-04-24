@@ -5,6 +5,19 @@ angular.module('phone-company')
 
         const SERVICES = "api/services";
 
+        function getAllCategories() {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/categories`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getServicesByProductCategoryId(productCategoryId, page, size) {
             let deferred = $q.defer();
             $http.get(`${SERVICES}/category/${productCategoryId}/${page}/${size}`)
@@ -47,6 +60,7 @@ angular.module('phone-company')
         return {
             getServicesByProductCategoryId: getServicesByProductCategoryId,
             getNewService: getNewService,
-            addService: addService
+            addService: addService,
+            getAllCategories: getAllCategories
         };
     }]);

@@ -72,7 +72,7 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
              PreparedStatement ps = conn.prepareStatement(getCategoryByNameQuery)) {
             ps.setString(1, productCategoryName);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return this.init(rs);
             }
         } catch (SQLException e) {
