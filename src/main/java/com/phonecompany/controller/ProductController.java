@@ -37,6 +37,9 @@ public class ProductController {
     @Autowired
     private CustomerTariffService customerTariffService;
 
+    @Autowired
+    private UserController userController;
+
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -135,9 +138,10 @@ public class ProductController {
         return response;
     }
 
-    @RequestMapping(value = "/api/tariffs/get/by/customer/{id}", method = RequestMethod.GET)
-    public List<CustomerTariff> getTariffsByCustomerId(@PathVariable("id") Long customerId) {
-        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = : " + customerId);
+    @RequestMapping(value = "/api/tariffs/get/by/customer", method = RequestMethod.GET)
+    public List<CustomerTariff> getTariffsByCustomerId() {
+        Long customerId = userController.getUser().getId();
+        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customerId);
         return this.customerTariffService.getByCustomerId(customerId);
     }
 

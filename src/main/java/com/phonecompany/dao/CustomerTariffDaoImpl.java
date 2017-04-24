@@ -78,8 +78,8 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
         CustomerTariff customerTariff = new CustomerTariff();
         try {
             customerTariff.setId(rs.getLong("id"));
-            customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id)")));
-            customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id)")));
+            customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id")));
+            customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customerTariff.setOrderDate(rs.getDate("order_date"));
             customerTariff.setTotalPrice(rs.getDouble("total_price"));
             customerTariff.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));

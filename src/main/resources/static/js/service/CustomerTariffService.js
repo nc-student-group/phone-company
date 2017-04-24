@@ -10,9 +10,9 @@ angular.module('phone-company').factory('CustomerTariffService', ['$q', '$http',
 
     return factory;
 
-    function getTariffsByCustomerId(customerId) {
+    function getTariffsByCustomerId() {
         var deferred = $q.defer();
-        $http.get(GET_CUSTOMER_TARIFFS_BY_CUSTOMER_ID_URL + customerId).then(
+        $http.get(GET_CUSTOMER_TARIFFS_BY_CUSTOMER_ID_URL).then(
             function (response) {
                 deferred.resolve(response.data);
             },

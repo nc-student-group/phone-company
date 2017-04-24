@@ -4,33 +4,17 @@
     angular.module('phone-company')
         .controller('CustomerTariffController', CustomerTariffController);
 
-    CustomerTariffController.$inject = ['$scope', '$log', 'CustomerService','CustomerTariffService', '$rootScope'];
+    CustomerTariffController.$inject = ['$scope', '$log','CustomerTariffService', '$rootScope'];
 
-    function CustomerTariffController($scope, $log, CustomerService,CustomerTariffService, $rootScope) {
-        console.log('This is CustomerController');
+    function CustomerTariffController($scope, $log,CustomerTariffService, $rootScope) {
+        console.log('This is CustomerTariffController');
+        $scope.tariffsFound = 0;
 
-        $scope.customer = {
-            id: "",
-            email: "",
-            fistName: "",
-            secondName: "",
-            lastName: "",
-            phone: "",
-            role: "CLIENT",
-            address: {
-                region: "Cherkasy Oblast",
-                locality: "",
-                street: "",
-                houseNumber: "",
-                apartmentNumber: ""
-            }
-        };
-
-
-        CustomerTariffService.getTariffsByCustomerId($scope.customer.id)
+        CustomerTariffService.getTariffsByCustomerId()
             .then(function (data) {
-                $scope.customerTariffs = data.customerTariffs;
+                $scope.customerTariffs = data;
                 console.log($scope.customerTariffs);
+                $scope.tariffsFound = data.length;
             });
     }
 }());

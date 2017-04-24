@@ -91,7 +91,7 @@
         $routeProvider.when('/client',
             {
                 templateUrl: 'view/client/clientProfile.html',
-                // controller: 'CustomerTariffController'
+                controller: 'CustomerTariffController'
             });
         $routeProvider.when('/client/tariffs',
             {
