@@ -1,7 +1,9 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnUserCreationEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +13,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -109,5 +106,18 @@ public class UserController {
             LOG.info("User with email " + email + " not found!");
         }
         return new ResponseEntity<>(persistedUser, HttpStatus.OK);
+    }
+    @RequestMapping(method = GET, value = "/api/users/{page}/{size}/{role}/{status}")
+    public Map<String, Object> getAllUsers(@PathVariable("page") int page, @PathVariable("size") int size,
+                                           @PathVariable("role") int userRole, @PathVariable("status") String status) {
+        LOG.info("Retrieving all the users contained in the database");
+
+        List<User> users = this.userService.getAllUsersPaging(page,size,userRole,status);
+
+        LOG.info("Users fetched from the database: " + users);
+        Map<String,Object> response = new HashMap<>();
+        response.put("users",users);
+        response.put("usersSelected",userService.getCountUsers(userRole,status));
+        return response;
     }
 }

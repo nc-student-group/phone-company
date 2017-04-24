@@ -230,11 +230,10 @@
                                         </md-input-container>
                                     </div>
 
-
                                     <div class="row">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Region</label>
-                                                <md-select ng-model="customer.address.region">
+                                                <md-select ng-model="customer.address.region" required>
                                                     <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
                                                         {{r.nameRegion}}
                                                     </md-option>

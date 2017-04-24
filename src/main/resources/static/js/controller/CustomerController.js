@@ -48,9 +48,11 @@
             $log.debug('Customer: ' + JSON.stringify($scope.customer));
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
+                    toastr.success(`Customers ${createdCustomer.email} has been successfully created. Please, check your email for the password`);
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {
+                    toastr.error(error.data.message);
                     $log.error("Failed to save customer", error);
                 });
         }

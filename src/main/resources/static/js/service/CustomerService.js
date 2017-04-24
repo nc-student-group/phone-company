@@ -114,6 +114,7 @@
                 function (errResponse) {
                     console.error(errResponse.toString());
                     deferred.reject(errResponse);
+
                 });
             return deferred.promise;
         };
