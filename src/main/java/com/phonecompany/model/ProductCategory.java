@@ -5,23 +5,23 @@ import javax.validation.constraints.NotNull;
 public class ProductCategory extends DomainEntity {
 
     @NotNull(message = "Category name must not be null")
-    private String nameCategory;
+    private String categoryName;
     @NotNull(message = "Units must not be null")
     private String units;
 
     public ProductCategory(){}
 
-    public ProductCategory(String nameCategory, String units) {
-        this.nameCategory = nameCategory;
+    public ProductCategory(String categoryName, String units) {
+        this.categoryName = categoryName;
         this.units = units;
     }
 
-    public String getNameCategory() {
-        return nameCategory;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setNameCategory(String nameCategory) {
-        this.nameCategory = nameCategory;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getUnits() {
@@ -30,5 +30,13 @@ public class ProductCategory extends DomainEntity {
 
     public void setUnits(String units) {
         this.units = units;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductCategory{" +
+                "categoryName='" + categoryName + '\'' +
+                ", units='" + units + '\'' +
+                "} " + super.toString();
     }
 }

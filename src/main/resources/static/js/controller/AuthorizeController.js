@@ -37,7 +37,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
-        $scope.phonePattern=/^\+38[0-9]{10}$/;
+        $scope.phonePattern=/^\+380[0-9]{9}$/;
         $scope.textFieldPattern=/^[a-zA-Z]+$/;
         $scope.numberPattern=/^[0-9]+$/;
 

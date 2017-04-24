@@ -71,7 +71,7 @@
         $routeProvider.when('/csr/services',
             {
                 templateUrl: 'view/csr/services.html',
-                // controller: 'TariffsController'
+                controller: 'ServicesController'
             });
         $routeProvider.when('/admin/users',
             {

@@ -2,19 +2,18 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Created by Oksanka on 21.04.2017.
- */
 @Repository
 public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
         implements ProductCategoryDao {
@@ -34,7 +33,7 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
     @Override
     public void populateSaveStatement(PreparedStatement statement, ProductCategory productCategory) {
         try {
-            statement.setString(1, productCategory.getNameCategory());
+            statement.setString(1, productCategory.getCategoryName());
             statement.setString(1, productCategory.getUnits());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -46,7 +45,7 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
         ProductCategory productCategory = new ProductCategory();
         try {
             productCategory.setId(rs.getLong("id"));
-            productCategory.setNameCategory(rs.getString("name_category"));
+            productCategory.setCategoryName(rs.getString("category_name"));
             productCategory.setUnits(rs.getString("units"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
@@ -57,11 +56,27 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
     @Override
     public void populateUpdateStatement(PreparedStatement statement, ProductCategory productCategory) {
         try {
-            statement.setString(1, productCategory.getNameCategory());
+            statement.setString(1, productCategory.getCategoryName());
             statement.setString(2, productCategory.getUnits());
             statement.setLong(3, productCategory.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
+    }
+
+    @Override
+    public ProductCategory getByName(String productCategoryName) {
+        String getCategoryByNameQuery = this.getQuery("getByName");
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(getCategoryByNameQuery)) {
+            ps.setString(1, productCategoryName);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                return this.init(rs);
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(productCategoryName, e);
+        }
+        return null;
     }
 }
