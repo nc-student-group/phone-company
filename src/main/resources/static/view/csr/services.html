@@ -162,7 +162,8 @@
                             <h4 class="title">Add Service</h4>
                         </div>
                         <div class="content">
-                            <form>
+                            <form name="servicesForm" id="servicesForm"
+                                  autocomplete="off" novalidate>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <md-input-container class="md-block">
@@ -175,10 +176,16 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <md-input-container class="md-block">
-                                            <input type="number" placeholder="Price"
-                                                   ng-model="currentService.price" required/>
-                                        </md-input-container>
+                                            <input type="number" placeholder="Price" name="price"
+                                                   ng-model="currentService.price"
+                                                   ng-pattern="numberPattern" required/>
 
+                                            <div ng-messages="servicesForm.price.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain positive numbers
+                                                </div>
+                                            </div>
+                                        </md-input-container>
                                     </div>
                                 </div>
 
@@ -186,18 +193,26 @@
                                     <div class="form-group col-md-12">
                                         <md-input-container class="md-block">
                                             <input type="number" class="form-control" placeholder="Discount"
-                                                   ng-model="currentService.discount"
-                                                   required/>
+                                                   ng-model="currentService.discount" name="discount"
+                                                   ng-pattern="discountPattern" required/>
+
+                                            <div ng-messages="servicesForm.discount.$error" role="alert" multiple>
+                                                <div ng-message="pattern">
+                                                    This field can only contain numbers from 0 to 1
+                                                </div>
+                                            </div>
                                         </md-input-container>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-12">
-                                        <md-input-container class="md-block">
-                                            <input type="text" class="form-control" placeholder="Category"
-                                                   ng-model="currentService.productCategory.categoryName"
-                                                   md-maxlength="150"
-                                                   required/>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Category:</label>
+                                            <md-select ng-model="currentService.productCategory.categoryName">
+                                                <md-option ng-repeat="c in categories" value="{{c.categoryName}}">
+                                                    {{c.categoryName}}
+                                                </md-option>
+                                            </md-select>
                                         </md-input-container>
                                     </div>
                                 </div>

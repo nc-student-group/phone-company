@@ -3,6 +3,7 @@ package com.phonecompany.model;
 import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Service extends DomainEntity {
 
@@ -12,6 +13,7 @@ public class Service extends DomainEntity {
     private double price;
     @NotNull(message = "Product status must not be null")
     private ProductStatus productStatus = ProductStatus.ACTIVATED; //product ACTIVATED by default
+    @Pattern(regexp = "^0(\\.\\d{1,3})?$", message = "This field can only contain numbers from 0 to 1")
     @NotNull(message = "Discount must not be null")
     private double discount;
     @NotNull(message = "Product category must not be null")
