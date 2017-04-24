@@ -18,6 +18,8 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 @Service
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         implements CustomerService {
@@ -81,6 +83,14 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Assert.notNull(user, "User should not be null");
 
         return super.update(user);
+    }
+    @Override
+    public List<Customer> getAllCustomersPaging(int page, int size,long rId,String status){
+        return customerDao.getAllCustomersPaging(page,size,rId,status);
+    }
+    @Override
+    public int getCountCustomers(long rId,String status){
+        return customerDao.getCountCustomers(rId,status);
     }
 }
 

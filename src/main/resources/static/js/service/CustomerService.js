@@ -11,6 +11,7 @@
     function CustomerService($http, $q, $log, $resource) {
         var CustomerService = {};
 
+        var GET_ALL_CUSTOMERS_URL = "api/customers/";
         // Basic CRUD operations
         CustomerService.perform = function () {
             return $resource('api/customers/:id', null,
@@ -37,9 +38,9 @@
             return deferred.promise;
         };
 
-        CustomerService.getAllCustomer = function() {
+        CustomerService.getAllCustomer = function(page, size,selectedRegion,selectedStatus) {
             var deferred = $q.defer();
-            $http.get("api/customers").then(
+            $http.get(GET_ALL_CUSTOMERS_URL+page+'/'+size+"/"+selectedRegion+"/"+selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
