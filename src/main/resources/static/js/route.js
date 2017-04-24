@@ -88,6 +88,16 @@
                 templateUrl: 'view/403.html',
                 // controller: ''
             });
+        $routeProvider.when('/client',
+            {
+                templateUrl: 'view/client/clientProfile.html',
+                // controller: 'CustomerTariffController'
+            });
+        $routeProvider.when('/client/tariffs',
+            {
+                templateUrl: 'view/client/tariffs.html',
+                controller: 'CustomerTariffController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 

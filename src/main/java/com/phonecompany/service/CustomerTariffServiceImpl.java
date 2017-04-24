@@ -6,6 +6,8 @@ import com.phonecompany.service.interfaces.CustomerTariffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> implements CustomerTariffService {
 
@@ -15,5 +17,11 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao){
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
+    }
+
+    @Override
+    public List<CustomerTariff> getByCustomerId(Long customerId) {
+        return customerTariffDao.getTariffsByCustomerId(customerId);
+
     }
 }

@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
+                .antMatchers("/api/tariffs/get/by/customer/**").hasRole("CLIENT")
                 .anyRequest().authenticated();
 
         http.csrf().disable();

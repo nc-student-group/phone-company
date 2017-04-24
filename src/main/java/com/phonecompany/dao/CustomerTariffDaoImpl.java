@@ -5,18 +5,23 @@ import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerService;
 import com.phonecompany.model.CustomerTariff;
+import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implements CustomerTariffDao {
@@ -83,5 +88,22 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             throw new EntityInitializationException(e);
         }
         return customerTariff;
+    }
+
+    @Override
+    public List<CustomerTariff> getTariffsByCustomerId(Long customerId) {
+        List<CustomerTariff> tariffs = new ArrayList<>();
+        String query = this.getQuery("getByCustomerId");
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                tariffs.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return tariffs;
     }
 }
