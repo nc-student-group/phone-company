@@ -193,10 +193,12 @@
                                             <span ng-hide="t.tariff.isCorporate">-</span>
                                         </td>
                                         <td>
-                                            <button style="width: 100%" ng-hide="t.tariff.productStatus === 'ACTIVATED'" class="btn btn-success btn-fill pull-left"
+                                            <button style="width: 100%" ng-hide="t.tariff.productStatus === 'ACTIVATED'"
+                                                    class="btn btn-success btn-fill pull-left"
                                                     ng-click="activateTariff($index)">Activate
                                             </button>
-                                            <button style="width: 100%" ng-show="t.tariff.productStatus === 'ACTIVATED'" class="btn btn-danger btn-fill pull-left"
+                                            <button style="width: 100%" ng-show="t.tariff.productStatus === 'ACTIVATED'"
+                                                    class="btn btn-danger btn-fill pull-left"
                                                     ng-click="deactivateTariff($index)">Deactivate
                                             </button>
                                             <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
