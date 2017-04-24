@@ -52,6 +52,7 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
+                        $scope.gotoAnchor("tariffTable");
                     }, function () {
                         $scope.preloader.send = false;
                     });
@@ -69,6 +70,7 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
+                        $scope.gotoAnchor("tariffTable");
                     }, function () {
                         $scope.preloader.send = false;
                     });
