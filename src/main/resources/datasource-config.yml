@@ -1,12 +1,12 @@
-active: dev
+active: prod
 profiles:
-  - name: dev
+  - name: prod
     datasource:
       url: jdbc:postgresql://ec2-23-23-244-83.compute-1.amazonaws.com:5432/d9860gpavsh57b?user=yzrllkhondutsx&password=99ecc04560666945bc95824b30d33b575478c323076284b6e4ea39362633dd4d&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
       driver-class-name: org.postgresql.Driver
       username: yzrllkhondutsx
       password: 99ecc04560666945bc95824b30d33b575478c323076284b6e4ea39362633dd4d
-  - name: prod
+  - name: dev
     datasource:
       url: jdbc:postgresql://localhost:5432/phone-company?user=postgres&password=1111
       driver-class-name: org.postgresql.Driver
