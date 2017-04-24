@@ -5,7 +5,6 @@ import javax.validation.constraints.Pattern;
 
 public class Address extends DomainEntity {
 
-    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Region can only contain letters")
     @NotNull(message = "Region must not be null")
     private Region region;
     @Pattern(regexp = "[a-zA-Z]{3,}", message = "Locality can only contain letters")

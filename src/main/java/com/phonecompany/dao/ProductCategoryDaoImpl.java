@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
         implements ProductCategoryDao {

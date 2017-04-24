@@ -8,32 +8,41 @@ angular.module('phone-company').controller('AuthorizeController', [
     'SessionService',
     'LoginService',
     'UserService',
+    'TariffService', /* to fetch all the regions */
     'CustomerService',
     '$rootScope',
     '$routeParams',
     function ($scope, $q, $http, $location, SessionService, LoginService,
-              UserService, CustomerService) {
+              UserService, TariffService, CustomerService) {
         console.log('This is AuthorizeController');
 
         $scope.selected = 'signIn';
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
-        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
+        $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
         $scope.phonePattern = /^\+380[0-9]{9}$/;
         $scope.textFieldPattern = /^[a-zA-Z]+$/;
         $scope.numberPattern = /^[0-9]+$/;
 
-        $scope.getNewService = function () {
+        $scope.getNewCustomer = function () {
             CustomerService.getNewCustomer().then(function (data) {
                 $scope.customer = data;
             });
         };
 
+        $scope.getNewCustomer();
+
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+            console.log($scope.regionsToAdd);
+        });
+
         $scope.registerCustomer = function () {
             console.log('Registering customer');
             CustomerService.registerCustomer($scope.customer)
-                .then(function (data) {
-                    toastr.success(`Customer ${data} has been successfully created`);
+                .then(function (response) {
+                    console.log(response.data);
+                    toastr.success(`Customer with an email ${response.data.email} has been successfully created. Please, check your email for the activation link`);
                 }, function (errorResponse) {
                     toastr.error(errorResponse.data.message);
                 });

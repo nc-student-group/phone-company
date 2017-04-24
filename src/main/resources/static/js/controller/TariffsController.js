@@ -30,6 +30,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
             console.log($scope.regionsToAdd);
         });
+
         $scope.preloader.send = true;
         TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
             .then(function (data) {

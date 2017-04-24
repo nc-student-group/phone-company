@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
@@ -104,16 +105,18 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     @Override
     public Customer getByVerificationToken(String token) {
         String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
-        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery );
+        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(customerByVerificationTokenQuery)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return this.init(rs);
+            if (rs.next()) {
+                return this.init(rs);
+            }
         } catch (SQLException e) {
             throw new EntityNotFoundException(token, e);
         }
+        return null;
     }
 
     private String getByVerificationTokenQuery() {

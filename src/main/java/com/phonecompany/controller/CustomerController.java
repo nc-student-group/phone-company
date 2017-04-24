@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.Tariff;
 import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -53,9 +54,12 @@ public class CustomerController {
 
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
 
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
+        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+    }
 
-        return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+    @GetMapping(value = "/api/customers/new")
+    public Customer getEmptyCustomer() {
+        return new Customer();
     }
 
     @RequestMapping(method = GET, value = "/api/customers")
@@ -68,6 +72,8 @@ public class CustomerController {
 
         return Collections.unmodifiableCollection(customers);
     }
+
+
 
     @GetMapping("/api/confirmRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)

@@ -38,7 +38,6 @@
             CustomerService.perform().save(user);
         };
 
-
         /**
          * Registers a new Customer
          *
@@ -49,7 +48,7 @@
             console.log('Persisting customer: ' + JSON.stringify(customer));
             $http.post("/api/customers", customer).then(
                 function (response) {
-                    deferred.resolve(response.data);
+                    deferred.resolve(response);
                     console.log(JSON.stringify(response.data));
                 },
                 function (errResponse) {

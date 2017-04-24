@@ -11,6 +11,7 @@ public class Region extends DomainEntity {
     public Region(String nameRegion) {
         this.nameRegion = nameRegion;
     }
+
     public Region(long id, String nameRegion) {
         super(id);
         this.nameRegion = nameRegion;
