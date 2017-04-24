@@ -39,7 +39,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
             preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
             preparedStatement.setString(2, address.getLocality());
             preparedStatement.setString(3, address.getStreet());
-            preparedStatement.setLong(4, address.getHouseNumber());
+            preparedStatement.setString(4, address.getHouseNumber());
             preparedStatement.setString(5, address.getApartmentNumber());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -54,7 +54,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
             address.setRegion(regionDao.getById(rs.getLong("region_id")));
             address.setLocality(rs.getString("locality"));
             address.setStreet(rs.getString("street"));
-            address.setHouseNumber(rs.getLong("house_number"));
+            address.setHouseNumber(rs.getString("house_number"));
             address.setApartmentNumber(rs.getString("apartment_number"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
@@ -68,7 +68,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
             preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
             preparedStatement.setString(2, address.getLocality());
             preparedStatement.setString(3, address.getStreet());
-            preparedStatement.setLong(4, address.getHouseNumber());
+            preparedStatement.setString(4, address.getHouseNumber());
             preparedStatement.setString(5, address.getApartmentNumber());
             preparedStatement.setLong(6, address.getId());
         } catch (SQLException e) {
