@@ -10,4 +10,4 @@ security:
   basic:
    enabled: false
 
-application-url: http://localhost:8090/api
+application-url: https://phone-company.herokuapp.com/#/api
