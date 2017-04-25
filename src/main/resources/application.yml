@@ -10,4 +10,4 @@ security:
   basic:
    enabled: false
 
-application-url: https://phone-company.herokuapp.com/#/api
+application-url: https://phone-company.herokuapp.com/api
