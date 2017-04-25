@@ -211,7 +211,7 @@
 
                                                     <div ng-messages="servicesForm.price.$error" role="alert" multiple>
                                                         <div ng-message="pattern">
-                                                            This field can only contain positive numbers
+                                                            This field should be in decimal format, like 99.99 and not be negative
                                                         </div>
                                                     </div>
                                                 </md-input-container>
@@ -248,6 +248,7 @@
                                             </div>
                                         </div>
                                         <button class="btn btn-info btn-fill pull-left"
+                                                ng-disabled="servicesForm.$invalid"
                                                 ng-click="addService()">Add service
                                         </button>
                                         <div class="clearfix"></div>
@@ -261,7 +262,7 @@
                                 <h4 class="title">Edit Service</h4>
                             </div>
                             <div class="content">
-                                <form name="servicesForm" id="editServicesForm"
+                                <form name="editServicesForm" id="editServicesForm"
                                       autocomplete="off" novalidate>
                                     <div class="row">
                                         <div class="col-md-12">
@@ -280,7 +281,7 @@
                                                        ng-model="serviceToEdit.price"
                                                        ng-pattern="numberPattern" required/>
 
-                                                <div ng-messages="servicesForm.price.$error" role="alert" multiple>
+                                                <div ng-messages="editServicesForm.price.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
                                                         This field can only contain positive numbers
                                                     </div>
@@ -296,7 +297,7 @@
                                                        ng-model="serviceToEdit.discount" name="discount"
                                                        ng-pattern="discountPattern" required/>
 
-                                                <div ng-messages="servicesForm.discount.$error" role="alert" multiple>
+                                                <div ng-messages="editServicesForm.discount.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
                                                         This field can only contain numbers from 0 to 1
                                                     </div>
@@ -321,7 +322,8 @@
                                             style="margin-right: 10px">Edit service
                                     </button>
                                     <button class="btn btn-default btn-fill pull-left"
-                                            ng-click="cancelEdit()">Cancel edit
+                                            ng-click="cancelEdit()"
+                                            ng-disabled="serviceToEdit.$invalid">Cancel edit
                                     </button>
                                     <div class="clearfix"></div>
                                 </form>
