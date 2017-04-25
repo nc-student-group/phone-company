@@ -40,9 +40,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public List<Tariff> getByRegion(Long regionId) {
+    public List<Tariff> getByRegionIdAndClient(Long regionId, Boolean isRepresentative) {
         return tariffDao.getByRegionId(regionId).stream()
-                .filter(t -> t.getProductStatus().equals(ProductStatus.ACTIVATED))
+                .filter(t -> (t.getProductStatus().equals(ProductStatus.ACTIVATED) &&
+                        isRepresentative.equals(t.isCorporate())))
                 .collect(Collectors.toList());
     }
 

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface TariffService extends CrudService<Tariff> {
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
-    public List<Tariff> getByRegion(Long regionId);
+    public List<Tariff> getByRegionIdAndClient(Long regionId, Boolean isRepresentative);
     public Integer getCountByRegionIdAndPaging(long regionId);
     public Map<String, Object> getTariffsTable(long regionId, int page, int size);
     public void updateTariffStatus(long tariffId, ProductStatus productStatus);

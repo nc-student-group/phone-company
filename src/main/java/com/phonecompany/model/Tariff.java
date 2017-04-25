@@ -129,4 +129,20 @@ public class Tariff extends DomainEntity {
     public void setCorporate(boolean corporate) {
         isCorporate = corporate;
     }
+
+    @Override
+    public String toString() {
+        return "Tariff{" +
+                "tariffName='" + tariffName + '\'' +
+                ", productStatus=" + productStatus +
+                ", internet='" + internet + '\'' +
+                ", callsInNetwork='" + callsInNetwork + '\'' +
+                ", callsOnOtherNumbers='" + callsOnOtherNumbers + '\'' +
+                ", sms='" + sms + '\'' +
+                ", mms='" + mms + '\'' +
+                ", roaming='" + roaming + '\'' +
+                ", isCorporate=" + isCorporate +
+                ", creationDate=" + creationDate +
+                '}';
+    }
 }

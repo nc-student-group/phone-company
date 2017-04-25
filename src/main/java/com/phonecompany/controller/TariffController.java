@@ -53,10 +53,12 @@ public class TariffController {
     }
 
     @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
-    public List<Tariff> getCustomerTariffs() {
+    public List<Tariff> getClientTariffs() {
         Customer customer = customerController.getCustomerByCurrentUserId();
+        Long regionId = customer.getAddress().getRegion().getId();
+        Boolean isRepresentative = customer.getRepresentative();
         LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
-        return tariffService.getByRegion(customer.getAddress().getRegion().getId());
+        return tariffService.getByRegionIdAndClient(regionId, isRepresentative);
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
