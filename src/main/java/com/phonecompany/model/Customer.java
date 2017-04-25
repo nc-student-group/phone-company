@@ -29,6 +29,20 @@ public class Customer extends User {
     public Customer() {
     }
 
+    public Customer(Long id, String email, String password, UserRole role,
+                    Status status, String firstName, String secondName,
+                    String lastName, String phone, Address address,
+                    Corporate corporate, Boolean isRepresentative) {
+        super(id, email, password, role, status);
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.address = address;
+        this.corporate = corporate;
+        this.isRepresentative = isRepresentative;
+    }
+
     public Customer(String email, String password, UserRole role,
                     Status status, String firstName, String secondName,
                     String lastName, String phone, Address address,

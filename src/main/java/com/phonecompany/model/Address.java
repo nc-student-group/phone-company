@@ -23,6 +23,17 @@ public class Address extends DomainEntity {
         super();
     }
 
+    public Address(Long id, Region region, String locality,
+                   String street, String houseNumber,
+                   String apartmentNumber) {
+        super(id);
+        this.region = region;
+        this.locality = locality;
+        this.street = street;
+        this.houseNumber = houseNumber;
+        this.apartmentNumber = apartmentNumber;
+    }
+
     public Address(Region region, String locality, String street, String houseNumber,
                    String apartmentNumber) {
         this.region = region;
@@ -31,6 +42,7 @@ public class Address extends DomainEntity {
         this.houseNumber = houseNumber;
         this.apartmentNumber = apartmentNumber;
     }
+
 
     public String getLocality() {
         return locality;
@@ -75,6 +87,8 @@ public class Address extends DomainEntity {
     @Override
     public String toString() {
         return "Address{" +
+                "region=" + region +
+                ", locality='" + locality + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
                 ", apartmentNumber='" + apartmentNumber + '\'' +

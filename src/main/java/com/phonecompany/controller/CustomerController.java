@@ -1,9 +1,11 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.Address;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
+import com.phonecompany.service.interfaces.AddressService;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,19 +36,24 @@ public class CustomerController {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerController.class);
 
     private CustomerService customerService;
+    private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public CustomerController(CustomerService customerService,
+                              AddressService addressService,
                               ApplicationEventPublisher eventPublisher) {
         this.customerService = customerService;
+        this.addressService = addressService;
         this.eventPublisher = eventPublisher;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        customer.setRole(CLIENT);
+        customer.setRole(CLIENT); //TODO: extract logic to service
+        Address savedAddress = this.addressService.save(customer.getAddress());
+        customer.setAddress(savedAddress);
         Customer persistedCustomer = this.customerService.save(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
 

@@ -33,6 +33,15 @@ public class User extends DomainEntity {
         this.status = status;
     }
 
+    public User(Long id, String email, String password,
+                UserRole role, Status status) {
+        super(id);
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+    }
+
     public String getEmail() {
         return email;
     }

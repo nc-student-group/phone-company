@@ -1,6 +1,13 @@
-package com.phonecompany.model;
+package com.phonecompany.model.events;
 
-public class OnUserCreationEvent {
+import com.phonecompany.model.User;
+
+/**
+ * Gets emitted when user gets created
+ *
+ * @see com.phonecompany.controller.UserController
+ */
+public final class OnUserCreationEvent {
 
     private final User persistedUser;
 

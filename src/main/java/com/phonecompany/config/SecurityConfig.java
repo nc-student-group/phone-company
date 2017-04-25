@@ -57,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/confirmRegistration").permitAll()
                 .antMatchers("/api/roles").hasRole("ADMIN")
                 .antMatchers("/api/services").hasAnyRole("CSR", "ADMIN")
+                .antMatchers("/api/services/**").hasAnyRole("CSR", "ADMIN")
 //                .antMatchers("/api/regions/get").hasAnyRole("CSR","ADMIN")
                 //regions are required for the registration as well. Thats why should be permitted to access
                 .antMatchers("/api/regions/get").permitAll()

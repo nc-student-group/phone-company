@@ -1,9 +1,7 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
-import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

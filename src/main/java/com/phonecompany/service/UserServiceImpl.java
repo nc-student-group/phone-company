@@ -1,8 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.OnUserCreationEvent;
+import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
@@ -87,8 +86,6 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         sendResetPasswordMessage(user);
         return update(user);
     }
-
-
 
     private void sendResetPasswordMessage(User user)
     {
