@@ -40,6 +40,9 @@ public class CustomerController {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
+    private UserController userController;
+
+    @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher) {
@@ -97,11 +100,18 @@ public class CustomerController {
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-        eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+        if(customerService.findByEmail(customer.getEmail())==null){
+            customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+            eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+        }
         Customer persistedCustomer = this.customerService.save(customer);
-
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
         return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = GET, value = "/api/customer/get")
+    public Customer getCustomerByCurrentUserId() {
+        LOG.debug("Retrieving customer by current logged in user");
+        return customerService.getById(userController.getUser().getId());
     }
 }

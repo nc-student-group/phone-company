@@ -76,4 +76,16 @@ public class CustomerTariff extends DomainEntity {
     public void setTariff(Tariff tariff) {
         this.tariff = tariff;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerTariff{" +
+                "customer=" + customer +
+                ", corporate=" + corporate +
+                ", orderDate=" + orderDate +
+                ", totalPrice=" + totalPrice +
+                ", orderStatus=" + orderStatus +
+                ", tariff=" + tariff +
+                "} " + super.toString();
+    }
 }

@@ -62,6 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //regions are required for the registration as well. Thats why should be permitted to access
                 .antMatchers("/api/regions/get").permitAll()
                 .antMatchers("/api/customers/new").permitAll()
+                .antMatchers("/api/customer/get/**").hasRole("CLIENT")
+                .antMatchers("/api/tariffs/get/available/").hasRole("CLIENT")
                 .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")
@@ -70,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
+                .antMatchers("/api/tariffs/get/by/client/**").hasRole("CLIENT")
                 .anyRequest().authenticated();
 
         http.csrf().disable();
