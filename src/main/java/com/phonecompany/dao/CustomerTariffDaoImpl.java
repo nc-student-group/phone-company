@@ -91,19 +91,32 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     }
 
     @Override
-    public List<CustomerTariff> getTariffsByCustomerId(Long customerId) {
-        List<CustomerTariff> tariffs = new ArrayList<>();
+    public List<CustomerTariff> getCustomerTariffsByCustomerId(Long customerId) {
         String query = this.getQuery("getByCustomerId");
+        return getCustomerTariffsByClientIdQuery(customerId, query);
+    }
+
+    @Override
+    public List<CustomerTariff> getCustomerTariffsByCorporateId(Long corporateId) {
+        String query = this.getQuery("getByCorporateId");
+        return getCustomerTariffsByClientIdQuery(corporateId, query);
+
+    }
+
+    private List<CustomerTariff> getCustomerTariffsByClientIdQuery(Long id, String query) {
+        List<CustomerTariff> tariffs = new ArrayList<>();
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setLong(1, customerId);
+            ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 tariffs.add(init(rs));
             }
         } catch (SQLException e) {
-            throw new EntityNotFoundException(customerId, e);
+            throw new EntityNotFoundException(id, e);
         }
         return tariffs;
     }
+
+
 }

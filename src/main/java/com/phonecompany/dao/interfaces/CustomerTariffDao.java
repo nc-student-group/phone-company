@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface CustomerTariffDao extends CrudDao<CustomerTariff>{
 
-    List<CustomerTariff> getTariffsByCustomerId(Long customerId);
+    List<CustomerTariff> getCustomerTariffsByCustomerId(Long customerId);
+    List<CustomerTariff> getCustomerTariffsByCorporateId(Long corporateId);
 
 }

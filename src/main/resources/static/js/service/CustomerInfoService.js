@@ -2,7 +2,7 @@
 
 angular.module('phone-company').factory('CustomerInfoService', ['$q', '$http', function ($q, $http) {
 
-    var GET_CUSTOMER_TARIFFS_BY_CUSTOMER_ID_URL = "api/tariffs/get/by/customer/";
+    var GET_CUSTOMER_TARIFFS_BY_CUSTOMER_ID_URL = "api/tariffs/get/by/client/";
     var GET_AVAILABLE_TARRIFS_URL = "api/tariffs/get/available/";
     var GET_CUSTOMER_URL = "api/customer/get/";
 

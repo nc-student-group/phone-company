@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.service.interfaces.CustomerTariffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,9 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     }
 
     @Override
-    public List<CustomerTariff> getByCustomerId(Long customerId) {
-        return customerTariffDao.getTariffsByCustomerId(customerId);
-
+    public List<CustomerTariff> getByClientId(Customer customer) {
+        return customer.getRepresentative() ?
+                customerTariffDao.getCustomerTariffsByCorporateId(customer.getCorporate().getId()) :
+                customerTariffDao.getCustomerTariffsByCustomerId(customer.getId());
     }
 }

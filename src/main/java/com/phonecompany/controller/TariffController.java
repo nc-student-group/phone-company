@@ -142,11 +142,11 @@ public class TariffController {
         return response;
     }
 
-    @RequestMapping(value = "/api/tariffs/get/by/customer", method = RequestMethod.GET)
-    public List<CustomerTariff> getTariffsByCustomerId() {
-        Long customerId = customerController.getCustomerByCurrentUserId().getId();
-        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customerId);
-        return this.customerTariffService.getByCustomerId(customerId);
+    @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
+    public List<CustomerTariff> getTariffsByClientId() {
+        Customer customer = customerController.getCustomerByCurrentUserId();
+        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
+        return this.customerTariffService.getByClientId(customer);
     }
 
 }
