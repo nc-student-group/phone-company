@@ -97,10 +97,11 @@ public class CustomerController {
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-        eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+        if(customerService.findByEmail(customer.getEmail())==null){
+            customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+            eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+        }
         Customer persistedCustomer = this.customerService.save(customer);
-
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
         return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
     }
