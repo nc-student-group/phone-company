@@ -52,6 +52,14 @@ public class ServicesController {
         return productCategoryList;
     }
 
+    @GetMapping(value = "/{id}")
+    public Service getServiceToEdit(@PathVariable("id") long serviceId) {
+        LOG.debug("Service with an id: {} will be edited", serviceId);
+        Service serviceToEdit = this.serviceService.getById(serviceId);
+        LOG.debug("Service fetched by id: {}", serviceId);
+        return serviceToEdit;
+    }
+
     @GetMapping(value = "/new")
     public Service getEmptyService() {
         return new Service();
@@ -62,6 +70,13 @@ public class ServicesController {
                                                  @RequestBody String status) { //TODO: must be enum
         LOG.debug("Service id to update: {}, status: {}", id, status);
         this.serviceService.updateServiceStatus(id, ProductStatus.valueOf(status));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "")
+    public ResponseEntity<?> updateService(@RequestBody Service service) {
+        LOG.debug("Service to be updated", service);
+        this.serviceService.update(service);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

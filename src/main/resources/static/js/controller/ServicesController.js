@@ -10,7 +10,7 @@ angular.module('phone-company').controller('ServicesController', [
     function ($scope, $http, $location, $rootScope, ServicesService, $anchorScroll) {
 
         $scope.numberPattern = /^[0-9]+$/;
-        $scope.discountPattern = /^0(\.\d{1,3})?$/;
+        $scope.discountPattern = /^(0(\.\d{1,3})?)|1$/;
         $scope.inProgress = false;
         $scope.currentCategory = 0;
         $scope.page = 0;
@@ -116,7 +116,7 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.gotoAnchor("servicesTable");
         };
 
-        $scope.gotoAnchor = function(x) {
+        $scope.gotoAnchor = function (x) {
             if ($location.hash() !== x) {
                 $location.hash(x);
             } else {
@@ -133,7 +133,7 @@ angular.module('phone-company').controller('ServicesController', [
                 toastr.success(`Service ${$scope.services[index].serviceName} has been successfully activated!`);
                 $scope.preloader.send = false;
             }, function () {
-                toastr.error('Error with service activation, please, try again!', 'Error');
+                toastr.error(`Service ${$scope.services[index].serviceName} has not been activated. Error has occurred`);
                 $scope.preloader.send = false;
             })
         };
@@ -145,9 +145,40 @@ angular.module('phone-company').controller('ServicesController', [
                 toastr.success(`Service ${$scope.services[index].serviceName} has been deactivated!`);
                 $scope.preloader.send = false;
             }, function () {
-                toastr.error('Error with service deactivation, please, try again!', 'Error');
+                toastr.error(`Service ${$scope.services[index].serviceName} has not been deactivated. Error has occurred`);
                 $scope.preloader.send = false;
             })
+        };
+
+        $scope.editService = function (id) {
+            $scope.preloader.send = true;
+            ServicesService.getServiceToEditById(id).then(function (data) {
+                $scope.serviceToEdit = data;
+                $scope.preloader.send = false;
+                $scope.editing = true;
+            }, function () {
+                $scope.preloader.send = false;
+            });
+        };
+
+        $scope.submitServiceEdit = function () {
+            $scope.preloader.send = true;
+            ServicesService.performServiceEdit($scope.serviceToEdit).then(function (data) {
+                $scope.serviceToEdit = data;
+                $scope.preloader.send = false;
+                $scope.editing = false;
+                $scope.updateData();
+                toastr.success(`Service ${$scope.serviceToEdit.serviceName} has been successfully edited`);
+            }, function () {
+                $scope.preloader.send = false;
+                toastr.error(`Service ${$scope.serviceToEdit.serviceName} has not been edited. Error has occurred`);
+            });
+        };
+
+        $scope.cancelEdit = function () {
+            $scope.editing = false;
+            $scope.tariffToEdit = undefined;
+            $scope.updateData();
         };
     }
 ]);

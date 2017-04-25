@@ -55,11 +55,12 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Service entity) {
         try {
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getProductCategory()));
-            preparedStatement.setString(3, entity.getServiceName());
+            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getProductCategory()));
+            preparedStatement.setString(2, entity.getServiceName());
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
+            preparedStatement.setDouble(6, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }

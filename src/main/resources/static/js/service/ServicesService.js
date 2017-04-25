@@ -44,9 +44,22 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
-        function addService(regionsToSave) {
+        function addService(service) {
             let deferred = $q.defer();
-            $http.post(SERVICES, regionsToSave).then(
+            $http.post(SERVICES, service).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse.data);
+                });
+            return deferred.promise;
+        }
+
+        function performServiceEdit(service) {
+            let deferred = $q.defer();
+            $http.patch(SERVICES, service).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -70,11 +83,26 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function getServiceToEditById(id) {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/${id}`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         return {
             getServicesByProductCategoryId: getServicesByProductCategoryId,
             getNewService: getNewService,
             addService: addService,
             getAllCategories: getAllCategories,
-            changeServiceStatus: changeServiceStatus
+            changeServiceStatus: changeServiceStatus,
+            getServiceToEditById: getServiceToEditById,
+            performServiceEdit: performServiceEdit
         };
     }]);
