@@ -98,6 +98,11 @@
                 templateUrl: 'view/client/tariffs.html',
                 controller: 'CustomerInfoController'
             });
+        $routeProvider.when('/client/services',
+            {
+                templateUrl: 'view/client/services.html',
+                controller: 'ServicesController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 
