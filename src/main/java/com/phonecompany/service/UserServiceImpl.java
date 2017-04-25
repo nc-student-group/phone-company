@@ -98,7 +98,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public String generatePassword() {
         SecureRandom random = new SecureRandom();
         String password = new BigInteger(50, random).toString(32);
-        char[] specSymb = "!@#$%^&_".toCharArray();
+        char[] specSymb = "!@#$^&_".toCharArray();
         char[] passwordWithSS = password.toCharArray();
         passwordWithSS[random.nextInt(passwordWithSS.length)] = specSymb[random.nextInt(specSymb.length)];
         password = String.valueOf(passwordWithSS);
