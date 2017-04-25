@@ -10,7 +10,7 @@ angular.module('phone-company').controller('ServicesController', [
     function ($scope, $http, $location, $rootScope, ServicesService, $anchorScroll) {
 
         $scope.numberPattern = /^[^0-]([0-9]*(\.\d{2}))$/;
-        $scope.discountPattern = /^(0(\.\d{1,3})?)|^1$/;
+        $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
         $scope.inProgress = false;
         $scope.currentCategory = 0;
         $scope.page = 0;
