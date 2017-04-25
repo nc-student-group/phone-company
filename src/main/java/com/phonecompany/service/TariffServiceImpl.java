@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements TariffService {
@@ -36,6 +37,14 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size){
         return tariffDao.getByRegionIdAndPaging(regionId, page, size);
+    }
+
+    @Override
+    public List<Tariff> getByRegionIdAndClient(Long regionId, Boolean isRepresentative) {
+        return tariffDao.getByRegionId(regionId).stream()
+                .filter(t -> (t.getProductStatus().equals(ProductStatus.ACTIVATED) &&
+                        isRepresentative.equals(t.isCorporate())))
+                .collect(Collectors.toList());
     }
 
     @Override
