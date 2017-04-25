@@ -219,14 +219,13 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="form-group col-md-12">
+                                            <div class="col-md-12">
                                                 <md-input-container class="md-block">
-                                                    <input type="number" class="form-control" placeholder="Discount"
+                                                    <input type="number" placeholder="Discount"
                                                            ng-model="currentService.discount" name="discount"
                                                            ng-pattern="discountPattern" required/>
 
-                                                    <div ng-messages="servicesForm.discount.$error" role="alert"
-                                                         multiple>
+                                                    <div ng-messages="servicesForm.discount.$error" role="alert" multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain numbers from 0 to 1
                                                         </div>
@@ -283,7 +282,7 @@
 
                                                 <div ng-messages="editServicesForm.price.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
-                                                        This field can only contain positive numbers
+                                                        This field should be in decimal format, like 99.99 and not be negative
                                                     </div>
                                                 </div>
                                             </md-input-container>
@@ -291,9 +290,9 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="form-group col-md-12">
+                                        <div class="col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="number" class="form-control" placeholder="Discount"
+                                                <input type="number" placeholder="Discount"
                                                        ng-model="serviceToEdit.discount" name="discount"
                                                        ng-pattern="discountPattern" required/>
 
