@@ -2,6 +2,9 @@ package com.phonecompany.model.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ *
+ */
 public class DataSourceInfo {
 
     @JsonProperty("url")

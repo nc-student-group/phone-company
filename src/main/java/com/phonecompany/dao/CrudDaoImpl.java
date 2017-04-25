@@ -6,13 +6,21 @@ import com.phonecompany.model.DomainEntity;
 import com.phonecompany.util.DbManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * A base class that provides an abstract implementation for
+ * all the methods applicable to any entity in the system
+ * (e.g. save or update)
+ *
+ * @param <T> entity type
+ */
 public abstract class CrudDaoImpl<T extends DomainEntity>
         implements CrudDao<T> {
 
@@ -108,14 +116,6 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
         }
     }
 
-    public abstract String getQuery(String type);
-
-    public abstract void populateSaveStatement(PreparedStatement preparedStatement, T entity);
-
-    public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
-
-    public abstract T init(ResultSet resultSet);
-
     @Override
     public void beginTransaction(){
         try(Connection conn = dbManager.getConnection();
@@ -145,4 +145,12 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             throw new TransactionCommitException(e);
         }
     }
+
+    public abstract String getQuery(String type);
+
+    public abstract void populateSaveStatement(PreparedStatement preparedStatement, T entity);
+
+    public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
+
+    public abstract T init(ResultSet resultSet);
 }

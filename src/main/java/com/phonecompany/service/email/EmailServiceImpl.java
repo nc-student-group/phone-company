@@ -20,6 +20,12 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
     }
 
+    /**
+     * Submits an email dispatch task to be fired up in one of the
+     * available threads provided by thread pool provider
+     *
+     * @param mailMessage message to be sent
+     */
     @Override
     public void sendMail(SimpleMailMessage mailMessage) {
         executorService.execute(new EmailDispatchTask(mailSender, mailMessage));

@@ -2,23 +2,22 @@ package com.phonecompany.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.phonecompany.exception.DataSourceConfigurationFileParseException;
 import com.phonecompany.model.config.Config;
 import com.phonecompany.model.config.DataSourceInfo;
 import com.phonecompany.model.config.Profile;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
- * Loads configuration properties for the project from the configuration source.
+ * Loads configuration properties from the configuration source.
  *
- * It allows architecture to be flexible and source code not be recompiled every
- * time configuration properties change their values
+ * Allows architecture to be flexible and source code not be recompiled every
+ * time configuration properties change their values.
  */
 public class ConfigManager {
 
@@ -32,6 +31,12 @@ public class ConfigManager {
         this.loadDataSourceInfo();
     }
 
+    /**
+     * Returns a single instance of the config provider
+     * that this class {@code ConfigManager} represents
+     *
+     * @return single {@code ConfigManager} object
+     */
     public static ConfigManager getInstance() {
         if(configManager == null) {
             configManager = new ConfigManager();
@@ -39,6 +44,13 @@ public class ConfigManager {
         return configManager;
     }
 
+    /**
+     * Responsible for the fact, that property file is being
+     * loaded only once
+     *
+     * @return fully constructed configuration object
+     * @see    DataSourceInfo configuration class
+     */
     public DataSourceInfo getDataSourceInfo() {
         if(this.dataSourceInfo == null) {
             this.loadDataSourceInfo();
@@ -46,7 +58,15 @@ public class ConfigManager {
         return dataSourceInfo;
     }
 
-    private void loadDataSourceInfo() {
+    /**
+     * Maps properties from the configuration file to the corresponding
+     * configuration object
+     *
+     * @throws DataSourceConfigurationFileParseException if mapping has
+     *         failed or no configuration file has been found
+     * @see    DataSourceInfo configuration class
+     */
+    private void loadDataSourceInfo() throws DataSourceConfigurationFileParseException {
         try {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             InputStream resourceAsStream = this.getClass()
@@ -58,7 +78,7 @@ public class ConfigManager {
             dataSourceInfo = activeProfile.getDataSource();
             LOG.debug("The following profile settings have been read: {}", dataSourceInfo);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new DataSourceConfigurationFileParseException(APPLICATION_CONFIG, e);
         }
     }
 
@@ -67,7 +87,8 @@ public class ConfigManager {
      * and returns the only one that matches an active one
      *
      * @param config object representing the whole configuration file
-     * @return profile that matches an active one
+     * @return       profile that matches an active one or {@literal null}
+     *               if none was found
      */
     private Profile findActiveProfile(Config config) {
         List<Profile> profiles = config.getProfiles();
