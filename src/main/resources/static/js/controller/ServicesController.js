@@ -9,8 +9,8 @@ angular.module('phone-company').controller('ServicesController', [
     '$anchorScroll',
     function ($scope, $http, $location, $rootScope, ServicesService, $anchorScroll) {
 
-        $scope.numberPattern = /^[0-9]+$/;
-        $scope.discountPattern = /^(0(\.\d{1,3})?)|1$/;
+        $scope.numberPattern = /^[^0-]([0-9]*(\.\d{2}))$/;
+        $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
         $scope.inProgress = false;
         $scope.currentCategory = 0;
         $scope.page = 0;

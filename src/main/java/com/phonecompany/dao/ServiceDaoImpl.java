@@ -75,7 +75,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             service.setServiceName(resultSet.getString("service_name"));
             service.setPrice(resultSet.getDouble("price"));
             service.setProductStatus(ProductStatus.valueOf(resultSet.getString("product_status")));
-            service.setDiscount(resultSet.getInt("discount"));
+            service.setDiscount(resultSet.getDouble("discount"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

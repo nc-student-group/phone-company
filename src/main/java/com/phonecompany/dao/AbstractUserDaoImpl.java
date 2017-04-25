@@ -2,7 +2,6 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AbstractUserDao;
 import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.model.DomainEntity;
 import com.phonecompany.model.User;
 
 import java.sql.Connection;
@@ -10,9 +9,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * A base class that provides an abstract implementation for
+ * all the methods applicable to any user in the system
+ * (e.g. identification by email)
+ *
+ * @param <T> entity type
+ */
 public abstract class AbstractUserDaoImpl<T extends User>
     extends CrudDaoImpl<T> implements AbstractUserDao<T> {
 
+    /**
+     * Finds entity by its email
+     *
+     * @param email email to search by
+     * @return      entity found by email or {@literal null}
+     *              if none was found
+     */
     @Override
     public T findByEmail(String email) {
         try (Connection conn = dbManager.getConnection();

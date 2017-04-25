@@ -367,7 +367,7 @@
                                                 <div class="col-md-6">
                                                     <md-input-container ng-show="exists(r, regionsToSave)"
                                                                         style="margin: 0 0; padding: 0;">
-                                                        <input type="number"
+                                                        <input type="number" min="0"
                                                                ng-model="r.price" class="form-control"
                                                                ng-change="checkPrice(r)" md-maxlength="4">
                                                     </md-input-container>

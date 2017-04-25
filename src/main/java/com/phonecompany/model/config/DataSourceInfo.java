@@ -2,6 +2,13 @@ package com.phonecompany.model.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Helper class used to map configuration file to the
+ * configuration object
+ *
+ * @see Config
+ * @see Profile
+ */
 public class DataSourceInfo {
 
     @JsonProperty("url")

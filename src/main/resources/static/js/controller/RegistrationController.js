@@ -65,7 +65,7 @@
                     console.log('Redirecting to pmg');
                     $window.location.href = '/#/pmg';
                     break;
-                case 'USER':
+                case 'CLIENT':
                     console.log('Redirecting to client');
                     $window.location.href = '/#/client';
                     break;

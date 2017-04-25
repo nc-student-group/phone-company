@@ -1,11 +1,9 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.dao.CrudDaoImpl;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Address;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;

@@ -84,10 +84,11 @@ public class UserController {
     @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
 
-        user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-        eventPublisher.publishEvent(new OnUserCreationEvent(user));
+        if(userService.findByEmail(user.getEmail())==null){
+            user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+            eventPublisher.publishEvent(new OnUserCreationEvent(user));
+        }
         User persistedUser = this.userService.save(user);
-
         HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
         return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
     }

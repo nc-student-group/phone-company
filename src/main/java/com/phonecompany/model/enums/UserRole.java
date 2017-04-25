@@ -8,9 +8,9 @@ import static com.phonecompany.model.enums.UserRole.Constants.*;
 public enum UserRole {
     /* Can create users with such roles as: CLIENT, CSR, PMG */
     ADMIN(ADMIN_DATABASE_ID),
-    /**/
+    /* Post tariffs and services available in the system*/
     CSR(CSR_DATABASE_ID),
-    /**/
+    /* Accepts complaints, responds to them */
     PMG(PMG_DATABASE_ID),
     /* Will post complaints or make requests to the system regarding
     details of the service */

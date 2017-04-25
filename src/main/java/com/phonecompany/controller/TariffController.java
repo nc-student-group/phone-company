@@ -1,10 +1,9 @@
 package com.phonecompany.controller;
 
 
-import com.phonecompany.model.Region;
-import com.phonecompany.model.Tariff;
-import com.phonecompany.model.TariffRegion;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.interfaces.CustomerTariffService;
 import com.phonecompany.service.interfaces.RegionService;
 import com.phonecompany.service.interfaces.TariffRegionService;
 import com.phonecompany.service.interfaces.TariffService;
@@ -32,6 +31,12 @@ public class TariffController {
     @Autowired
     private TariffService tariffService;
 
+    @Autowired
+    private CustomerTariffService customerTariffService;
+
+    @Autowired
+    private CustomerController customerController;
+
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -45,6 +50,15 @@ public class TariffController {
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
         return tariffService.getTariffsTable(regionId, page, size);
+    }
+
+    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
+    public List<Tariff> getClientTariffs() {
+        Customer customer = customerController.getCustomerByCurrentUserId();
+        Long regionId = customer.getAddress().getRegion().getId();
+        Boolean isRepresentative = customer.getRepresentative();
+        LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
+        return tariffService.getByRegionIdAndClient(regionId, isRepresentative);
     }
 
     @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
@@ -130,11 +144,11 @@ public class TariffController {
         return response;
     }
 
-    @RequestMapping(value = "/api/tariff/update/status/{id}/{status}", method = RequestMethod.GET)
-    public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
-                                                   @PathVariable("status") ProductStatus productStatus) {
-        this.tariffService.updateTariffStatus(tariffId, productStatus);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
+    public List<CustomerTariff> getTariffsByClientId() {
+        Customer customer = customerController.getCustomerByCurrentUserId();
+        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
+        return this.customerTariffService.getByClientId(customer);
     }
 
 }

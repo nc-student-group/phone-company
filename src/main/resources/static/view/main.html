@@ -178,14 +178,18 @@
                                 </md-input-container>
                             </div>
                         </div>
-
-                        <button ng-class="{unsubmitable : registerForm.$invalid,
+                        <div style="margin-top: -80px">
+                            <p class="login-message" style="font-size: 0.9em">Changed your mind?
+                                <a ng-href="#/login">Fall back to login</a>
+                            </p>
+                            <button ng-class="{unsubmitable : registerForm.$invalid,
                         submitable: !registerForm.$invalid}"
-                                ng-disabled="registerForm.$invalid"
-                                style="width: 300px;"
-                                type="submit" class="center-block register-button">
-                            Submit
-                        </button>
+                                    ng-disabled="registerForm.$invalid"
+                                    style="width: 300px;"
+                                    type="submit" class="center-block register-button">
+                                Submit
+                            </button>
+                        </div>
                         <div class="clearfix"></div>
                     </form>
                 </div>

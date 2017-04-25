@@ -18,6 +18,17 @@ class UserControllerAdvice {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserControllerAdvice.class);
 
+    /**
+     * Intercepts an exception in order to produce an object containing
+     * information regarding the error.
+     * Gets fired up if an exception of type {@code EmailAlreadyPresentException}
+     * takes place
+     *
+     * @param e exception object containing information about the error
+     * @return  an object that exposes to a REST consumer a respective
+     *          {@code HttpStatus} code as well as an error body that
+     *          enables to take a corresponding action in return
+     */
     @ExceptionHandler(EmailAlreadyPresentException.class)
     public ResponseEntity<?> emailAlreadyPresentException(EmailAlreadyPresentException e) {
         LOG.debug("e.getMessage: {}", e.getMessage());
