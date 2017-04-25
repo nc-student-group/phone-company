@@ -163,7 +163,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <md-input-container class="md-block">
-                                            <input type="number" placeholder="Price"
+                                            <input type="number" min="0" placeholder="Price"
                                                    ng-model="currentService.price" required/>
                                         </md-input-container>
 
@@ -181,9 +181,9 @@
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         <md-input-container class="md-block">
-                                            <input type="number" class="form-control" placeholder="Discount"
-                                                   ng-model="currentService.discount"
-                                                   required/>
+                                            <input type="number" min="0"
+                                                   class="form-control" placeholder="Discount"
+                                                   ng-model="currentService.discount" required/>
                                         </md-input-container>
                                     </div>
                                 </div>
