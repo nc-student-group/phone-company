@@ -78,16 +78,16 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         return queryLoader.getQuery("query.user." + type);
     }
 
-    public List<User> getAllUsersPaging(int page, int size, int role, String status){
+    public List<User> getAllUsersPaging(int page, int size, int role, String status) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAllByRoleAndStatus"), params, role,status);
-        query+=" LIMIT ? OFFSET ?";
+        String query = buildQuery(this.getQuery("getAllByRoleAndStatus"), params, role, status);
+        query += " LIMIT ? OFFSET ?";
         params.add(size);
-        params.add(page*size);
+        params.add(page * size);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             List<User> result = new ArrayList<>();
@@ -101,27 +101,28 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         }
     }
 
-    private String buildQuery(String query, List params, int role, String status){
+    private String buildQuery(String query, List params, int role, String status) {
         String where = " WHERE dbu.role_id <> 4 and dbu.role_id <> 1";
-        if(role>0){
-            where+="and dbu.role_id = ?";
+        if (role > 0) {
+            where += "and dbu.role_id = ?";
             params.add(role);
         }
-        if(!status.equals("ALL")){
-            where+=" and dbu.status = ?";
+        if (!status.equals("ALL")) {
+            where += " and dbu.status = ?";
             params.add(status);
         }
-        query+=where;
+        query += where;
 
         return query;
     }
-    public int getCountUsers(int role, String status){
+
+    public int getCountUsers(int role, String status) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getCount"),params, role,status);
+        String query = buildQuery(this.getQuery("getCount"), params, role, status);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

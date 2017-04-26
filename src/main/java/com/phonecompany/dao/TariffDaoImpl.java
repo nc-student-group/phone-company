@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
 

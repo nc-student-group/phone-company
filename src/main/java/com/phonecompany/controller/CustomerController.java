@@ -89,12 +89,16 @@ public class CustomerController {
             throws URISyntaxException {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.customerService.activateUserByToken(token);
+        HttpHeaders redirectionHeaders = this.getRedirectionHeaders();
 
+        return new ResponseEntity<>(redirectionHeaders, HttpStatus.SEE_OTHER);
+    }
+
+    private HttpHeaders getRedirectionHeaders() throws URISyntaxException {
         URI registration = new URI("https://phone-company.herokuapp.com/#/login/success");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
-
-        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        return httpHeaders;
     }
 
     @RequestMapping(method = POST, value = "/api/customer/save")

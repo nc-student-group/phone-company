@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
@@ -133,16 +132,16 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return queryLoader.getQuery("query.customer." + type);
     }
 
-    public List<Customer> getAllCustomersPaging(int page, int size, long rId, String status){
+    public List<Customer> getAllCustomersPaging(int page, int size, long rId, String status) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAllByRegionAndStatus"), params, rId,status);
-        query+=" LIMIT ? OFFSET ?";
+        String query = buildQuery(this.getQuery("getAllByRegionAndStatus"), params, rId, status);
+        query += " LIMIT ? OFFSET ?";
         params.add(size);
-        params.add(page*size);
+        params.add(page * size);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             LOG.info(query);
             ResultSet rs = ps.executeQuery();
@@ -157,27 +156,28 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
-    private String buildQuery(String query, List params, long rId, String status){
+    private String buildQuery(String query, List params, long rId, String status) {
         String where = " WHERE dbu.role_id=4";
-        if(rId > 0){
-            query+=" INNER JOIN address as a on dbu.address_id = a.id ";
-            where+=" and a.region_id = ?";
+        if (rId > 0) {
+            query += " INNER JOIN address as a on dbu.address_id = a.id ";
+            where += " and a.region_id = ?";
             params.add(rId);
         }
-        if(!status.equals("ALL")){
-            where+=" and dbu.status=?";
+        if (!status.equals("ALL")) {
+            where += " and dbu.status=?";
             params.add(status);
         }
-        query+=where;
+        query += where;
         return query;
     }
-    public int getCountCustomers(long rId, String status){
+
+    public int getCountCustomers(long rId, String status) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getCount"),params, rId,status);
+        String query = buildQuery(this.getQuery("getCount"), params, rId, status);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
