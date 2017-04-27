@@ -84,6 +84,7 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         query += " LIMIT ? OFFSET ?";
         params.add(size);
         params.add(page * size);
+
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             for (int i = 0; i < params.size(); i++) {

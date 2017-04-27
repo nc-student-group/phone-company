@@ -2,10 +2,7 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityModificationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.*;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
@@ -82,33 +79,36 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
     }
 
     @Override
-    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId, int page, int size) {
-        List<Service> services = new ArrayList<>();
-        String getAllQuery = this.getQuery("getAll");
-        if (productCategoryId != 0) {
-            getAllQuery += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
-        }
-        getAllQuery += " LIMIT ? OFFSET ?";
-
+    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId,
+                                                         int page, int size) {
+        List<Object> params = new ArrayList<>();
+        String query = buildQuery(this.getQuery("getAll"), params, productCategoryId);
+        query += " LIMIT ? OFFSET ?";
+        params.add(size);
+        params.add(page * size);
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(getAllQuery)) {
-            if (productCategoryId != 0) {
-                ps.setLong(1, productCategoryId);
-                ps.setInt(2, size);
-                ps.setInt(3, page * size);
-            } else {
-                ps.setInt(1, size);
-                ps.setInt(2, page * size);
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
+            List<Service> result = new ArrayList<>();
             while (rs.next()) {
-                services.add(init(rs));
+                result.add(init(rs));
             }
+            return result;
         } catch (SQLException e) {
-            throw new EntityNotFoundException(productCategoryId, e);
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
         }
+    }
 
-        return services;
+    private String buildQuery(String query, List params, Long productCategoryId) {
+        if (productCategoryId != 0) {
+            query += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
+            params.add(productCategoryId);
+        }
+        return query;
     }
 
     @Override

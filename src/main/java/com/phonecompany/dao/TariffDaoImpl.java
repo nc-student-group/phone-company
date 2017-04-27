@@ -1,10 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityModificationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.*;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
@@ -95,31 +92,37 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
 
     @Override
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
-        List<Tariff> tariffs = new ArrayList<>();
-        String query = this.getQuery("getAll");
-        if (regionId != 0) {
-            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
-        }
-        query += " ORDER BY t.creation_date DESC ";
+        List<Object> params = new ArrayList<>();
+        String query = buildQuery(this.getQuery("getAll"), params, regionId);
         query += " LIMIT ? OFFSET ?";
+        params.add(size);
+        params.add(page * size);
+
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-                ps.setInt(2, size);
-                ps.setInt(3, page * size);
-            } else {
-                ps.setInt(1, size);
-                ps.setInt(2, page * size);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
             while (rs.next()) {
-                tariffs.add(init(rs));
+                result.add(init(rs));
             }
+            return result;
         } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
         }
-        return tariffs;
+    }
+
+    private String buildQuery(String query, List params, long regionId) {
+        if (regionId != 0) {
+            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+            params.add(regionId);
+        }
+        query += " ORDER BY t.creation_date DESC ";
+
+        return query;
     }
 
     @Override
@@ -176,7 +179,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
              PreparedStatement ps = conn.prepareStatement(this.getQuery("findByTariffName"))) {
             ps.setString(1, tariffName);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
