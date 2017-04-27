@@ -3,14 +3,11 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
-import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.Status;
-import com.phonecompany.model.enums.UserRole;
-import com.phonecompany.util.QueryBuilder;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -22,8 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Repository
