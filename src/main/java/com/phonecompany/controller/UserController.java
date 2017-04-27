@@ -1,13 +1,12 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
+import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +16,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.*;
 
-import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -54,8 +52,7 @@ public class UserController {
         userService.update(user);
 
         User persistedUser = this.userService.save(user);
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
-        return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/user/get")
@@ -89,8 +86,7 @@ public class UserController {
             eventPublisher.publishEvent(new OnUserCreationEvent(user));
         }
         User persistedUser = this.userService.save(user);
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedUser.getId());
-        return new ResponseEntity<>(persistedUser, resourceHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = POST, value = "api/user/reset")
@@ -109,7 +105,7 @@ public class UserController {
     @RequestMapping(method = GET, value = "/api/users/{page}/{size}/{role}/{status}")
     public Map<String, Object> getAllUsers(@PathVariable("page") int page, @PathVariable("size") int size,
                                            @PathVariable("role") int userRole, @PathVariable("status") String status) {
-        LOG.info("Retrieving all the users contained in the database");
+        LOG.info("Retrieving all the paginated users contained in the database");
 
         List<User> users = this.userService.getAllUsersPaging(page, size, userRole, status);
 

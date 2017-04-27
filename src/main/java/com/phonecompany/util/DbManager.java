@@ -11,6 +11,8 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static com.mchange.v2.c3p0.PoolConfig.MAX_IDLE_TIME;
+
 /**
  * A factory for connections to the physical data source that this
  * {@code DbManager} object represents.
@@ -48,6 +50,10 @@ public class DbManager {
             dataSource.setJdbcUrl(dataSourceInfo.getUrl());
             LOG.debug("Setting max pool size to: {}", MAX_POOL_SIZE);
             dataSource.setMaxPoolSize(20);
+            LOG.debug("Max statements available: {}", 50);
+            dataSource.setMaxStatements(50);
+            LOG.debug("Idle test period was set to: {}", 60); //c3p0 default
+            dataSource.setIdleConnectionTestPeriod(30);
 
             return dataSource;
         } catch (PropertyVetoException e) {
