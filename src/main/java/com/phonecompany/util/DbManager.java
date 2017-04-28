@@ -20,7 +20,12 @@ import static com.mchange.v2.c3p0.PoolConfig.MAX_IDLE_TIME;
 public class DbManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DbManager.class);
-    public static final int MAX_POOL_SIZE = 20; //current heroku postgres limit
+    private static final int MAX_POOL_SIZE = 20; //current heroku postgres limit
+    private static final int MAX_IDLE_TIME = 1; // one idle second and connection returns to the pool
+    private static final int CHECKOUT_TIMEOUT = 4000;
+    private static final int IDLE_CONNECTION_TEST_PERIOD = 30;
+    private static final int MAX_STATEMENTS = 50;
+    private static final int MIN_POOL_SIZE = 1;
 
     private static DbManager dbManager;
 
@@ -49,11 +54,17 @@ public class DbManager {
             LOG.debug("Setting url: {}", dataSourceInfo.getUrl());
             dataSource.setJdbcUrl(dataSourceInfo.getUrl());
             LOG.debug("Setting max pool size to: {}", MAX_POOL_SIZE);
-            dataSource.setMaxPoolSize(20);
-            LOG.debug("Max statements available: {}", 50);
-            dataSource.setMaxStatements(50);
-            LOG.debug("Idle test period was set to: {}", 60); //c3p0 default
-            dataSource.setIdleConnectionTestPeriod(30);
+            dataSource.setMaxPoolSize(MAX_POOL_SIZE);
+            LOG.debug("Setting min pool size to: {}", MIN_POOL_SIZE);
+            dataSource.setMinPoolSize(MIN_POOL_SIZE);
+            LOG.debug("Max statements available: {}", MAX_STATEMENTS);
+            dataSource.setMaxStatements(MAX_STATEMENTS);
+            LOG.debug("Idle test period was set to: {}", IDLE_CONNECTION_TEST_PERIOD);
+            dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_PERIOD);
+            LOG.debug("Idle connection time out: {}", CHECKOUT_TIMEOUT);
+            dataSource.setCheckoutTimeout(CHECKOUT_TIMEOUT);
+            LOG.debug("Setting max idle connection time to: {}", MAX_IDLE_TIME);
+            dataSource.setMaxIdleTime(MAX_IDLE_TIME);
 
             return dataSource;
         } catch (PropertyVetoException e) {
