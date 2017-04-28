@@ -3,8 +3,8 @@ package com.phonecompany.dao.interfaces;
 import com.phonecompany.model.User;
 
 import java.util.List;
+import java.util.Map;
 
-public interface UserDao extends CrudDao<User>, AbstractUserDao<User> {
-    public List<User> getAllUsersPaging(int page, int size, int role, String status);
-    public int getCountUsers(int role,String status);
+public interface UserDao extends CrudDao<User>, AbstractUserDao<User>,
+        AbstractPageableDao<User> {
 }

@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
 
@@ -94,14 +93,15 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
     @Override
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAll"), params,regionId);
-        query+=" LIMIT ? OFFSET ?";
+        String query = buildQuery(this.getQuery("getAll"), params, regionId);
+        query += " LIMIT ? OFFSET ?";
         params.add(size);
-        params.add(page*size);
+        params.add(page * size);
+
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
@@ -115,7 +115,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
         }
     }
 
-    private String buildQuery(String query, List params, long regionId){
+    private String buildQuery(String query, List params, long regionId) {
         if (regionId != 0) {
             query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
             params.add(regionId);
@@ -179,7 +179,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
              PreparedStatement ps = conn.prepareStatement(this.getQuery("findByTariffName"))) {
             ps.setString(1, tariffName);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {

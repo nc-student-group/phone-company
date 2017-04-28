@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class ServiceDaoImpl extends CrudDaoImpl<Service>
         implements ServiceDao {
@@ -80,16 +79,17 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
     }
 
     @Override
-    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId, int page, int size) {
+    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId,
+                                                         int page, int size) {
         List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAll"), params, productCategoryId);
-        query+=" LIMIT ? OFFSET ?";
+        String query = buildQuery(this.getQuery("getAll"), params, productCategoryId);
+        query += " LIMIT ? OFFSET ?";
         params.add(size);
-        params.add(page*size);
+        params.add(page * size);
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             List<Service> result = new ArrayList<>();
@@ -103,7 +103,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
         }
     }
 
-    private String buildQuery(String query, List params, Long productCategoryId){
+    private String buildQuery(String query, List params, Long productCategoryId) {
         if (productCategoryId != 0) {
             query += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
             params.add(productCategoryId);

@@ -3,7 +3,6 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
-import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
@@ -20,12 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
@@ -133,60 +128,56 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return queryLoader.getQuery("query.customer." + type);
     }
 
-    public List<Customer> getAllCustomersPaging(int page, int size, long rId, String status){
-        List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAllByRegionAndStatus"), params, rId,status);
-        query+=" LIMIT ? OFFSET ?";
-        params.add(size);
-        params.add(page*size);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
-            }
-            LOG.info(query);
-            ResultSet rs = ps.executeQuery();
-            List<Customer> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
+    @Override
+    public String buildQueryByParams(String getEntityQuery, Map<String, Object> params) {
+        String where = " WHERE dbu.role_id = 4";
+
+        long regionId = (long) params.get("regionId");
+        String status = (String) params.get("status");
+        Integer limit = (Integer) params.getOrDefault("limit", null);
+        Integer offset = (Integer) params.getOrDefault("offset", null);
+
+        if (regionId > 0) {
+            getEntityQuery += " INNER JOIN address AS a ON dbu.address_id = a.id ";
+            where += " AND a.region_id = ?";
         }
+        if (!status.equals("ALL")) {
+            where += " AND dbu.status=?";
+        }
+        getEntityQuery += where;
+
+        if(limit != null) {
+            getEntityQuery += " LIMIT ?";
+        }
+        if(offset != null) {
+            getEntityQuery += " OFFSET ?";
+        }
+
+        return getEntityQuery;
     }
 
-    private String buildQuery(String query, List params, long rId, String status){
-        String where = " WHERE dbu.role_id=4";
-        if(rId > 0){
-            query+=" INNER JOIN address as a on dbu.address_id = a.id ";
-            where+=" and a.region_id = ?";
-            params.add(rId);
+    @Override
+    public void setStatementParams(PreparedStatement ps, Map<String, Object> params)
+            throws SQLException {
+        long regionId = (long) params.get("regionId");
+        String status = (String) params.get("status");
+        Integer limit = (Integer) params.get("limit");
+        Integer offset = (Integer) params.get("offset");
+        int parameterPosition = 1;
+
+        if (regionId > 0) {
+            ps.setLong(parameterPosition, regionId);
+            parameterPosition++;
         }
-        if(!status.equals("ALL")){
-            where+=" and dbu.status=?";
-            params.add(status);
+        if (!status.equals("ALL")) {
+            ps.setString(parameterPosition, status);
+            parameterPosition++;
         }
-        query+=where;
-        return query;
-    }
-    public int getCountCustomers(long rId, String status){
-        List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getCount"),params, rId,status);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            return 0;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
+        if(limit != null) {
+            ps.setInt(parameterPosition++, limit);
+        }
+        if(offset != null) {
+            ps.setInt(parameterPosition, offset);
         }
     }
 }
