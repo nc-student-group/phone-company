@@ -3,7 +3,6 @@ package com.phonecompany.model;
 import com.phonecompany.model.enums.OrderStatus;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 
 public class CustomerService extends DomainEntity{
 
@@ -11,8 +10,6 @@ public class CustomerService extends DomainEntity{
     private Customer customer;
     @NotNull(message = "Service must not be null")
     private Service service;
-    @NotNull(message = "Date must not be null")
-    private Date orderDate;
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Order status must not be null")
@@ -20,10 +17,9 @@ public class CustomerService extends DomainEntity{
 
     public CustomerService(){}
 
-    public CustomerService(Customer customer, Service service, Date orderDate, double price, OrderStatus orderStatus) {
+    public CustomerService(Customer customer, Service service, double price, OrderStatus orderStatus) {
         this.customer = customer;
         this.service = service;
-        this.orderDate = orderDate;
         this.price = price;
         this.orderStatus = orderStatus;
     }
@@ -42,14 +38,6 @@ public class CustomerService extends DomainEntity{
 
     public void setService(Service service) {
         this.service = service;
-    }
-
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
     }
 
     public double getPrice() {

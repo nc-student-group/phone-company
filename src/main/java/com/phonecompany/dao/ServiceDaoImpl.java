@@ -43,6 +43,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
+            preparedStatement.setString(6, entity.getPictureUrl());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -56,7 +57,8 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
-            preparedStatement.setDouble(6, TypeMapper.getNullableId(entity));
+            preparedStatement.setString(6, entity.getPictureUrl());
+            preparedStatement.setDouble(7, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -72,6 +74,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             service.setPrice(resultSet.getDouble("price"));
             service.setProductStatus(ProductStatus.valueOf(resultSet.getString("product_status")));
             service.setDiscount(resultSet.getDouble("discount"));
+            service.setPictureUrl(resultSet.getString("picture_url"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

@@ -1,34 +1,34 @@
 -- Test Data
 -- Region
-INSERT INTO region(name_region) VALUES ('Cherkasy Oblast');
-INSERT INTO region(name_region) VALUES ('Chernihiv Oblast');
-INSERT INTO region(name_region) VALUES ('Chernivtsi Oblast');
-INSERT INTO region(name_region) VALUES ('Dnipropetrovsk Oblast');
-INSERT INTO region(name_region) VALUES ('Donetsk Oblast');
-INSERT INTO region(name_region) VALUES ('Ivano-Frankivsk Oblast');
-INSERT INTO region(name_region) VALUES ('Kharkiv Oblast');
-INSERT INTO region(name_region) VALUES ('Kherson Oblast');
-INSERT INTO region(name_region) VALUES ('Khmelnytskyi Oblast');
-INSERT INTO region(name_region) VALUES ('Kiev Oblast');
-INSERT INTO region(name_region) VALUES ('Kirovohrad Oblast');
-INSERT INTO region(name_region) VALUES ('Luhansk Oblast');
-INSERT INTO region(name_region) VALUES ('Lviv Oblast');
-INSERT INTO region(name_region) VALUES ('Mykolaiv Oblast');
-INSERT INTO region(name_region) VALUES ('Odessa Oblast');
-INSERT INTO region(name_region) VALUES ('Poltava Oblast');
-INSERT INTO region(name_region) VALUES ('Rivne Oblast');
-INSERT INTO region(name_region) VALUES ('Sumy Oblast');
-INSERT INTO region(name_region) VALUES ('Ternopil Oblast');
-INSERT INTO region(name_region) VALUES ('Vinnytsia Oblast');
-INSERT INTO region(name_region) VALUES ('Volyn Oblast');
-INSERT INTO region(name_region) VALUES ('Zakarpattia Oblast');
-INSERT INTO region(name_region) VALUES ('Zaporizhia Oblast');
-INSERT INTO region(name_region) VALUES ('Zhytomyr Oblast');
+INSERT INTO region(name_region) VALUES ('Cherkasy Region');
+INSERT INTO region(name_region) VALUES ('Chernihiv Region');
+INSERT INTO region(name_region) VALUES ('Chernivtsi Region');
+INSERT INTO region(name_region) VALUES ('Dnipropetrovsk Region');
+INSERT INTO region(name_region) VALUES ('Donetsk Region');
+INSERT INTO region(name_region) VALUES ('Ivano-Frankivsk Region');
+INSERT INTO region(name_region) VALUES ('Kharkiv Region');
+INSERT INTO region(name_region) VALUES ('Kherson Region');
+INSERT INTO region(name_region) VALUES ('Khmelnytskyi Region');
+INSERT INTO region(name_region) VALUES ('Kiev Region');
+INSERT INTO region(name_region) VALUES ('Kirovohrad Region');
+INSERT INTO region(name_region) VALUES ('Luhansk Region');
+INSERT INTO region(name_region) VALUES ('Lviv Region');
+INSERT INTO region(name_region) VALUES ('Mykolaiv Region');
+INSERT INTO region(name_region) VALUES ('Odessa Region');
+INSERT INTO region(name_region) VALUES ('Poltava Region');
+INSERT INTO region(name_region) VALUES ('Rivne Region');
+INSERT INTO region(name_region) VALUES ('Sumy Region');
+INSERT INTO region(name_region) VALUES ('Ternopil Region');
+INSERT INTO region(name_region) VALUES ('Vinnytsia Region');
+INSERT INTO region(name_region) VALUES ('Volyn Region');
+INSERT INTO region(name_region) VALUES ('Zakarpattia Region');
+INSERT INTO region(name_region) VALUES ('Zaporizhia Region');
+INSERT INTO region(name_region) VALUES ('Zhytomyr Region');
 INSERT INTO region(name_region) VALUES ('Crimea');
 
 -- Address
 INSERT INTO address(region_id, locality, street, house_number, apartment_number)
-VALUES ('10', 'Kiev', 'Yangela St.', '16/2', '310');
+VALUES ('10, 'Kiev', 'Yangela St.', '16/2', '310');
 INSERT INTO address(region_id, locality, street, house_number, apartment_number)
 VALUES ('4', 'Dnipro', 'Naberezhna St.', '15', null);
 INSERT INTO address(region_id, locality, street, house_number, apartment_number)

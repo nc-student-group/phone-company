@@ -7,9 +7,7 @@ import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.CustomerService;
 import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -49,10 +47,9 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
         try {
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
-            preparedStatement.setDate(3, entity.getOrderDate());
-            preparedStatement.setDouble(4, entity.getTotalPrice());
-            preparedStatement.setString(5, entity.getOrderStatus().name());
-            preparedStatement.setLong(6, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setDouble(3, entity.getTotalPrice());
+            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -63,10 +60,9 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
         try {
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
-            preparedStatement.setDate(3, entity.getOrderDate());
-            preparedStatement.setDouble(4, entity.getTotalPrice());
-            preparedStatement.setString(5, entity.getOrderStatus().name());
-            preparedStatement.setLong(6, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setDouble(3, entity.getTotalPrice());
+            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setLong(6, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -80,9 +76,8 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             customerTariff.setId(rs.getLong("id"));
             customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id")));
             customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
-            customerTariff.setOrderDate(rs.getDate("order_date"));
             customerTariff.setTotalPrice(rs.getDouble("total_price"));
-            customerTariff.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
+            customerTariff.setOrderStatus(OrderStatus.valueOf(rs.getString("tariff_status")));
             customerTariff.setTariff(tariffDao.getById(rs.getLong("tariff_id")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

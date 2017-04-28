@@ -56,3 +56,42 @@ CREATE TABLE verification_token
   expiry_date DATE
 );
 
+CREATE TABLE IF NOT EXISTS public."order"
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    customer_service_id INT,
+    customer_tariff_id INT,
+    type VARCHAR(255),
+    order_status VARCHAR(255),
+    creation_date DATE,
+    execution_date DATE,
+    CONSTRAINT order_customer_service_id_fk FOREIGN KEY (customer_service_id) REFERENCES customer_service (id),
+    CONSTRAINT order_customer_tariff_id_fk FOREIGN KEY (customer_tariff_id) REFERENCES customer_tariff (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.marketing_campaign
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    tariff_region_id INT,
+    marketing_campaign_status VARCHAR(255),
+    CONSTRAINT marketing_campaign_tariff_region_id_fk FOREIGN KEY (tariff_region_id) REFERENCES tariff_region (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.marketing_campaign_services
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    marketing_campaign_id INT,
+    price DOUBLE PRECISION,
+    service_id INT,
+    CONSTRAINT marketing_campaign_services_marketing_campaign_id_fk FOREIGN KEY (marketing_campaign_id) REFERENCES marketing_campaign (id),
+    CONSTRAINT marketing_campaign_services_service_id_fk FOREIGN KEY (service_id) REFERENCES service (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.marketing_campaign_tariff
+(
+    id SERIAL PRIMARY KEY NOT NULL,
+    marketing_campaign_id INT,
+    tariff_region_id INT,
+    CONSTRAINT marketing_campaign_tariff_tariff_region_id_fk FOREIGN KEY (tariff_region_id) REFERENCES tariff_region (id),
+    CONSTRAINT marketing_campaign_tariff_marketing_campaign_id_fk FOREIGN KEY (marketing_campaign_id) REFERENCES marketing_campaign (id)
+);
