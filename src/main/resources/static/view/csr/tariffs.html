@@ -349,6 +349,37 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <md-button class="md-raised md-primary upload_photo" ng-click="uploadPicture()">
+                                            <i class="fa fa-upload" aria-hidden="true"></i>Upload picture</md-button>
+                                        <div>
+                                            <br/>
+                                            <input type="file" name="fileInput" id="fileInput" onchange="angular.element(this).scope().fileChanged(event)" />
+                                        </div>
+                                        <div class="bg_crop_modal" ng-show="imageCropStep == 2" ng-click="clear()"></div>
+                                        <div ng-show="imageCropStep == 2" class="crop_files_images">
+                                            <image-crop
+                                                    data-height="176"
+                                                    data-width="176"
+                                                    data-shape="square"
+                                                    data-step="imageCropStep"
+                                                    src="imgSrc"
+                                                    data-result="customer.profilePhoto"
+                                                    data-result-blob="resultBlob"
+                                                    crop="initCrop"
+                                                    padding="250"
+                                                    max-size="1024"
+                                            ></image-crop>
+                                            <br/>
+                                            <div class="wrp_crop_img_btn">
+                                                <!-- <button ng-click="clear()">Cancel</button> -->
+                                                <!-- <button ng-click="initCrop = true">Crop</button> -->
+
+                                                <md-button class="md-raised md-primary" ng-click="clear()">Cancel</md-button>
+                                                <md-button class="md-raised md-primary" ng-click="initCrop = true">Crop</md-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Regions & prices</label>
                                         </div>
@@ -379,36 +410,6 @@
                                                     </md-input-container>
                                                 </div>
                                             </div>
-                                            <!--<div class="row">-->
-                                            <!--<div class="col-md-5"><label>Region</label></div>-->
-                                            <!--<div class="col-md-5"><label>Price</label></div>-->
-                                            <!--<div class="col-md-2"></div>-->
-                                            <!--</div>-->
-                                            <!--<div class="row" ng-repeat="rts in regionsToSave">-->
-                                            <!--<div class="col-md-5">{{rts.region.nameRegion}}</div>-->
-                                            <!--<div class="col-md-5">{{rts.price}}</div>-->
-                                            <!--<div class="col-md-2">-->
-                                            <!--<button type="submit" class="btn btn-toggle btn-fill pull-left"-->
-                                            <!--ng-click="removeRegion()">Remove-->
-                                            <!--</button>-->
-                                            <!--</div>-->
-                                            <!--</div>-->
-                                            <!--<div class="row">-->
-                                            <!--<div class="col-md-5">-->
-                                            <!--<select class="form-control" ng-model="regionToAdd.region">-->
-                                            <!--<option ng-repeat="r in regions" ng-value="r">{{r.nameRegion}}</option>-->
-                                            <!--</select>-->
-                                            <!--</div>-->
-                                            <!--<div class="col-md-5">-->
-                                            <!--<input type="number" class="form-control" placeholder="Price"-->
-                                            <!--ng-model="currentTariff.price"/>-->
-                                            <!--</div>-->
-                                            <!--<div class="col-md-2">-->
-                                            <!--<button type="submit" class="btn btn-toggle btn-fill pull-left"-->
-                                            <!--ng-click="addRegionToList()">Add-->
-                                            <!--</button>-->
-                                            <!--</div>-->
-                                            <!--</div>-->
                                         </div>
                                     </div>
                                     <button class="btn btn-info btn-fill pull-left"

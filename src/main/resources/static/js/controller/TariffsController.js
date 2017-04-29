@@ -371,4 +371,34 @@ angular.module('phone-company').controller('TariffsController', [
             })
         };
 
+        $scope.fileChanged = function (e) {
+            var files = e.target.files;
+            $scope.files = files;
+
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(files[0]);
+
+            fileReader.onload = function (e) {
+                $scope.imgSrc = this.result;
+                $scope.$apply();
+                console.log("!!!!!!!!test");
+                $scope.imageCropStep = 2;
+            };
+
+        };
+
+        $scope.uploadPicture = function () {
+            $('#fileInput').click();
+        };
+
+        $scope.clear = function () {
+            $scope.imageCropStep = 1;
+            $('#fileInput').val('');
+            // $scope.files = {};
+            console.log($scope.files);
+            delete $scope.imgSrc;
+            delete $scope.result;
+            delete $scope.resultBlob;
+        };
+
     }]);
