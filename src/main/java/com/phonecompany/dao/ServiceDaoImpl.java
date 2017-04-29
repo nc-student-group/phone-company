@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ServiceDaoImpl extends CrudDaoImpl<Service>
+public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
         implements ServiceDao {
 
     private QueryLoader queryLoader;
@@ -161,5 +161,26 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
         } catch (SQLException e) {
             throw new EntityNotFoundException(regionId, e);
         }
+    }
+
+    @Override
+    public String getWhereClause(Object... args) {
+
+        String where = "";
+        long productCategoryId = (long) args[0];
+
+        if (productCategoryId != 0) {
+            where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +
+                    "WHERE prod_category_id = " + productCategoryId;
+        }
+        return where;
+    }
+
+    @Override
+    public String getCountQuery(Object... args) {
+        String getCountQuery = this.getQuery("getCount");
+        getCountQuery += this.getWhereClause(args);
+
+        return getCountQuery;
     }
 }

@@ -7,12 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
         extends CrudDaoImpl<T> implements AbstractPageableDao<T> {
@@ -20,37 +19,51 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPageableDaoImpl.class);
 
     @Override
-    public List<T> getPagingByParametersMap(int page, int size, Map<String, Object> params) {
+    public List<T> getPaging(int page, int size, Object... args) {
 
-        String getEntityQuery = this.getQuery("getEntity");
-        String paginationQuery = this.buildQueryByParams(getEntityQuery, params);
+        String pagingQuery = this.getPagingQuery(page, size, args);
+
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(paginationQuery)) {
+             Statement s = conn.createStatement()) {
 
-            this.setStatementParams(ps, params);
+            LOG.debug("Executing paging query: {}", pagingQuery);
+            ResultSet rs = s.executeQuery(pagingQuery);
 
-            ResultSet rs = ps.executeQuery();
             List<T> result = new ArrayList<>();
             while (rs.next()) {
                 result.add(init(rs));
             }
             return result;
+
         } catch (SQLException e) {
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
         }
     }
 
-    public int getEntityCount(Map<String, Object> params) {
-        String countQuery = this.getQuery("getCount");
-        LOG.debug("Count query: {}", countQuery);
-        String parametrizedCountQuery = this.buildQueryByParams(countQuery, params);
-        LOG.debug("Parametrized Count query: {}", parametrizedCountQuery);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(parametrizedCountQuery)) {
-            this.setStatementParams(ps, params);
+    public String getPagingQuery(int page, int size, Object... args) {
 
-            ResultSet rs = ps.executeQuery();
+        String getEntityQuery = this.getQuery("getAll");
+        String whereClause = this.getWhereClause(args);
+
+        whereClause += " LIMIT " + size;
+        whereClause += " OFFSET " + page * size;
+
+        getEntityQuery += whereClause;
+
+        return getEntityQuery;
+    }
+
+    public int getEntityCount(Object... args) {
+
+        String countQuery = this.getCountQuery(args);
+
+        try (Connection conn = dbManager.getConnection();
+             Statement s = conn.createStatement()) {
+
+            LOG.debug("Executing count query: {}", countQuery);
+            ResultSet rs = s.executeQuery(countQuery);
+
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -62,6 +75,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
         }
     }
 
-    public abstract String buildQueryByParams(String getEntityQuery, Map<String, Object> params);
-    public abstract void setStatementParams(PreparedStatement ps, Map<String, Object> params) throws SQLException;
+    public abstract String getWhereClause(Object... args);
+
+    public abstract String getCountQuery(Object... args);
 }

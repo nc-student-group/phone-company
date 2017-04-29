@@ -8,6 +8,6 @@ import java.util.Map;
 
 public interface AbstractPageableDao<T extends DomainEntity>
         extends CrudDao<T> {
-    List<T> getPagingByParametersMap(int page, int size, Map<String, Object> params);
-    int getEntityCount(Map<String, Object> params);
+    int getEntityCount(Object... args);
+    List<T> getPaging(int page, int size, Object... args);
 }
