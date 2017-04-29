@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -46,7 +45,6 @@ public class CorporationController {
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Corporate corporate) {
         LOG.debug("Corporate retrieved from the http request: " + corporate);
         Corporate persistedCorporate = this.corporateService.save(corporate);
-        HttpHeaders resourceHeaders = getResourceHeaders(CORPORATE_RESOURCE_NAME, persistedCorporate.getId());
-        return new ResponseEntity<>(persistedCorporate, resourceHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(persistedCorporate, HttpStatus.CREATED);
     }
 }
