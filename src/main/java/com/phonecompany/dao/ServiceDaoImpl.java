@@ -82,39 +82,6 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     @Override
-    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId,
-                                                         int page, int size) {
-        List<Object> params = new ArrayList<>();
-        String query = buildQuery(this.getQuery("getAll"), params, productCategoryId);
-        query += " LIMIT ? OFFSET ?";
-        params.add(size);
-        params.add(page * size);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Service> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        }
-    }
-
-    private String buildQuery(String query, List params, Long productCategoryId) {
-        if (productCategoryId != 0) {
-            query += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
-            params.add(productCategoryId);
-        }
-        return query;
-    }
-
-    @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
@@ -148,25 +115,6 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     @Override
-    public Integer getCountByProductCategoryIdAndPaging(long regionId) {
-        String query = this.getQuery("getCount");
-        if (regionId != 0) {
-            query += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ? ";
-        }
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-            }
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
-        }
-    }
-
-    @Override
     public String getWhereClause(Object... args) {
 
         String where = "";
@@ -174,7 +122,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
         if (productCategoryId != 0) {
             where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +
-                    "WHERE prod_category_id = " + productCategoryId;
+                    "WHERE prod_category_id = ?";
+            this.preparedStatementParams.add(productCategoryId);
         }
         return where;
     }

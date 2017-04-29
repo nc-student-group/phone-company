@@ -83,10 +83,12 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         String status = (String) args[1];
 
         if (roleId > 0) {
-            where += " AND role_id = " + roleId;
+            where += " AND role_id = ?";
+            this.preparedStatementParams.add(roleId);
         }
         if (!status.equals("ALL")) {
-            where += " AND status = '" + status + "'";
+            where += " AND status = ?";
+            this.preparedStatementParams.add(status);
         }
         return where;
     }

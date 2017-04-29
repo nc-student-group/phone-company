@@ -137,10 +137,12 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         String status = (String) args[1];
 
         if (regionId > 0) {
-            where += " AND address.region_id = " + regionId;
+            where += " AND address.region_id = ?";
+            this.preparedStatementParams.add(regionId);
         }
         if (!status.equals("ALL")) {
-            where += " AND dbuser.status='" + status + "'";
+            where += " AND dbuser.status = ?";
+            this.preparedStatementParams.add(status);
         }
 
         return where;
