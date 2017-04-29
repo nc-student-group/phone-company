@@ -73,6 +73,11 @@
                 templateUrl: 'view/csr/services.html',
                 controller: 'ServicesController'
             });
+        $routeProvider.when('/csr/corporations',
+            {
+                templateUrl: 'view/csr/corporations.html',
+                controller: 'CorporationsController'
+            });
         $routeProvider.when('/admin/users',
             {
                 templateUrl: 'view/admin/users.html',

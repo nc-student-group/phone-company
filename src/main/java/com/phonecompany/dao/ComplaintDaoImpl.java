@@ -38,6 +38,7 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
+            preparedStatement.setString(6, entity.getSubject());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -51,8 +52,9 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
+            preparedStatement.setString(6, entity.getSubject());
 
-            preparedStatement.setLong(6, entity.getId());
+            preparedStatement.setLong(7, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -68,6 +70,7 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             complaint.setText(rs.getString("text"));
             complaint.setType(rs.getString("type"));
             complaint.setUser(userDao.getById(rs.getLong("user_id")));
+            complaint.setSubject(rs.getString("subject"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

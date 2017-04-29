@@ -9,15 +9,17 @@ public class Complaint extends DomainEntity {
     private String text;
     private String type;
     private User user;
+    private String subject;
 
     public Complaint(){}
 
-    public Complaint(String status, Date date, String text, String type, User user) {
+    public Complaint(String status, Date date, String text, String type, User user, String subject) {
         this.status = status;
         this.date = date;
         this.text = text;
         this.type = type;
         this.user = user;
+        this.subject = subject;
     }
 
     public String getStatus() {
@@ -60,6 +62,10 @@ public class Complaint extends DomainEntity {
         this.user = user;
     }
 
+    public String getSubject() { return subject; }
+
+    public void setSubject(String subject) { this.subject = subject; }
+
     @Override
     public String toString() {
         return "Complaint{" +
@@ -68,6 +74,7 @@ public class Complaint extends DomainEntity {
                 ", text='" + text + '\'' +
                 ", type='" + type + '\'' +
                 ", user=" + user +
+                ", subject=" + subject +
                 '}';
     }
 }

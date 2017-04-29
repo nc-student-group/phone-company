@@ -6,7 +6,7 @@ import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerService;
-import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
         try {
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
-            preparedStatement.setDate(3, entity.getOrderDate());
-            preparedStatement.setDouble(4, entity.getPrice());
-            preparedStatement.setString(5, entity.getOrderStatus().name());
+            preparedStatement.setDouble(3, entity.getPrice());
+            preparedStatement.setString(4, entity.getOrderStatus().name());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -53,10 +52,9 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
         try {
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
-            preparedStatement.setDate(3, entity.getOrderDate());
-            preparedStatement.setDouble(4, entity.getPrice());
-            preparedStatement.setString(5, entity.getOrderStatus().name());
-            preparedStatement.setLong(6, entity.getId());
+            preparedStatement.setDouble(3, entity.getPrice());
+            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setLong(5, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -69,9 +67,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
             customerService.setId(rs.getLong("id"));
             customerService.setCustomer(customerDao.getById(rs.getLong("customer_id)")));
             customerService.setService(serviceDao.getById(rs.getLong("service_id)")));
-            customerService.setOrderDate(rs.getDate("order_date"));
             customerService.setPrice(rs.getDouble("price"));
-            customerService.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
+            customerService.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("service_status")));
 
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

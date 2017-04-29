@@ -3,7 +3,6 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.Tariff;
-import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,8 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(8, entity.getRoaming());
             preparedStatement.setBoolean(9, entity.getIsCorporate());
             preparedStatement.setDate(10, entity.getCreationDate());
+            preparedStatement.setDouble(11, entity.getDiscount());
+            preparedStatement.setString(12, entity.getPictureUrl());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -62,8 +63,10 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setString(8, entity.getRoaming());
             preparedStatement.setBoolean(9, entity.getIsCorporate());
             preparedStatement.setDate(10, entity.getCreationDate());
+            preparedStatement.setDouble(11, entity.getDiscount());
+            preparedStatement.setString(12, entity.getPictureUrl());
 
-            preparedStatement.setLong(11, entity.getId());
+            preparedStatement.setLong(13, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -84,6 +87,8 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             tariff.setRoaming(rs.getString("roaming"));
             tariff.setIsCorporate(rs.getBoolean("is_corporate"));
             tariff.setCreationDate(rs.getDate("creation_date"));
+            tariff.setDiscount(rs.getDouble("discount"));
+            tariff.setPictureUrl(rs.getString("picture_url"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
