@@ -151,4 +151,11 @@ public class TariffController {
         return this.customerTariffService.getByClientId(customer);
     }
 
+    @RequestMapping(value = "/api/tariff/update/status/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
+                                                   @PathVariable("status") ProductStatus productStatus) {
+        this.tariffService.updateTariffStatus(tariffId, productStatus);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
 }
