@@ -12,4 +12,5 @@ public interface TariffDao extends CrudDao<Tariff> {
     public void updateTariffStatus(long tariffId, ProductStatus productStatus);
     public Tariff findByTariffName(String tariffName);
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
+    public Integer getCountTariffsAvailableForCustomer(long regionId);
 }

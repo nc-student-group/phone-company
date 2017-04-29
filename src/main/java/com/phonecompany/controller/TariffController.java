@@ -150,16 +150,20 @@ public class TariffController {
     }
 
     @RequestMapping(value = "/api/tariffs/available/get/{page}/{size}", method = RequestMethod.GET)
-    public List<Tariff> getTariffsAvailableForCustomer(@PathVariable("page") int page,
+    public Map<String, Object> getTariffsAvailableForCustomer(@PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
-            return tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size);
+            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
-            return tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size);
+            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         }
+        return response;
     }
 
 }

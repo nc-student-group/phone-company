@@ -114,6 +114,11 @@
                 templateUrl: 'view/client/allTariffs.html',
                 controller: 'AllTariffsController'
             });
+        $routeProvider.when('/client/tariff/:id',
+            {
+                templateUrl: 'view/client/tariffDetail.html',
+                controller: 'TariffDetailController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 

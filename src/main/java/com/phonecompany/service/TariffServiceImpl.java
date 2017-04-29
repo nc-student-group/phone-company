@@ -109,4 +109,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
     }
 
+    public Integer getCountTariffsAvailableForCustomer(long regionId){
+        return tariffDao.getCountTariffsAvailableForCustomer(regionId);
+    }
+
 }

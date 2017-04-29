@@ -224,4 +224,19 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
                     "Check your database connection or whether sql query is right", e);
         }
     }
+
+    @Override
+    public Integer getCountTariffsAvailableForCustomer(long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
+            ps.setObject(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
 }
