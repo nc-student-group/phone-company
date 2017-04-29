@@ -1,3 +1,4 @@
+/*
 -- Test Data
 -- Region
 INSERT INTO region(name_region) VALUES ('Cherkasy Region');
@@ -219,3 +220,4 @@ VALUES ('', to_date('2017-03-25', 'YYYY-MM-DD'), 'Complaint2', 'type2', '55');
 INSERT INTO complaint(status, date, text, type, user_id)
 VALUES ('', to_date('2017-03-25', 'YYYY-MM-DD'), 'Complaint3', 'type3', '60');
 
+*/

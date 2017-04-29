@@ -1,3 +1,4 @@
+/*
 ALTER TABLE dbuser
   ADD FOREIGN KEY (role_id) REFERENCES role (id);
 ALTER TABLE dbuser
@@ -59,3 +60,4 @@ VALUES
 INSERT INTO dbuser (email, password, role_id, firstname, secondname, lastname, phone, address_id, status)
 VALUES ('d.vodotiiets@yandex.ua', '7332ltt8bi', 2, NULL, NULL, NULL, NULL, 3, NULL);
 
+*/

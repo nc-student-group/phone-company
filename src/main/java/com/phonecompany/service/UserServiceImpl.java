@@ -109,20 +109,11 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     @Override
     public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("limit", size);
-        params.put("offset", page * size);
-        params.put("roleId", roleId);
-        params.put("status", status);
-
-        return userDao.getPagingByParametersMap(page, size, params);
+        return userDao.getPaging(page, size, roleId, status);
     }
 
     @Override
     public int getCountUsers(int roleId, String status) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("roleId", roleId);
-        params.put("status", status);
-        return userDao.getEntityCount(params);
+        return userDao.getEntityCount(roleId, status);
     }
 }

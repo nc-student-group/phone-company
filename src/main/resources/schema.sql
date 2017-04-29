@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS address;
 DROP TABLE IF EXISTS dbuser;
 DROP TABLE IF EXISTS role;
@@ -95,3 +96,4 @@ CREATE TABLE IF NOT EXISTS public.marketing_campaign_tariff
     CONSTRAINT marketing_campaign_tariff_tariff_region_id_fk FOREIGN KEY (tariff_region_id) REFERENCES tariff_region (id),
     CONSTRAINT marketing_campaign_tariff_marketing_campaign_id_fk FOREIGN KEY (marketing_campaign_id) REFERENCES marketing_campaign (id)
 );
+*/

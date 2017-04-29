@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 @Repository
 public class UserDaoImpl extends AbstractUserDaoImpl<User>
@@ -72,58 +71,32 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
 
     @Override
     public String getQuery(String type) {
-        LOG.debug("Query type: {}", type);
         return queryLoader.getQuery("query.user." + type);
     }
 
     @Override
-    public String buildQueryByParams(String getEntityQuery, Map<String, Object> params) {
-        String where = " WHERE dbu.role_id <> 4 and dbu.role_id <> 1";
-        Integer limit = (Integer) params.getOrDefault("limit", null);
-        Integer offset = (Integer) params.getOrDefault("offset", null);
+    public String getWhereClause(Object... args) {
 
-        int roleId = (int) params.get("roleId");
-        String status = (String) params.get("status");
+        String where = "";
+
+        int roleId = (int) args[0];
+        String status = (String) args[1];
 
         if (roleId > 0) {
-            where += " and dbu.role_id = ?";
+            where += " AND role_id = " + roleId;
         }
         if (!status.equals("ALL")) {
-            where += " and dbu.status = ?";
+            where += " AND status = '" + status + "'";
         }
-        getEntityQuery += where;
-        if(limit != null) {
-            getEntityQuery += " LIMIT ?";
-        }
-        if(offset != null) {
-            getEntityQuery += " OFFSET ?";
-        }
-
-        return getEntityQuery;
+        return where;
     }
 
     @Override
-    public void setStatementParams(PreparedStatement ps, Map<String, Object> params) throws SQLException {
-        int roleId = (int) params.get("roleId");
-        String status = (String) params.get("status");
-        Integer limit = (Integer) params.getOrDefault("limit", null);
-        Integer offset = (Integer) params.getOrDefault("offset", null);
+    public String getCountQuery(Object... args) {
 
-        int parameterIndex = 1;
+        String getCountQuery = this.getQuery("getCount");
+        getCountQuery += this.getWhereClause(args);
 
-        if (roleId > 0) {
-            ps.setInt(parameterIndex, roleId);
-            parameterIndex++;
-        }
-        if (!status.equals("ALL")) {
-            ps.setString(parameterIndex, status);
-            parameterIndex++;
-        }
-        if(limit != null) {
-            ps.setInt(parameterIndex++, limit);
-        }
-        if(offset != null) {
-            ps.setInt(parameterIndex, offset);
-        }
+        return getCountQuery;
     }
 }

@@ -3,7 +3,6 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -19,10 +18,8 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
@@ -90,21 +87,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     @Override
     public List<Customer> getAllCustomersPaging(int page, int size, long regionId, String status) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("limit", size);
-        params.put("offset", page * size);
-        params.put("regionId", regionId);
-        params.put("status", status);
-
-        return customerDao.getPagingByParametersMap(page, size, params);
+        return customerDao.getPaging(page, size, regionId, status);
     }
 
     @Override
     public int getCountCustomers(long regionId, String status) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("regionId", regionId);
-        params.put("status", status);
-        return customerDao.getEntityCount(params);
+        return customerDao.getEntityCount(regionId, status);
     }
 }
 
