@@ -65,7 +65,6 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setDate(10, entity.getCreationDate());
             preparedStatement.setDouble(11, entity.getDiscount());
             preparedStatement.setString(12, entity.getPictureUrl());
-
             preparedStatement.setLong(13, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
