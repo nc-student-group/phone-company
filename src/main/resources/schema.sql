@@ -72,9 +72,9 @@ CREATE TABLE IF NOT EXISTS public."order"
 CREATE TABLE IF NOT EXISTS public.marketing_campaign
 (
     id SERIAL PRIMARY KEY NOT NULL,
-    tariff_region_id INT,
+    name VARCHAR(255),
     marketing_campaign_status VARCHAR(255),
-    CONSTRAINT marketing_campaign_tariff_region_id_fk FOREIGN KEY (tariff_region_id) REFERENCES tariff_region (id)
+    description VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS public.marketing_campaign_services

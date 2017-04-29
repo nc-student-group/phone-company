@@ -6,7 +6,7 @@ import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerService;
-import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
             customerService.setCustomer(customerDao.getById(rs.getLong("customer_id)")));
             customerService.setService(serviceDao.getById(rs.getLong("service_id)")));
             customerService.setPrice(rs.getDouble("price"));
-            customerService.setOrderStatus(OrderStatus.valueOf(rs.getString("service_status")));
+            customerService.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("service_status")));
 
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

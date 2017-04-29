@@ -8,7 +8,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id")));
             customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customerTariff.setTotalPrice(rs.getDouble("total_price"));
-            customerTariff.setOrderStatus(OrderStatus.valueOf(rs.getString("tariff_status")));
+            customerTariff.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("tariff_status")));
             customerTariff.setTariff(tariffDao.getById(rs.getLong("tariff_id")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
