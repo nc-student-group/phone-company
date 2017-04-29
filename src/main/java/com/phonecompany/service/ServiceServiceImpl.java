@@ -36,22 +36,12 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @Override
     public Map<String, Object> getServicesByProductCategoryId(Long productCategoryId, int page, int size) {
         Map<String, Object> response = new HashMap<>();
-        List<Service> services = this.getByProductCategoryIdAndPaging(productCategoryId, page, size);
+        List<Service> services = this.serviceDao.getPaging(page, size, productCategoryId);
 
         LOG.debug("Fetched services: {}", services);
         response.put("services", services);
-        response.put("servicesCount", this.getCountByProductCategoryIdAndPaging(productCategoryId));
+        response.put("servicesCount", this.serviceDao.getEntityCount(productCategoryId));
         return response;
-    }
-
-    @Override
-    public Integer getCountByProductCategoryIdAndPaging(long productCategoryId) {
-        return this.serviceDao.getCountByProductCategoryIdAndPaging(productCategoryId);
-    }
-
-    @Override
-    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId, int page, int size) {
-        return this.serviceDao.getByProductCategoryIdAndPaging(productCategoryId, page, size);
     }
 
     @Override
