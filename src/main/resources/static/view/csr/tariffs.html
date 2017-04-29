@@ -155,12 +155,13 @@
                                         <a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a></td>
                                         <td style="padding: 0;">
                                             <table width="100%" style="table-layout: fixed;"
-                                                   class="table table-striped">
+                                                   class="table table-striped" ng-hide="t.tariff.isCorporate">
                                                 <tr ng-repeat="r in t.regions" class="tariff-td">
                                                     <td>{{r.region.nameRegion}}</td>
                                                     <td style="text-align: left; padding-right: 0;">{{r.price}}</td>
                                                 </tr>
                                             </table>
+                                            <span ng-show="t.tariff.isCorporate">Price: {{t.tariff.price}}</span>
                                         </td>
                                         <td>{{t.tariff.productStatus}}</td>
                                         <td style="padding: 0;">
@@ -416,7 +417,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-show="currentTariff.isCorporate">
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" class="form-control" name="price"
+                                                       placeholder="Price"
+                                                       ng-model="currentTariff.price" ng-change="checkTariffPrice(currentTariff)"/>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-hide="currentTariff.isCorporate">
                                         <div class="form-group col-md-12">
                                             <div class="row">
                                                 <div class="col-md-3">
@@ -629,7 +639,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-show="tariffToEdit.isCorporate">
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" class="form-control" name="price"
+                                                       placeholder="Price"
+                                                       ng-model="tariffToEdit.price" ng-change="checkTariffPrice(tariffToEdit)"/>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-hide="tariffToEdit.isCorporate">
                                         <div class="form-group col-md-12">
                                             <div class="row">
                                                 <div class="col-md-3">

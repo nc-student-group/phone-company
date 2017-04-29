@@ -107,7 +107,7 @@ angular.module('phone-company').controller('TariffsController', [
                 return;
             }
             $scope.preloader.send = true;
-            if ($scope.regionsToSave.length == 0) {
+            if ($scope.regionsToSave.length == 0 || $scope.currentTariff.isCorporate) {
                 TariffService.addTariffSingle($scope.currentTariff).then(function (data) {
                         $scope.successAddTariff();
                     },
@@ -193,6 +193,15 @@ angular.module('phone-company').controller('TariffsController', [
             }
         };
 
+        $scope.checkTariffPrice = function (t) {
+            if (t.price < 0) {
+                t.price = 0;
+            }
+            if (t.price > 2000) {
+                t.price = 2000;
+            }
+        };
+
         $scope.editClick = function (id) {
             $scope.preloader.send = true;
             TariffService.getTariffToEditById(id).then(function (data) {
@@ -264,7 +273,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
             $scope.preloader.send = true;
             console.log($scope.regionsToEdit);
-            if ($scope.regionsToEdit.length == 0) {
+            if ($scope.regionsToEdit.length == 0 || $scope.tariffToEdit.isCorporate) {
                 TariffService.saveTariffSingle($scope.tariffToEdit).then(function (data) {
                     $scope.successTariffUpdate();
                 }, function (data) {
@@ -326,6 +335,14 @@ angular.module('phone-company').controller('TariffsController', [
             }
             if (tariff.roaming == undefined || tariff.roaming.length < 1) {
                 toastr.error('Roaming field length must be greater than zero and less than 150', 'Error');
+                return false;
+            }
+            if (tariff.pictureUrl == undefined || tariff.pictureUrl.length < 1) {
+                toastr.error('Tariff picture is required.', 'Error');
+                return false;
+            }
+            if (tariff.isCorporate && (tariff.price < 1 || tariff.price > 2000)) {
+                toastr.error('Tariff price must be greater than zero and less than 2000', 'Error');
                 return false;
             }
             for (var i = 0; i < regionsToSave.length; i++) {
