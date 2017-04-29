@@ -19,7 +19,10 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
@@ -41,7 +44,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<Customer> confirmMessageCreator,
                                EmailService emailService) {
-        this.customerDao = (CustomerDao)customerDao;
+        this.customerDao = (CustomerDao) customerDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.confirmMessageCreator = confirmMessageCreator;
@@ -84,13 +87,24 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
         return super.update(user);
     }
+
     @Override
-    public List<Customer> getAllCustomersPaging(int page, int size,long rId,String status){
-        return customerDao.getAllCustomersPaging(page,size,rId,status);
+    public List<Customer> getAllCustomersPaging(int page, int size, long regionId, String status) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", size);
+        params.put("offset", page * size);
+        params.put("regionId", regionId);
+        params.put("status", status);
+
+        return customerDao.getPagingByParametersMap(page, size, params);
     }
+
     @Override
-    public int getCountCustomers(long rId,String status){
-        return customerDao.getCountCustomers(rId,status);
+    public int getCountCustomers(long regionId, String status) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("regionId", regionId);
+        params.put("status", status);
+        return customerDao.getEntityCount(params);
     }
 }
 

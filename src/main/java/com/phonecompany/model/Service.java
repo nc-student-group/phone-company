@@ -9,25 +9,28 @@ public class Service extends DomainEntity {
 
     @NotNull(message = "Service name must not be null")
     private String serviceName;
+    @Pattern(regexp = "^[^0-]([0-9]*(\\.\\d{2}))$", message = "This field should be in decimal format, like 99.99 and not be negative")
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Product status must not be null")
     private ProductStatus productStatus = ProductStatus.ACTIVATED; //product ACTIVATED by default
-    @Pattern(regexp = "^(0(\\.\\d{1,3})?)|1$", message = "This field can only contain numbers from 0 to 1")
+    @Pattern(regexp = "^(0(\\.)(\\d{1,3})?)|^1$", message = "This field can only contain numbers from 0 to 1")
     @NotNull(message = "Discount must not be null")
     private double discount;
     @NotNull(message = "Product category must not be null")
     private ProductCategory productCategory;
+    private String pictureUrl;
 
     public Service(){}
 
     public Service(ProductCategory productCategory, String serviceName,
-                   double price, ProductStatus productStatus, double discount) {
+                   double price, ProductStatus productStatus, double discount, String pictureUrl) {
         this.productCategory = productCategory;
         this.serviceName = serviceName;
         this.price = price;
         this.productStatus = productStatus;
         this.discount = discount;
+        this.pictureUrl = pictureUrl;
     }
 
     public ProductCategory getProductCategory() {
@@ -70,6 +73,9 @@ public class Service extends DomainEntity {
         this.discount = discount;
     }
 
+    public String getPictureUrl() { return pictureUrl; }
+
+    public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
     @Override
     public String toString() {
         return "Service{" +
@@ -78,6 +84,7 @@ public class Service extends DomainEntity {
                 ", price=" + price +
                 ", productStatus=" + productStatus +
                 ", discount=" + discount +
+                ", discount=" + pictureUrl +
                 "} " + super.toString();
     }
 }

@@ -16,21 +16,21 @@ public enum UserRole {
     details of the service */
     CLIENT(CLIENT_DATABASE_ID);
 
-    private long databaseId;
+    private Long databaseId;
 
-    UserRole(long databaseId) {
+    UserRole(Long databaseId) {
         this.databaseId = databaseId;
     }
 
-    public long getDatabaseId() {
+    public Long getDatabaseId() {
         return databaseId;
     }
 
     static class Constants {
-        static final long ADMIN_DATABASE_ID = 1;
-        static final long CSR_DATABASE_ID = 2;
-        static final long PMG_DATABASE_ID = 3;
-        static final long CLIENT_DATABASE_ID = 4;
+        static final Long ADMIN_DATABASE_ID = 1L;
+        static final Long CSR_DATABASE_ID = 2L;
+        static final Long PMG_DATABASE_ID = 3L;
+        static final Long CLIENT_DATABASE_ID = 4L;
     }
 
     public String toString() {
