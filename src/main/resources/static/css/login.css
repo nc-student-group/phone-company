@@ -237,6 +237,20 @@
     border-radius: 50px;
 }
 
+.tariff-picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.more-button {
+    height: 30px;
+    font-size: 18px;
+    background-color: #fff62f;
+    text-align: center;
+    border-radius: 5px;
+}
+
 /*TARIFF PAGE CSS END*/
 .paginate_button {
     cursor: pointer;

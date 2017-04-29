@@ -2,13 +2,16 @@ package com.phonecompany.controller;
 
 
 import com.phonecompany.model.*;
+import com.phonecompany.model.CustomerService;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.CustomerServiceImpl;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -36,6 +39,9 @@ public class TariffController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private CustomerServiceImpl customerService;
 
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
@@ -141,6 +147,19 @@ public class TariffController {
                                                    @PathVariable("status") ProductStatus productStatus) {
         this.tariffService.updateTariffStatus(tariffId, productStatus);
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariffs/available/get/{page}/{size}", method = RequestMethod.GET)
+    public List<Tariff> getTariffsAvailableForCustomer(@PathVariable("page") int page,
+                                                       @PathVariable("size") int size) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        if (customer.getCorporate() == null) {
+            return tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size);
+        } else {
+            return tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size);
+        }
     }
 
 }

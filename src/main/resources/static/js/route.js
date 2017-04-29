@@ -109,6 +109,11 @@
                 templateUrl: 'view/client/services.html',
                 controller: 'ServicesController'
             });
+        $routeProvider.when('/client/tariffs/available',
+            {
+                templateUrl: 'view/client/allTariffs.html',
+                controller: 'AllTariffsController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 

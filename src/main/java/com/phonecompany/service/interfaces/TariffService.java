@@ -16,5 +16,5 @@ public interface TariffService extends CrudService<Tariff> {
     public void updateTariffStatus(long tariffId, ProductStatus productStatus);
     public Tariff findByTariffName(String tariffName);
     public ResponseEntity<?> updateTariffAndRegions(List<TariffRegion> tariffRegions);
-
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 }
