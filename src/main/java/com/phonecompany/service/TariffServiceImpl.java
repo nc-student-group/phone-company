@@ -105,12 +105,24 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size){
         return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
     }
 
+    @Override
     public Integer getCountTariffsAvailableForCustomer(long regionId){
         return tariffDao.getCountTariffsAvailableForCustomer(regionId);
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
+        return this.tariffDao.getTariffsAvailableForCorporate(page, size);
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCorporate(){
+        return this.tariffDao.getCountTariffsAvailableForCorporate();
     }
 
 }

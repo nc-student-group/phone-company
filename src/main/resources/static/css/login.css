@@ -251,6 +251,20 @@
     border-radius: 5px;
 }
 
+.sale-picture{
+    position: absolute;
+    background: url("../../css/img/sale.png") 50% 50% no-repeat;
+    background-size: 65px 65px;
+    top:0px;
+    left: 0px;
+    width: 65px;
+    height: 65px;
+    text-align: center;
+    padding-top: 23px;
+    font-size: 18px;
+    transform: rotate(-30deg);
+}
+
 /*TARIFF PAGE CSS END*/
 .paginate_button {
     cursor: pointer;
