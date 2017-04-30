@@ -4,9 +4,9 @@
     angular.module('phone-company')
         .controller('CustomerController', CustomerController);
 
-    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService', '$rootScope'];
+    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService','CorporationService', '$rootScope'];
 
-    function CustomerController($scope, $log, CustomerService, TariffService, $rootScope) {
+    function CustomerController($scope, $log, CustomerService, TariffService,CorporationService, $rootScope) {
         console.log('This is CustomerService');
 
         $scope.page = 0;
@@ -22,6 +22,12 @@
         $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
         $scope.numberPattern = /^[0-9]+$/;
 
+        $scope.corporateUser=false;
+
+        CorporationService.getAllCorporation().then(function (data) {
+           $scope.corporations = data;
+        });
+
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
             $scope.customer = {
@@ -31,8 +37,12 @@
                 lastName: "",
                 phone: "",
                 role: "CLIENT",
+                corporate:{
+                    id:""
+                },
+                isRepresentative:false,
                 address: {
-                    region: $scope.regions[0],
+                    region: "",
                     locality: "",
                     street: "",
                     houseNumber: "",
@@ -46,6 +56,9 @@
          */
         function createCustomer() {
             $log.debug('Customer: ' + JSON.stringify($scope.customer));
+            if(!$scope.customer.isRepresentative){
+                $scope.customer.corporate.id=null;
+            }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
                     toastr.success(`Customers ${createdCustomer.email} has been successfully created. Please, check your email for the password`);

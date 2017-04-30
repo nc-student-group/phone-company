@@ -311,6 +311,39 @@
                                         </md-input-container>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <md-checkbox ng-model="corporateUser" aria-label="There are a corporate client">
+                                                    There are a corporate client
+                                                </md-checkbox>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="corporateUser">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Corporation</label>
+                                                <md-select ng-model="customer.corporate.id">
+                                                    <md-option ng-repeat="c in corporations" value="{{c.id}}">
+                                                        {{c.corporateName}}
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="corporateUser">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <md-checkbox ng-model="customer.isRepresentative" aria-label="Representaive">
+                                                        Representative
+                                                    </md-checkbox>
+                                                </md-input-container>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
                                     <button  ng-class="{unsubmitable : customerForm.$invalid,
                         submitable: !customerForm.$invalid}"
                                             ng-disabled="customerForm.$invalid"
