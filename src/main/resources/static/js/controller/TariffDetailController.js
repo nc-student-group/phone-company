@@ -9,4 +9,12 @@ angular.module('phone-company').controller('TariffDetailController', [
         console.log('This is TariffDetailController');
         console.log($routeParams['id']);
 
+        TariffService.getTariffForCustomerById($routeParams['id']).then(function (data) {
+            if (data == null) {
+                $location.path("/client/tariffs/available");
+            } else {
+                $scope.tariff = data;
+            }
+        });
+
     }]);

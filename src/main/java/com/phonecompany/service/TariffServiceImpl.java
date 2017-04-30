@@ -125,4 +125,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return this.tariffDao.getCountTariffsAvailableForCorporate();
     }
 
+    @Override
+    public Tariff getByIdForSingleCustomer(long id){
+        return this.tariffDao.getByIdForSingleCustomer(id);
+    }
+
 }

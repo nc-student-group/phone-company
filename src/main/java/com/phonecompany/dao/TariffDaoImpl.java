@@ -267,12 +267,27 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
         }
+    }
+
+    @Override
+    public Tariff getByIdForSingleCustomer(long id){
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
+            ps.setObject(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                return this.init(rs);
+            }
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+        return null;
     }
 }
