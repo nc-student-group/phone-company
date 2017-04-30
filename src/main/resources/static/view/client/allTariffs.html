@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="row" ng-show="t.discount > 0 && t.discount < 1"
                                          style="text-align: center; font-size: 16px; color: #161121">
-                                        <b>{{t.price * t.discount}} auh / 30 days</b>
+                                        <b>{{t.price * (1 - t.discount)}} auh / 30 days</b>
                                         <s style="font-size: 14px; color: red">{{t.price}} auh / 30 days</s>
                                     </div>
                                     <div class="row">

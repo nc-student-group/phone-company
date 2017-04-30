@@ -251,11 +251,11 @@
     border-radius: 5px;
 }
 
-.sale-picture{
+.sale-picture {
     position: absolute;
     background: url("../../css/img/sale.png") 50% 50% no-repeat;
     background-size: 65px 65px;
-    top:0px;
+    top: 0px;
     left: 0px;
     width: 65px;
     height: 65px;
@@ -263,6 +263,42 @@
     padding-top: 23px;
     font-size: 18px;
     transform: rotate(-30deg);
+}
+
+.conditions-value {
+    text-align: center;
+    font-size: 16px;
+    color: #161121;
+}
+
+.condition{
+    font-size: 16px;
+    color: #161121;
+    text-align: left;
+}
+
+.row-one{
+    background-color: #bdbdbd;
+}
+
+.row-one div{
+    height: 50px;
+}
+
+.row-one div span {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+
+.row-two {
+    background-color: #ffffff;
+}
+
+.row-two div {
+    height: 50px;
+}
+
+.row-two div span{
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
 
 /*TARIFF PAGE CSS END*/

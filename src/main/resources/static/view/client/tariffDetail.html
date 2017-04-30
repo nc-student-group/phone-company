@@ -63,24 +63,87 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">{{tariff.tariffName}}</h4>
-                                <p class="category">Available tariff plans</p>
+                                <h4 class="title"><b>{{tariff.tariffName}}</b></h4>
+                                <p class="category" ng-hide="tariff.isCorporate">Individual tariff plan</p>
+                                <p class="category" ng-show="tariff.isCorporate">Corporate tariff plan</p>
                             </div>
                             <hr/>
-                            <div class="row" style="margin: 0;">
+                            <div class="row" style="margin: 0; padding: 20px;">
+                                <div class="col-md-4">
+                                    <div class="tariff-picture">
+                                        <img ng-src="{{tariff.pictureUrl}}" width="90%"/>
+                                        <div class="sale-picture" ng-show="tariff.discount > 0 && tariff.discount < 1">
+                                            <b>-{{tariff.discount * 100}}%</b></div>
+                                    </div>
+                                    <div class="row" style="padding-top: 20px;">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2">
+                                            ACTIVATE
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row" style="text-align: center; font-size: 20px;">
+                                        <b>Conditions</b>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition">
+                                            <span>Calls in network</span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{tariff.callsInNetwork}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{tariff.callsOnOtherNumbers}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Roaming</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Internet</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.internet}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>SMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.sms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>MMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.mms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Monthly payment</span></div>
+                                        <div class="col-md-4"
+                                             style="text-align: center; font-size: 16px; color: #161121"
+                                             ng-hide="tariff.discount > 0 && tariff.discount < 1"><span>
+                                            <b>{{tariff.price}} auh</b></span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value"
+                                             ng-show="tariff.discount > 0 && tariff.discount < 1">
+                                            <span><b>{{tariff.price * (1 - tariff.discount)}} auh</b><br>
+                                                <s style="font-size: 14px; color: red">{{tariff.price}} auh</s></span>
+                                        </div>
+                                        <!--<div class="col-md-4">{{tariff.price * (1 - tariff.discount)}}</div>-->
+                                    </div>
+                                </div>
                                 <!--<div class="col-md-6" style="padding: 10px;" ng-repeat="t in tariffs">-->
-                                    <!--<div class="tariff-picture"><img ng-src="{{t.pictureUrl}}" width="90%"/></div>-->
-                                    <!--<div class="tariff-picture"-->
-                                         <!--style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>-->
-                                    <!--</div>-->
-                                    <!--<div class="row" style="text-align: center; font-size: 16px; color: #161121">-->
-                                        <!--{{t.price}} auh / 30 days-->
-                                    <!--</div>-->
-                                    <!--<div class="row">-->
-                                        <!--<button class="btn btn-info btn-fill col-md-8 col-md-offset-2">-->
-                                            <!--More-->
-                                        <!--</button>-->
-                                    <!--</div>-->
+                                <!--<div class="tariff-picture"><img ng-src="{{t.pictureUrl}}" width="90%"/></div>-->
+                                <!--<div class="tariff-picture"-->
+                                <!--style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>-->
+                                <!--</div>-->
+                                <!--<div class="row" style="text-align: center; font-size: 16px; color: #161121">-->
+                                <!--{{t.price}} auh / 30 days-->
+                                <!--</div>-->
+                                <!--<div class="row">-->
+                                <!--<button class="btn btn-info btn-fill col-md-8 col-md-offset-2">-->
+                                <!--More-->
+                                <!--</button>-->
+                                <!--</div>-->
                                 <!--</div>-->
                             </div>
                         </div>
