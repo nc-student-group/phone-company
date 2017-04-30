@@ -119,6 +119,11 @@
                 templateUrl: 'view/client/tariffDetail.html',
                 controller: 'TariffDetailController'
             });
+        $routeProvider.when('/client/complaints',
+            {
+                templateUrl: 'view/client/complaints.html',
+                controller: 'ComplaintController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 
