@@ -31,6 +31,7 @@ public class Tariff extends DomainEntity {
     private Date creationDate;
     private Double discount;
     private String pictureUrl;
+    private double price;
 
     public Tariff() {
     }
@@ -143,6 +144,14 @@ public class Tariff extends DomainEntity {
     public String getPictureUrl() { return pictureUrl; }
 
     public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {

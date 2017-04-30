@@ -180,5 +180,45 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.tariffToEdit = undefined;
             $scope.updateData();
         };
+
+        $scope.uploadPicture = function () {
+            $('#fileInput').click();
+        };
+
+        /**
+         * Gets invoked when the value of uploading input element
+         * has been changed
+         *
+         * @param e event that is bound with the file input
+         */
+        $scope.fileChanged = function (e) {
+            let files = e.target.files; // FileList object - an array-like sequence of File objects
+            $scope.files = files;
+
+            let fileReader = new FileReader();
+            // Starts reading the contents of the specified Blob, once
+            // finished, the result attribute contains a data: URL
+            // representing the file's data
+            fileReader.readAsDataURL(files[0]);
+
+            fileReader.onload = function (e) {
+                console.log(`Image source obtained: ${this.result}`);
+                // this.result contains base64 representation of the
+                // binary file with an image
+                $scope.imgSrc = this.result;
+                //model was change outside angular context
+                //that's why model needs to be updated manually
+                $scope.$apply();
+                $scope.imageCropStep = 2;
+            };
+
+            $scope.clear = function () {
+                $scope.imageCropStep = 1;
+                $('#fileInput').val('');
+                delete $scope.imgSrc;
+                delete $scope.result;
+                delete $scope.resultBlob;
+            };
+        };
     }
 ]);

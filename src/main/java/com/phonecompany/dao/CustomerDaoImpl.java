@@ -147,12 +147,4 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
 
         return where;
     }
-
-    @Override
-    public String getCountQuery(Object... args) {
-        String getCountQuery = this.getQuery("getCount");
-        getCountQuery += this.getWhereClause(args);
-
-        return getCountQuery;
-    }
 }

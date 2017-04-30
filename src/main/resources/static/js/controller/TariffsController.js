@@ -7,7 +7,8 @@ angular.module('phone-company').controller('TariffsController', [
     '$rootScope',
     'TariffService',
     '$anchorScroll',
-    function ($scope, $http, $location, $rootScope, TariffService, $anchorScroll) {
+    '$window',
+    function ($scope, $http, $location, $rootScope, TariffService, $anchorScroll, $window) {
         console.log('This is TariffsController');
         $scope.page = 0;
         $scope.size = 5;
@@ -16,6 +17,7 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.currentRegion = 0;
         $scope.regionsToSave = [];
         $scope.editing = false;
+        $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
@@ -53,7 +55,8 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
-                        $scope.gotoAnchor("tariffTable");
+                        // $scope.gotoAnchor("tariffTable");
+                        $window.scrollTo(0, 0);
                     }, function () {
                         $scope.preloader.send = false;
                     });
@@ -71,7 +74,7 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.tariffsSelected = data.tariffsSelected;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
-                        $scope.gotoAnchor("tariffTable");
+                        $window.scrollTo(0, 0);
                     }, function () {
                         $scope.preloader.send = false;
                     });
@@ -104,7 +107,7 @@ angular.module('phone-company').controller('TariffsController', [
                 return;
             }
             $scope.preloader.send = true;
-            if ($scope.regionsToSave.length == 0) {
+            if ($scope.regionsToSave.length == 0 || $scope.currentTariff.isCorporate) {
                 TariffService.addTariffSingle($scope.currentTariff).then(function (data) {
                         $scope.successAddTariff();
                     },
@@ -148,7 +151,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
             $scope.updateData();
             $scope.preloader.send = false;
-            $scope.gotoAnchor("tariffTable");
+            $window.scrollTo(0, 0);
         };
 
         $scope.toggle = function (item, list) {
@@ -190,6 +193,15 @@ angular.module('phone-company').controller('TariffsController', [
             }
         };
 
+        $scope.checkTariffPrice = function (t) {
+            if (t.price < 0) {
+                t.price = 0;
+            }
+            if (t.price > 2000) {
+                t.price = 2000;
+            }
+        };
+
         $scope.editClick = function (id) {
             $scope.preloader.send = true;
             TariffService.getTariffToEditById(id).then(function (data) {
@@ -204,7 +216,7 @@ angular.module('phone-company').controller('TariffsController', [
                 }
                 $scope.preloader.send = false;
                 $scope.editing = true;
-                $scope.gotoAnchor("tariff-editing");
+                $window.scrollTo(0, 0);
             }, function () {
                 $scope.preloader.send = false;
             });
@@ -252,7 +264,7 @@ angular.module('phone-company').controller('TariffsController', [
             $scope.updateData();
             $scope.tariffToEdit = undefined;
             $scope.regionsToEdit = undefined;
-            $scope.gotoAnchor("tariffTable");
+            $window.scrollTo(0, 0);
         };
 
         $scope.saveTariff = function () {
@@ -261,7 +273,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
             $scope.preloader.send = true;
             console.log($scope.regionsToEdit);
-            if ($scope.regionsToEdit.length == 0) {
+            if ($scope.regionsToEdit.length == 0 || $scope.tariffToEdit.isCorporate) {
                 TariffService.saveTariffSingle($scope.tariffToEdit).then(function (data) {
                     $scope.successTariffUpdate();
                 }, function (data) {
@@ -292,16 +304,9 @@ angular.module('phone-company').controller('TariffsController', [
             toastr.success('Your tariff "' + $scope.tariffToEdit.tariffName + '" updated successfully!');
             console.log("Tariff updated");
             $scope.preloader.send = false;
-            $scope.gotoAnchor("tariff-editing");
+            $window.scrollTo(0, 0);
         };
 
-        $scope.gotoAnchor = function(x) {
-            if ($location.hash() !== x) {
-                $location.hash(x);
-            } else {
-                $anchorScroll();
-            }
-        };
 
         $scope.validateTariff = function (tariff, regionsToSave) {
             if (tariff.tariffName == undefined || tariff.tariffName.length < 1) {
@@ -330,6 +335,14 @@ angular.module('phone-company').controller('TariffsController', [
             }
             if (tariff.roaming == undefined || tariff.roaming.length < 1) {
                 toastr.error('Roaming field length must be greater than zero and less than 150', 'Error');
+                return false;
+            }
+            if (tariff.pictureUrl == undefined || tariff.pictureUrl.length < 1) {
+                toastr.error('Tariff picture is required.', 'Error');
+                return false;
+            }
+            if (tariff.isCorporate && (tariff.price < 1 || tariff.price > 2000)) {
+                toastr.error('Tariff price must be greater than zero and less than 2000', 'Error');
                 return false;
             }
             for (var i = 0; i < regionsToSave.length; i++) {
@@ -369,6 +382,36 @@ angular.module('phone-company').controller('TariffsController', [
                 toastr.error('Some problems with tariff deactivation, try again!', 'Error');
                 $scope.preloader.send = false;
             })
+        };
+
+        $scope.fileChanged = function (e) {
+            var files = e.target.files;
+            $scope.files = files;
+
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(files[0]);
+
+            fileReader.onload = function (e) {
+                $scope.imgSrc = this.result;
+                $scope.$apply();
+                console.log("!!!!!!!!test");
+                $scope.imageCropStep = 2;
+            };
+
+        };
+
+        $scope.uploadPicture = function () {
+            $('#fileInput').click();
+        };
+
+        $scope.clear = function () {
+            $scope.imageCropStep = 1;
+            $('#fileInput').val('');
+            // $scope.files = {};
+            console.log($scope.files);
+            delete $scope.imgSrc;
+            delete $scope.result;
+            delete $scope.resultBlob;
         };
 
     }]);

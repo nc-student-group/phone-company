@@ -5,7 +5,8 @@ import com.phonecompany.model.enums.ProductStatus;
 
 import java.util.List;
 
-public interface ServiceDao extends CrudDao<Service>, AbstractPageableDao<Service> {
+public interface ServiceDao extends CrudDao<Service>,
+        AbstractPageableDao<Service> {
 
     boolean isExist(Service service);
 
