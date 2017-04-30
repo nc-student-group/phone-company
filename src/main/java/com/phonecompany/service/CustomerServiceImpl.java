@@ -3,6 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.model.Customer;
+import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -94,5 +95,6 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     public int getCountCustomers(long regionId, String status) {
         return customerDao.getEntityCount(regionId, status);
     }
+
 }
 

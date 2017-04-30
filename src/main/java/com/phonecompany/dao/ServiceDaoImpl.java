@@ -122,7 +122,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
         if (productCategoryId != 0) {
             where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +
-                    "WHERE prod_category_id = " + productCategoryId;
+                    "WHERE prod_category_id = ?";
+            this.preparedStatementParams.add(productCategoryId);
         }
         return where;
     }

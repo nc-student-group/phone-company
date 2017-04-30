@@ -4,7 +4,8 @@
         ['ngRoute',
             "ngMaterial",
             'ngMessages',
-            'ngResource']);
+            'ngResource',
+            "ImageCropper"]);
 
     app.config(function ($routeProvider, $locationProvider) {
         // $locationProvider.html5Mode(true);
@@ -106,7 +107,17 @@
         $routeProvider.when('/client/services',
             {
                 templateUrl: 'view/client/services.html',
-                controller: 'ServicesController'
+                controller: 'ClientServicesController'
+            });
+        $routeProvider.when('/client/tariffs/available',
+            {
+                templateUrl: 'view/client/allTariffs.html',
+                controller: 'AllTariffsController'
+            });
+        $routeProvider.when('/client/tariff/:id',
+            {
+                templateUrl: 'view/client/tariffDetail.html',
+                controller: 'TariffDetailController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });

@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.interfaces.FileService;
 import com.phonecompany.service.interfaces.TariffRegionService;
 import com.phonecompany.service.interfaces.TariffService;
 import org.slf4j.Logger;
@@ -27,15 +28,18 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private TariffDao tariffDao;
     private TariffRegionService tariffRegionService;
 
+    private FileService fileService;
+
     @Autowired
-    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService){
+    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService, FileService fileService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
+        this.fileService = fileService;
     }
 
     @Override
-    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size){
+    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
         return tariffDao.getByRegionIdAndPaging(regionId, page, size);
     }
 
@@ -48,12 +52,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public Integer getCountByRegionIdAndPaging(long regionId){
+    public Integer getCountByRegionIdAndPaging(long regionId) {
         return tariffDao.getCountByRegionIdAndPaging(regionId);
     }
 
     @Override
-    public Map<String, Object> getTariffsTable(long regionId, int page, int size){
+    public Map<String, Object> getTariffsTable(long regionId, int page, int size) {
         Map<String, Object> response = new HashMap<>();
         List<Tariff> tariffs = this.getByRegionIdAndPaging(regionId, page, size);
         List<Object> rows = new ArrayList<>();
@@ -63,50 +67,67 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             row.put("regions", tariffRegionService.getAllByTariffId(tariff.getId()));
             rows.add(row);
         });
-        response.put("tariffs",rows);
+        response.put("tariffs", rows);
         response.put("tariffsSelected", this.getCountByRegionIdAndPaging(regionId));
         return response;
     }
 
     @Override
-    public void updateTariffStatus(long tariffId, ProductStatus productStatus){
+    public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
         this.tariffDao.updateTariffStatus(tariffId, productStatus);
     }
 
     @Override
-    public Tariff findByTariffName(String tariffName){
+    public Tariff findByTariffName(String tariffName) {
         return this.tariffDao.findByTariffName(tariffName);
     }
 
     @Override
-    public ResponseEntity<?> updateTariffAndRegions(List<TariffRegion> tariffRegions){
+    public ResponseEntity<?> updateTariffAndRegions(List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff tariff = tariffRegions.get(0).getTariff();
             Tariff temp = this.findByTariffName(tariff.getTariffName());
-            if(temp != null && temp.getId() != tariff.getId()){
-                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+            if (temp != null && temp.getId() != tariff.getId()) {
+                return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
             }
-            this.setAutoCommit(false);
-            this.beginTransaction();
-            try {
-                Tariff savedTariff = this.update(tariff);
-                LOGGER.debug("Tariff added {}", tariff);
-                tariffRegionService.deleteByTariffId(savedTariff.getId());
-                tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                    if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                        tariffRegion.setTariff(savedTariff);
-                        tariffRegionService.save(tariffRegion);
-                        LOGGER.debug("Tariff-region added {}", tariffRegion);
-                    }
-                });
-                this.rollback();
-            }catch (Exception e){
-                this.rollback();
-            }finally {
-                this.setAutoCommit(true);
-            }
+            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+            Tariff savedTariff = this.update(tariff);
+            LOGGER.debug("Tariff added {}", tariff);
+            tariffRegionService.deleteByTariffId(savedTariff.getId());
+            tariffRegions.forEach((TariffRegion tariffRegion) -> {
+                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                    tariffRegion.setTariff(savedTariff);
+                    tariffRegionService.save(tariffRegion);
+                    LOGGER.debug("Tariff-region added {}", tariffRegion);
+                }
+            });
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size){
+        return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCustomer(long regionId){
+        return tariffDao.getCountTariffsAvailableForCustomer(regionId);
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
+        return this.tariffDao.getTariffsAvailableForCorporate(page, size);
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCorporate(){
+        return this.tariffDao.getCountTariffsAvailableForCorporate();
+    }
+
+    @Override
+    public Tariff getByIdForSingleCustomer(long id){
+        return this.tariffDao.getByIdForSingleCustomer(id);
     }
 
 }

@@ -37,8 +37,6 @@
 
         $scope.users = UserService.getUsers();
 
-
-
         $scope.preloader.send = true;
         $scope.getAllUser = function () {
             UserService.getAllUsers($scope.page, $scope.size,$scope.selectedRole,$scope.selectedStatus).then(function (data) {

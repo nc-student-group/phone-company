@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
+
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
     private CustomerTariffDao customerTariffDao;

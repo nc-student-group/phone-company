@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
+public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements TariffDao {
 
     private QueryLoader queryLoader;
 
@@ -45,6 +45,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setDate(10, entity.getCreationDate());
             preparedStatement.setDouble(11, entity.getDiscount());
             preparedStatement.setString(12, entity.getPictureUrl());
+            preparedStatement.setDouble(13, entity.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -65,8 +66,8 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             preparedStatement.setDate(10, entity.getCreationDate());
             preparedStatement.setDouble(11, entity.getDiscount());
             preparedStatement.setString(12, entity.getPictureUrl());
-
-            preparedStatement.setLong(13, entity.getId());
+            preparedStatement.setDouble(13, entity.getPrice());
+            preparedStatement.setLong(14, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -89,6 +90,7 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
             tariff.setCreationDate(rs.getDate("creation_date"));
             tariff.setDiscount(rs.getDouble("discount"));
             tariff.setPictureUrl(rs.getString("picture_url"));
+            tariff.setPrice(rs.getDouble("price"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -193,4 +195,99 @@ public class TariffDaoImpl extends CrudDaoImpl<Tariff> implements TariffDao {
         return null;
     }
 
+    @Override
+    public String getWhereClause(Object... args) {
+        String where = "";
+        long regionId = (long) args[0];
+
+        if (regionId != 0) {
+            where += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+        }
+        return where;
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId,int page, int size){
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"))) {
+            ps.setObject(1,regionId);
+            ps.setObject(2,size);
+            ps.setObject(3,page*size);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCustomer(long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
+            ps.setObject(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
+        String query = this.getQuery("getAll");
+        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ORDER BY t.creation_date DESC LIMIT ? OFFSET ? ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setObject(1,size);
+            ps.setObject(2,page*size);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCorporate(){
+        String query = this.getQuery("getCount");
+        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public Tariff getByIdForSingleCustomer(long id){
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
+            ps.setObject(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                return this.init(rs);
+            }
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+        return null;
+    }
 }
