@@ -239,4 +239,40 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
                     "Check your database connection or whether sql query is right", e);
         }
     }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
+        String query = this.getQuery("getAll");
+        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ORDER BY t.creation_date DESC LIMIT ? OFFSET ? ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setObject(1,size);
+            ps.setObject(2,page*size);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public Integer getCountTariffsAvailableForCorporate(){
+        String query = this.getQuery("getCount");
+        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
 }

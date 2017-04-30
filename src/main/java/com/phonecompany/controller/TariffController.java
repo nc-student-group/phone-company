@@ -151,7 +151,7 @@ public class TariffController {
 
     @RequestMapping(value = "/api/tariffs/available/get/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getTariffsAvailableForCustomer(@PathVariable("page") int page,
-                                                       @PathVariable("size") int size) {
+                                                              @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
@@ -160,8 +160,10 @@ public class TariffController {
             response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
             response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
-            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
-            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
+            if (customer.getRepresentative()) {
+                response.put("tariffs", tariffService.getTariffsAvailableForCorporate(page, size));
+                response.put("tariffsCount", tariffService.getCountTariffsAvailableForCorporate());
+            }
         }
         return response;
     }
