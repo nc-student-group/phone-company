@@ -6,6 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 public interface FileService {
-    public File convert(MultipartFile file, String path) throws IOException;
-    public String stringToFile(String picture, String path);
+    File convert(MultipartFile file, String path) throws IOException;
+    String stringToFile(String picture, String path);
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,12 +47,16 @@ public class FileServiceImpl implements FileService {
     public String stringToFile(String picture, String path) {
         if (picture != null) {
             if (picture.substring(0, 10).equals("data:image")) {
+                LOGGER.debug("Image metadata: {}", picture.substring(0, 10));
                 String base64Image = picture.split(",")[1];
-                byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Image);
+                LOGGER.debug("base64 representation of the binary file with an image: {}", base64Image);
+                byte[] imageBytes = DatatypeConverter.parseBase64Binary(base64Image);
                 BufferedImage img = null;
                 try {
                     img = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                    File file = new File("tariff-picture." + picture.split(";")[0].split("/")[1]);
+                    LOGGER.debug("picture.split(\";\")[0]: {}", picture.split(";")[0]);
+                    LOGGER.debug("picture.split(\";\")[0].split(\"/\")[1]: {}", picture.split(";")[0].split("/")[1]);
+                    File file = new File("picture." + picture.split(";")[0].split("/")[1]);
                     ImageIO.write(img, picture.split(";")[0].split("/")[1], file);
                     return uploadFileToAmazon(file, path);
                 } catch (IOException e) {
@@ -72,10 +77,8 @@ public class FileServiceImpl implements FileService {
             upload.waitForCompletion();
             file.delete();
             return S3_URL + BUCKET_NAME + "/" + path + "/" + file.getName();
-        } catch (AmazonClientException amazonClientException) {
+        } catch (AmazonClientException | InterruptedException amazonClientException) {
             amazonClientException.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         return "";
     }
