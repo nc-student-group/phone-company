@@ -5,6 +5,8 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.enums.ComplaintCategory;
+import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +35,10 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Complaint entity) {
         try {
-            preparedStatement.setString(1, entity.getStatus());
+            preparedStatement.setString(1, entity.getStatus().name());
             preparedStatement.setDate(2, entity.getDate());
             preparedStatement.setString(3, entity.getText());
-            preparedStatement.setString(4, entity.getType());
+            preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
         } catch (SQLException e) {
@@ -47,10 +49,10 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Complaint entity) {
         try {
-            preparedStatement.setString(1, entity.getStatus());
+            preparedStatement.setString(1, entity.getStatus().name());
             preparedStatement.setDate(2, entity.getDate());
             preparedStatement.setString(3, entity.getText());
-            preparedStatement.setString(4, entity.getType());
+            preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
 
@@ -65,10 +67,10 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
         Complaint complaint = new Complaint();
         try {
             complaint.setId(rs.getLong("id"));
-            complaint.setStatus(rs.getString("status"));
+            complaint.setStatus(ComplaintStatus.valueOf(rs.getString("status")));
             complaint.setDate(rs.getDate("date"));
             complaint.setText(rs.getString("text"));
-            complaint.setType(rs.getString("type"));
+            complaint.setType(ComplaintCategory.valueOf(rs.getString("type")));
             complaint.setUser(userDao.getById(rs.getLong("user_id")));
             complaint.setSubject(rs.getString("subject"));
         } catch (SQLException e) {
