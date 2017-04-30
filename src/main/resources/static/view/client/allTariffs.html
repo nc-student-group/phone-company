@@ -1,0 +1,112 @@
+<div class="wrapper">
+    <div class="sidebar" data-color="purple">
+
+        <div class="sidebar-wrapper" data-color="azure">
+            <div class="logo">
+                <a href="/#/index" class="simple-text">
+                    Phone Company
+                </a>
+            </div>
+
+            <ul class="nav">
+                <li>
+                    <a href="/#/client">
+                        <i class="pe-7s-user"></i>
+                        <p>User Profile</p>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/#/client/tariffs">
+                        <i class="pe-7s-note2"></i>
+                        <p>Tariff plans</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/client/services">
+                        <i class="pe-7s-note"></i>
+                        <p>Services</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <h3 class="navbar-brand">Customer page</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a ng-click="logout()">
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Tariff plans</h4>
+                                <p class="category">Available tariff plans</p>
+                            </div>
+                            <hr/>
+                            <div class="row" style="margin: 0;">
+                                <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs" ng-click="tariffClick(t.id)">
+                                    <div class="tariff-picture"><img ng-src="{{t.pictureUrl}}" width="90%"/></div>
+                                    <div class="tariff-picture"
+                                         style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>
+                                    </div>
+                                    <div class="row" style="text-align: center; font-size: 16px; color: #161121">
+                                        {{t.price}} auh / 30 days
+                                    </div>
+                                    <div class="row">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2" ng-click="tariffClick(t.id); $event.stopPropagation();">
+                                            More
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="padding: 10px;"
+                                     ng-click="nextPage()" ng-show="tariffsCount > tariffs.length">
+                                    <div class="tariff-picture"><img src="../../css/img/show-more.png" width="90%"/></div>
+                                    <div class="row" style="height: 47px;"></div>
+                                    <div class="row">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="nextPage(); $event.stopPropagation();">
+                                            Show More
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

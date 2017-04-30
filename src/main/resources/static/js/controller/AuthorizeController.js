@@ -50,6 +50,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.loginClick = function () {
             console.log('Trying to login');
+            $scope.preloader.send = true;
             LoginService.login("username=" + $scope.user.email +
                 "&password=" + $scope.user.password).then(function (data) {
                     LoginService.tryLogin().then(function (response) {
@@ -57,10 +58,12 @@ angular.module('phone-company').controller('AuthorizeController', [
                         console.log('Currently logged in role is: ' + loggedInRole);
                         var redirectionUrl = loggedInRole.toLowerCase();
                         console.log('Redirecting to: ' + redirectionUrl);
+                        $scope.preloader.send = false;
                         $location.path(redirectionUrl);
                     });
                 },
                 function (data) {
+                    $scope.preloader.send = false;
                     toastr.error('Bad credentials', 'Error');
                 });
         };
