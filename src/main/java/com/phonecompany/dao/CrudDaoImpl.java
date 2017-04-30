@@ -117,9 +117,9 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     }
 
     @Override
-    public void beginTransaction(){
-        try(Connection conn = dbManager.getConnection();
-            PreparedStatement ps = conn.prepareStatement(BEGIN_TRANSACTION)) {
+    public void beginTransaction() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(BEGIN_TRANSACTION)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new TransactionBeginException(e);
@@ -127,9 +127,9 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     }
 
     @Override
-    public void commit(){
-        try(Connection conn = dbManager.getConnection();
-            PreparedStatement ps = conn.prepareStatement(COMMIT_TRANSACTION)) {
+    public void commit() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(COMMIT_TRANSACTION)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new TransactionCommitException(e);
@@ -137,9 +137,9 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     }
 
     @Override
-    public void rollback(){
-        try(Connection conn = dbManager.getConnection();
-            PreparedStatement ps = conn.prepareStatement(ROLLBACK_TRANSACTION)) {
+    public void rollback() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(ROLLBACK_TRANSACTION)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new TransactionCommitException(e);

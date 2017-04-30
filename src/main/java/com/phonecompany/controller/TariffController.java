@@ -2,16 +2,16 @@ package com.phonecompany.controller;
 
 
 import com.phonecompany.model.*;
+import com.phonecompany.model.CustomerService;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.interfaces.CustomerTariffService;
-import com.phonecompany.service.interfaces.RegionService;
-import com.phonecompany.service.interfaces.TariffRegionService;
-import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.service.CustomerServiceImpl;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -36,6 +36,12 @@ public class TariffController {
 
     @Autowired
     private CustomerController customerController;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private CustomerServiceImpl customerService;
 
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
@@ -70,40 +76,33 @@ public class TariffController {
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff tariff = tariffRegions.get(0).getTariff();
-            if(tariffService.findByTariffName(tariff.getTariffName()) != null){
-                return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+            if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
+                return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
             }
             tariff.setProductStatus(ProductStatus.ACTIVATED);
             tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            tariffService.setAutoCommit(false);
-            tariffService.beginTransaction();
-            try {
-                Tariff savedTariff = tariffService.save(tariff);
-                LOGGER.debug("Tariff added {}", savedTariff);
-                tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                    if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                        tariffRegion.setTariff(savedTariff);
-                        tariffRegionService.save(tariffRegion);
-                        LOGGER.debug("Tariff-region added {}", tariffRegion);
-                    }
-                });
-                tariffService.commit();
-            }catch (Exception e){
-                tariffService.rollback();
-            }finally {
-                tariffService.setAutoCommit(true);
-            }
+            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+            Tariff savedTariff = tariffService.save(tariff);
+            LOGGER.debug("Tariff added {}", savedTariff);
+            tariffRegions.forEach((TariffRegion tariffRegion) -> {
+                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                    tariffRegion.setTariff(savedTariff);
+                    tariffRegionService.save(tariffRegion);
+                    LOGGER.debug("Tariff-region added {}", tariffRegion);
+                }
+            });
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/tariff/add/single", method = RequestMethod.POST)
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
-        if(tariffService.findByTariffName(tariff.getTariffName()) != null){
-            return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+        if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
+            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
         Tariff savedTariff = tariffService.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -117,22 +116,14 @@ public class TariffController {
     @RequestMapping(value = "/api/tariff/update/single", method = RequestMethod.POST)
     public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
         Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
-        if(temp != null && temp.getId() != tariff.getId()){
-            return new ResponseEntity<>(new Error("Tariff with name \""+tariff.getTariffName()+"\" already exist!"), HttpStatus.BAD_REQUEST);
+        if (temp != null && temp.getId() != tariff.getId()) {
+            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());
-        tariffService.setAutoCommit(false);
-        tariffService.beginTransaction();
-        try {
-            Tariff updatedTariff = tariffService.update(tariff);
-            tariffRegionService.deleteByTariffId(updatedTariff.getId());
-            LOGGER.debug("Tariff added {}", updatedTariff);
-            tariffService.commit();
-        }catch (Exception e){
-            tariffService.rollback();
-        }finally {
-            tariffService.setAutoCommit(true);
-        }
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+        Tariff updatedTariff = tariffService.update(tariff);
+        tariffRegionService.deleteByTariffId(updatedTariff.getId());
+        LOGGER.debug("Tariff added {}", updatedTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
@@ -149,6 +140,30 @@ public class TariffController {
         Customer customer = customerController.getCustomerByCurrentUserId();
         LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
         return this.customerTariffService.getByClientId(customer);
+    }
+
+    @RequestMapping(value = "/api/tariff/update/status/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
+                                                   @PathVariable("status") ProductStatus productStatus) {
+        this.tariffService.updateTariffStatus(tariffId, productStatus);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariffs/available/get/{page}/{size}", method = RequestMethod.GET)
+    public Map<String, Object> getTariffsAvailableForCustomer(@PathVariable("page") int page,
+                                                       @PathVariable("size") int size) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Map<String, Object> response = new HashMap<>();
+        if (customer.getCorporate() == null) {
+            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
+        } else {
+            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
+        }
+        return response;
     }
 
 }

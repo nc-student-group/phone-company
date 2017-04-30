@@ -3,7 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -19,6 +19,7 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<Customer> confirmMessageCreator,
                                EmailService emailService) {
-        this.customerDao = (CustomerDao)customerDao;
+        this.customerDao = (CustomerDao) customerDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.confirmMessageCreator = confirmMessageCreator;
@@ -84,13 +85,16 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
         return super.update(user);
     }
+
     @Override
-    public List<Customer> getAllCustomersPaging(int page, int size,long rId,String status){
-        return customerDao.getAllCustomersPaging(page,size,rId,status);
+    public List<Customer> getAllCustomersPaging(int page, int size, long regionId, String status) {
+        return customerDao.getPaging(page, size, regionId, status);
     }
+
     @Override
-    public int getCountCustomers(long rId,String status){
-        return customerDao.getCountCustomers(rId,status);
+    public int getCountCustomers(long regionId, String status) {
+        return customerDao.getEntityCount(regionId, status);
     }
+
 }
 

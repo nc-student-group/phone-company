@@ -1,9 +1,8 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.CustomerProductStatus;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 
 public class CustomerService extends DomainEntity{
 
@@ -11,21 +10,18 @@ public class CustomerService extends DomainEntity{
     private Customer customer;
     @NotNull(message = "Service must not be null")
     private Service service;
-    @NotNull(message = "Date must not be null")
-    private Date orderDate;
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Order status must not be null")
-    private OrderStatus orderStatus;
+    private CustomerProductStatus customerProductStatus;
 
     public CustomerService(){}
 
-    public CustomerService(Customer customer, Service service, Date orderDate, double price, OrderStatus orderStatus) {
+    public CustomerService(Customer customer, Service service, double price, CustomerProductStatus customerProductStatus) {
         this.customer = customer;
         this.service = service;
-        this.orderDate = orderDate;
         this.price = price;
-        this.orderStatus = orderStatus;
+        this.customerProductStatus = customerProductStatus;
     }
 
     public Customer getCustomer() {
@@ -44,14 +40,6 @@ public class CustomerService extends DomainEntity{
         this.service = service;
     }
 
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
     public double getPrice() {
         return price;
     }
@@ -60,11 +48,11 @@ public class CustomerService extends DomainEntity{
         this.price = price;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public CustomerProductStatus getOrderStatus() {
+        return customerProductStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setOrderStatus(CustomerProductStatus orderStatus) {
+        this.customerProductStatus = orderStatus;
     }
 }

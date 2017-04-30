@@ -2,10 +2,7 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityModificationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.*;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
@@ -20,9 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
 @Repository
-public class ServiceDaoImpl extends CrudDaoImpl<Service>
+public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
         implements ServiceDao {
 
     private QueryLoader queryLoader;
@@ -47,6 +43,7 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
+            preparedStatement.setString(6, entity.getPictureUrl());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -60,7 +57,8 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
-            preparedStatement.setDouble(6, TypeMapper.getNullableId(entity));
+            preparedStatement.setString(6, entity.getPictureUrl());
+            preparedStatement.setDouble(7, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -76,40 +74,11 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
             service.setPrice(resultSet.getDouble("price"));
             service.setProductStatus(ProductStatus.valueOf(resultSet.getString("product_status")));
             service.setDiscount(resultSet.getDouble("discount"));
+            service.setPictureUrl(resultSet.getString("picture_url"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
         return service;
-    }
-
-    @Override
-    public List<Service> getByProductCategoryIdAndPaging(Long productCategoryId, int page, int size) {
-        List<Service> services = new ArrayList<>();
-        String getAllQuery = this.getQuery("getAll");
-        if (productCategoryId != 0) {
-            getAllQuery += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ?";
-        }
-        getAllQuery += " LIMIT ? OFFSET ?";
-
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(getAllQuery)) {
-            if (productCategoryId != 0) {
-                ps.setLong(1, productCategoryId);
-                ps.setInt(2, size);
-                ps.setInt(3, page * size);
-            } else {
-                ps.setInt(1, size);
-                ps.setInt(2, page * size);
-            }
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                services.add(init(rs));
-            }
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(productCategoryId, e);
-        }
-
-        return services;
     }
 
     @Override
@@ -146,21 +115,16 @@ public class ServiceDaoImpl extends CrudDaoImpl<Service>
     }
 
     @Override
-    public Integer getCountByProductCategoryIdAndPaging(long regionId) {
-        String query = this.getQuery("getCount");
-        if (regionId != 0) {
-            query += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id WHERE prod_category_id = ? ";
+    public String getWhereClause(Object... args) {
+
+        String where = "";
+        long productCategoryId = (long) args[0];
+
+        if (productCategoryId != 0) {
+            where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +
+                    "WHERE prod_category_id = ?";
+            this.preparedStatementParams.add(productCategoryId);
         }
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-            }
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
-        }
+        return where;
     }
 }

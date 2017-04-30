@@ -29,11 +29,16 @@ public class Tariff extends DomainEntity {
     private boolean isCorporate;
     @NotNull(message = "Creation date must not be null")
     private Date creationDate;
+    private Double discount;
+    private String pictureUrl;
+    private double price;
 
     public Tariff() {
     }
 
-    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming, boolean isCorporate, Date creationDate) {
+    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet,
+                  String callsInNetwork, String callsOnOtherNumbers, String sms, String mms,
+                  String roaming, boolean isCorporate, Date creationDate, Double discount, String pictureUrl) {
         super(id);
         this.tariffName = tariffName;
         this.productStatus = productStatus;
@@ -45,6 +50,8 @@ public class Tariff extends DomainEntity {
         this.roaming = roaming;
         this.isCorporate = isCorporate;
         this.creationDate = creationDate;
+        this.discount = discount;
+        this.pictureUrl = pictureUrl;
     }
     public boolean getIsCorporate() {  return isCorporate; }
 
@@ -130,6 +137,22 @@ public class Tariff extends DomainEntity {
         isCorporate = corporate;
     }
 
+    public Double getDiscount() { return discount; }
+
+    public void setDiscount(Double discount) { this.discount = discount; }
+
+    public String getPictureUrl() { return pictureUrl; }
+
+    public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "Tariff{" +
@@ -143,6 +166,8 @@ public class Tariff extends DomainEntity {
                 ", roaming='" + roaming + '\'' +
                 ", isCorporate=" + isCorporate +
                 ", creationDate=" + creationDate +
+                ", discount=" + discount +
+                ", pictureUrl=" + pictureUrl +
                 "} " + super.toString();
     }
 }

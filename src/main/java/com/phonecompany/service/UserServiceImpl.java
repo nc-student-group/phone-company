@@ -19,7 +19,9 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -42,7 +44,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                            @Qualifier("confirmationEmailCreator")
                                    MailMessageCreator<User> confirmMessageCreator,
                            @Qualifier("passwordAssignmentMessageCreator")
-                                       MailMessageCreator<User> passwordAssigmentCreator,
+                                   MailMessageCreator<User> passwordAssigmentCreator,
                            EmailService emailService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
@@ -71,7 +73,6 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public Status getStatus() {
         return Status.ACTIVATED;
     }
-
     @Override
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
@@ -80,6 +81,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
         return super.update(user);
     }
+
     @Override
     public User resetPassword(User user) {
         user.setPassword(generatePassword());
@@ -87,8 +89,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return update(user);
     }
 
-    private void sendResetPasswordMessage(User user)
-    {
+    private void sendResetPasswordMessage(User user) {
         SimpleMailMessage resetPasswordMessage =
                 this.resetPassMessageCreator.constructMessage(user);
         LOG.info("Sending email reset password to: {}", user.getEmail());
@@ -107,12 +108,12 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
 
     @Override
-    public List<User> getAllUsersPaging(int page, int size, int role, String status) {
-        return userDao.getAllUsersPaging(page,size,role,status);
+    public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {
+        return userDao.getPaging(page, size, roleId, status);
     }
 
     @Override
-    public int getCountUsers(int role, String status) {
-        return userDao.getCountUsers(role,status);
+    public int getCountUsers(int roleId, String status) {
+        return userDao.getEntityCount(roleId, status);
     }
 }

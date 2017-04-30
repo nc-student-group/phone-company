@@ -1,28 +1,28 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Repository
 public class UserDaoImpl extends AbstractUserDaoImpl<User>
         implements UserDao {
 
     private QueryLoader queryLoader;
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 
     @Autowired
     public UserDaoImpl(QueryLoader queryLoader) {
@@ -69,68 +69,27 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         }
     }
 
-    private String getUserByVerificationTokenQuery() {
-        return this.getQuery("get.user.by.verification.token");
-    }
-
     @Override
     public String getQuery(String type) {
         return queryLoader.getQuery("query.user." + type);
     }
 
-    public List<User> getAllUsersPaging(int page, int size, int role, String status){
-        List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getAllByRoleAndStatus"), params, role,status);
-        query+=" LIMIT ? OFFSET ?";
-        params.add(size);
-        params.add(page*size);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<User> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        }
-    }
+    @Override
+    public String getWhereClause(Object... args) {
 
-    private String buildQuery(String query, List params, int role, String status){
-        String where = " WHERE dbu.role_id <> 4 and dbu.role_id <> 1";
-        if(role>0){
-            where+="and dbu.role_id = ?";
-            params.add(role);
-        }
-        if(!status.equals("ALL")){
-            where+=" and dbu.status = ?";
-            params.add(status);
-        }
-        query+=where;
+        String where = "";
 
-        return query;
-    }
-    public int getCountUsers(int role, String status){
-        List<Object> params = new ArrayList<>();
-        String query  = buildQuery(this.getQuery("getCount"),params, role,status);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for(int i=0;i<params.size();i++){
-                ps.setObject(i+1,params.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            return 0;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
+        int roleId = (int) args[0];
+        String status = (String) args[1];
+
+        if (roleId > 0) {
+            where += " AND role_id = ?";
+            this.preparedStatementParams.add(roleId);
         }
+        if (!status.equals("ALL")) {
+            where += " AND status = ?";
+            this.preparedStatementParams.add(status);
+        }
+        return where;
     }
 }

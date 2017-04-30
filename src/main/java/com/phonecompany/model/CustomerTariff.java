@@ -1,31 +1,27 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.CustomerProductStatus;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 
 public class CustomerTariff extends DomainEntity {
 
     private Customer customer;
     private Corporate corporate;
-    @NotNull(message = "Order date must not be null")
-    private Date orderDate;
     @NotNull(message = "Total price must not be null")
     private double totalPrice;
     @NotNull(message = "Order status must not be null")
-    private OrderStatus orderStatus;
+    private CustomerProductStatus customerProductStatus;
     @NotNull(message = "Tariff must not be null")
     private Tariff tariff;
 
     public CustomerTariff(){}
 
-    public CustomerTariff(Customer customer, Corporate corporate, Date orderDate, double totalPrice, OrderStatus orderStatus, Tariff tariff) {
+    public CustomerTariff(Customer customer, Corporate corporate, double totalPrice, CustomerProductStatus customerProductStatus, Tariff tariff) {
         this.customer = customer;
         this.corporate = corporate;
-        this.orderDate = orderDate;
         this.totalPrice = totalPrice;
-        this.orderStatus = orderStatus;
+        this.customerProductStatus = customerProductStatus;
         this.tariff = tariff;
     }
 
@@ -45,14 +41,6 @@ public class CustomerTariff extends DomainEntity {
         this.corporate = corporate;
     }
 
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -61,12 +49,12 @@ public class CustomerTariff extends DomainEntity {
         this.totalPrice = totalPrice;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public CustomerProductStatus getOrderStatus() {
+        return customerProductStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setOrderStatus(CustomerProductStatus orderStatus) {
+        this.customerProductStatus = orderStatus;
     }
 
     public Tariff getTariff() {
@@ -82,9 +70,8 @@ public class CustomerTariff extends DomainEntity {
         return "CustomerTariff{" +
                 "customer=" + customer +
                 ", corporate=" + corporate +
-                ", orderDate=" + orderDate +
                 ", totalPrice=" + totalPrice +
-                ", orderStatus=" + orderStatus +
+                ", orderStatus=" + customerProductStatus +
                 ", tariff=" + tariff +
                 "} " + super.toString();
     }

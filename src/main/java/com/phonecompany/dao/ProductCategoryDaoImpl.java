@@ -9,12 +9,8 @@ import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
         implements ProductCategoryDao {
