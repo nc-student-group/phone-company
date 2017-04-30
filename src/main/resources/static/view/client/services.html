@@ -1,11 +1,11 @@
 <div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
+    <div class="sidebar" data-color="blue">
         <div class="sidebar-wrapper">
             <div class="logo">
                 <a href="/#/index" class="simple-text">
                     Phone Company
                 </a>
+                <span class="close-sidebar fa fa-times" ng-click="shifted = true"></span>
             </div>
 
             <ul class="nav">
@@ -35,14 +35,10 @@
         <nav class="navbar navbar-default navbar-fixed">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse"
-                            data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <h3 class="navbar-brand">Customer page</h3>
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand page-role-title">Customer page</h3>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -56,112 +52,36 @@
             </div>
         </nav>
 
-
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div ng-hide="editing">
-                            <div class="card">
-                                <div class="header">
-                                    <h4 class="title">Additional Services</h4>
-                                    <p class="category">Additional services</p>
-                                </div>
-                                <hr/>
-                                <div class="row" style="padding-left: 15px">
-                                    <div class="col-sm-4">
-                                        <div class="dataTables_length" id="servicesTable_length">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Show entries:</label>
-                                                <md-select ng-model="size" md-on-close="updateData()">
-                                                    <md-option value="5">5</md-option>
-                                                    <md-option value="10">10</md-option>
-                                                    <md-option value="25">25</md-option>
-                                                    <md-option value="50">50</md-option>
-                                                    <md-option value="100">100</md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="dataTables_length">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Category:</label>
-                                                <md-select ng-model="currentCategory" md-on-close="updateData()">
-                                                    <md-option value="0">All Categories</md-option>
-                                                    <md-option ng-repeat="c in categories" value="{{c.id}}">
-                                                        {{c.categoryName}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="content table-responsive">
-                                    <table id="servicesTable" class="table table-striped table-bordered table-hover">
-                                        <!--name-->
-                                        <col width="20%">
-                                        <!--region price-->
-                                        <col width="10%">
-                                        <!--status-->
-                                        <col width="15%">
-                                        <!--calls-->
-                                        <col width="10%">
-                                        <!--sms-->
-                                        <col width="20%">
-                                        <!--date-->
-                                        <col width="15%">
-                                        <thead>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Status</th>
-                                        <th>Discount</th>
-                                        <th>Category</th>
-                                        </thead>
-                                        <tbody>
-
-                                        <tr ng-repeat="s in services">
-                                            <td>{{s.serviceName}}</td>
-                                            <td>{{s.price}}</td>
-                                            <td>{{s.productStatus}}</td>
-                                            <td>{{s.discount}}</td>
-                                            <td>{{s.productCategory.categoryName}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                    <div class="row">
-                                        <div class="col-sm-7">
-                                            <div class="dataTables_paginate paging_simple_numbers"
-                                                 id="services_table_paginate">
-                                                <ul class="pagination">
-                                                    <li class="paginate_button previous" id="tariffTable_previous">
-                                                        <a aria-controls="servicesTable" data-dt-idx="0"
-                                                           tabindex="0" ng-show="page > 0"
-                                                           ng-click="previousPage()">Previous</a>
-                                                    </li>
-                                                    <li class="paginate_button active"><a
-                                                            aria-controls="tariffTable"
-                                                            data-dt-idx="1" tabindex="0">{{page + 1}}</a>
-                                                    </li>
-                                                    <li class="paginate_button next pointable" id="servicesTable_next">
-                                                        <a
-                                                                aria-controls="servicesTable" data-dt-idx="2"
-                                                                tabindex="0" ng-show="(page + 1) * size < servicesCount"
-                                                                ng-click="nextPage()">Next</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div>
-                                                <label><b>Services count: {{servicesCount}}</b></label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="col-md-12">
+            <div ng-cloak>
+                <div class="container-fluid">
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom
+                                 md-selected="currentCategory">
+                            <md-tab ng-repeat="c in categories"
+                                    label="{{c.categoryName}}"
+                                    md-on-select="updateServicesByCategory()">
+                            </md-tab>
+                        </md-tabs>
+                        <img class="center-block" style="padding-top: 50px"
+                             ng-show="loading === true" src="../../css/ring.gif" alt=""/>
+                        <div ng-show="loading === false"
+                             class="container-fluid services-cards">
+                            <div ng-repeat="s in services" class="col-md-4">
+                                <figure class="snip1174 blue">
+                                    <img ng-src="{{s.pictureUrl}}" alt=""/>
+                                    <figcaption>
+                                        <h2>{{s.serviceName}}</h2>
+                                        <p>
+                                            If you do the job badly enough, sometimes you don't get
+                                            asked to do it again.
+                                        </p>
+                                        <a href="#">Learn more</a>
+                                    </figcaption>
+                                </figure>
                             </div>
                         </div>
-                    </div>
+                    </md-content>
                 </div>
             </div>
         </div>

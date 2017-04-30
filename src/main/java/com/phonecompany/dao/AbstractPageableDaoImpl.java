@@ -38,6 +38,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
             return result;
 
         } catch (SQLException e) {
+            this.preparedStatementParams.clear();
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
         }
@@ -84,6 +85,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
             return 0;
         } catch (SQLException e) {
+            this.preparedStatementParams.clear();
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
         }

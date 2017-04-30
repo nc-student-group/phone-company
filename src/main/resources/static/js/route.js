@@ -107,7 +107,7 @@
         $routeProvider.when('/client/services',
             {
                 templateUrl: 'view/client/services.html',
-                controller: 'ServicesController'
+                controller: 'ClientServicesController'
             });
         $routeProvider.when('/client/tariffs/available',
             {

@@ -4,6 +4,14 @@
     top: 7px;
 }
 
+.services-content-shift {
+    padding-left: 60px;
+    -webkit-transition: all 5s ease-in-out;
+    -moz-transition: all 5s ease-in-out;
+    -o-transition: all 5s ease-in-out;
+    transition: all 5s ease-in-out;
+}
+
 .close-sidebar:hover {
     color: #fff;
     cursor: pointer;
