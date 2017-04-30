@@ -1,19 +1,22 @@
 package com.phonecompany.model;
 
+import com.phonecompany.model.enums.ComplaintCategory;
+import com.phonecompany.model.enums.ComplaintStatus;
+
 import java.sql.Date;
 
 public class Complaint extends DomainEntity {
 
-    private String status;
+    private ComplaintStatus status;
     private Date date;
     private String text;
-    private String type;
+    private ComplaintCategory type;
     private User user;
     private String subject;
 
     public Complaint(){}
 
-    public Complaint(String status, Date date, String text, String type, User user, String subject) {
+    public Complaint(ComplaintStatus status, Date date, String text, ComplaintCategory type, User user, String subject) {
         this.status = status;
         this.date = date;
         this.text = text;
@@ -22,11 +25,11 @@ public class Complaint extends DomainEntity {
         this.subject = subject;
     }
 
-    public String getStatus() {
+    public ComplaintStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ComplaintStatus status) {
         this.status = status;
     }
 
@@ -46,11 +49,11 @@ public class Complaint extends DomainEntity {
         this.text = text;
     }
 
-    public String getType() {
+    public ComplaintCategory getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ComplaintCategory type) {
         this.type = type;
     }
 
