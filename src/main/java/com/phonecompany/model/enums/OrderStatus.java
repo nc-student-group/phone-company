@@ -1,7 +1,13 @@
 package com.phonecompany.model.enums;
 
 public enum OrderStatus {
-    ACTIVE,
-    SUSPENDED,
-    DEACTIVATED
+    CREATED,
+    DONE,
+    PENDING,
+    CANCELED;
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }

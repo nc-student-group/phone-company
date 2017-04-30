@@ -6,6 +6,7 @@ import com.phonecompany.model.enums.UserRole;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TypeMapper {
@@ -29,7 +30,7 @@ public class TypeMapper {
      */
     public static UserRole getUserRoleByDatabaseId(Long databaseId) {
         return Arrays.stream(UserRole.values())
-                .filter(ur -> ur.getDatabaseId() == databaseId)
+                .filter(ur -> Objects.equals(ur.getDatabaseId(), databaseId))
                 .findFirst().orElse(null);
     }
 

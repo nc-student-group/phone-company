@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * @param <T> entity type
  */
 public abstract class AbstractUserDaoImpl<T extends User>
-    extends CrudDaoImpl<T> implements AbstractUserDao<T> {
+    extends AbstractPageableDaoImpl<T> implements AbstractUserDao<T> {
 
     /**
      * Finds entity by its email

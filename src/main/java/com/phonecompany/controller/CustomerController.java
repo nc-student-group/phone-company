@@ -2,9 +2,9 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Address;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
+import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.service.interfaces.AddressService;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
@@ -24,9 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.phonecompany.controller.UserController.USERS_RESOURCE_NAME;
 import static com.phonecompany.model.enums.UserRole.CLIENT;
-import static com.phonecompany.util.RestUtil.getResourceHeaders;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -89,12 +87,16 @@ public class CustomerController {
             throws URISyntaxException {
         LOG.debug("Token retrieved from the request parameter: {}", token);
         this.customerService.activateUserByToken(token);
+        HttpHeaders redirectionHeaders = this.getRedirectionHeaders();
 
-        URI registration = new URI("http://localhost:8090/#/login/success");
+        return new ResponseEntity<>(redirectionHeaders, HttpStatus.SEE_OTHER);
+    }
+
+    private HttpHeaders getRedirectionHeaders() throws URISyntaxException {
+        URI registration = new URI("https://phone-company.herokuapp.com/#/login/success");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
-
-        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        return httpHeaders;
     }
 
     @RequestMapping(method = POST, value = "/api/customer/save")
@@ -105,8 +107,7 @@ public class CustomerController {
             eventPublisher.publishEvent(new OnUserCreationEvent(customer));
         }
         Customer persistedCustomer = this.customerService.save(customer);
-        HttpHeaders resourceHeaders = getResourceHeaders(USERS_RESOURCE_NAME, persistedCustomer.getId());
-        return new ResponseEntity<>(persistedCustomer, resourceHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/customer/get")

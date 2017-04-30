@@ -19,16 +19,19 @@ public class Service extends DomainEntity {
     private double discount;
     @NotNull(message = "Product category must not be null")
     private ProductCategory productCategory;
+    @NotNull(message = "Picture URL must not be null")
+    private String pictureUrl;
 
     public Service(){}
 
     public Service(ProductCategory productCategory, String serviceName,
-                   double price, ProductStatus productStatus, double discount) {
+                   double price, ProductStatus productStatus, double discount, String pictureUrl) {
         this.productCategory = productCategory;
         this.serviceName = serviceName;
         this.price = price;
         this.productStatus = productStatus;
         this.discount = discount;
+        this.pictureUrl = pictureUrl;
     }
 
     public ProductCategory getProductCategory() {
@@ -71,6 +74,10 @@ public class Service extends DomainEntity {
         this.discount = discount;
     }
 
+    public String getPictureUrl() { return pictureUrl; }
+
+    public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+
     @Override
     public String toString() {
         return "Service{" +
@@ -79,6 +86,7 @@ public class Service extends DomainEntity {
                 ", price=" + price +
                 ", productStatus=" + productStatus +
                 ", discount=" + discount +
+                ", pictureUrl=" + pictureUrl +
                 "} " + super.toString();
     }
 }

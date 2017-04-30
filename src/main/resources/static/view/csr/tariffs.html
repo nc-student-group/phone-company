@@ -6,6 +6,7 @@
                 <a href="/#/index" class="simple-text">
                     Phone Company
                 </a>
+                <span class="close-sidebar fa fa-times"></span>
             </div>
 
             <ul class="nav">
@@ -39,6 +40,12 @@
                         <p>Complaints</p>
                     </a>
                 </li>
+                <li>
+                    <a href="/#/csr/corporations">
+                        <i class="pe-7s-attention"></i>
+                        <p>Corporations</p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -47,14 +54,10 @@
         <nav class="navbar navbar-default navbar-fixed">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse"
-                            data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <h3 class="navbar-brand">CSR page</h3>
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand page-role-title">CSR page</h3>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -74,8 +77,8 @@
                     <div class="col-md-12">
                         <div ng-hide="editing" class="card">
                             <div class="header">
-                                <h4 class="title">Tariffs</h4>
-                                <p class="category">All tariffs</p>
+                                <h4 class="title">Tariff plans</h4>
+                                <p class="category">All tariff plans</p>
                             </div>
                             <hr/>
                             <div class="content table-responsive">
@@ -145,18 +148,22 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="t in tariffs" class="tariff-td">
-                                        <td>{{t.tariff.tariffName}}</td>
+                                        <td>{{t.tariff.tariffName}}<br>
+                                        <a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a></td>
                                         <td style="padding: 0;">
-                                            <table width="100%" style="table-layout: fixed;" class="table table-striped">
+                                            <table width="100%" style="table-layout: fixed;"
+                                                   class="table table-striped" ng-hide="t.tariff.isCorporate">
                                                 <tr ng-repeat="r in t.regions" class="tariff-td">
                                                     <td>{{r.region.nameRegion}}</td>
                                                     <td style="text-align: left; padding-right: 0;">{{r.price}}</td>
                                                 </tr>
                                             </table>
+                                            <span ng-show="t.tariff.isCorporate">Price: {{t.tariff.price}}</span>
                                         </td>
                                         <td>{{t.tariff.productStatus}}</td>
                                         <td style="padding: 0;">
-                                            <table width="100%" style="table-layout: fixed;" class="table table-striped">
+                                            <table width="100%" style="table-layout: fixed;"
+                                                   class="table table-striped">
                                                 <tr class="tariff-td">
                                                     <td style="word-wrap: break-word;">Calls in Network</td>
                                                     <td style="text-align: left">{{t.tariff.callsInNetwork}}</td>
@@ -172,7 +179,8 @@
                                             </table>
                                         </td>
                                         <td style="padding: 0;">
-                                            <table width="100%" style="table-layout: fixed;" class="table table-striped">
+                                            <table width="100%" style="table-layout: fixed;"
+                                                   class="table table-striped">
                                                 <tr class="tariff-td">
                                                     <td>SMS</td>
                                                     <td style="text-align: left">{{t.tariff.sms}}</td>
@@ -230,7 +238,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div>
-                                            <label><b>Tariffs selected: {{tariffsSelected}}</b></label>
+                                            <label><b>Tariffs founded: {{tariffsSelected}}</b></label>
                                         </div>
                                     </div>
                                 </div>
@@ -243,99 +251,128 @@
                                 <h4 class="title">Add tariff</h4>
                             </div>
                             <div class="content">
-                                <form>
+                                <form name="addTariffForm" id="addTariffForm"
+                                      autocomplete="off" novalidate ng-submit="addTariff()">
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Tariff name</label>-->
-                                        <!--</div>-->
                                         <div class="col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" placeholder="Tariff name"
+                                                <input type="text" placeholder="Tariff name" name="tariffName"
                                                        ng-model="currentTariff.tariffName" md-maxlength="150" required/>
+                                                <div ng-messages="addTariffForm.tariffName.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Tariff name is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
 
                                         </div>
                                     </div>
-
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Internet</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Internet"
+                                                <input type="text" class="form-control" placeholder="Internet" name="internet"
                                                        ng-model="currentTariff.internet" md-maxlength="150" required/>
+                                                <div ng-messages="addTariffForm.internet.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Internet is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Calls in network</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Calls in network"
+                                                <input type="text" class="form-control" placeholder="Calls in network" name="callsInNetwork"
                                                        ng-model="currentTariff.callsInNetwork" md-maxlength="150"
                                                        required/>
+                                                <div ng-messages="addTariffForm.callsInNetwork.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Calls in network is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Calls on other numbers</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
                                                 <input type="text" class="form-control"
                                                        placeholder="Calls on other number"
-                                                       ng-model="currentTariff.callsOnOtherNumbers" md-maxlength="150"
+                                                       ng-model="currentTariff.callsOnOtherNumbers" md-maxlength="150" name="callsOnOtherNumbers"
                                                        required/>
+                                                <div ng-messages="addTariffForm.callsOnOtherNumbers.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Calls on other numbers is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>SMS</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="SMS"
+                                                <input type="text" class="form-control" placeholder="SMS" name="sms"
                                                        ng-model="currentTariff.sms" md-maxlength="150" required/>
+                                                <div ng-messages="addTariffForm.sms.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        SMS is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>MMS</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="MMS"
+                                                <input type="text" class="form-control" placeholder="MMS" name="mms"
                                                        ng-model="currentTariff.mms" md-maxlength="150" required/>
+                                                <div ng-messages="addTariffForm.mms.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        MMS is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Roaming</label>-->
-
-                                        <!--</div>-->
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Roaming"
+                                                <input type="text" class="form-control" placeholder="Roaming" name="roaming"
                                                        ng-model="currentTariff.roaming" md-maxlength="150" required/>
+                                                <div ng-messages="addTariffForm.roaming.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Roaming is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label>Is corporate</label>-->
-                                        <!--</div>-->
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" min="0" max="100" class="form-control" name="discount"
+                                                       placeholder="Discount"
+                                                       ng-model="currentTariff.discount" required ng-pattern="discountPattern"/>
+                                                <div ng-messages="addTariffForm.discount.$error" role="alert" multiple>
+                                                    <div ng-message="pattern">
+                                                        This field can only contain numbers from 0 to 100
+                                                    </div>
+                                                    <div ng-message="required">
+                                                        Discount is required.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-checkbox type="checkbox" class="md-block"
                                                          ng-model="currentTariff.isCorporate">Is corporate
@@ -343,70 +380,87 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Regions & prices</label>
+                                        <img ng-src="{{currentTariff.pictureUrl}}" alt="">
+                                        <md-button class="md-raised md-primary upload_photo" ng-click="uploadPicture()">
+                                            <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
+                                        </md-button>
+                                        <div>
+                                            <br/>
+                                            <input type="file" name="fileInput" id="fileInput"
+                                                   onchange="angular.element(this).scope().fileChanged(event)"/>
                                         </div>
-                                        <div class="form-group col-md-8">
+                                        <div class="bg_crop_modal" ng-show="imageCropStep == 2"
+                                             ng-click="clear()"></div>
+                                        <div ng-show="imageCropStep == 2" class="crop_files_images">
+                                            <image-crop
+                                                    data-height="240"
+                                                    data-width="360"
+                                                    data-shape="square"
+                                                    data-step="imageCropStep"
+                                                    src="imgSrc"
+                                                    data-result="currentTariff.pictureUrl"
+                                                    data-result-blob="resultBlob"
+                                                    crop="initCrop"
+                                                    padding="250"
+                                                    max-size="1024"
+                                            ></image-crop>
+                                            <br/>
+                                            <div class="wrp_crop_img_btn">
+                                                <md-button class="md-raised md-primary" ng-click="clear()">Cancel
+                                                </md-button>
+                                                <md-button class="md-raised md-primary" ng-click="initCrop = true">
+                                                    Crop
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="currentTariff.isCorporate">
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" class="form-control" name="price"
+                                                       placeholder="Price"
+                                                       ng-model="currentTariff.price" ng-change="checkTariffPrice(currentTariff)"/>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-hide="currentTariff.isCorporate">
+                                        <div class="form-group col-md-12">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label>Region</label>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
+                                                    <label>Price</label>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>Region</label>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <label>Price</label>
                                                 </div>
                                             </div>
-                                            <div class="row" ng-repeat="r in regionsToAdd">
-                                                <div class="col-md-6">
-                                                    <md-checkbox type="checkbox" class="md-block"
-                                                                 ng-click="toggle(r, regionsToSave)"
-                                                                 ng-checked="exists(r, regionsToSave)"><label>{{r.region.nameRegion}}</label>
-                                                    </md-checkbox>
-                                                    <!--<input type="checkbox" ng-click="toggle(r, regionsToSave)" ng-checked="exists(r, regionsToSave)">-->
-                                                    <!--<label>{{r.region.nameRegion}}</label>-->
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <md-input-container ng-show="exists(r, regionsToSave)"
-                                                                        style="margin: 0 0; padding: 0;">
-                                                        <input type="number" min="0"
-                                                               ng-model="r.price" class="form-control"
-                                                               ng-change="checkPrice(r)" md-maxlength="4">
-                                                    </md-input-container>
+                                            <div class="row">
+                                                <div class="col-md-5" ng-repeat="r in regionsToAdd">
+                                                    <div class="col-md-6">
+                                                        <md-checkbox type="checkbox" class="md-block"
+                                                                     ng-click="toggle(r, regionsToSave)"
+                                                                     ng-checked="exists(r, regionsToSave)"><label>{{r.region.nameRegion}}</label>
+                                                        </md-checkbox>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <md-input-container ng-show="exists(r, regionsToSave)"
+                                                                            style="margin: 0 0; padding: 0;">
+                                                            <input type="number"
+                                                                   ng-model="r.price" class="form-control"
+                                                                   ng-change="checkPrice(r, regionsToSave)">
+                                                        </md-input-container>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <!--<div class="row">-->
-                                            <!--<div class="col-md-5"><label>Region</label></div>-->
-                                            <!--<div class="col-md-5"><label>Price</label></div>-->
-                                            <!--<div class="col-md-2"></div>-->
-                                            <!--</div>-->
-                                            <!--<div class="row" ng-repeat="rts in regionsToSave">-->
-                                            <!--<div class="col-md-5">{{rts.region.nameRegion}}</div>-->
-                                            <!--<div class="col-md-5">{{rts.price}}</div>-->
-                                            <!--<div class="col-md-2">-->
-                                            <!--<button type="submit" class="btn btn-toggle btn-fill pull-left"-->
-                                            <!--ng-click="removeRegion()">Remove-->
-                                            <!--</button>-->
-                                            <!--</div>-->
-                                            <!--</div>-->
-                                            <!--<div class="row">-->
-                                            <!--<div class="col-md-5">-->
-                                            <!--<select class="form-control" ng-model="regionToAdd.region">-->
-                                            <!--<option ng-repeat="r in regions" ng-value="r">{{r.nameRegion}}</option>-->
-                                            <!--</select>-->
-                                            <!--</div>-->
-                                            <!--<div class="col-md-5">-->
-                                            <!--<input type="number" class="form-control" placeholder="Price"-->
-                                            <!--ng-model="currentTariff.price"/>-->
-                                            <!--</div>-->
-                                            <!--<div class="col-md-2">-->
-                                            <!--<button type="submit" class="btn btn-toggle btn-fill pull-left"-->
-                                            <!--ng-click="addRegionToList()">Add-->
-                                            <!--</button>-->
-                                            <!--</div>-->
-                                            <!--</div>-->
                                         </div>
                                     </div>
-                                    <button class="btn btn-info btn-fill pull-left"
-                                            ng-click="addTariff()">Add tariff
+                                    <button class="btn btn-info btn-fill pull-left" type="submit"
+                                            ng-disabled="addTariffForm.$invalid">Add tariff
                                     </button>
                                     <div class="clearfix"></div>
                                 </form>
@@ -416,15 +470,23 @@
                         <div ng-show="editing" id="tariff-editing" class="card">
                             <div class="header">
                                 <h4 class="title">Edit tariff</h4>
-                                <button class="btn btn-default btn-fill pull-left" ng-click="cancelEdit()"> < back to tariffs</button>
+                                <button class="btn btn-default btn-fill pull-left" ng-click="cancelEdit()"> < back to
+                                    tariffs
+                                </button>
                             </div>
                             <div class="content">
-                                <form>
+                                <form name="editTariffForm">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" placeholder="Tariff name"
+                                                <input type="text" placeholder="Tariff name" name="tariffName"
                                                        ng-model="tariffToEdit.tariffName" md-maxlength="150" required/>
+                                                <div ng-messages="editTariffForm.tariffName.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Tariff name is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
 
                                         </div>
@@ -432,17 +494,29 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Internet"
+                                                <input type="text" class="form-control" placeholder="Internet" name="internet"
                                                        ng-model="tariffToEdit.internet" md-maxlength="150" required/>
+                                                <div ng-messages="editTariffForm.internet.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Internet is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Calls in network"
+                                                <input type="text" class="form-control" placeholder="Calls in network" name="callsInNetwork"
                                                        ng-model="tariffToEdit.callsInNetwork" md-maxlength="150"
                                                        required/>
+                                                <div ng-messages="editTariffForm.callsInNetwork.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Calls in network is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
@@ -450,33 +524,74 @@
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
                                                 <input type="text" class="form-control"
-                                                       placeholder="Calls on other number"
+                                                       placeholder="Calls on other number" name="callsOnOtherNumbers"
                                                        ng-model="tariffToEdit.callsOnOtherNumbers" md-maxlength="150"
                                                        required/>
+                                                <div ng-messages="editTariffForm.callsOnOtherNumbers.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Calls on other numbers is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="SMS"
+                                                <input type="text" class="form-control" placeholder="SMS" name="sms"
                                                        ng-model="tariffToEdit.sms" md-maxlength="150" required/>
+                                                <div ng-messages="editTariffForm.sms.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        SMS is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="MMS"
+                                                <input type="text" class="form-control" placeholder="MMS" name="mms"
                                                        ng-model="tariffToEdit.mms" md-maxlength="150" required/>
+                                                <div ng-messages="editTariffForm.mms.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        MMS is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Roaming"
+                                                <input type="text" class="form-control" placeholder="Roaming" name="roaming"
                                                        ng-model="tariffToEdit.roaming" md-maxlength="150" required/>
+                                                <div ng-messages="editTariffForm.roaming.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Roaming is required.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" min="0" max="100" class="form-control" name="discount"
+                                                       placeholder="Discount"
+                                                       ng-model="tariffToEdit.discount" required ng-pattern="discountPattern"/>
+                                                <div ng-messages="editTariffForm.discount.$error" role="alert" multiple>
+                                                    <div ng-message="pattern">
+                                                        This field can only contain numbers from 0 to 100
+                                                    </div>
+                                                    <div ng-message="required">
+                                                        Discount is required.
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>
@@ -488,32 +603,80 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label>Regions & prices</label>
+                                        <img ng-src="{{tariffToEdit.pictureUrl}}" alt="">
+                                        <md-button class="md-raised md-primary upload_photo" ng-click="uploadPicture()">
+                                            <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
+                                        </md-button>
+                                        <div>
+                                            <br/>
+
                                         </div>
-                                        <div class="form-group col-md-8">
+                                        <div class="bg_crop_modal" ng-show="imageCropStep == 2"
+                                             ng-click="clear()"></div>
+                                        <div ng-show="imageCropStep == 2" class="crop_files_images">
+                                            <image-crop
+                                                    data-height="240"
+                                                    data-width="360"
+                                                    data-shape="square"
+                                                    data-step="imageCropStep"
+                                                    src="imgSrc"
+                                                    data-result="tariffToEdit.pictureUrl"
+                                                    data-result-blob="resultBlob"
+                                                    crop="initCrop"
+                                                    padding="250"
+                                                    max-size="1024"
+                                            ></image-crop>
+                                            <br/>
+                                            <div class="wrp_crop_img_btn">
+                                                <md-button class="md-raised md-primary" ng-click="clear()">Cancel
+                                                </md-button>
+                                                <md-button class="md-raised md-primary" ng-click="initCrop = true">
+                                                    Crop
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="tariffToEdit.isCorporate">
+                                        <div class="form-group col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="number" class="form-control" name="price"
+                                                       placeholder="Price"
+                                                       ng-model="tariffToEdit.price" ng-change="checkTariffPrice(tariffToEdit)"/>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-hide="tariffToEdit.isCorporate">
+                                        <div class="form-group col-md-12">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label>Region</label>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
+                                                    <label>Price</label>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>Region</label>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <label>Price</label>
                                                 </div>
                                             </div>
-                                            <div class="row" ng-repeat="r in regionsToAdd">
-                                                <div class="col-md-6">
-                                                    <md-checkbox type="checkbox" class="md-block"
-                                                                 ng-click="toggleEdit(r, regionsToEdit)"
-                                                                 ng-checked="existsEdit(r, regionsToEdit)"><label>{{r.region.nameRegion}}</label>
-                                                    </md-checkbox>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <md-input-container ng-show="existsEdit(r, regionsToEdit)"
-                                                                        style="margin: 0 0; padding: 0;">
-                                                        <input type="number"
-                                                               ng-model="r.price" class="form-control"
-                                                               ng-change="checkPrice(r, regionsToEdit)">
-                                                    </md-input-container>
+                                            <div class="row">
+                                                <div class="col-md-5" ng-repeat="r in regionsToAdd">
+                                                    <div class="col-md-6">
+                                                        <md-checkbox type="checkbox" class="md-block"
+                                                                     ng-click="toggleEdit(r, regionsToEdit)"
+                                                                     ng-checked="existsEdit(r, regionsToEdit)"><label>{{r.region.nameRegion}}</label>
+                                                        </md-checkbox>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <md-input-container ng-show="existsEdit(r, regionsToEdit)"
+                                                                            style="margin: 0 0; padding: 0;">
+                                                            <input type="number"
+                                                                   ng-model="r.price" class="form-control"
+                                                                   ng-change="checkPrice(r, regionsToEdit)">
+                                                        </md-input-container>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -521,7 +684,9 @@
                                     <button class="btn btn-success btn-fill pull-left"
                                             ng-click="saveTariff()">Save tariff
                                     </button>
-                                    <button class="btn btn-default btn-fill pull-left" ng-click="cancelEdit()"> < back to tariffs</button>
+                                    <button class="btn btn-default btn-fill pull-left" ng-click="cancelEdit()"> < back
+                                        to tariffs
+                                    </button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
