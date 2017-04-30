@@ -23,4 +23,6 @@ public interface TariffDao extends CrudDao<Tariff> {
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size);
 
     public Integer getCountTariffsAvailableForCorporate();
+
+    public Tariff getByIdForSingleCustomer(long id);
 }

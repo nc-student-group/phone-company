@@ -168,4 +168,16 @@ public class TariffController {
         return response;
     }
 
+    @RequestMapping(value = "/api/tariff/for/customer/get/{id}", method = RequestMethod.GET)
+    public Tariff getTariffForCustomerById(@PathVariable("id") long id) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        if (customer.getCorporate() == null) {
+            return tariffService.getByIdForSingleCustomer(id);
+        } else {
+            return tariffService.getById(id);
+        }
+    }
+
 }
