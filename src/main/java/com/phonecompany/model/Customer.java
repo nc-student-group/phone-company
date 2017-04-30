@@ -1,5 +1,6 @@
 package com.phonecompany.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
 
@@ -24,6 +25,7 @@ public class Customer extends User {
     private Address address;
     private Corporate corporate;
     @NotNull(message = "isRepresentative must not be null")
+    @JsonProperty(value = "isRepresentative")
     private Boolean isRepresentative;
 
     public Customer() {

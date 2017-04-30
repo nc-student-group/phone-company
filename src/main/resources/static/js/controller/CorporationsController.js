@@ -24,6 +24,7 @@
                 .then(function (createdCorporation) {
                     toastr.success("Corporation created");
                     $log.debug("Created Corporation: ", createdCorporation);
+                    $scope.corporations = CorporationService.getAllCorporation();
                 }, function (error) {
                     toastr.error(error.data.message);
                     $log.error("Failed to save corporation", error);
