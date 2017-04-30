@@ -23,7 +23,7 @@ public class DbManager {
     private static final int MAX_POOL_SIZE = 20; //current heroku postgres limit
     private static final int MAX_IDLE_TIME = 1; // one idle second and connection returns to the pool
     private static final int CHECKOUT_TIMEOUT = 7000;
-    private static final int IDLE_CONNECTION_TEST_PERIOD = 30;
+    private static final int IDLE_CONNECTION_TEST_PERIOD = 100; //allowed number of acquisition attempts
     private static final int MAX_STATEMENTS = 50;
     private static final int MIN_POOL_SIZE = 1;
 
