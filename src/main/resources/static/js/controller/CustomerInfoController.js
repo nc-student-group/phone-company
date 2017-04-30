@@ -10,24 +10,30 @@
         console.log('This is CustomerInfoController');
         $scope.tariffsFound = 0;
         $scope.availableTariffsFound = 0;
+        $scope.loading = true;
 
         CustomerInfoService.getCustomer()
             .then(function (data) {
                 $scope.customer = data;
+                $scope.loading = false;
             });
 
+        $scope.loading = true;
         CustomerInfoService.getTariffsByCustomerId()
             .then(function (data) {
                 $scope.customerTariffs = data;
                 console.log($scope.customerTariffs);
                 $scope.tariffsFound = data.length;
+                $scope.loading = false;
             });
 
+        $scope.loading = true;
         CustomerInfoService.getAvailableTariffs()
             .then(function (data) {
                 $scope.availableTariffs = data;
                 console.log($scope.availableTariffs);
                 $scope.availableTariffsFound = data.length;
+                $scope.loading = false;
             });
     }
 }());
