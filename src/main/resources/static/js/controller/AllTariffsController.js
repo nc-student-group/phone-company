@@ -6,6 +6,7 @@ angular.module('phone-company').controller('AllTariffsController', [
     'TariffService',
     function ($scope, $rootScope, $location, TariffService) {
         console.log('This is AllTariffsController');
+        $scope.activePage = 'tariffs';
         $scope.page = 0;
         $scope.size = 6;
         $scope.inProgress = false;

@@ -1,55 +1,5 @@
 <div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-        <div class="sidebar-wrapper" data-color="azure">
-            <div class="logo">
-                <a href="/#/index" class="simple-text">
-                    Phone Company
-                </a>
-                <span class="close-sidebar fa fa-times"></span>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/#/csr">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="/#/csr/tariffs">
-                        <i class="pe-7s-note2"></i>
-                        <p>Tariffs</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/services">
-                        <i class="pe-7s-note"></i>
-                        <p>Services</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/orders">
-                        <i class="pe-7s-cart"></i>
-                        <p>Orders</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/complaints">
-                        <i class="pe-7s-attention"></i>
-                        <p>Complaints</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/corporations">
-                        <i class="pe-7s-portfolio"></i>
-                        <p>Corporations</p>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
+    <ng-include src="'../../view/img/csrSidebar.html'"></ng-include>
     <div class="main-panel">
         <nav class="navbar navbar-default navbar-fixed">
             <div class="container-fluid">
@@ -149,15 +99,17 @@
                                     <tbody>
                                     <tr ng-repeat="t in tariffs" class="tariff-td">
                                         <td>{{t.tariff.tariffName}}<br>
-                                        <a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a></td>
-                                        <td style="padding: 0; max-height:250px;">
-                                            <table width="100%" style="table-layout: fixed;"
-                                                   class="table table-striped" ng-hide="t.tariff.isCorporate">
-                                                <tr ng-repeat="r in t.regions" class="tariff-td">
-                                                    <td>{{r.region.nameRegion}}</td>
-                                                    <td style="text-align: left; padding-right: 0;">{{r.price}}</td>
-                                                </tr>
-                                            </table>
+                                            <a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a></td>
+                                        <td style="padding: 0;">
+                                            <div ng-hide="t.tariff.isCorporate" style="height: 200px; overflow: auto;">
+                                                <table width="100%" style="table-layout: fixed;"
+                                                       class="table table-striped" ng-hide="t.tariff.isCorporate">
+                                                    <tr ng-repeat="r in t.regions" class="tariff-td">
+                                                        <td>{{r.region.nameRegion}}</td>
+                                                        <td style="text-align: left; padding-right: 0;">{{r.price}}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
                                             <span ng-show="t.tariff.isCorporate">Price: {{t.tariff.price}}</span>
                                         </td>
                                         <td>{{t.tariff.productStatus}}</td>
@@ -271,7 +223,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Internet" name="internet"
+                                                <input type="text" class="form-control" placeholder="Internet"
+                                                       name="internet"
                                                        ng-model="currentTariff.internet" md-maxlength="150" required/>
                                                 <div ng-messages="addTariffForm.internet.$error" role="alert"
                                                      multiple>
@@ -285,7 +238,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Calls in network" name="callsInNetwork"
+                                                <input type="text" class="form-control" placeholder="Calls in network"
+                                                       name="callsInNetwork"
                                                        ng-model="currentTariff.callsInNetwork" md-maxlength="150"
                                                        required/>
                                                 <div ng-messages="addTariffForm.callsInNetwork.$error" role="alert"
@@ -302,7 +256,8 @@
                                             <md-input-container class="md-block">
                                                 <input type="text" class="form-control"
                                                        placeholder="Calls on other number"
-                                                       ng-model="currentTariff.callsOnOtherNumbers" md-maxlength="150" name="callsOnOtherNumbers"
+                                                       ng-model="currentTariff.callsOnOtherNumbers" md-maxlength="150"
+                                                       name="callsOnOtherNumbers"
                                                        required/>
                                                 <div ng-messages="addTariffForm.callsOnOtherNumbers.$error" role="alert"
                                                      multiple>
@@ -344,7 +299,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Roaming" name="roaming"
+                                                <input type="text" class="form-control" placeholder="Roaming"
+                                                       name="roaming"
                                                        ng-model="currentTariff.roaming" md-maxlength="150" required/>
                                                 <div ng-messages="addTariffForm.roaming.$error" role="alert"
                                                      multiple>
@@ -358,9 +314,11 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="number" min="0" max="100" class="form-control" name="discount"
+                                                <input type="number" min="0" max="100" class="form-control"
+                                                       name="discount"
                                                        placeholder="Discount"
-                                                       ng-model="currentTariff.discount" required ng-pattern="discountPattern"/>
+                                                       ng-model="currentTariff.discount" required
+                                                       ng-pattern="discountPattern"/>
                                                 <div ng-messages="addTariffForm.discount.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
                                                         This field can only contain numbers from 0 to 100
@@ -419,7 +377,8 @@
                                             <md-input-container class="md-block">
                                                 <input type="number" class="form-control" name="price"
                                                        placeholder="Price"
-                                                       ng-model="currentTariff.price" ng-change="checkTariffPrice(currentTariff)"/>
+                                                       ng-model="currentTariff.price"
+                                                       ng-change="checkTariffPrice(currentTariff)"/>
                                             </md-input-container>
                                         </div>
                                     </div>
@@ -494,7 +453,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Internet" name="internet"
+                                                <input type="text" class="form-control" placeholder="Internet"
+                                                       name="internet"
                                                        ng-model="tariffToEdit.internet" md-maxlength="150" required/>
                                                 <div ng-messages="editTariffForm.internet.$error" role="alert"
                                                      multiple>
@@ -508,7 +468,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Calls in network" name="callsInNetwork"
+                                                <input type="text" class="form-control" placeholder="Calls in network"
+                                                       name="callsInNetwork"
                                                        ng-model="tariffToEdit.callsInNetwork" md-maxlength="150"
                                                        required/>
                                                 <div ng-messages="editTariffForm.callsInNetwork.$error" role="alert"
@@ -527,7 +488,8 @@
                                                        placeholder="Calls on other number" name="callsOnOtherNumbers"
                                                        ng-model="tariffToEdit.callsOnOtherNumbers" md-maxlength="150"
                                                        required/>
-                                                <div ng-messages="editTariffForm.callsOnOtherNumbers.$error" role="alert"
+                                                <div ng-messages="editTariffForm.callsOnOtherNumbers.$error"
+                                                     role="alert"
                                                      multiple>
                                                     <div ng-message="required">
                                                         Calls on other numbers is required.
@@ -567,7 +529,8 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="text" class="form-control" placeholder="Roaming" name="roaming"
+                                                <input type="text" class="form-control" placeholder="Roaming"
+                                                       name="roaming"
                                                        ng-model="tariffToEdit.roaming" md-maxlength="150" required/>
                                                 <div ng-messages="editTariffForm.roaming.$error" role="alert"
                                                      multiple>
@@ -581,9 +544,11 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <md-input-container class="md-block">
-                                                <input type="number" min="0" max="100" class="form-control" name="discount"
+                                                <input type="number" min="0" max="100" class="form-control"
+                                                       name="discount"
                                                        placeholder="Discount"
-                                                       ng-model="tariffToEdit.discount" required ng-pattern="discountPattern"/>
+                                                       ng-model="tariffToEdit.discount" required
+                                                       ng-pattern="discountPattern"/>
                                                 <div ng-messages="editTariffForm.discount.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
                                                         This field can only contain numbers from 0 to 100
@@ -641,7 +606,8 @@
                                             <md-input-container class="md-block">
                                                 <input type="number" class="form-control" name="price"
                                                        placeholder="Price"
-                                                       ng-model="tariffToEdit.price" ng-change="checkTariffPrice(tariffToEdit)"/>
+                                                       ng-model="tariffToEdit.price"
+                                                       ng-change="checkTariffPrice(tariffToEdit)"/>
                                             </md-input-container>
                                         </div>
                                     </div>

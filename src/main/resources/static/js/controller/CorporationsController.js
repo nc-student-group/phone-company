@@ -8,7 +8,7 @@
 
     function CorporationsController($scope, $log, CorporationService, $rootScope) {
         console.log('This is CorporationsController');
-
+        $scope.activePage='corporations';
         $scope.preloader.send = true;
         CorporationService.getAllCorporation().then(function (data) {
             $scope.corporations = data;
