@@ -2,11 +2,15 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.*;
+import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityModificationException;
+import com.phonecompany.exception.EntityNotFoundException;
+import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import com.sun.deploy.security.ValidationState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +18,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
@@ -44,6 +46,9 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
             preparedStatement.setString(6, entity.getPictureUrl());
+            preparedStatement.setString(7, entity.getDescription());
+            preparedStatement.setString(8, entity.getPreviewDescription());
+            preparedStatement.setObject(9, TypeMapper.toSqlDate(entity.getExpiryDate()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -57,8 +62,11 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
-            preparedStatement.setString(6, entity.getPictureUrl());
-            preparedStatement.setDouble(7, TypeMapper.getNullableId(entity));
+            preparedStatement.setObject(6, entity.getPictureUrl());
+            preparedStatement.setObject(7, entity.getDescription());
+            preparedStatement.setObject(8, entity.getPreviewDescription());
+            preparedStatement.setObject(9, TypeMapper.toSqlDate(entity.getExpiryDate()));
+            preparedStatement.setDouble(10, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -75,6 +83,9 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             service.setProductStatus(ProductStatus.valueOf(resultSet.getString("product_status")));
             service.setDiscount(resultSet.getDouble("discount"));
             service.setPictureUrl(resultSet.getString("picture_url"));
+            service.setDescription(resultSet.getString("description"));
+            service.setPreviewDescription(resultSet.getString("preview_description"));
+            service.setExpiryDate(TypeMapper.toLocalDate((resultSet.getDate("expiry_date"))));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -115,7 +126,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     @Override
-    public String getWhereClause(Object... args) {
+    public String prepareWhereClause(Object... args) {
 
         String where = "";
         long productCategoryId = (long) args[0];

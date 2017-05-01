@@ -13,7 +13,7 @@
         $scope.user ={
             email: '',
             role:''
-        }
+        };
 
         $scope.page = 0;
         $scope.roles = 0;
@@ -21,6 +21,7 @@
         $scope.inProgress = false;
         $scope.selectedStatus = "ALL";
         $scope.selectedRole = 0;
+
         $scope.createUser = function() {
             $log.debug('User: ' + JSON.stringify($scope.user));
             UserService.saveUserByAdmin($scope.user)

@@ -7,6 +7,7 @@ import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.service.interfaces.AddressService;
 import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +37,17 @@ public class CustomerController {
     private CustomerService customerService;
     private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    private UserController userController;
+    private UserService userService;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
-                              ApplicationEventPublisher eventPublisher) {
+                              ApplicationEventPublisher eventPublisher,
+                              UserService userService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
+        this.userService = userService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
@@ -102,7 +103,7 @@ public class CustomerController {
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        if(customerService.findByEmail(customer.getEmail())==null){
+        if (customerService.findByEmail(customer.getEmail()) == null) {
             customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
             eventPublisher.publishEvent(new OnUserCreationEvent(customer));
         }
@@ -112,7 +113,7 @@ public class CustomerController {
 
     @RequestMapping(method = GET, value = "/api/customer/get")
     public Customer getCustomerByCurrentUserId() {
-        LOG.debug("Retrieving customer by current logged in user");
-        return customerService.getById(userController.getUser().getId());
+        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        return customerService.getById(loggedInUser.getId());
     }
 }

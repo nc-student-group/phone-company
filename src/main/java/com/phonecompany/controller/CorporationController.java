@@ -21,9 +21,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 public class CorporationController {
+    
     private static final Logger LOG = LoggerFactory.getLogger(CorporationController.class);
     private CorporateService corporateService;
-    public static final String CORPORATE_RESOURCE_NAME = "corporations";
 
     @Autowired
     public CorporationController(CorporateService corporateService) {

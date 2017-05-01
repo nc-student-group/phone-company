@@ -11,8 +11,17 @@ import java.util.Optional;
 
 public class TypeMapper {
 
+    /**
+     * Converts an instance of {@code java.sql.Date} to its corresponding
+     * {@code java.time.LocalDate} representation. This method does aware
+     * that its incoming parameter may be {@literal null}.
+     *
+     * @param date date to convert
+     * @return corresponding {@code java.time.LocalDate} object or {@literal null}
+     */
     public static LocalDate toLocalDate(Date date) {
-        return date.toLocalDate();
+        return Optional.ofNullable(date).map(Date::toLocalDate)
+                .orElse(null);
     }
 
     public static Date toSqlDate(LocalDate localDate) {

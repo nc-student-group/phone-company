@@ -6,6 +6,6 @@ import com.phonecompany.model.enums.ComplaintCategory;
 import java.util.List;
 
 public interface ComplaintService extends CrudService<Complaint> {
-    public void createComplaint(Complaint complaint);
+    public Complaint createComplaint(Complaint complaint);
     public List<ComplaintCategory> getAllComplaintCategory();
 }

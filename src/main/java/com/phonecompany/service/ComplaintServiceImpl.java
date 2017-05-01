@@ -38,16 +38,14 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     }
 
     @Override
-    public void createComplaint(Complaint complaint)
+    public Complaint createComplaint(Complaint complaint)
     {
         complaint.setStatus(ComplaintStatus.ACCEPTED);
         complaint.setDate(new java.sql.Date(System.currentTimeMillis()));
-
-        complaintDao.save(complaint);
-
+        Complaint createdComplaint = complaintDao.save(complaint);
         sendComplaintAcceptedMessage(complaint.getUser());
-
         LOG.debug("Complaint added {}", complaint);
+        return createdComplaint;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class Customer extends User {
     @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
     @NotNull(message = "Last name must not be null")
     private String lastName;
-    @Pattern(regexp = "^\\+380[0-9]{9}$", message = "Phone should be in format of +380#########")
+    @Pattern(regexp = "^\\+38077[0-9]{7}$", message = "Phone should be in format of +38077#######")
     @NotNull(message = "Phone must not be null")
     private String phone;
     @NotNull(message = "Address must not be null")
@@ -27,6 +27,8 @@ public class Customer extends User {
     @NotNull(message = "isRepresentative must not be null")
     @JsonProperty(value = "isRepresentative")
     private Boolean isRepresentative;
+    @NotNull(message = "Mailing agreement has to be specified")
+    private Boolean isMailingEnabled = true; // mailing is enabled by default
 
     public Customer() {
     }
@@ -115,6 +117,14 @@ public class Customer extends User {
         isRepresentative = representative;
     }
 
+    public Boolean getMailingEnabled() {
+        return isMailingEnabled;
+    }
+
+    public void setMailingEnabled(Boolean mailingEnabled) {
+        isMailingEnabled = mailingEnabled;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -125,6 +135,7 @@ public class Customer extends User {
                 ", address=" + address +
                 ", corporate=" + corporate +
                 ", isRepresentative=" + isRepresentative +
+                ", isMailingEnabled=" + isMailingEnabled +
                 "} " + super.toString();
     }
 }

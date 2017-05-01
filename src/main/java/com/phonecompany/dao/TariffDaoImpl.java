@@ -196,7 +196,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public String getWhereClause(Object... args) {
+    public String prepareWhereClause(Object... args) {
         String where = "";
         long regionId = (long) args[0];
 
