@@ -31,8 +31,8 @@
         CustomerInfoService.getCurrentTariff()
             .then(function (data) {
                 console.log(`Retrieved current tariff ${JSON.stringify(data)}`);
-                $scope.tariff = data;
-                if ($scope.tariff != undefined) {
+                $scope.currentTariff = data;
+                if ($scope.currentTariff !== "") {
                     $scope.hasCurrentTariff = true;
                 }
                 $scope.loading = false;
@@ -45,8 +45,6 @@
                 $scope.customerTariffs = data;
                 console.log($scope.customerTariffs);
                 $scope.tariffsFound = data.length;
-                $scope.tariff = data[0].tariff;
-                console.log($scope.tariff);
                 $scope.loading = false;
             });
 
