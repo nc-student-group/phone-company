@@ -41,8 +41,8 @@
             });
         $routeProvider.when('/csr',
             {
-                templateUrl: 'view/csr/csrProfile.html'
-                // controller: ''
+                templateUrl: 'view/csr/csrProfile.html',
+                controller: 'CsrProfileController'
             });
         $routeProvider.when('/pmg',
             {
@@ -62,12 +62,12 @@
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',
-                // controller: 'TariffsController'
+                controller: 'CsrOrdersController'
             });
         $routeProvider.when('/csr/complaints',
             {
                 templateUrl: 'view/csr/complaints.html',
-                // controller: 'TariffsController'
+                controller: 'CsrComplaintsController'
             });
         $routeProvider.when('/csr/services',
             {

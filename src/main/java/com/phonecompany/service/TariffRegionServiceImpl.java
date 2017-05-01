@@ -28,4 +28,9 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion> imple
     public void deleteByTariffId(long tariffId){
         this.tariffRegionDao.deleteByTariffId(tariffId);
     }
+
+    @Override
+    public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId){
+        return this.tariffRegionDao.getByTariffIdAndRegionId(tariffId, regionId);
+    }
 }

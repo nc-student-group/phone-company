@@ -57,7 +57,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Service entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getProductCategory()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getProductCategory()));
             preparedStatement.setString(2, entity.getServiceName());
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getProductStatus().name());

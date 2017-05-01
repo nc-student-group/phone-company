@@ -2,7 +2,6 @@ package com.phonecompany.controller;
 
 
 import com.phonecompany.model.*;
-import com.phonecompany.model.CustomerService;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.CustomerServiceImpl;
 import com.phonecompany.service.interfaces.*;
@@ -43,6 +42,8 @@ public class TariffController {
     @Autowired
     private CustomerServiceImpl customerService;
 
+    @Autowired
+    private OrderService orderService;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -75,22 +76,7 @@ public class TariffController {
     @RequestMapping(value = "/api/tariff/add", method = RequestMethod.POST)
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
-            Tariff tariff = tariffRegions.get(0).getTariff();
-            if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
-                return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-            }
-            tariff.setProductStatus(ProductStatus.ACTIVATED);
-            tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
-            Tariff savedTariff = tariffService.save(tariff);
-            LOGGER.debug("Tariff added {}", savedTariff);
-            tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                    tariffRegion.setTariff(savedTariff);
-                    tariffRegionService.save(tariffRegion);
-                    LOGGER.debug("Tariff-region added {}", tariffRegion);
-                }
-            });
+            return tariffService.addNewTariff(tariffRegions.get(0).getTariff(), tariffRegions);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -174,10 +160,35 @@ public class TariffController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
         if (customer.getCorporate() == null) {
-            return tariffService.getByIdForSingleCustomer(id);
+            return tariffService.getByIdForSingleCustomer(id, customer.getAddress().getRegion().getId());
         } else {
             return tariffService.getById(id);
         }
     }
 
+    @RequestMapping(value = "/api/tariff/by/customer/get", method = RequestMethod.GET)
+    public ResponseEntity<?> getCurrentCustomerTariff() {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        CustomerTariff customerTariff = null;
+        if (customer.getCorporate() == null) {
+            customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
+        } else {
+            if (customer.getCorporate() != null && customer.getRepresentative()) {
+                customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
+                LOGGER.debug("Corporate tariff {}", customerTariff);
+            } else {
+                return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative."), HttpStatus.CONFLICT);
+            }
+        }
+        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariff/activate/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> activateTariff(@PathVariable("id") long id) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return tariffService.activateTariff(id, customerService.findByEmail(securityUser.getUsername()));
+    }
 }

@@ -8,6 +8,7 @@
 
     function CorporationsController($scope, $log, CorporationService, $rootScope) {
         console.log('This is CorporationsController');
+        $scope.activePage='corporations';
 
         $scope.page = 0;
         $scope.size = 5;

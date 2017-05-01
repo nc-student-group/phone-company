@@ -29,7 +29,7 @@ public class Tariff extends DomainEntity {
     private boolean isCorporate;
     @NotNull(message = "Creation date must not be null")
     private Date creationDate;
-    private Double discount;
+    private double discount;
     private String pictureUrl;
     private double price;
 
@@ -137,9 +137,9 @@ public class Tariff extends DomainEntity {
         isCorporate = corporate;
     }
 
-    public Double getDiscount() { return discount; }
+    public double getDiscount() { return discount; }
 
-    public void setDiscount(Double discount) { this.discount = discount; }
+    public void setDiscount(double discount) { this.discount = discount; }
 
     public String getPictureUrl() { return pictureUrl; }
 

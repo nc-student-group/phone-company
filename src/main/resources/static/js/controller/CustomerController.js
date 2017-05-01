@@ -8,7 +8,7 @@
 
     function CustomerController($scope, $log, CustomerService, TariffService,CorporationService, $rootScope) {
         console.log('This is CustomerService');
-
+        $scope.activePage='customers';
         $scope.page = 0;
         $scope.size = 5;
         $scope.inProgress = false;

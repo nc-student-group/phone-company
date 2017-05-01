@@ -45,8 +45,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, TariffRegion entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getRegion()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getRegion()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setDouble(3, entity.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -56,8 +56,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, TariffRegion entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getRegion()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getRegion()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setLong(4, entity.getId());
         } catch (SQLException e) {
@@ -86,7 +86,7 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffId"))) {
             ps.setLong(1, tariffId);
             ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 TariffRegion tariffRegion = new TariffRegion();
                 tariffRegion.setId(rs.getLong("tr_id"));
                 tariffRegion.setRegion(new Region(rs.getLong("region_id"), rs.getString("name_region")));
@@ -101,7 +101,23 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     }
 
     @Override
-    public void deleteByTariffId(long tariffId){
+    public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"))) {
+            ps.setLong(1, tariffId);
+            ps.setLong(2, regionId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return init(rs);
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(tariffId, e);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteByTariffId(long tariffId) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getQuery("deleteByTariffId"))) {
             preparedStatement.setLong(1, tariffId);

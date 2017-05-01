@@ -35,8 +35,8 @@ public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaig
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, MarketingCampaignTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariffRegion()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariffRegion()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -45,8 +45,8 @@ public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaig
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, MarketingCampaignTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariffRegion()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariffRegion()));
 
             preparedStatement.setLong(3, entity.getId());
         } catch (SQLException e) {

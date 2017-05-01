@@ -75,6 +75,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public Status getStatus() {
         return Status.ACTIVATED;
     }
+
     @Override
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
