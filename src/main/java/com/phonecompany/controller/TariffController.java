@@ -46,7 +46,8 @@ public class TariffController {
     @Autowired
     private CustomerServiceImpl customerService;
 
-
+    @Autowired
+    private OrderService orderService;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -193,33 +194,33 @@ public class TariffController {
         if (customer.getCorporate() == null) {
             customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
         } else {
-            if(customer.getCorporate()!= null && customer.getRepresentative()){
+            if (customer.getCorporate() != null && customer.getRepresentative()) {
                 customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
-            }else{
-                return new ResponseEntity<Object>(new Error("You aren't representative of your company."), HttpStatus.CONFLICT);
+            } else {
+                return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative."), HttpStatus.CONFLICT);
             }
         }
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/tariff/activate/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Void> activateTariff(@PathVariable("id") long id){
+    public ResponseEntity<Object> activateTariff(@PathVariable("id") long id) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
-        if(customer.getCorporate() == null){
+        if (customer.getCorporate() == null) {
             CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
-            if(customerTariff != null){
-                Date date = new Date(Calendar.getInstance().getTimeInMillis());
-                Order deactivationOrder = new Order(null, customerTariff, OrderType.DEACTIVATION, OrderStatus.CREATED,date, date);
-                //orderService.save(deactivationOrder);
-                customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
-                customerTariffService.update(customerTariff);
-                deactivationOrder.setOrderStatus(OrderStatus.DONE);
-                //orderService.update(deactivationOrder);
+            if (customerTariff != null) {
+                tariffService.deactivateTariff(customerTariff);
             }
             TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(id, customer.getAddress().getRegion().getId());
+            if(tariffRegion != null && tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+                tariffService.activateTariff(customer, tariffRegion);
+            }else{
+                return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+            }
+
         }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 }
