@@ -114,6 +114,16 @@ public class CustomerController {
     @RequestMapping(method = GET, value = "/api/customer/get")
     public Customer getCustomerByCurrentUserId() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-        return customerService.getById(loggedInUser.getId());
+        LOG.debug("Currently logged in user retrieved from the security context: {}", loggedInUser);
+        Customer loggedInCustomer = customerService.getById(loggedInUser.getId());
+        LOG.debug("Currently logged in customer: {}", loggedInCustomer);
+        return loggedInCustomer;
+    }
+
+    @PatchMapping(value = "/api/customers/")
+    public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
+        LOG.debug("Customer retrieved from the http request: {}", customer);
+        this.customerService.update(customer);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
