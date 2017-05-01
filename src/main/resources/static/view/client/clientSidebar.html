@@ -1,0 +1,37 @@
+<div class="sidebar" data-color="blue">
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="/#/index" class="simple-text">
+                Phone Company
+            </a>
+            <span class="close-sidebar fa fa-times" ng-click="shifted = true"></span>
+        </div>
+
+        <ul class="nav">
+            <li ng-class="{'active': activePage == 'profile'}">
+                <a href="/#/client">
+                    <i class="pe-7s-user"></i>
+                    <p>User Profile</p>
+                </a>
+            </li>
+            <li ng-class="{'active': activePage == 'tariffs'}">
+                <a href="/#/client/tariffs/available">
+                    <i class="pe-7s-note2"></i>
+                    <p>Tariff plans</p>
+                </a>
+            </li>
+            <li ng-class="{'active': activePage == 'services'}">
+                <a href="/#/client/services">
+                    <i class="pe-7s-note"></i>
+                    <p>Services</p>
+                </a>
+            </li>
+            <li ng-class="{'active': activePage == 'complaints'}">
+                <a href="/#/client/complaints">
+                    <i class="pe-7s-attention"></i>
+                    <p>Complaints</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

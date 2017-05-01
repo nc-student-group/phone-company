@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/complaints")
@@ -19,29 +21,34 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
-    private UserController userController;
+    private UserService userService;
 
     @Autowired
-    public ComplaintController(ComplaintService complaintService) {
+    public ComplaintController(ComplaintService complaintService,
+                               UserService userService) {
         this.complaintService = complaintService;
+        this.userService = userService;
     }
 
+    //TODO: please, do not autowire controllers in controllers
     @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
-        complaint.setUser(userController.getUser());
+        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        complaint.setUser(loggedInUser);
         Complaint createdComplaint = complaintService.createComplaint(complaint);
         LOG.debug("Complaint added {}", createdComplaint);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
     @GetMapping(value = "/complaints")
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
-//        List<Complaint> complaints = complaintService.getAll();
-//        LOG.info("Complaints fetched from the database: " + complaints);
+        List<Complaint> complaints = complaintService.getAll();
+        LOG.info("Complaints fetched from the database: " + complaints);
 
-        return complaintService.getAll();
+        return Collections.unmodifiableCollection(complaints);
     }
 
     @GetMapping(value = "/categories")

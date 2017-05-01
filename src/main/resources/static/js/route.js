@@ -5,7 +5,7 @@
             "ngMaterial",
             'ngMessages',
             'ngResource',
-            "ImageCropper"]);
+            'ImageCropper']);
 
     app.config(function ($routeProvider, $locationProvider) {
         // $locationProvider.html5Mode(true);
@@ -41,8 +41,8 @@
             });
         $routeProvider.when('/csr',
             {
-                templateUrl: 'view/csr/csrProfile.html'
-                // controller: ''
+                templateUrl: 'view/csr/csrProfile.html',
+                controller: 'CsrProfileController'
             });
         $routeProvider.when('/pmg',
             {
@@ -62,12 +62,12 @@
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',
-                // controller: 'TariffsController'
+                controller: 'CsrOrdersController'
             });
         $routeProvider.when('/csr/complaints',
             {
                 templateUrl: 'view/csr/complaints.html',
-                controller: 'ComplaintController'
+                controller: 'CsrComplaintsController'
             });
         $routeProvider.when('/csr/services',
             {
@@ -109,6 +109,11 @@
                 templateUrl: 'view/client/services.html',
                 controller: 'ClientServicesController'
             });
+        $routeProvider.when('/client/services/:id',
+            {
+                templateUrl: 'view/client/serviceDetail.html',
+                controller: 'ServiceDetailController'
+            });
         $routeProvider.when('/client/tariffs/available',
             {
                 templateUrl: 'view/client/allTariffs.html',
@@ -131,7 +136,7 @@
         $httpProvider.interceptors.push('responseObserver');
     }]);
 
-    app.factory('responseObserver', function responseObserver($q, $location, $window) {
+    app.factory('responseObserver', function responseObserver($q, $location) {
         return {
             'responseError': function (errorResponse) {
                 switch (errorResponse.status) {

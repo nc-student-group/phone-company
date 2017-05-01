@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
         extends CrudDaoImpl<T> implements AbstractPageableDao<T> {

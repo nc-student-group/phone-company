@@ -10,6 +10,7 @@ angular.module('phone-company').controller('ComplaintController', [
     '$window',
     function ($scope, $http, $location, $rootScope, ComplaintService, $anchorScroll, $window) {
         console.log('This is ComplaintController');
+        $scope.activePage = 'complaints';
         $scope.complaint = {
             user: '',
             status: 'ACCEPTED',

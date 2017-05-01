@@ -9,6 +9,7 @@ angular.module('phone-company').controller('ServicesController', [
     '$anchorScroll',
     function ($scope, $http, $location, $rootScope, ServicesService, $anchorScroll) {
 
+        $scope.activePage= 'services';
         $scope.numberPattern = /^[^0-]([0-9]*(\.\d{2}))$/;
         $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
         $scope.inProgress = false;
@@ -152,7 +153,7 @@ angular.module('phone-company').controller('ServicesController', [
 
         $scope.editService = function (id) {
             $scope.preloader.send = true;
-            ServicesService.getServiceToEditById(id).then(function (data) {
+            ServicesService.getServiceById(id).then(function (data) {
                 $scope.serviceToEdit = data;
                 $scope.preloader.send = false;
                 $scope.editing = true;
