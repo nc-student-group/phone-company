@@ -95,15 +95,19 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             Tariff savedTariff = this.update(tariff);
             LOGGER.debug("Tariff added {}", tariff);
             tariffRegionService.deleteByTariffId(savedTariff.getId());
-            tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                    tariffRegion.setTariff(savedTariff);
-                    tariffRegionService.save(tariffRegion);
-                    LOGGER.debug("Tariff-region added {}", tariffRegion);
-                }
-            });
+            this.addTariffRegions(tariffRegions, savedTariff);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    private void addTariffRegions(List<TariffRegion> tariffRegions, Tariff tariff){
+        tariffRegions.forEach((TariffRegion tariffRegion) -> {
+            if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
+                tariffRegion.setTariff(tariff);
+                tariffRegionService.save(tariffRegion);
+                LOGGER.debug("Tariff-region added {}", tariffRegion);
+            }
+        });
     }
 
     @Override
@@ -220,6 +224,20 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                 return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative to change tariff plan."), HttpStatus.CONFLICT);
             }
         }
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions){
+        if (this.findByTariffName(tariff.getTariffName()) != null) {
+            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
+        }
+        tariff.setProductStatus(ProductStatus.ACTIVATED);
+        tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+        Tariff savedTariff = this.save(tariff);
+        LOGGER.debug("Tariff added {}", savedTariff);
+        this.addTariffRegions(tariffRegions, savedTariff);
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
