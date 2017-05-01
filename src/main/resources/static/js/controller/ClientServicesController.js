@@ -44,5 +44,20 @@ angular.module('phone-company').controller('ClientServicesController', [
             }, function () {
                 $scope.loading = false;
             });
+
+        $scope.showMore = function () {
+            if ($scope.size < $scope.servicesCount) {
+                $scope.loading = true;
+                $scope.size = $scope.size + 3;
+                ServicesService.getServicesByProductCategoryId($scope.currentCategory + 1, $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.services = data.services;
+                        $scope.servicesCount = data.servicesCount;
+                        $scope.loading = false;
+                    }, function () {
+                        $scope.loading = false;
+                    });
+            }
+        }
     }
 ]);

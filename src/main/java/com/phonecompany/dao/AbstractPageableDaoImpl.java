@@ -55,7 +55,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     public String getPagingQuery(int page, int size, Object... args) {
 
         String getAllQuery = this.getQuery("getAll");
-        String whereClause = this.getWhereClause(args);
+        String whereClause = this.prepareWhereClause(args);
 
         whereClause += " LIMIT ?";
         this.preparedStatementParams.add(size);
@@ -93,10 +93,10 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
     public String getCountQuery(Object... args) {
         String getCountQuery = this.getQuery("getCount");
-        getCountQuery += this.getWhereClause(args);
+        getCountQuery += this.prepareWhereClause(args);
 
         return getCountQuery;
     }
 
-    public abstract String getWhereClause(Object... args);
+    public abstract String prepareWhereClause(Object... args);
 }

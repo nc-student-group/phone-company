@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -75,6 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/tariffs/get/by/client/**").hasRole("CLIENT")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
+                .antMatchers("/api/complaint/add").hasAnyRole("CLIENT", "CSR", "ADMIN")
+                .antMatchers("/api/complaints").hasAnyRole("PMG", "CSR", "ADMIN")
+                .antMatchers("/api/complaintCategory/get").hasAnyRole("CLIENT", "CSR", "ADMIN")
                 .anyRequest().authenticated();
 
         http.csrf().disable();

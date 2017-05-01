@@ -23,7 +23,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
-    public static final String USERS_RESOURCE_NAME = "users";
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
@@ -57,12 +56,9 @@ public class UserController {
 
     @RequestMapping(method = GET, value = "/api/user/get")
     public User getUser() {
-        org.springframework.security.core.userdetails.User securityUser = null;
-        securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder
-                        .getContext().getAuthentication().getPrincipal();
-        User user = userService.findByEmail(securityUser.getUsername());
-        LOG.info("Retrieving all the users contained in the database");
+        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        User user = userService.findByEmail(loggedInUser.getEmail());
+        LOG.debug("User retrieved from security context: {}", user);
 
         return user;
     }

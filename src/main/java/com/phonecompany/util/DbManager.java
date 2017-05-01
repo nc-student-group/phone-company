@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static com.mchange.v2.c3p0.PoolConfig.MAX_IDLE_TIME;
 
@@ -20,12 +21,15 @@ import static com.mchange.v2.c3p0.PoolConfig.MAX_IDLE_TIME;
 public class DbManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DbManager.class);
-    private static final int MAX_POOL_SIZE = 20; //current heroku postgres limit
+    private static final int MAX_POOL_SIZE = 100;
     private static final int MAX_IDLE_TIME = 1; // one idle second and connection returns to the pool
-    private static final int CHECKOUT_TIMEOUT = 7000;
-    private static final int IDLE_CONNECTION_TEST_PERIOD = 30;
+    private static final int CHECKOUT_TIMEOUT = 0;
+    private static final int IDLE_CONNECTION_TEST_PERIOD = 5; //allowed number of acquisition attempts
     private static final int MAX_STATEMENTS = 50;
-    private static final int MIN_POOL_SIZE = 1;
+    private static final int MIN_POOL_SIZE = 3;
+    private static final int ACQUIRE_RETRY_ATTEMPTS = 10;
+    private static final int UNRETURNED_CONNECTION_TIMEOUT = 20;
+    private static final int MAX_CONNECTION_AGE = 3600;
 
     private static DbManager dbManager;
 
@@ -57,6 +61,8 @@ public class DbManager {
             dataSource.setMaxPoolSize(MAX_POOL_SIZE);
             LOG.debug("Setting min pool size to: {}", MIN_POOL_SIZE);
             dataSource.setMinPoolSize(MIN_POOL_SIZE);
+            LOG.debug("Setting max pool size to: {}", MIN_POOL_SIZE);
+            dataSource.setMaxPoolSize(MAX_POOL_SIZE);
             LOG.debug("Max statements available: {}", MAX_STATEMENTS);
             dataSource.setMaxStatements(MAX_STATEMENTS);
             LOG.debug("Idle test period was set to: {}", IDLE_CONNECTION_TEST_PERIOD);
@@ -65,6 +71,17 @@ public class DbManager {
             dataSource.setCheckoutTimeout(CHECKOUT_TIMEOUT);
             LOG.debug("Setting max idle connection time to: {}", MAX_IDLE_TIME);
             dataSource.setMaxIdleTime(MAX_IDLE_TIME);
+            LOG.debug("Setting retry attempts to : {}", ACQUIRE_RETRY_ATTEMPTS);
+            dataSource.setAcquireRetryAttempts(ACQUIRE_RETRY_ATTEMPTS);
+            LOG.debug("Setting unreturned connection timeout: {}", UNRETURNED_CONNECTION_TIMEOUT);
+            dataSource.setUnreturnedConnectionTimeout(UNRETURNED_CONNECTION_TIMEOUT);
+            LOG.debug("Setting max connection age to: {}", MAX_CONNECTION_AGE);
+            dataSource.setMaxConnectionAge(MAX_CONNECTION_AGE);
+
+            Properties p = new Properties(System.getProperties());
+            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF"); // c3p0 logging is redundant
+            System.setProperties(p);
 
             return dataSource;
         } catch (PropertyVetoException e) {

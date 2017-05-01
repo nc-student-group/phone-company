@@ -28,6 +28,12 @@
                         <p>Services</p>
                     </a>
                 </li>
+                <li>
+                    <a href="/#/client/complaints">
+                        <i class="pe-7s-attention"></i>
+                        <p>Complaints</p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -53,6 +59,9 @@
             </div>
         </nav>
 
+        <md-switch ng-model="data.cb1" aria-label="Switch 1">
+            Switch 1: {{ data.cb1 }}
+        </md-switch>
         <div class="content">
             <div class="container-fluid">
                 <div ng-cloak>
@@ -114,7 +123,7 @@
                                         <div class="col-md-12">
                                             <div ng-hide="editing" class="card">
                                                 <div class="header">
-                                                    <h4 class="title">My tariff planes</h4>
+                                                    <h4 class="title">My tariff plans</h4>
                                                     <p class="category">History of all tariff plans</p>
                                                 </div>
                                                 <hr/>
