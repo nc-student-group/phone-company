@@ -49,12 +49,12 @@ public class CustomerTariff extends DomainEntity {
         this.totalPrice = totalPrice;
     }
 
-    public CustomerProductStatus getOrderStatus() {
+    public CustomerProductStatus getCustomerProductStatus() {
         return customerProductStatus;
     }
 
-    public void setOrderStatus(CustomerProductStatus orderStatus) {
-        this.customerProductStatus = orderStatus;
+    public void setCustomerProductStatus(CustomerProductStatus customerProductStatus) {
+        this.customerProductStatus = customerProductStatus;
     }
 
     public Tariff getTariff() {

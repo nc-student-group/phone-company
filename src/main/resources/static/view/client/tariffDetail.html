@@ -82,7 +82,7 @@
                                             <b>-{{tariff.discount * 100}}%</b></div>
                                     </div>
                                     <div class="row" style="padding-top: 20px;">
-                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2" ng-click="activateClick()">
                                             ACTIVATE
                                         </button>
                                     </div>
@@ -127,12 +127,12 @@
                                         <div class="col-md-4"
                                              style="text-align: center; font-size: 16px; color: #161121"
                                              ng-hide="tariff.discount > 0 && tariff.discount < 1"><span>
-                                            <b>{{tariff.price}} auh</b></span>
+                                            <b>{{tariff.price}} uah</b></span>
                                         </div>
                                         <div class="col-md-4 conditions-value"
                                              ng-show="tariff.discount > 0 && tariff.discount < 1">
-                                            <span><b>{{tariff.price * (1 - tariff.discount)}} auh</b><br>
-                                                <s style="font-size: 14px; color: red">{{tariff.price}} auh</s></span>
+                                            <span><b>{{tariff.price * (1 - tariff.discount)}} uah</b><br>
+                                                <s style="font-size: 14px; color: red">{{tariff.price}} uah</s></span>
                                         </div>
                                         <!--<div class="col-md-4">{{tariff.price * (1 - tariff.discount)}}</div>-->
                                     </div>

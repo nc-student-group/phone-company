@@ -113,5 +113,39 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
         return tariffs;
     }
 
+    @Override
+    public CustomerTariff getCurrentCustomerTariff(long customerId) {
+        String query = this.getQuery("getByCustomerId");
+        query += " and tariff_status='ACTIVE' ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return null;
+    }
+
+    @Override
+    public CustomerTariff getCurrentCorporateTariff(long corporateId){
+        String query = this.getQuery("getByCorporateId");
+        query += " and tariff_status='ACTIVE' ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, corporateId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(corporateId, e);
+        }
+        return null;
+    }
+
 
 }
