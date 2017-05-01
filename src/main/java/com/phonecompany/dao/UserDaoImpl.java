@@ -75,7 +75,7 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
     }
 
     @Override
-    public String getWhereClause(Object... args) {
+    public String prepareWhereClause(Object... args) {
 
         String where = "";
 

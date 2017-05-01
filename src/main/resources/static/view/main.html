@@ -2,6 +2,9 @@
     <div class="registration-form">
         <div class="col-lg-8 col-lg-offset-2 centered">
             <div class="card">
+                <i class="fa fa-times close-registration-form"
+                   ng-click="fallBackToLogin()">
+                </i>
                 <div class="content">
                     <div class="row text-center">
                         <h4 style="font-weight: 500; font-size: 32px; text-transform: uppercase">Registration</h4>
@@ -179,9 +182,6 @@
                             </div>
                         </div>
                         <div style="margin-top: -80px">
-                            <p class="login-message" style="font-size: 0.9em">Changed your mind?
-                                <a ng-href="#/login">Fall back to login</a>
-                            </p>
                             <button ng-class="{unsubmitable : registerForm.$invalid,
                         submitable: !registerForm.$invalid}"
                                     ng-disabled="registerForm.$invalid"

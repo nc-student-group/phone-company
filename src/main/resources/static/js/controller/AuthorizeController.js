@@ -20,7 +20,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
-        $scope.phonePattern = /^\+380[0-9]{9}$/;
+        $scope.phonePattern = /^\+38077[0-9]{7}$/;
         $scope.textFieldPattern = /^[a-zA-Z]+$/;
         $scope.numberPattern = /^[0-9]+$/;
 
@@ -67,5 +67,9 @@ angular.module('phone-company').controller('AuthorizeController', [
                     toastr.error('Bad credentials', 'Error');
                 });
         };
+
+        $scope.fallBackToLogin = function () {
+            $location.path('/login');
+        }
 
     }]);

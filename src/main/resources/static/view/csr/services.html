@@ -214,7 +214,8 @@
 
                                                     <div ng-messages="servicesForm.price.$error" role="alert" multiple>
                                                         <div ng-message="pattern">
-                                                            This field should be in decimal format, like 99.99 and not be negative
+                                                            This field should be in decimal format, like 99.99 and not
+                                                            be negative
                                                         </div>
                                                     </div>
                                                 </md-input-container>
@@ -228,7 +229,8 @@
                                                            ng-model="currentService.discount" name="discount"
                                                            ng-pattern="discountPattern" required/>
 
-                                                    <div ng-messages="servicesForm.discount.$error" role="alert" multiple>
+                                                    <div ng-messages="servicesForm.discount.$error" role="alert"
+                                                         multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain numbers from 0 to 1
                                                         </div>
@@ -250,8 +252,23 @@
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <div class="col-md-12">
+                                                <md-input-container class="md-block">
+                                                <textarea placeholder="Description"
+                                                          ng-model="currentService.description"
+                                                          name="description" md-maxlength="100"></textarea>
+                                                    <div ng-messages="currentService.description.$error" role="alert">
+                                                        <div ng-message="md-maxlength">
+                                                            Sorry, but your message is too verbose!
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <img ng-src="{{currentService.pictureUrl}}" alt="">
-                                            <md-button class="md-raised md-primary upload_photo" ng-click="uploadPicture()">
+                                            <md-button class="md-raised md-primary upload_photo"
+                                                       ng-click="uploadPicture()">
                                                 <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
                                             </md-button>
                                             <div>
@@ -282,12 +299,13 @@
                                                         Crop
                                                     </md-button>
                                                 </div>
+                                            </div>
+                                            <button class="btn btn-info btn-fill pull-left"
+                                                    ng-disabled="servicesForm.$invalid"
+                                                    ng-click="addService()">Add service
+                                            </button>
+                                            <div class="clearfix"></div>
                                         </div>
-                                        <button class="btn btn-info btn-fill pull-left"
-                                                ng-disabled="servicesForm.$invalid"
-                                                ng-click="addService()">Add service
-                                        </button>
-                                        <div class="clearfix"></div>
                                     </form>
                                 </div>
                             </div>
@@ -319,7 +337,8 @@
 
                                                 <div ng-messages="editServicesForm.price.$error" role="alert" multiple>
                                                     <div ng-message="pattern">
-                                                        This field should be in decimal format, like 99.99 and not be negative
+                                                        This field should be in decimal format, like 99.99 and not be
+                                                        negative
                                                     </div>
                                                 </div>
                                             </md-input-container>
@@ -333,7 +352,8 @@
                                                        ng-model="serviceToEdit.discount" name="discount"
                                                        ng-pattern="discountPattern" required/>
 
-                                                <div ng-messages="editServicesForm.discount.$error" role="alert" multiple>
+                                                <div ng-messages="editServicesForm.discount.$error" role="alert"
+                                                     multiple>
                                                     <div ng-message="pattern">
                                                         This field can only contain numbers from 0 to 1
                                                     </div>
@@ -350,6 +370,20 @@
                                                         {{c.categoryName}}
                                                     </md-option>
                                                 </md-select>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block">
+                                                <textarea placeholder="Description"
+                                                          ng-model="currentService.description"
+                                                          name="description" md-maxlength="100"></textarea>
+                                                <div ng-messages="editServicesForm.description.$error" role="alert">
+                                                    <div ng-message="md-maxlength">
+                                                        Sorry, but your message is too verbose!
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                     </div>

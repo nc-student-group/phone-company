@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -106,6 +108,13 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return password;
     }
 
+    public User getCurrentlyLoggedInUser() {
+        SecuredUser securedUser = new SecuredUser(
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = this.findByEmail(securedUser.getUserName());
+        LOG.debug("User retrieved from the security context: {}", user);
+        return user;
+    }
 
     @Override
     public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {

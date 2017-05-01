@@ -4,12 +4,14 @@ import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 
 public class Service extends DomainEntity {
 
     @NotNull(message = "Service name must not be null")
     private String serviceName;
-    @Pattern(regexp = "^[^0-]([0-9]*(\\.\\d{2}))$", message = "This field should be in decimal format, like 99.99 and not be negative")
+    @Pattern(regexp = "^[^0-]([0-9]*(\\.\\d{2}))$",
+            message = "This field should be in decimal format, like 99.99 and not be negative")
     @NotNull(message = "Price must not be null")
     private double price;
     @NotNull(message = "Product status must not be null")
@@ -21,6 +23,12 @@ public class Service extends DomainEntity {
     private ProductCategory productCategory;
     @NotNull(message = "Picture URL must not be null")
     private String pictureUrl;
+    @NotNull(message = "Description must not be null")
+    private String description;
+    @NotNull(message = "Preview description must not be null")
+    private String previewDescription;
+    @NotNull(message = "Expiry date must not be null")
+    private LocalDate expiryDate;
 
     public Service(){}
 
@@ -78,15 +86,42 @@ public class Service extends DomainEntity {
 
     public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPreviewDescription() {
+        return previewDescription;
+    }
+
+    public void setPreviewDescription(String previewDescription) {
+        this.previewDescription = previewDescription;
+    }
+
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
     @Override
     public String toString() {
         return "Service{" +
-                "productCategory=" + productCategory +
-                ", serviceName='" + serviceName + '\'' +
+                "serviceName='" + serviceName + '\'' +
                 ", price=" + price +
                 ", productStatus=" + productStatus +
                 ", discount=" + discount +
-                ", pictureUrl=" + pictureUrl +
+                ", productCategory=" + productCategory +
+                ", pictureUrl='" + pictureUrl + '\'' +
+                ", description='" + description + '\'' +
+                ", previewDescription='" + previewDescription + '\'' +
+                ", expiryDate=" + expiryDate +
                 "} " + super.toString();
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
         implements ProductCategoryDao {
