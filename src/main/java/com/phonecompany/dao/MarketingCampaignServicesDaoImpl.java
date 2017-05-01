@@ -36,8 +36,8 @@ public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampa
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, MarketingCampaignServices entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -47,8 +47,8 @@ public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampa
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, MarketingCampaignServices entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
 
             preparedStatement.setLong(4, entity.getId());

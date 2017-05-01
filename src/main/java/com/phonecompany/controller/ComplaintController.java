@@ -8,18 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @RestController
+@RequestMapping(value = "api/complaints")
 public class ComplaintController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
@@ -33,7 +29,8 @@ public class ComplaintController {
         this.complaintService = complaintService;
     }
 
-    @RequestMapping(value = "/api/complaint/add", method = RequestMethod.POST)
+    //@RequestMapping(value = "/api/complaint/add", method = RequestMethod.POST)
+    @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         complaint.setUser(userController.getUser());
         Complaint createdComplaint = complaintService.createComplaint(complaint);
@@ -42,7 +39,8 @@ public class ComplaintController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(method = GET, value = "/api/complaints")
+    //@RequestMapping(method = GET, value = "/api/complaints")
+    @GetMapping(value = "/complaints")
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
         List<Complaint> complaints = complaintService.getAll();
@@ -51,7 +49,8 @@ public class ComplaintController {
         return Collections.unmodifiableCollection(complaints);
     }
 
-    @RequestMapping(method = GET, value = "/api/complaintCategory/get")
+    //@RequestMapping(method = GET, value = "/api/complaintCategory/get")
+    @GetMapping(value = "/categories")
     public Collection<ComplaintCategory> getAllComplaintCategory() {
         LOG.info("Retrieving all the complaint categories");
 

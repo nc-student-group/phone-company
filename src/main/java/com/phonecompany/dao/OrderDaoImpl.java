@@ -44,8 +44,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     public void populateSaveStatement(PreparedStatement preparedStatement, Order entity) {
         try {
             LOGGER.debug("Order save {}", entity);
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomerService()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomerService()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
             preparedStatement.setDate(5 ,entity.getCreationDate());
@@ -58,8 +58,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Order entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomerService()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomerService()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
             preparedStatement.setDate(5 ,entity.getCreationDate());

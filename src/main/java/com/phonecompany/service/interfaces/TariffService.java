@@ -1,9 +1,6 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Tariff;
-import com.phonecompany.model.TariffRegion;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -33,9 +30,15 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Integer getCountTariffsAvailableForCorporate();
 
-    public Tariff getByIdForSingleCustomer(long id);
+    public Tariff getByIdForSingleCustomer(long id, long regionId);
 
-    public void deactivateTariff(CustomerTariff customerTariff);
+    public void deactivateSingleTariff(CustomerTariff customerTariff);
 
-    public void activateTariff(Customer customer, TariffRegion tariffRegion);
+    public void deactivateCorporateTariff(CustomerTariff customerTariff);
+
+    public void activateSingleTariff(Customer customer, TariffRegion tariffRegion);
+
+    public void activateCorporateTariff(Corporate corporate, Tariff tariff);
+
+    public ResponseEntity<?> activateTariff(long tariffId, Customer customer);
 }

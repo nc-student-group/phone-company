@@ -276,10 +276,11 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public Tariff getByIdForSingleCustomer(long id){
+    public Tariff getByIdForSingleCustomer(long id, long regionId){
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
             ps.setObject(1, id);
+            ps.setObject(2, regionId);
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
                 return this.init(rs);

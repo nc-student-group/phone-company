@@ -38,8 +38,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, CustomerService entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getOrderStatus().name());
         } catch (SQLException e) {
@@ -50,8 +50,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, CustomerService entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setString(4, entity.getOrderStatus().name());
             preparedStatement.setLong(5, entity.getId());

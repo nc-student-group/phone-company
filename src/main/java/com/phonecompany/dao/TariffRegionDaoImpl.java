@@ -45,8 +45,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, TariffRegion entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getRegion()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getRegion()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setDouble(3, entity.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -56,8 +56,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, TariffRegion entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getRegion()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getRegion()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setDouble(3, entity.getPrice());
             preparedStatement.setLong(4, entity.getId());
         } catch (SQLException e) {
@@ -102,10 +102,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
 
     @Override
     public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId) {
-        String query = this.getQuery("getAllByTariffId");
-        query += " and tr.region_id = ? ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"))) {
             ps.setLong(1, tariffId);
             ps.setLong(2, regionId);
             ResultSet rs = ps.executeQuery();
