@@ -60,7 +60,7 @@ angular.module('phone-company').controller('TariffDetailController', [
                 });
         };
 
-        function DialogController($scope, $mdDialog, currentTariff, newTariff) {
+        function DialogController($scope, $mdDialog, currentTariff, newTariff, TariffService) {
             $scope.currentTariff = currentTariff;
             $scope.newTariff = newTariff;
 
@@ -72,6 +72,13 @@ angular.module('phone-company').controller('TariffDetailController', [
             };
 
             $scope.answer = function (message) {
+                TariffService.activateTariff($scope.newTariff.id).then(function () {
+                    $location.path("/client");
+                }, function (data) {
+                    toastr.error(data.message, 'Error');
+                    $mdDialog.cancel();
+                    $location.path("/client/tariffs/available");
+                });
                 // if ($scope.review.reviewUser.email == undefined) {
                 //     $scope.validEmailForm = 1;
                 // } else {
