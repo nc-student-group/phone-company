@@ -82,7 +82,6 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public Customer update(Customer user) {
         Assert.notNull(user, "User should not be null");
-
         return super.update(user);
     }
 

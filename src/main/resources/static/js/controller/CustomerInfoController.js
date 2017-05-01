@@ -4,16 +4,24 @@
     angular.module('phone-company')
         .controller('CustomerInfoController', CustomerInfoController);
 
-    CustomerInfoController.$inject = ['$scope', '$log','CustomerInfoService', '$rootScope'];
+    CustomerInfoController.$inject = ['$scope', '$log', 'CustomerInfoService', '$rootScope'];
 
-    function CustomerInfoController($scope, $log,CustomerInfoService, $rootScope) {
+    function CustomerInfoController($scope, $log, CustomerInfoService, $rootScope) {
         console.log('This is CustomerInfoController');
         $scope.tariffsFound = 0;
         $scope.availableTariffsFound = 0;
+        $scope.mailingSwitchDisabled = true;
+
+        $scope.setMailingAgreement = function () {
+            console.log(`Setting mailing agreement to: ${$scope.customer.mailingEnabled}`);
+            CustomerInfoService.patchCustomer($scope.customer);
+        };
 
         CustomerInfoService.getCustomer()
             .then(function (data) {
+                console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
+                $scope.mailingSwitchDisabled = false;
             });
 
         CustomerInfoService.getTariffsByCustomerId()
