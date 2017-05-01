@@ -48,7 +48,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -61,7 +61,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
             preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setLong(6, entity.getId());
         } catch (SQLException e) {
@@ -77,7 +77,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id")));
             customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customerTariff.setTotalPrice(rs.getDouble("total_price"));
-            customerTariff.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("tariff_status")));
+            customerTariff.setCustomerProductStatus(CustomerProductStatus.valueOf(rs.getString("tariff_status")));
             customerTariff.setTariff(tariffDao.getById(rs.getLong("tariff_id")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
