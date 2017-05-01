@@ -58,6 +58,10 @@ angular.module('phone-company').controller('ClientServicesController', [
                         $scope.loading = false;
                     });
             }
-        }
+        };
+
+        $scope.showServiceDetails = function (id) {
+            $location.path("/client/services/" + id);
+        };
     }
 ]);

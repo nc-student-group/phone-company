@@ -119,6 +119,11 @@
                 templateUrl: 'view/client/tariffDetail.html',
                 controller: 'TariffDetailController'
             });
+        $routeProvider.when('/client/services/:id',
+            {
+                templateUrl: 'view/client/serviceDetail.html',
+                controller: 'ServiceDetailController'
+            });
         $routeProvider.when('/client/complaints',
             {
                 templateUrl: 'view/client/complaints.html',
