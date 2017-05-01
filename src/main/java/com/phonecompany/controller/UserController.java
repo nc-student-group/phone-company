@@ -58,27 +58,21 @@ public class UserController {
     @RequestMapping(method = GET, value = "/api/user/get")
     public User getUser() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-        User user = userService.findByEmail(loggedInUser.getEmail());
-        LOG.debug("User retrieved from security context: {}", user);
+        LOG.debug("User retrieved from security context: {}", loggedInUser);
 
-        return user;
+        return loggedInUser;
     }
 
     @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
     public ResponseEntity<?> tryLogin() {
-        LOG.debug("About to fetch currently logged in role");
-        org.springframework.security.core.userdetails.User securityUser = null;
-        securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder
-                        .getContext().getAuthentication().getPrincipal();
-        User user = userService.findByEmail(securityUser.getUsername());
-        return new ResponseEntity<>(user.getRole(), HttpStatus.OK);
+        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        LOG.debug("Currently logged in user: {}", loggedInUser);
+        return new ResponseEntity<>(loggedInUser.getRole(), HttpStatus.OK);
     }
 
     @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
-
-        if(userService.findByEmail(user.getEmail())==null){
+        if (userService.findByEmail(user.getEmail()) == null) {
             user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
             eventPublisher.publishEvent(new OnUserCreationEvent(user));
         }

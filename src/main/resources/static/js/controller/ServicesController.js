@@ -152,7 +152,7 @@ angular.module('phone-company').controller('ServicesController', [
 
         $scope.editService = function (id) {
             $scope.preloader.send = true;
-            ServicesService.getServiceToEditById(id).then(function (data) {
+            ServicesService.getServiceById(id).then(function (data) {
                 $scope.serviceToEdit = data;
                 $scope.preloader.send = false;
                 $scope.editing = true;

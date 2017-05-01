@@ -72,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("/api/tariffs/get/by/client/**").hasRole("CLIENT")
+                .antMatchers("/api/tariffs/get/by/client/**").hasRole("CLIENT")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("/api/complaint/add").hasAnyRole("CLIENT", "CSR", "ADMIN")

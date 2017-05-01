@@ -53,11 +53,10 @@ public class ServicesController {
     }
 
     @GetMapping(value = "/{id}")
-    public Service getServiceToEdit(@PathVariable("id") long serviceId) {
-        LOG.debug("Service with an id: {} will be edited", serviceId);
-        Service serviceToEdit = this.serviceService.getById(serviceId);
-        LOG.debug("Service fetched by id: {}", serviceId);
-        return serviceToEdit;
+    public Service getServiceById(@PathVariable("id") long serviceId) {
+        Service serviceFetchedById = this.serviceService.getById(serviceId);
+        LOG.debug("Service fetched by id: {}", serviceFetchedById);
+        return serviceFetchedById;
     }
 
     @GetMapping(value = "/new")

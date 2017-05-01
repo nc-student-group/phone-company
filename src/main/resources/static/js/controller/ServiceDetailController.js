@@ -2,17 +2,23 @@
 
 angular.module('phone-company').controller('ServiceDetailController', [
     '$scope',
-    '$location',
     '$rootScope',
+    '$location',
+    '$routeParams',
     'ServicesService',
-    '$anchorScroll',
-    function ($scope, $location, $rootScope, ServicesService) {
+    function ($scope, $rootScope, $location, $routeParams, ServicesService) {
 
-        let selectedServiceId = $routeParams['id'];
+        // let selectedServiceId = $routeParams['id'];
 
-        console.log(`Selected service id ${selectedServiceId}`);
+        console.log(`Selected service id ${$routeParams['id']}`);
 
+        $scope.preloader.send = true;
+        ServicesService.getServiceById($routeParams['id'])
+            .then(function (data) {
+                $scope.currentService = data;
+                $scope.preloader.send = false;
+            }, function () {
+                $scope.preloader.send = false;
+            });
 
-
-    }
-]);
+    }]);
