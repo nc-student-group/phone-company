@@ -28,8 +28,7 @@ public class DbManager {
     private static final int MAX_STATEMENTS = 50;
     private static final int MIN_POOL_SIZE = 3;
     private static final int ACQUIRE_RETRY_ATTEMPTS = 10;
-    private static final int UNRETURNED_CONNECTION_TIMEOUT = 20;
-    private static final int MAX_CONNECTION_AGE = 3600;
+    private static final int MAX_CONNECTION_AGE = 5;
 
     private static DbManager dbManager;
 
@@ -73,8 +72,6 @@ public class DbManager {
             dataSource.setMaxIdleTime(MAX_IDLE_TIME);
             LOG.debug("Setting retry attempts to : {}", ACQUIRE_RETRY_ATTEMPTS);
             dataSource.setAcquireRetryAttempts(ACQUIRE_RETRY_ATTEMPTS);
-            LOG.debug("Setting unreturned connection timeout: {}", UNRETURNED_CONNECTION_TIMEOUT);
-            dataSource.setUnreturnedConnectionTimeout(UNRETURNED_CONNECTION_TIMEOUT);
             LOG.debug("Setting max connection age to: {}", MAX_CONNECTION_AGE);
             dataSource.setMaxConnectionAge(MAX_CONNECTION_AGE);
 

@@ -33,13 +33,18 @@ public class Service extends DomainEntity {
     public Service(){}
 
     public Service(ProductCategory productCategory, String serviceName,
-                   double price, ProductStatus productStatus, double discount, String pictureUrl) {
+                   double price, ProductStatus productStatus, double discount,
+                   String pictureUrl, String description, String previewDescription,
+                   LocalDate expiryDate) {
         this.productCategory = productCategory;
         this.serviceName = serviceName;
         this.price = price;
         this.productStatus = productStatus;
         this.discount = discount;
         this.pictureUrl = pictureUrl;
+        this.description = description;
+        this.previewDescription = previewDescription;
+        this.expiryDate = expiryDate;
     }
 
     public ProductCategory getProductCategory() {

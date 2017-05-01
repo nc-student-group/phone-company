@@ -36,7 +36,7 @@ public class Customer extends User {
     public Customer(Long id, String email, String password, UserRole role,
                     Status status, String firstName, String secondName,
                     String lastName, String phone, Address address,
-                    Corporate corporate, Boolean isRepresentative) {
+                    Corporate corporate, Boolean isRepresentative, Boolean isMailingEnabled) {
         super(id, email, password, role, status);
         this.firstName = firstName;
         this.secondName = secondName;
@@ -45,12 +45,13 @@ public class Customer extends User {
         this.address = address;
         this.corporate = corporate;
         this.isRepresentative = isRepresentative;
+        this.isMailingEnabled = isMailingEnabled;
     }
 
     public Customer(String email, String password, UserRole role,
                     Status status, String firstName, String secondName,
                     String lastName, String phone, Address address,
-                    Corporate corporate, Boolean isRepresentative) {
+                    Corporate corporate, Boolean isRepresentative, Boolean isMailingEnabled) {
         super(email, password, role, status);
         this.firstName = firstName;
         this.secondName = secondName;
@@ -59,6 +60,7 @@ public class Customer extends User {
         this.address = address;
         this.corporate = corporate;
         this.isRepresentative = isRepresentative;
+        this.isMailingEnabled = isMailingEnabled;
     }
 
     public String getFirstName() {
