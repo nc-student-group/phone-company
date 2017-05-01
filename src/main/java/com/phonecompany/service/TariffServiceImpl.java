@@ -127,8 +127,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public Tariff getByIdForSingleCustomer(long id) {
-        return this.tariffDao.getByIdForSingleCustomer(id);
+    public Tariff getByIdForSingleCustomer(long id, long regionId) {
+        return this.tariffDao.getByIdForSingleCustomer(id, regionId);
     }
 
     @Override
@@ -150,6 +150,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         Order activationOrder = new Order(null, null, OrderType.ACTIVATION, OrderStatus.CREATED, date, date);
         orderService.save(activationOrder);
+        LOGGER.debug("TARIFF PRICE: "+tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()));
         CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getPrice()), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);

@@ -150,7 +150,7 @@
                                     <tr ng-repeat="t in tariffs" class="tariff-td">
                                         <td>{{t.tariff.tariffName}}<br>
                                         <a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a></td>
-                                        <td style="padding: 0;">
+                                        <td style="padding: 0; max-height:250px;">
                                             <table width="100%" style="table-layout: fixed;"
                                                    class="table table-striped" ng-hide="t.tariff.isCorporate">
                                                 <tr ng-repeat="r in t.regions" class="tariff-td">

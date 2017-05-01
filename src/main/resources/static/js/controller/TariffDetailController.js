@@ -25,15 +25,13 @@ angular.module('phone-company').controller('TariffDetailController', [
         $scope.activateClick = function () {
             $scope.preloader.send = true;
             TariffService.getCurrentCustomerTariff().then(function (data) {
-                console.log(data);
                 $scope.currentTariff = data;
-                if ($scope.currentTariff == undefined) {
-                    toastr.info("no current tariff");
+                if ($scope.currentTariff.tariff != undefined && $scope.currentTariff.tariff.id == $scope.tariff.id) {
+                    toastr.error("This tariff plan is already activated for you!", 'Error');
                 } else {
-                    toastr.info('Current tariff: "' + $scope.currentTariff.tariff.tariffName + '"');
+                    $scope.showModalWindow($scope.currentTariff, $scope.tariff, $scope.preloader);
                 }
                 $scope.preloader.send = false;
-                $scope.showModalWindow($scope.currentTariff, $scope.tariff);
             }, function (data) {
                 $scope.preloader.send = false;
                 if (data.message != undefined) {
@@ -42,16 +40,16 @@ angular.module('phone-company').controller('TariffDetailController', [
             })
         };
 
-        $scope.showModalWindow = function (currentTariff, newTariff) {
+        $scope.showModalWindow = function (currentTariff, newTariff, preloader) {
             $mdDialog.show({
                 controller: DialogController,
                 templateUrl: '../../view/client/changeTariffModal.html',
                 locals: {
                     currentTariff: currentTariff,
-                    newTariff: newTariff
+                    newTariff: newTariff,
+                    preloader:preloader
                 },
                 parent: angular.element(document.body),
-                // targetEvent: ev,
                 clickOutsideToClose: true,
                 escapeToClose: true
             })
@@ -60,9 +58,10 @@ angular.module('phone-company').controller('TariffDetailController', [
                 });
         };
 
-        function DialogController($scope, $mdDialog, currentTariff, newTariff, TariffService) {
+        function DialogController($scope, $mdDialog, currentTariff, newTariff, TariffService, preloader) {
             $scope.currentTariff = currentTariff;
             $scope.newTariff = newTariff;
+            $scope.preloader = preloader;
 
             $scope.hide = function () {
                 $mdDialog.hide();
@@ -72,23 +71,17 @@ angular.module('phone-company').controller('TariffDetailController', [
             };
 
             $scope.answer = function (message) {
+                $scope.preloader.send = true;
                 TariffService.activateTariff($scope.newTariff.id).then(function () {
+                    $mdDialog.cancel();
                     $location.path("/client");
+                    $scope.preloader.send = false;
                 }, function (data) {
                     toastr.error(data.message, 'Error');
                     $mdDialog.cancel();
+                    $scope.preloader.send = false;
                     $location.path("/client/tariffs/available");
                 });
-                // if ($scope.review.reviewUser.email == undefined) {
-                //     $scope.validEmailForm = 1;
-                // } else {
-                //     if ($scope.review.reviewUser.name.length > 0 && $scope.review.reviewUser.email.length > 0 && $scope.review.description.length > 0) {
-                //         $scope.review.description = $scope.removeTags($scope.review.description);
-                //         ReviewService.addNewReview($scope.review).then(function (data) {
-                //         });
-                //         $mdDialog.hide(message);
-                //     }
-                // }
             };
         }
 

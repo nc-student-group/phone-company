@@ -179,7 +179,7 @@ public class TariffController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
         if (customer.getCorporate() == null) {
-            return tariffService.getByIdForSingleCustomer(id);
+            return tariffService.getByIdForSingleCustomer(id, customer.getAddress().getRegion().getId());
         } else {
             return tariffService.getById(id);
         }

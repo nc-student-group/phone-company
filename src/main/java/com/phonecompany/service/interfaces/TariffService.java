@@ -33,7 +33,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Integer getCountTariffsAvailableForCorporate();
 
-    public Tariff getByIdForSingleCustomer(long id);
+    public Tariff getByIdForSingleCustomer(long id, long regionId);
 
     public void deactivateTariff(CustomerTariff customerTariff);
 
