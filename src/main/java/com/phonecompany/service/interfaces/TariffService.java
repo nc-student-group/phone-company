@@ -1,5 +1,7 @@
 package com.phonecompany.service.interfaces;
 
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
@@ -32,4 +34,8 @@ public interface TariffService extends CrudService<Tariff> {
     public Integer getCountTariffsAvailableForCorporate();
 
     public Tariff getByIdForSingleCustomer(long id);
+
+    public void deactivateTariff(CustomerTariff customerTariff);
+
+    public void activateTariff(Customer customer, TariffRegion tariffRegion);
 }

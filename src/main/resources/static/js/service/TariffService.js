@@ -13,6 +13,8 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariff/update/status/";
     var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/get/";
     var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariff/for/customer/get/";
+    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariff/by/customer/get";
+    var GET_ACTIVATE_TARIFF_URL = "/api/tariff/activate/";
 
     var factory = {
         getAllRegions: getAllRegions,
@@ -24,8 +26,10 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
         addTariffSingle: addTariffSingle,
         saveTariffSingle: saveTariffSingle,
         changeTariffStatus: changeTariffStatus,
-        getTariffsAvailableForCustomer:getTariffsAvailableForCustomer,
-        getTariffForCustomerById:getTariffForCustomerById
+        getTariffsAvailableForCustomer: getTariffsAvailableForCustomer,
+        getTariffForCustomerById: getTariffForCustomerById,
+        getCurrentCustomerTariff: getCurrentCustomerTariff,
+        activateTariff: activateTariff
     };
 
     return factory;
@@ -172,5 +176,32 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
             });
         return deferred.promise;
     }
+
+    function getCurrentCustomerTariff() {
+        var deferred = $q.defer();
+        $http.get(GET_CURRENT_CUSTOMER_TARIFF_URL).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function activateTariff(id) {
+        var deferred = $q.defer();
+        $http.get(GET_ACTIVATE_TARIFF_URL + id).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
 
 }]);

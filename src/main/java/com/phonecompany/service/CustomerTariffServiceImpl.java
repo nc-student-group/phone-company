@@ -26,4 +26,14 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
                 customerTariffDao.getCustomerTariffsByCorporateId(customer.getCorporate().getId()) :
                 customerTariffDao.getCustomerTariffsByCustomerId(customer.getId());
     }
+
+    @Override
+    public CustomerTariff getCurrentCustomerTariff(long customerId){
+        return this.customerTariffDao.getCurrentCustomerTariff(customerId);
+    }
+
+    @Override
+    public CustomerTariff getCurrentCorporateTariff(long corporateId){
+        return this.customerTariffDao.getCurrentCorporateTariff(corporateId);
+    }
 }

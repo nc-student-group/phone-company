@@ -30,7 +30,8 @@ public class Service extends DomainEntity {
     @NotNull(message = "Expiry date must not be null")
     private LocalDate expiryDate;
 
-    public Service(){}
+    public Service() {
+    }
 
     public Service(ProductCategory productCategory, String serviceName,
                    double price, ProductStatus productStatus, double discount,
@@ -87,9 +88,13 @@ public class Service extends DomainEntity {
         this.discount = discount;
     }
 
-    public String getPictureUrl() { return pictureUrl; }
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
 
-    public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
 
     public String getDescription() {
         return description;

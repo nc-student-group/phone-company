@@ -3,6 +3,9 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.CustomerService;
+import com.phonecompany.model.enums.CustomerProductStatus;
+import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.CustomerServiceImpl;
 import com.phonecompany.service.interfaces.*;
@@ -43,6 +46,8 @@ public class TariffController {
     @Autowired
     private CustomerServiceImpl customerService;
 
+    @Autowired
+    private OrderService orderService;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -180,4 +185,42 @@ public class TariffController {
         }
     }
 
+    @RequestMapping(value = "/api/tariff/by/customer/get", method = RequestMethod.GET)
+    public ResponseEntity<?> getCurrentCustomerTariff() {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        CustomerTariff customerTariff = null;
+        if (customer.getCorporate() == null) {
+            customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
+        } else {
+            if (customer.getCorporate() != null && customer.getRepresentative()) {
+                customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
+            } else {
+                return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative."), HttpStatus.CONFLICT);
+            }
+        }
+        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/tariff/activate/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> activateTariff(@PathVariable("id") long id) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        if (customer.getCorporate() == null) {
+            CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
+            if (customerTariff != null) {
+                tariffService.deactivateTariff(customerTariff);
+            }
+            TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(id, customer.getAddress().getRegion().getId());
+            if(tariffRegion != null && tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+                tariffService.activateTariff(customer, tariffRegion);
+            }else{
+                return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+            }
+
+        }
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
 }

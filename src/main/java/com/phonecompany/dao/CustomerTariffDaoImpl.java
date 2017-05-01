@@ -45,11 +45,11 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, CustomerTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getTariff()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -58,11 +58,11 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, CustomerTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setLong(6, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -77,7 +77,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             customerTariff.setCustomer(customerDao.getById(rs.getLong("customer_id")));
             customerTariff.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customerTariff.setTotalPrice(rs.getDouble("total_price"));
-            customerTariff.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("tariff_status")));
+            customerTariff.setCustomerProductStatus(CustomerProductStatus.valueOf(rs.getString("tariff_status")));
             customerTariff.setTariff(tariffDao.getById(rs.getLong("tariff_id")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
@@ -111,6 +111,40 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
             throw new EntityNotFoundException(id, e);
         }
         return tariffs;
+    }
+
+    @Override
+    public CustomerTariff getCurrentCustomerTariff(long customerId) {
+        String query = this.getQuery("getByCustomerId");
+        query += " and tariff_status='ACTIVE' ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return null;
+    }
+
+    @Override
+    public CustomerTariff getCurrentCorporateTariff(long corporateId){
+        String query = this.getQuery("getByCorporateId");
+        query += " and tariff_status='ACTIVE' ";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, corporateId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(corporateId, e);
+        }
+        return null;
     }
 
 

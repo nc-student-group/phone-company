@@ -39,7 +39,7 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             preparedStatement.setDate(2, entity.getDate());
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -53,7 +53,7 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             preparedStatement.setDate(2, entity.getDate());
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getUser()));
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
 
             preparedStatement.setLong(7, entity.getId());

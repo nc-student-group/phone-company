@@ -36,7 +36,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Address address) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(address.getRegion()));
             preparedStatement.setString(2, address.getLocality());
             preparedStatement.setString(3, address.getStreet());
             preparedStatement.setString(4, address.getHouseNumber());
@@ -65,7 +65,7 @@ public class AddressDaoImpl extends CrudDaoImpl<Address>
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, Address address) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(address.getRegion()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(address.getRegion()));
             preparedStatement.setString(2, address.getLocality());
             preparedStatement.setString(3, address.getStreet());
             preparedStatement.setString(4, address.getHouseNumber());
