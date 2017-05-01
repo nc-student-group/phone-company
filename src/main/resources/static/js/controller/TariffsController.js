@@ -10,6 +10,7 @@ angular.module('phone-company').controller('TariffsController', [
     '$window',
     function ($scope, $http, $location, $rootScope, TariffService, $anchorScroll, $window) {
         console.log('This is TariffsController');
+        $scope.activePage = 'tariffs';
         $scope.page = 0;
         $scope.size = 5;
         $scope.inProgress = false;

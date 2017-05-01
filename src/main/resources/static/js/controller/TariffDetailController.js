@@ -8,6 +8,7 @@ angular.module('phone-company').controller('TariffDetailController', [
     '$mdDialog',
     function ($scope, $rootScope, $location, $routeParams, TariffService, $mdDialog) {
         console.log('This is TariffDetailController');
+        $scope.activePage = 'tariffs';
         console.log($routeParams['id']);
 
         $scope.preloader.send = true;

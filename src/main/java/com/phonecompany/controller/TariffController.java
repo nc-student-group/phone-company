@@ -76,22 +76,7 @@ public class TariffController {
     @RequestMapping(value = "/api/tariff/add", method = RequestMethod.POST)
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
-            Tariff tariff = tariffRegions.get(0).getTariff();
-            if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
-                return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-            }
-            tariff.setProductStatus(ProductStatus.ACTIVATED);
-            tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
-            Tariff savedTariff = tariffService.save(tariff);
-            LOGGER.debug("Tariff added {}", savedTariff);
-            tariffRegions.forEach((TariffRegion tariffRegion) -> {
-                if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
-                    tariffRegion.setTariff(savedTariff);
-                    tariffRegionService.save(tariffRegion);
-                    LOGGER.debug("Tariff-region added {}", tariffRegion);
-                }
-            });
+            return tariffService.addNewTariff(tariffRegions.get(0).getTariff(), tariffRegions);
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
