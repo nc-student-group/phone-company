@@ -45,11 +45,11 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, CustomerTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
             preparedStatement.setString(4, entity.getCustomerProductStatus().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getTariff()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -58,11 +58,11 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, CustomerTariff entity) {
         try {
-            preparedStatement.setLong(1, TypeMapper.getNullableId(entity.getCustomer()));
-            preparedStatement.setLong(2, TypeMapper.getNullableId(entity.getCorporate()));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
+            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCorporate()));
             preparedStatement.setDouble(3, entity.getTotalPrice());
             preparedStatement.setString(4, entity.getCustomerProductStatus().name());
-            preparedStatement.setLong(5, TypeMapper.getNullableId(entity.getTariff()));
+            preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getTariff()));
             preparedStatement.setLong(6, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
