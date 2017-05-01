@@ -90,18 +90,27 @@
                                         <th>ID</th>
                                         <th>Client</th>
                                         <th>Date</th>
-                                        <th>Topic</th>
+                                        <th>Subject</th>
+                                        <th>Description</th>
+                                        <th>Type</th>
                                         <th>Status</th>
-                                        <th>Content</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td><textarea readonly style="resize: vertical">...</textarea></td>
+                                        <tr ng-repeat="c in complaints">
+                                            <td>{{c.id}}</td>
+                                            <td>
+                                                <a href="" ng-click="">{{c.user.email}}</a>
+                                            </td>
+                                            <td>{{c.date}}</td>
+                                            <td>{{c.subject}}</td>
+                                            <td>
+                                                <textarea readonly style="resize: vertical" width="100%">
+                                                    {{c.text}}
+                                                </textarea>
+                                            </td>
+                                            <td>{{c.type}}</td>
+                                            <td>{{c.status}}</td>
+
                                         </tr>
                                     </tbody>
                                 </table>

@@ -67,7 +67,7 @@
         $routeProvider.when('/csr/complaints',
             {
                 templateUrl: 'view/csr/complaints.html',
-                // controller: 'TariffsController'
+                controller: 'ComplaintController'
             });
         $routeProvider.when('/csr/services',
             {
@@ -131,7 +131,7 @@
         $httpProvider.interceptors.push('responseObserver');
     }]);
 
-    app.factory('responseObserver', function responseObserver($q, $location) {
+    app.factory('responseObserver', function responseObserver($q, $location, $window) {
         return {
             'responseError': function (errorResponse) {
                 switch (errorResponse.status) {

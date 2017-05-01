@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/complaints")
@@ -21,7 +19,6 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
-    @Autowired
     private UserController userController;
 
     @Autowired
@@ -29,7 +26,6 @@ public class ComplaintController {
         this.complaintService = complaintService;
     }
 
-    //@RequestMapping(value = "/api/complaint/add", method = RequestMethod.POST)
     @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         complaint.setUser(userController.getUser());
@@ -39,17 +35,15 @@ public class ComplaintController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    //@RequestMapping(method = GET, value = "/api/complaints")
     @GetMapping(value = "/complaints")
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
-        List<Complaint> complaints = complaintService.getAll();
-        LOG.info("Complaints fetched from the database: " + complaints);
+//        List<Complaint> complaints = complaintService.getAll();
+//        LOG.info("Complaints fetched from the database: " + complaints);
 
-        return Collections.unmodifiableCollection(complaints);
+        return complaintService.getAll();
     }
 
-    //@RequestMapping(method = GET, value = "/api/complaintCategory/get")
     @GetMapping(value = "/categories")
     public Collection<ComplaintCategory> getAllComplaintCategory() {
         LOG.info("Retrieving all the complaint categories");
