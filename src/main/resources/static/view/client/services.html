@@ -79,10 +79,10 @@
                                     <figcaption>
                                         <h2>{{s.serviceName}}</h2>
                                         <p>
-                                            If you do the job badly enough, sometimes you don't get
-                                            asked to do it again.
+                                            {{s.previewDescription}}
                                         </p>
-                                        <a ng-click="showServiceDetails(s.id)">
+                                        <a style="cursor: pointer"
+                                           ng-click="showServiceDetails(s.id)">
                                             Learn more</a>
                                     </figcaption>
                                 </figure>

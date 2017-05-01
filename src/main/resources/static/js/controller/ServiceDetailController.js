@@ -12,13 +12,17 @@ angular.module('phone-company').controller('ServiceDetailController', [
 
         console.log(`Selected service id ${$routeParams['id']}`);
 
-        $scope.preloader.send = true;
+        $scope.loading = true;
         ServicesService.getServiceById($routeParams['id'])
             .then(function (data) {
                 $scope.currentService = data;
-                $scope.preloader.send = false;
+                $scope.loading = false;
             }, function () {
-                $scope.preloader.send = false;
+                $scope.loading = false;
             });
+
+        $scope.backToServices = function () {
+            $location.path = '/client/tariffs';
+        }
 
     }]);

@@ -4,7 +4,6 @@ import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDate;
 
 public class Service extends DomainEntity {
 
@@ -27,8 +26,8 @@ public class Service extends DomainEntity {
     private String description;
     @NotNull(message = "Preview description must not be null")
     private String previewDescription;
-    @NotNull(message = "Expiry date must not be null")
-    private LocalDate expiryDate;
+    @NotNull(message = "Duration must not be null")
+    private Integer durationInDays;
 
     public Service() {
     }
@@ -36,7 +35,7 @@ public class Service extends DomainEntity {
     public Service(ProductCategory productCategory, String serviceName,
                    double price, ProductStatus productStatus, double discount,
                    String pictureUrl, String description, String previewDescription,
-                   LocalDate expiryDate) {
+                   Integer durationInDays) {
         this.productCategory = productCategory;
         this.serviceName = serviceName;
         this.price = price;
@@ -45,7 +44,7 @@ public class Service extends DomainEntity {
         this.pictureUrl = pictureUrl;
         this.description = description;
         this.previewDescription = previewDescription;
-        this.expiryDate = expiryDate;
+        this.durationInDays = durationInDays;
     }
 
     public ProductCategory getProductCategory() {
@@ -112,12 +111,12 @@ public class Service extends DomainEntity {
         this.previewDescription = previewDescription;
     }
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
+    public Integer getDurationInDays() {
+        return durationInDays;
     }
 
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setDurationInDays(Integer durationInDays) {
+        this.durationInDays = durationInDays;
     }
 
     @Override
@@ -131,7 +130,7 @@ public class Service extends DomainEntity {
                 ", pictureUrl='" + pictureUrl + '\'' +
                 ", description='" + description + '\'' +
                 ", previewDescription='" + previewDescription + '\'' +
-                ", expiryDate=" + expiryDate +
+                ", durationInDays=" + durationInDays +
                 "} " + super.toString();
     }
 }
