@@ -138,55 +138,74 @@
                                                     <h4 class="title">Manage my tariff plans</h4>
                                                 </div>
                                                 <hr/>
-                                                <div class="col-md-8">
-                                                    <b>{{tariff.tariffName}}</b>
-                                                    <div class="row row-one">
-                                                        <div class="col-md-8 condition"><span>Current status</span></div>
-                                                        <div class="col-md-4 conditions-value">
-                                                            <span><b>{{tariff.productStatus}}</b></span>
+                                                    <div ng-show="hasCurrentTariff === false">
+                                                        <div class="row">
+                                                            <h3 style="text-align: center">No current tariff plans available!</h3>
                                                         </div>
                                                     </div>
-                                                    <div class="row row-two">
-                                                        <div class="col-md-8 condition"><span>Roaming</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                                    <div ng-show="hasCurrentTariff === true">
+                                                        <div class="row">
+                                                            <h3 style="text-align: center">{{tariff.tariffName}}</h3>
                                                         </div>
-                                                    </div>
-                                                    <div class="row row-one">
-                                                        <div class="col-md-8 condition">
-                                                            <span>Calls in network</span>
+                                                        <div class="col-md-4">
+                                                            <button style="width: 100%"
+                                                                    class="btn btn-danger btn-fill pull-left"
+                                                                    ng-click="">Deactivate
+                                                            </button>
+                                                            <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
+                                                                    ng-show="tariff.productStatus === 'ACTIVATED'"
+                                                                    ng-click="">Suspend
+                                                            </button>
                                                         </div>
-                                                        <div class="col-md-4 conditions-value">
-                                                            <span><b>{{tariff.callsInNetwork}}</b></span></div>
-                                                    </div>
-                                                    <div class="row row-two">
-                                                        <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
-                                                        <div class="col-md-4 conditions-value">
-                                                            <span><b>{{tariff.callsOnOtherNumbers}}</b></span>
+                                                        <div class="col-md-8">
+                                                        <div class="row row-one">
+                                                            <div class="col-md-8 condition"><span>Current status</span></div>
+                                                            <div class="col-md-4 conditions-value">
+                                                                <span><b>{{tariff.productStatus}}</b></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row row-one">
-                                                        <div class="col-md-8 condition"><span>Roaming</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                                        <div class="row row-two">
+                                                            <div class="col-md-8 condition"><span>Roaming</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row row-two">
-                                                        <div class="col-md-8 condition"><span>Internet</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.internet}}</b></span>
+                                                        <div class="row row-one">
+                                                            <div class="col-md-8 condition">
+                                                                <span>Calls in network</span>
+                                                            </div>
+                                                            <div class="col-md-4 conditions-value">
+                                                                <span><b>{{tariff.callsInNetwork}}</b></span></div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row row-one">
-                                                        <div class="col-md-8 condition"><span>SMS</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.sms}}</b></span></div>
-                                                    </div>
-                                                    <div class="row row-two">
-                                                        <div class="col-md-8 condition"><span>MMS</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.mms}}</b></span></div>
-                                                    </div>
-                                                    <div class="row row-one">
-                                                        <div class="col-md-8 condition"><span>Monthly payment</span></div>
-                                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.price}} uah</b></span></div>
-                                                    </div>
+                                                        <div class="row row-two">
+                                                            <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
+                                                            <div class="col-md-4 conditions-value">
+                                                                <span><b>{{tariff.callsOnOtherNumbers}}</b></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row row-one">
+                                                            <div class="col-md-8 condition"><span>Roaming</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row row-two">
+                                                            <div class="col-md-8 condition"><span>Internet</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.internet}}</b></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row row-one">
+                                                            <div class="col-md-8 condition"><span>SMS</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.sms}}</b></span></div>
+                                                        </div>
+                                                        <div class="row row-two">
+                                                            <div class="col-md-8 condition"><span>MMS</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.mms}}</b></span></div>
+                                                        </div>
+                                                        <div class="row row-one">
+                                                            <div class="col-md-8 condition"><span>Monthly payment</span></div>
+                                                            <div class="col-md-4 conditions-value"><span><b>{{tariff.price}} uah</b></span></div>
+                                                        </div>
                                                 </div>
+                                                    </div>
                                                     <div class="clearfix"></div>
 
                                                 <!--<div class="header">-->

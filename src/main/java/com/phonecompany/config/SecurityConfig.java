@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/customers/new").permitAll()
                 .antMatchers("/api/customer/get/**").hasRole("CLIENT")
                 .antMatchers("/api/tariffs/get/available/").hasRole("CLIENT")
+                .antMatchers("/api/customer/tariff").hasRole("CLIENT")
                 .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")

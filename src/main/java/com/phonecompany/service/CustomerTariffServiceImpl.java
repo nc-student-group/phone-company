@@ -36,4 +36,11 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     public CustomerTariff getCurrentCorporateTariff(long corporateId){
         return this.customerTariffDao.getCurrentCorporateTariff(corporateId);
     }
+
+    @Override
+    public CustomerTariff getCurrentActiveOrSuspendedClientTariff(Customer customer) {
+        return customer.getRepresentative() ?
+                customerTariffDao.getCurrentActiveOrSuspendedCorporateTariff(customer.getCorporate().getId()) :
+                customerTariffDao.getCurrentActiveOrSuspendedCustomerTariff(customer.getId());
+    }
 }
