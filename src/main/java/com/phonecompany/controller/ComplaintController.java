@@ -1,8 +1,10 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.User;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.service.interfaces.ComplaintService;
+import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,25 +23,27 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
-    @Autowired
-    private UserController userController;
+    private UserService userService;
 
     @Autowired
-    public ComplaintController(ComplaintService complaintService) {
+    public ComplaintController(ComplaintService complaintService,
+                               UserService userService) {
         this.complaintService = complaintService;
+        this.userService = userService;
     }
 
-    //@RequestMapping(value = "/api/complaint/add", method = RequestMethod.POST)
+    //TODO: please, do not autowire controllers in controllers
     @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
-        complaint.setUser(userController.getUser());
+        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        complaint.setUser(loggedInUser);
         Complaint createdComplaint = complaintService.createComplaint(complaint);
         LOG.debug("Complaint added {}", createdComplaint);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    //@RequestMapping(method = GET, value = "/api/complaints")
+    //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
     @GetMapping(value = "/complaints")
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
@@ -49,7 +53,6 @@ public class ComplaintController {
         return Collections.unmodifiableCollection(complaints);
     }
 
-    //@RequestMapping(method = GET, value = "/api/complaintCategory/get")
     @GetMapping(value = "/categories")
     public Collection<ComplaintCategory> getAllComplaintCategory() {
         LOG.info("Retrieving all the complaint categories");
