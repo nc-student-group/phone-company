@@ -15,7 +15,8 @@ angular.module('phone-company').factory('CustomerInfoService',
             getCurrentTariff: getCurrentTariff,
             getCustomer: getCustomer,
             patchCustomer: patchCustomer,
-            deactivateTariff: deactivateTariff
+            deactivateTariff: deactivateTariff,
+            suspendTariff: suspendTariff
         };
 
         function patchCustomer(customer) {

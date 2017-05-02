@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> implements CustomerTariffService {
@@ -64,6 +65,39 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
         order.setType(OrderType.DEACTIVATION);
         customerTariffDao.update(customerTariff);
         orderService.save(order);
+        return customerTariff;
+    }
+
+    @Override
+    public CustomerTariff suspendCustomerTariff(Map<String, Object> suspensionData) {
+
+        CustomerTariff customerTariff = customerTariffDao.
+                getById((new Long((Integer)suspensionData.get("currentTariffId"))));
+        Integer daysToExecution = (Integer) suspensionData.get("daysToExecution");
+
+        customerTariff.setCustomerProductStatus(CustomerProductStatus.SUSPENDED);
+
+        LocalDate now  = LocalDate.now();
+        LocalDate executionDate = now.plusDays(daysToExecution);
+
+        Order suspensionOrder = new Order();
+        suspensionOrder.setType(OrderType.SUSPENSION);
+        suspensionOrder.setOrderStatus(OrderStatus.DONE);
+        suspensionOrder.setCreationDate(now);
+        suspensionOrder.setCustomerTariff(customerTariff);
+        suspensionOrder.setExecutionDate(now);
+
+        Order resumingOrder = new Order();
+        resumingOrder.setType(OrderType.RESUMING);
+        resumingOrder.setOrderStatus(OrderStatus.PENDING);
+        resumingOrder.setCreationDate(now);
+        resumingOrder.setCustomerTariff(customerTariff);
+        resumingOrder.setExecutionDate(executionDate);
+
+        customerTariffDao.update(customerTariff);
+        orderService.save(suspensionOrder);
+        orderService.save(resumingOrder);
+
         return customerTariff;
     }
 }
