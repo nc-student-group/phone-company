@@ -8,13 +8,14 @@ angular.module('phone-company').controller('CsrComplaintsController', [
         console.log('This is CsrComplaintsController');
         $scope.activePage = 'complaints';
         $scope.complaint = {
-            user: '',
+            user: {},
             status: 'ACCEPTED',
             date:'',
             text: '',
             type: '',
             subject: ''
         };
+        $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
 
         ComplaintService.getAllComplaintCategory().then(function (data) {
             console.log('Get all categories of complaint');
@@ -40,8 +41,8 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             ComplaintService.createComplaint($scope.complaint).then(function (data) {
                     $scope.complaint = data;
                     if ($scope.complaint.user.id != undefined) {
-                        toastr.success('Your complaint created successfully!');
-                        console.log("Complaint added", data);
+                        toastr.success('Complaint created successfully!');
+                        console.log("Complaint added", $scope.complaint);
                     } else {
                         toastr.error('Error during complaint creating. User undefined!', 'Error');
                         console.log("User undefined");

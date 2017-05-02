@@ -118,7 +118,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
-    public void deactivateCustomer(long id) {
+    public void deactivateCustomerTariff(long id) {
         Customer customer = this.getById(id);
         if (customer.getCorporate() == null) {
             CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(id);

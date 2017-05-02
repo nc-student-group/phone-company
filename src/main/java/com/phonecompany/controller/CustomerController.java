@@ -135,7 +135,7 @@ public class CustomerController {
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
-
+        customerService.deactivateCustomerTariff(customer.getId());
         this.customerService.update(customer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -143,7 +143,7 @@ public class CustomerController {
     @RequestMapping(value = "/api/customer/status/update/{id}/{status}", method = RequestMethod.GET)
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         if (status.equals(Status.DEACTIVATED)) {
-            customerService.deactivateCustomer(id);
+            customerService.deactivateCustomerTariff(id);
         }
         customerService.updateStatus(id, status);
         return new ResponseEntity<Void>(HttpStatus.OK);
