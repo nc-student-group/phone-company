@@ -5,6 +5,7 @@ import com.phonecompany.exception.*;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.phonecompany.util.TypeMapper.toLocalDate;
+import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
 public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements TariffDao {
@@ -31,43 +35,43 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public void populateSaveStatement(PreparedStatement preparedStatement, Tariff entity) {
+    public void populateSaveStatement(PreparedStatement preparedStatement, Tariff tariff) {
         try {
-            preparedStatement.setString(1, entity.getTariffName());
-            preparedStatement.setString(2, entity.getProductStatus().name());
-            preparedStatement.setString(3, entity.getInternet());
-            preparedStatement.setString(4, entity.getCallsInNetwork());
-            preparedStatement.setString(5, entity.getCallsOnOtherNumbers());
-            preparedStatement.setString(6, entity.getSms());
-            preparedStatement.setString(7, entity.getMms());
-            preparedStatement.setString(8, entity.getRoaming());
-            preparedStatement.setBoolean(9, entity.getIsCorporate());
-            preparedStatement.setDate(10, entity.getCreationDate());
-            preparedStatement.setDouble(11, entity.getDiscount());
-            preparedStatement.setString(12, entity.getPictureUrl());
-            preparedStatement.setDouble(13, entity.getPrice());
+            preparedStatement.setString(1, tariff.getTariffName());
+            preparedStatement.setString(2, tariff.getProductStatus().name());
+            preparedStatement.setString(3, tariff.getInternet());
+            preparedStatement.setString(4, tariff.getCallsInNetwork());
+            preparedStatement.setString(5, tariff.getCallsOnOtherNumbers());
+            preparedStatement.setString(6, tariff.getSms());
+            preparedStatement.setString(7, tariff.getMms());
+            preparedStatement.setString(8, tariff.getRoaming());
+            preparedStatement.setBoolean(9, tariff.getIsCorporate());
+            preparedStatement.setDate(10, toSqlDate(tariff.getCreationDate()));
+            preparedStatement.setDouble(11, tariff.getDiscount());
+            preparedStatement.setString(12, tariff.getPictureUrl());
+            preparedStatement.setDouble(13, tariff.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
     }
 
     @Override
-    public void populateUpdateStatement(PreparedStatement preparedStatement, Tariff entity) {
+    public void populateUpdateStatement(PreparedStatement preparedStatement, Tariff tariff) {
         try {
-            preparedStatement.setString(1, entity.getTariffName());
-            preparedStatement.setString(2, entity.getProductStatus().name());
-            preparedStatement.setString(3, entity.getInternet());
-            preparedStatement.setString(4, entity.getCallsInNetwork());
-            preparedStatement.setString(5, entity.getCallsOnOtherNumbers());
-            preparedStatement.setString(6, entity.getSms());
-            preparedStatement.setString(7, entity.getMms());
-            preparedStatement.setString(8, entity.getRoaming());
-            preparedStatement.setBoolean(9, entity.getIsCorporate());
-            preparedStatement.setDate(10, entity.getCreationDate());
-            preparedStatement.setDouble(11, entity.getDiscount());
-            preparedStatement.setString(12, entity.getPictureUrl());
-            preparedStatement.setDouble(13, entity.getPrice());
-            preparedStatement.setLong(14, entity.getId());
+            preparedStatement.setString(1, tariff.getTariffName());
+            preparedStatement.setString(2, tariff.getProductStatus().name());
+            preparedStatement.setString(3, tariff.getInternet());
+            preparedStatement.setString(4, tariff.getCallsInNetwork());
+            preparedStatement.setString(5, tariff.getCallsOnOtherNumbers());
+            preparedStatement.setString(6, tariff.getSms());
+            preparedStatement.setString(7, tariff.getMms());
+            preparedStatement.setString(8, tariff.getRoaming());
+            preparedStatement.setBoolean(9, tariff.getIsCorporate());
+            preparedStatement.setDate(10, toSqlDate(tariff.getCreationDate()));
+            preparedStatement.setDouble(11, tariff.getDiscount());
+            preparedStatement.setString(12, tariff.getPictureUrl());
+            preparedStatement.setDouble(13, tariff.getPrice());
+            preparedStatement.setLong(14, tariff.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -87,7 +91,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             tariff.setMms(rs.getString("mms"));
             tariff.setRoaming(rs.getString("roaming"));
             tariff.setIsCorporate(rs.getBoolean("is_corporate"));
-            tariff.setCreationDate(rs.getDate("creation_date"));
+            tariff.setCreationDate(toLocalDate(rs.getDate("creation_date")));
             tariff.setDiscount(rs.getDouble("discount"));
             tariff.setPictureUrl(rs.getString("picture_url"));
             tariff.setPrice(rs.getDouble("price"));

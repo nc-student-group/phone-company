@@ -119,11 +119,11 @@ public class Customer extends User {
         isRepresentative = representative;
     }
 
-    public Boolean getMailingEnabled() {
+    public Boolean getIsMailingEnabled() {
         return isMailingEnabled;
     }
 
-    public void setMailingEnabled(Boolean mailingEnabled) {
+    public void setIsMailingEnabled(Boolean mailingEnabled) {
         isMailingEnabled = mailingEnabled;
     }
 

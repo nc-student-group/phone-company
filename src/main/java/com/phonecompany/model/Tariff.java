@@ -5,6 +5,7 @@ import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Tariff extends DomainEntity {
 
@@ -28,7 +29,7 @@ public class Tariff extends DomainEntity {
     @JsonProperty(value = "isCorporate")
     private boolean isCorporate;
     @NotNull(message = "Creation date must not be null")
-    private Date creationDate;
+    private LocalDate creationDate;
     private double discount;
     private String pictureUrl;
     private double price;
@@ -36,9 +37,10 @@ public class Tariff extends DomainEntity {
     public Tariff() {
     }
 
-    public Tariff(Long id, String tariffName, ProductStatus productStatus, String internet,
-                  String callsInNetwork, String callsOnOtherNumbers, String sms, String mms,
-                  String roaming, boolean isCorporate, Date creationDate, Double discount, String pictureUrl) {
+    public Tariff(Long id, String tariffName, ProductStatus productStatus,
+                  String internet, String callsInNetwork, String callsOnOtherNumbers,
+                  String sms, String mms, String roaming, boolean isCorporate,
+                  LocalDate creationDate, Double discount, String pictureUrl) {
         super(id);
         this.tariffName = tariffName;
         this.productStatus = productStatus;
@@ -121,11 +123,11 @@ public class Tariff extends DomainEntity {
         this.mms = mms;
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
