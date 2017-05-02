@@ -1,0 +1,76 @@
+<div class="wrapper">
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+    <div class="main-panel">
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div >
+                            <div class="card" ng-hide="editing">
+                                <div class="header">
+                                    <h4 class="title">Company details</h4>
+                                </div>
+                                <hr/>
+                                <div class="content table-responsive">
+
+                                    <table id="customersTable" class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <th>Email</th>
+                                        <th>Name</th>
+                                        <th>Second name</th>
+                                        <th>Last name</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="c in customers">
+                                            <td>{{c.email}}</td>
+                                            <td>{{c.firstName}}</td>
+                                            <td>{{c.secondName}}</td>
+                                            <td>{{c.lastName}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="header">
+                                    <h4 class="title">Add customers to company:</h4>
+                                </div>
+                                <hr/>
+                                <div class="content table-responsive" style="height: 400px; overflow-y: scroll">
+                                    <table id="customersTableWithoutCorporation" class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <th>Email</th>
+                                        <th>Name</th>
+                                        <th>Second name</th>
+                                        <th>Last name</th>
+                                        <th></th>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="c in customersWithoutCorporation">
+                                            <td>{{c.email}}</td>
+                                            <td>{{c.firstName}}</td>
+                                            <td>{{c.secondName}}</td>
+                                            <td>{{c.lastName}}</td>
+                                            <td>
+                                                <button class="btn btn-default btn-fill" ng-click="addCustomerToCompany(c)">Add</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <p class="copyright">
+                &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+            </p>
+        </div>
+    </footer>
+</div>

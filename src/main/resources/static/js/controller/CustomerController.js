@@ -4,11 +4,11 @@
     angular.module('phone-company')
         .controller('CustomerController', CustomerController);
 
-    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService','CorporationService', '$rootScope'];
+    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService', 'CorporationService', '$rootScope','$mdDialog'];
 
-    function CustomerController($scope, $log, CustomerService, TariffService,CorporationService, $rootScope) {
+    function CustomerController($scope, $log, CustomerService, TariffService, CorporationService, $rootScope, $mdDialog) {
         console.log('This is CustomerService');
-        $scope.activePage='customers';
+        $scope.activePage = 'customers';
         $scope.page = 0;
         $scope.size = 5;
         $scope.inProgress = false;
@@ -22,7 +22,7 @@
         $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
         $scope.numberPattern = /^[0-9]+$/;
 
-        $scope.corporateUser=false;
+        $scope.corporateUser = false;
 
         CorporationService.getAllCorporation().then(function (data) {
            $scope.corporations = data;
@@ -37,10 +37,10 @@
                 lastName: "",
                 phone: "",
                 role: "CLIENT",
-                corporate:{
-                    id:""
+                corporate: {
+                    id: ""
                 },
-                isRepresentative:false,
+                isRepresentative: false,
                 address: {
                     region: "",
                     locality: "",
@@ -56,12 +56,12 @@
          */
         function createCustomer() {
             $log.debug('Customer: ' + JSON.stringify($scope.customer));
-            if(!$scope.customer.isRepresentative){
-                $scope.customer.corporate.id=null;
+            if (!$scope.customer.isRepresentative) {
+                $scope.customer.corporate.id = null;
             }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
-                    toastr.success(`Customers ${createdCustomer.email} has been successfully created. Please, check your email for the password`);
+                    toastr.success("Customers"+ ${createdCustomer.email}+" has been successfully created. Please, check your email for the password");
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {
@@ -121,5 +121,63 @@
                 });
             }
         };
+
+        $scope.deactivateClick = function (index) {
+            $scope.showModalWindow($scope.preloader, $scope.customers[index]);
+        };
+
+        $scope.activateClick = function (index) {
+            $scope.preloader.send = true;
+            CustomerService.updateStatus($scope.customers[index].id, 'ACTIVATED').then(function (data) {
+                $scope.customers[index].status = 'ACTIVATED';
+                toastr.success('Customer "' + $scope.customers[index].email + ' " activated!', 'Success activation');
+                $scope.preloader.send = false;
+            }, function (data) {
+                toastr.error('Some problems with customer activation, try again!', 'Error');
+                $scope.preloader.send = false;
+            })
+        };
+
+        $scope.showModalWindow = function (preloader, customer) {
+            $mdDialog.show({
+                controller: DialogController,
+                templateUrl: '../../view/admin/deactivateCustomerModal.html',
+                locals: {
+                    preloader: preloader,
+                    customer: customer
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function DialogController($scope, $mdDialog, preloader, customer, CustomerService) {
+            $scope.preloader = preloader;
+            $scope.customer = customer;
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function (message) {
+                $scope.preloader.send = true;
+                CustomerService.updateStatus($scope.customer.id, 'DEACTIVATED').then(function (data) {
+                    $scope.customer.status = 'DEACTIVATED';
+                    toastr.success('Customer "' + $scope.customer.email + ' " deactivated!', 'Success deactivation');
+                    $scope.preloader.send = false;
+                    $scope.cancel();
+                }, function (data) {
+                    toastr.error('Some problems with customer deactivation, try again!', 'Error');
+                    $scope.preloader.send = false;
+                    $scope.cancel();
+                })
+            };
+        }
     }
 }());

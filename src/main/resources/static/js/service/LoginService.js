@@ -34,7 +34,7 @@ angular.module('phone-company')
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
-                    console.error(errResponse.toString());
+                    console.error(JSON.stringify(errResponse));
                     deferred.reject(errResponse);
                 });
             return deferred.promise;

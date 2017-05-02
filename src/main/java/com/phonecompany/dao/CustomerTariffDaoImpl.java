@@ -115,10 +115,8 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public CustomerTariff getCurrentCustomerTariff(long customerId) {
-        String query = this.getQuery("getByCustomerId");
-        query += " and tariff_status='ACTIVE' ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -132,10 +130,8 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public CustomerTariff getCurrentCorporateTariff(long corporateId){
-        String query = this.getQuery("getByCorporateId");
-        query += " and tariff_status='ACTIVE' ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCorporateId"))) {
             ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

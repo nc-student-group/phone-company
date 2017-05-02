@@ -19,6 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @Repository
@@ -54,7 +56,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             statement.setObject(9, TypeMapper.getNullableId(customer.getCorporate()));
             statement.setObject(10, customer.getRepresentative());
             statement.setString(11, customer.getStatus().name());
-            statement.setBoolean(12, customer.getMailingEnabled());
+            statement.setBoolean(12, customer.getIsMailingEnabled());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -74,7 +76,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             statement.setObject(9, TypeMapper.getNullableId(customer.getCorporate()));
             statement.setObject(10, customer.getRepresentative());
             statement.setString(11, customer.getStatus().name());
-            statement.setBoolean(12, customer.getMailingEnabled());
+            statement.setBoolean(12, customer.getIsMailingEnabled());
             statement.setLong(13, customer.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -98,7 +100,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             customer.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customer.setRepresentative(rs.getBoolean("is_representative"));
             customer.setStatus(Status.valueOf(rs.getString("status")));
-            customer.setMailingEnabled(rs.getBoolean("is_mailing_enabled"));
+            customer.setIsMailingEnabled(rs.getBoolean("is_mailing_enabled"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -122,8 +124,50 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return null;
     }
 
+    @Override
+    public List<Customer> getByCorporateId(long corporateId) {
+        if (corporateId != 0) {
+            String customersByCorporate = this.getByCorporateIdQuery();
+            LOG.debug("customerByCompany : {}", customersByCorporate);
+            try (Connection conn = dbManager.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+                ps.setLong(1, corporateId);
+                ResultSet rs = ps.executeQuery();
+                List<Customer> customers = new ArrayList<>();
+                while (rs.next()) {
+                    customers.add(this.init(rs));
+                }
+                return customers;
+            } catch (SQLException e) {
+                throw new EntityNotFoundException(corporateId, e);
+            }
+        } else {
+            String customersByCorporate = this.getWithoutCorporateQuery();
+            LOG.debug("customerByVerificationTokenQuery : {}", customersByCorporate);
+            try (Connection conn = dbManager.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+                ResultSet rs = ps.executeQuery();
+                List<Customer> customers = new ArrayList<>();
+                while (rs.next()) {
+                    customers.add(this.init(rs));
+                }
+                return customers;
+            } catch (SQLException e) {
+                throw new EntityNotFoundException(corporateId, e);
+            }
+        }
+    }
+
     private String getByVerificationTokenQuery() {
         return this.getQuery("by.verification.token");
+    }
+
+    private String getByCorporateIdQuery() {
+        return this.getQuery("by.corporate");
+    }
+
+    private String getWithoutCorporateQuery() {
+        return this.getQuery("without.corporate");
     }
 
     @Override

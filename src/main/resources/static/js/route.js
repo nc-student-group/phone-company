@@ -129,6 +129,11 @@
                 templateUrl: 'view/client/complaints.html',
                 controller: 'ComplaintController'
             });
+        $routeProvider.when('/csr/corporation/:id',
+            {
+                templateUrl: 'view/csr/corporation.html',
+                controller: 'CorporationController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 
@@ -150,7 +155,8 @@
                         break;
                     }
                     case 500:
-                        $window.location = './500.html';
+                        toastr.error("500 error");
+                        // $window.location = './500.html';
                         break;
                 }
                 return $q.reject(errorResponse);

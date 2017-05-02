@@ -47,7 +47,10 @@
                                         <tr ng-repeat="c in corporations">
                                             <td>{{c.id}}</td>
                                             <td>{{c.corporateName}}</td>
-                                            <td><button class="btn btn-default btn-fill" ng-click="editClick(c)">Edit</button></td>
+                                            <td>
+                                                <button class="btn btn-default btn-fill" ng-click="editClick(c)">Edit</button>
+                                                <button class="btn btn-default btn-fill" ng-click="detailsClick(c)">Details</button>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

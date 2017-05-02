@@ -20,12 +20,15 @@ public class TypeMapper {
      * @return corresponding {@code java.time.LocalDate} object or {@literal null}
      */
     public static LocalDate toLocalDate(Date date) {
-        return Optional.ofNullable(date).map(Date::toLocalDate)
+        return Optional.ofNullable(date)
+                .map(Date::toLocalDate)
                 .orElse(null);
     }
 
     public static Date toSqlDate(LocalDate localDate) {
-        return Date.valueOf(localDate);
+        return Optional.ofNullable(localDate)
+                .map(l -> Date.valueOf(localDate))
+                .orElse(null);
     }
 
     /**

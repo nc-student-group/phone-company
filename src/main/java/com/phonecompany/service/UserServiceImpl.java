@@ -9,10 +9,12 @@ import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.service.interfaces.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
@@ -23,6 +25,7 @@ import org.springframework.util.Assert;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -30,12 +33,16 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    @Value("${application-url}")
+    private String applicationUrl;
+
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
     private MailMessageCreator<VerificationToken> confirmMessageCreator;
     private MailMessageCreator<User> passwordAssignmentCreator;
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -46,13 +53,15 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                                    MailMessageCreator<VerificationToken> confirmMessageCreator,
                            @Qualifier("passwordAssignmentMessageCreator")
                                    MailMessageCreator<User> passwordAssigmentCreator,
-                           EmailService emailService) {
+                           EmailService emailService,
+                           VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
         this.passwordAssignmentCreator = passwordAssigmentCreator;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @EventListener
@@ -123,5 +132,10 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     @Override
     public int getCountUsers(int roleId, String status) {
         return userDao.getEntityCount(roleId, status);
+    }
+
+    @Override
+    public void updateStatus(long id, Status status){
+        userDao.updateStatus(id, status);
     }
 }

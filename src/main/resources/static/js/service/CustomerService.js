@@ -44,7 +44,7 @@
          * @returns {jQuery.promise|promise|*}
          */
         CustomerService.registerCustomer = function (customer) {
-            let deferred = $q.defer();
+            var deferred = $q.defer();
             console.log('Persisting customer: ' + JSON.stringify(customer));
             $http.post("/api/customers", customer).then(
                 function (response) {
@@ -65,8 +65,8 @@
          * @returns {jQuery.promise|promise|*}
          */
         CustomerService.getNewCustomer = function () {
-            let deferred = $q.defer();
-            $http.get(`/api/customers/new`).then(
+            var deferred = $q.defer();
+            $http.get("/api/customers/new").then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -91,9 +91,9 @@
             return deferred.promise;
         };
 
-        CustomerService.getAllCustomer = function(page, size,selectedRegion,selectedStatus) {
+        CustomerService.getAllCustomer = function (page, size, selectedRegion, selectedStatus) {
             var deferred = $q.defer();
-            $http.get(GET_ALL_CUSTOMERS_URL+page+'/'+size+"/"+selectedRegion+"/"+selectedStatus).then(
+            $http.get(GET_ALL_CUSTOMERS_URL + page + '/' + size + "/" + selectedRegion + "/" + selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -103,6 +103,7 @@
                 });
             return deferred.promise;
         };
+
 
         CustomerService.saveCustomerByAdmin = function (customer) {
             console.log('customer: ' + JSON.stringify(customer));
@@ -118,7 +119,33 @@
                 });
             return deferred.promise;
         };
+        CustomerService.updateStatus = function (id, status) {
+            var deferred = $q.defer();
+            $http.get("/api/customer/status/update/" + id + "/" + status).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
 
+                });
+            return deferred.promise;
+        };
+
+        CustomerService.updateCustomer = function (customer) {
+            var deferred = $q.defer();
+            $http.patch("api/customers/", customer).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+
+                });
+            return deferred.promise;
+        };
 
         return CustomerService;
     }

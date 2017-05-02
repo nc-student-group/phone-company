@@ -2,12 +2,12 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Address;
 import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.events.OnUserCreationEvent;
-import com.phonecompany.service.interfaces.AddressService;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +38,22 @@ public class CustomerController {
     private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
+    private TariffService tariffService;
+    private CustomerTariffService customerTariffService;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
-                              UserService userService) {
+                              UserService userService,
+                              TariffService tariffService,
+                              CustomerTariffService customerTariffService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
+        this.tariffService = tariffService;
+        this.customerTariffService = customerTariffService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
@@ -120,10 +126,26 @@ public class CustomerController {
         return loggedInCustomer;
     }
 
+    @RequestMapping(method = GET, value = "/api/customer/getByCorporateId/{id}")
+    public List<Customer> getCustomerByCorporateId(@PathVariable("id") long corporateId) {
+        List<Customer> customers = this.customerService.getCustomersByCorporate(corporateId);
+        return customers;
+    }
+
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
+
         this.customerService.update(customer);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/customer/status/update/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
+        if (status.equals(Status.DEACTIVATED)) {
+            customerService.deactivateCustomer(id);
+        }
+        customerService.updateStatus(id, status);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
