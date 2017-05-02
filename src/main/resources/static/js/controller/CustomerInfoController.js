@@ -4,16 +4,16 @@
     angular.module('phone-company')
         .controller('CustomerInfoController', CustomerInfoController);
 
-    CustomerInfoController.$inject = ['$scope', '$log', 'CustomerInfoService', '$rootScope'];
+    CustomerInfoController.$inject = ['$scope', '$log', 'CustomerInfoService', '$rootScope', '$mdDialog'];
 
-    function CustomerInfoController($scope, $log, CustomerInfoService, $rootScope) {
+    function CustomerInfoController($scope, $log, CustomerInfoService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
         $scope.tariffsFound = 0;
-        $scope.availableTariffsFound = 0;
         $scope.mailingSwitchDisabled = true;
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
+        $scope.suspensionData = {};
 
         $scope.setMailingAgreement = function () {
             console.log(`Setting mailing agreement to: ${$scope.customer.mailingEnabled}`);
@@ -49,31 +49,44 @@
                 $scope.loading = false;
             });
 
-        CustomerInfoService.getAvailableTariffs()
-            .then(function (data) {
-                $scope.availableTariffs = data;
-                console.log($scope.availableTariffs);
-                $scope.availableTariffsFound = data.length;
-            });
-
-        $scope.deactivateTariff = function () {
-            $scope.preloader.send = true;
-            TariffService.changeTariffStatus($scope.tariff.id, 'DEACTIVATED').then(function () {
-                $scope.tariff.productStatus = "DEACTIVATED";
-                toastr.success('Your tariff "' + $scope.tariff.tariffName + ' " deactivated!', 'Success deactivation');
-            }, function () {
-                toastr.error('Some problems with tariff deactivation, try again!', 'Error');
+        $scope.showDeactivationModalWindow = function (currentTariff) {
+            $mdDialog.show({
+                controller: DialogController,
+                templateUrl: '../../view/client/deactivateCurrentTariffModal.html',
+                locals: {
+                    currentTariff: currentTariff
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
             })
+                .then(function (answer) {
+
+                });
         };
 
-        $scope.suspendTariff = function () {
-            $scope.preloader.send = true;
-            TariffService.changeTariffStatus($scope.tariff.id, 'SUSPENDED').then(function () {
-                $scope.tariff.productStatus = "SUSPENDED";
-                toastr.success('Your tariff "' + $scope.tariff.tariffName + ' " suspended!', 'Success suspend');
-            }, function () {
-                toastr.error('Some problems with tariff suspend, try again!', 'Error');
-            })
-        };
+        function DialogController($scope, $mdDialog, currentTariff, CustomerInfoService) {
+            $scope.currentTariff = currentTariff;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.deactivateTariff($scope.currentTariff).then(function () {
+                    $mdDialog.cancel();
+                    $location.path("/client");
+                    toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
+                        " was successfully deactivated!", "Tariff plan deactivation")
+                }, function (data) {
+                    toastr.error(data.message, 'Error');
+                    $mdDialog.cancel();
+                    $location.path("/client");
+                });
+            };
+        }
     }
 }());

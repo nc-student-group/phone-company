@@ -1,0 +1,23 @@
+<md-dialog aria-label="Modal Window">
+    <div class="modal-window">
+        <h3>Tariff plan suspension <span class="close-icon" ng-click="cancel()"></span></h3>
+        <div class="send-review">
+            <div class="row">
+                <div class="col-md-9 modal-label">Your current tariff plan:</div>
+                <div class="col-md-3 modal-label">Price:</div>
+                <div class="col-md-9 modal-label"><b>"{{currentTariff.tariff.tariffName}}"</b></div>
+                <div class="col-md-3 modal-label"><b>{{currentTariff.totalPrice}} uah</b></div>
+                <div class="form-group row">
+                    <label for="number-input" class="col-2 col-form-label">Suspension period (in days):</label>
+                    <div class="col-10">
+                        <input class="form-control" type="number" min="1" max="365" value="1" id="number-input" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="wrap_btn">
+                <input type="submit" class="btn-post-comment" ng-click="answer(message)" value="Suspend">
+            </div>
+        </div>
+    </div>
+</md-dialog>

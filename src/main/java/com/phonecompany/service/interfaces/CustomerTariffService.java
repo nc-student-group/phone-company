@@ -11,6 +11,7 @@ public interface CustomerTariffService extends CrudService<CustomerTariff> {
     public CustomerTariff getCurrentCustomerTariff(long customerId);
     public CustomerTariff getCurrentCorporateTariff(long corporateId);
     CustomerTariff getCurrentActiveOrSuspendedClientTariff(Customer customer);
+    CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff);
 
 
 }

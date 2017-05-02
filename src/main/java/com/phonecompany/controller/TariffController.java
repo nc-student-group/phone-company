@@ -201,4 +201,11 @@ public class TariffController {
         CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/api/customer/tariff/deactivate")
+    public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+//        customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
 }
