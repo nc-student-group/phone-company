@@ -102,10 +102,8 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
 
     @Override
     public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId) {
-        String query = this.getQuery("getAllByTariffId");
-        query += " and tr.region_id = ? ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"))) {
             ps.setLong(1, tariffId);
             ps.setLong(2, regionId);
             ResultSet rs = ps.executeQuery();

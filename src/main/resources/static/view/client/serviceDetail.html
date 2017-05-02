@@ -1,0 +1,127 @@
+<div class="wrapper">
+    <div class="sidebar" data-color="blue">
+        <div class="sidebar-wrapper">
+            <div class="logo">
+                <a href="/#/index" class="simple-text">
+                    Phone Company
+                </a>
+                <span class="close-sidebar fa fa-times" ng-click="shifted = true"></span>
+            </div>
+
+            <ul class="nav">
+                <li>
+                    <a href="/#/client">
+                        <i class="pe-7s-user"></i>
+                        <p>User Profile</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/client/tariffs/available">
+                        <i class="pe-7s-note2"></i>
+                        <p>Tariff plans</p>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/#/client/services">
+                        <i class="pe-7s-note"></i>
+                        <p>Services</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/client/complaints">
+                        <i class="pe-7s-attention"></i>
+                        <p>Complaints</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand page-role-title">Customer page</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a ng-click="logout()">
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <img class="center-block" style="padding-top: 50px"
+                                 ng-show="loading === true" src="../../css/ring.gif" alt=""/>
+
+                            <div ng-show="loading === false">
+                                <div class="header">
+                                    <h4 class="title">{{currentService.serviceName}}</h4>
+                                </div>
+                                <hr/>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4 col-lg-offset-1">
+                                            <div style="width: 360px; height: 240px;">
+                                                <img class="rounded img-thumbnail"
+                                                     ng-src="{{currentService.pictureUrl}}" class="rounded"
+                                                     alt="...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-md-offset-1">
+                                            <table class="table table-striped table-hover
+                                            table-bordered" style="table-layout: fixed">
+                                                <tbody>
+                                                <tr>
+                                                    <td>Price</td>
+                                                    <td>{{currentService.price}} UAH</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Duration</td>
+                                                    <td>
+                                                        {{currentService.durationInDays}} days
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Amount</td>
+                                                    <td>???</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="word-wrap: break-word">
+                                                        {{currentService.description}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href="/#/client/services"
+                                                           class="btn btn-primary">
+                                                        Back to all services
+                                                    </a>
+                                                    </td>
+                                                    <td><a href="#"
+                                                           class="pull-right btn btn-success">Checkout</a>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

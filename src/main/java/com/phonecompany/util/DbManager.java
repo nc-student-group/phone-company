@@ -21,14 +21,14 @@ import static com.mchange.v2.c3p0.PoolConfig.MAX_IDLE_TIME;
 public class DbManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DbManager.class);
-    private static final int MAX_POOL_SIZE = 100;
+    private static final int MAX_POOL_SIZE = 20;
     private static final int MAX_IDLE_TIME = 1; // one idle second and connection returns to the pool
     private static final int CHECKOUT_TIMEOUT = 0;
     private static final int IDLE_CONNECTION_TEST_PERIOD = 5; //allowed number of acquisition attempts
     private static final int MAX_STATEMENTS = 50;
-    private static final int MIN_POOL_SIZE = 3;
+    private static final int MIN_POOL_SIZE = 1;
     private static final int ACQUIRE_RETRY_ATTEMPTS = 10;
-    private static final int MAX_CONNECTION_AGE = 5;
+    private static final int MAX_CONNECTION_AGE = 1800;
 
     private static DbManager dbManager;
 
@@ -56,11 +56,9 @@ public class DbManager {
             dataSource.setPassword(dataSourceInfo.getPassword());
             LOG.debug("Setting url: {}", dataSourceInfo.getUrl());
             dataSource.setJdbcUrl(dataSourceInfo.getUrl());
-            LOG.debug("Setting max pool size to: {}", MAX_POOL_SIZE);
-            dataSource.setMaxPoolSize(MAX_POOL_SIZE);
             LOG.debug("Setting min pool size to: {}", MIN_POOL_SIZE);
             dataSource.setMinPoolSize(MIN_POOL_SIZE);
-            LOG.debug("Setting max pool size to: {}", MIN_POOL_SIZE);
+            LOG.debug("Setting max pool size to: {}", MAX_POOL_SIZE);
             dataSource.setMaxPoolSize(MAX_POOL_SIZE);
             LOG.debug("Max statements available: {}", MAX_STATEMENTS);
             dataSource.setMaxStatements(MAX_STATEMENTS);

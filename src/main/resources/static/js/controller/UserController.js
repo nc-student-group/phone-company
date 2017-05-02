@@ -8,6 +8,7 @@
 
     function UserController($scope, $log, UserService, $rootScope) {
         console.log('This is UserController');
+        $scope.activePage='users';
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.users = UserService.getUsers();
         $scope.user ={

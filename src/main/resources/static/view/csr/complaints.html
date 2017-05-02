@@ -1,113 +1,164 @@
 <div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-        <div class="sidebar-wrapper">
-            <div class="logo">
-                <a href="/#/index" class="simple-text">
-                    Phone Company
-                </a>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/#/csr">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/tariffs">
-                        <i class="pe-7s-note2"></i>
-                        <p>Tariffs</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/services">
-                        <i class="pe-7s-note"></i>
-                        <p>Services</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/orders">
-                        <i class="pe-7s-cart"></i>
-                        <p>Orders</p>
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="/#/csr/complaints">
-                        <i class="pe-7s-attention"></i>
-                        <p>Complaints</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/csr/corporations">
-                        <i class="pe-7s-portfolio"></i>
-                        <p>Corporations</p>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
 
     <div class="main-panel">
-        <nav class="navbar navbar-default navbar-fixed">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <h3 class="navbar-brand">CSR page</h3>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#">
-                                Log out
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
         <div class="content">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Complaints</h4>
-                                <p class="category">All complaints</p>
-                            </div>
-                            <hr />
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom>
+                            <md-tab label="Complaints/Suggestions">
+                                <md-content class="md-padding">
+                                    <!--ALL COMPLAINTS-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Complaints/Suggestions</h4>
+                                                    <p class="category">All complaints</p>
+                                                </div>
+                                                <hr />
 
-                            <div class="content table-responsive ">
-                                <table class="table table-striped table-bordered table-hover">
-                                    <thead>
-                                        <th>ID</th>
-                                        <th>Client</th>
-                                        <th>Date</th>
-                                        <th>Topic</th>
-                                        <th>Status</th>
-                                        <th>Content</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td>...</td>
-                                            <td><textarea readonly style="resize: vertical">...</textarea></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                                                <div class="content table-responsive ">
+                                                    <table class="table table-striped table-bordered table-hover">
+                                                        <!--id-->
+                                                        <col width="5%">
+                                                        <!--client-->
+                                                        <col width="15%">
+                                                        <!--date-->
+                                                        <col width="10%">
+                                                        <!--type-->
+                                                        <col width="10%">
+                                                        <!--status-->
+                                                        <col width="10%">
+                                                        <!--subject-->
+                                                        <col width="15%">
+                                                        <!--description-->
+                                                        <col width="35%">
+                                                        <thead>
+                                                        <th>ID</th>
+                                                        <th>Client</th>
+                                                        <th>Date</th>
+                                                        <th>Type</th>
+                                                        <th>Status</th>
+                                                        <th>Subject</th>
+                                                        <th>Description</th>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr ng-repeat="c in complaints">
+                                                            <td>{{c.id}}</td>
+                                                            <td>
+                                                                <a href="" ng-click="">{{c.user.email}}</a>
+                                                            </td>
+                                                            <td>{{c.date}}</td>
+                                                            <td>{{c.type}}</td>
+                                                            <td>{{c.status}}</td>
+                                                            <td>{{c.subject}}</td>
+                                                            <td>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Create complaint/suggestion">
+                                <md-content class="md-padding">
+                                    <!--CREATE COMPLAINT-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+
+                                                <div class="header">
+                                                    <h4 class="title">Complaints/Suggestions</h4>
+                                                    <p class="category">Create complaint/suggestion</p>
+                                                </div>
+                                                <div class="content">
+                                                    <form name="createComplaintForm" id="createComplaintForm"
+                                                          autocomplete="off" novalidate ng-submit="createComplaint()">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <md-input-container class="md-block">
+                                                                    <input type="text" placeholder="User email" name="userEmail"
+                                                                           ng-model="complaint.user.email" required/>
+                                                                    <div ng-messages="createComplaintForm.userEmail.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="required">
+                                                                            User email is required.
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Category</label>
+                                                                    <md-select ng-model="complaint.type" name="complaintCategory" required>
+                                                                        <md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                                            {{c}}
+                                                                        </md-option>
+                                                                    </md-select>
+                                                                    <div ng-messages="createComplaintForm.complaintCategory.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="required">
+                                                                            Category is required.
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <md-input-container class="md-block">
+                                                                    <input type="text" placeholder="Complaint subject" name="complaintSubject"
+                                                                           ng-model="complaint.subject" md-maxlength="150" required/>
+                                                                    <div ng-messages="createComplaintForm.complaintSubject.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="required">
+                                                                            Subject is required.
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-md-12">
+                                                                <md-input-container class="md-block">
+                                                <textarea rows="5" cols="50" type="text" class="form-control"
+                                                          placeholder="Description" name="description"
+                                                          ng-model="complaint.text" md-maxlength="1000" required>
+                                                </textarea>
+                                                                    <div ng-messages="createComplaintForm.description.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="required">
+                                                                            Description is required.
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+
+                                                        <button class="btn btn-info btn-fill pull-left" type="submit"
+                                                                ng-disabled="createComplaintForm.$invalid">Create complaint/suggestion
+                                                        </button>
+                                                        <div class="clearfix"></div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
                 </div>
             </div>
         </div>

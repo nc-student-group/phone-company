@@ -2,6 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.SecuredUser;
+import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -21,9 +22,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -35,8 +34,8 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
-    private MailMessageCreator<User> confirmMessageCreator;
-    private MailMessageCreator<User> passwordAssigmentCreator;
+    private MailMessageCreator<VerificationToken> confirmMessageCreator;
+    private MailMessageCreator<User> passwordAssignmentCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -44,7 +43,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                            @Qualifier("resetPassMessageCreator")
                                    MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
-                                   MailMessageCreator<User> confirmMessageCreator,
+                                   MailMessageCreator<VerificationToken> confirmMessageCreator,
                            @Qualifier("passwordAssignmentMessageCreator")
                                    MailMessageCreator<User> passwordAssigmentCreator,
                            EmailService emailService) {
@@ -53,16 +52,16 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
-        this.passwordAssigmentCreator = passwordAssigmentCreator;
+        this.passwordAssignmentCreator = passwordAssigmentCreator;
     }
 
     @EventListener
     public void confirmRegistration(OnUserCreationEvent onUserCreationEvent) {
         User persistedUser = onUserCreationEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
-                this.passwordAssigmentCreator.constructMessage(persistedUser);
+                this.passwordAssignmentCreator.constructMessage(persistedUser);
         LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
-        emailService.sendMail(confirmationMessage);
+        emailService.sendMail(confirmationMessage, persistedUser);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         SimpleMailMessage resetPasswordMessage =
                 this.resetPassMessageCreator.constructMessage(user);
         LOG.info("Sending email reset password to: {}", user.getEmail());
-        emailService.sendMail(resetPasswordMessage);
+        emailService.sendMail(resetPasswordMessage, user);
     }
 
     public String generatePassword() {

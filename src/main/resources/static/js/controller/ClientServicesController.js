@@ -7,7 +7,7 @@ angular.module('phone-company').controller('ClientServicesController', [
     'ServicesService',
     '$anchorScroll',
     function ($scope, $location, $rootScope, ServicesService, $anchorScroll) {
-
+        $scope.activePage = 'services';
         $scope.shifted = false;
         $scope.loading = true;
         $scope.currentCategory = 0;
@@ -58,6 +58,10 @@ angular.module('phone-company').controller('ClientServicesController', [
                         $scope.loading = false;
                     });
             }
-        }
+        };
+
+        $scope.showServiceDetails = function (id) {
+            $location.path("/client/services/" + id);
+        };
     }
 ]);

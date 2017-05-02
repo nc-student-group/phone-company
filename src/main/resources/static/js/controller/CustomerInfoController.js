@@ -8,6 +8,7 @@
 
     function CustomerInfoController($scope, $log, CustomerInfoService, $rootScope) {
         console.log('This is CustomerInfoController');
+        $scope.activePage = 'profile';
         $scope.tariffsFound = 0;
         $scope.availableTariffsFound = 0;
         $scope.mailingSwitchDisabled = true;

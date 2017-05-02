@@ -6,12 +6,11 @@ angular.module('phone-company').controller('ComplaintController', [
     '$location',
     '$rootScope',
     'ComplaintService',
-    '$anchorScroll',
-    '$window',
-    function ($scope, $http, $location, $rootScope, ComplaintService, $anchorScroll, $window) {
+    function ($scope, $http, $location, $rootScope, ComplaintService) {
         console.log('This is ComplaintController');
+        $scope.activePage = 'complaints';
         $scope.complaint = {
-            user_id: '',
+            user: '',
             status: 'ACCEPTED',
             date:'',
             text: '',
@@ -20,13 +19,14 @@ angular.module('phone-company').controller('ComplaintController', [
         };
         
         ComplaintService.getAllComplaintCategory().then(function (data) {
+            console.log('Get all categories of complaint');
             $scope.complaintCategories = data;
         });
-        
+
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);
             ComplaintService.createComplaint($scope.complaint).then(function (data) {
-                    toastr.success('Your complaint created successfully!');
+                    toastr.success('User complaint created successfully!');
                     console.log("Complaint added");
                 },
                 function (data) {
@@ -38,6 +38,6 @@ angular.module('phone-company').controller('ComplaintController', [
                     $scope.preloader.send = false;
                 }
             );
-        };        
+        };
 
     }]);
