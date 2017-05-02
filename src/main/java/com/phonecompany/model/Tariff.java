@@ -1,6 +1,10 @@
 package com.phonecompany.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.phonecompany.config.LocalDateTimeDeserializer;
+import com.phonecompany.config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.ProductStatus;
 
 import javax.validation.constraints.NotNull;
@@ -29,6 +33,8 @@ public class Tariff extends DomainEntity {
     @JsonProperty(value = "isCorporate")
     private boolean isCorporate;
     @NotNull(message = "Creation date must not be null")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate creationDate;
     private double discount;
     private String pictureUrl;
