@@ -68,7 +68,21 @@
 
         UserService.updateStatus = function (id, status) {
             var deferred = $q.defer();
-            $http.get("/api/user/status/update/"+id+"/"+status).then(
+            $http.get("/api/user/update/"+id+"/"+status).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        UserService.updateUserByAdmin = function (user) {
+            console.log('User: ' + JSON.stringify(user));
+            var deferred = $q.defer();
+            $http.post("/api/user/update", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

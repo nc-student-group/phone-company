@@ -14,7 +14,7 @@
         var GET_ALL_CORPORATION_URL = "api/corporations/";
         var SAVE_EDITED_CORPORATION_URL = "api/corporations/";
         var SAVE_CORPORATION_URL = "api/corporation/save";
-
+        var GET_CUSTOMER_URL = "api/customer/getByCorporateId/";
 
         CorporationService.saveCorporation = function (corporation) {
             console.log('corporation: ' + JSON.stringify(corporation));
@@ -57,7 +57,18 @@
                 });
             return deferred.promise;
         };
-
+        CorporationService.getCustomers = function (id) {
+            var deferred = $q.defer();
+            $http.get(GET_CUSTOMER_URL+id).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
         return CorporationService;
     }
 }());
