@@ -14,7 +14,7 @@ public interface CustomerService extends CrudService<Customer>, AbstractUserServ
 
     int getCountCustomers(long rId, String status);
 
-    public void deactivateCustomer(long id);
+    public void deactivateCustomerTariff(long id);
 
     List<Customer>  getCustomersByCorporate(long corporateId);
 }
