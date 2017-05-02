@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -86,8 +87,8 @@ public class TariffController {
             return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+        tariff.setCreationDate(LocalDate.now());
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
         Tariff savedTariff = tariffService.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -105,7 +106,7 @@ public class TariffController {
             return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
         Tariff updatedTariff = tariffService.update(tariff);
         tariffRegionService.deleteByTariffId(updatedTariff.getId());
         LOGGER.debug("Tariff added {}", updatedTariff);

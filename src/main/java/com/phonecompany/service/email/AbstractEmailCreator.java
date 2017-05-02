@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.SimpleMailMessage;
 
-import static com.phonecompany.service.email.EmailDispatchTask.PHONE_COMPANY_URL;
+import static com.phonecompany.service.email.EmailDispatchTask.PHONE_COMPANY_EMAIL;
 
 /**
  * Base class for all the types providing capabilities
@@ -29,7 +29,7 @@ public abstract class AbstractEmailCreator<T>
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setSubject(this.getEmailSubject());
         mailMessage.setText(this.getEmailBody(entity));
-        mailMessage.setFrom(PHONE_COMPANY_URL);
+        mailMessage.setFrom(PHONE_COMPANY_EMAIL);
         return mailMessage;
     }
 

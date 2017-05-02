@@ -1,8 +1,6 @@
 package com.phonecompany.service.email;
 
 import com.phonecompany.exception.MailSendException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,7 +14,7 @@ import javax.mail.internet.MimeMessage;
  */
 public class EmailDispatchTask implements Runnable {
 
-    static final String PHONE_COMPANY_URL = "nc.phone.company.project@gmail.com";
+    static final String PHONE_COMPANY_EMAIL = "nc.phone.company.project@gmail.com";
 
     private JavaMailSender mailSender;
     private SimpleMailMessage mailMessage;
@@ -48,7 +46,7 @@ public class EmailDispatchTask implements Runnable {
             mimeMessageHelper.setText(mailMessage.getText(), true); // true = isHtml
             mimeMessageHelper.setTo(mailMessage.getTo());
             mimeMessageHelper.setSubject(mailMessage.getSubject());
-            mimeMessageHelper.setFrom(PHONE_COMPANY_URL);
+            mimeMessageHelper.setFrom(PHONE_COMPANY_EMAIL);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new MailSendException(e);

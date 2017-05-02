@@ -9,6 +9,7 @@ import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
+import com.phonecompany.service.interfaces.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +29,19 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Value("${application-url}")
-    private String applicationUrl;
-
     private CustomerDao customerDao;
-    private VerificationTokenDao verificationTokenDao;
+    private VerificationTokenService verificationTokenService;
     private MailMessageCreator<VerificationToken> confirmMessageCreator;
     private EmailService<Customer> emailService;
 
     @Autowired
     public CustomerServiceImpl(CustomerDao customerDao,
-                               VerificationTokenDao verificationTokenDao,
+                               VerificationTokenService verificationTokenService,
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<VerificationToken> confirmMessageCreator,
                                EmailService<Customer> emailService) {
         this.customerDao = customerDao;
-        this.verificationTokenDao = verificationTokenDao;
+        this.verificationTokenService = verificationTokenService;
         this.confirmMessageCreator = confirmMessageCreator;
         this.emailService = emailService;
     }
@@ -58,15 +56,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     public void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent) {
         Customer persistedCustomer = registrationCompleteEvent.getPersistedUser();
 
-        String randomID = UUID.randomUUID().toString();
-        String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
-        LOG.info("Confirmation url: {}", confirmationUrl);
-
-        VerificationToken verificationToken =
-                this.verificationTokenDao.save(new VerificationToken(persistedCustomer, randomID));
+        VerificationToken persistedToken = verificationTokenService
+                .saveTokenForUser(persistedCustomer);
 
         SimpleMailMessage confirmationMessage =
-                this.confirmMessageCreator.constructMessage(verificationToken);
+                this.confirmMessageCreator.constructMessage(persistedToken);
         LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
         emailService.sendMail(confirmationMessage, persistedCustomer);
     }

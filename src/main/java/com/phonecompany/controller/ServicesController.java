@@ -3,9 +3,7 @@ package com.phonecompany.controller;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
-import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.email.AbstractEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/services")
@@ -27,7 +26,7 @@ public class ServicesController {
 
     private ServiceService serviceService;
     private ProductCategoryService productCategoryService;
-    private MailMessageCreator<Service> emailCreator;
+    private MailMessageCreator<Service> serviceNotificationEmailCreator;
     private EmailService<Customer> emailService;
     private CustomerService customerService;
 
@@ -40,7 +39,7 @@ public class ServicesController {
                               CustomerService customerService) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
-        this.emailCreator = emailCreator;
+        this.serviceNotificationEmailCreator = emailCreator;
         this.emailService = emailService;
         this.customerService = customerService;
     }
@@ -57,14 +56,21 @@ public class ServicesController {
     public ResponseEntity<?> addService(@RequestBody Service service) {
         LOG.debug("Service parsed from the request body: {}", service);
         Service persistedService = this.serviceService.save(service);
-        SimpleMailMessage mailMessage = this.emailCreator.constructMessage(service);
-        this.notifyAllCustomers(mailMessage);
+        SimpleMailMessage mailMessage = this
+                .serviceNotificationEmailCreator.constructMessage(service);
+        this.notifyAgreedCustomers(mailMessage);
         return new ResponseEntity<>(persistedService, HttpStatus.OK);
     }
 
-    private void notifyAllCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> allCustomers = this.customerService.getAll();
-        this.emailService.sendMail(mailMessage, allCustomers);
+    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
+        List<Customer> agreedCustomers = this.getAgreedCustomers();
+        LOG.debug("Customers agreed to receive mailing: {}", agreedCustomers);
+        this.emailService.sendMail(mailMessage, agreedCustomers);
+    }
+
+    private List<Customer> getAgreedCustomers() {
+        return this.customerService.getAll().stream()
+                .filter(Customer::getIsMailingEnabled).collect(Collectors.toList());
     }
 
     @GetMapping("/categories")

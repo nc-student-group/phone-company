@@ -1,20 +1,21 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.model.User;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.service.interfaces.VerificationTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class VerificationTokenServiceImpl extends CrudServiceImpl<VerificationToken>
         implements VerificationTokenService {
 
-    private VerificationTokenDao verificationTokenDao;
+    @Override
+    public VerificationToken saveTokenForUser(User user) {
+        String randomID = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(user, randomID);
 
-    @Autowired
-    public VerificationTokenServiceImpl(VerificationTokenDao verificationTokenDao) {
-        this.verificationTokenDao = verificationTokenDao;
+        return super.save(verificationToken);
     }
 }
