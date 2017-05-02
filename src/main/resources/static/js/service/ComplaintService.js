@@ -6,6 +6,7 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
 
     var factory = {
         getAllComplaintCategory: getAllComplaintCategory,
+        getAllComplaints: getAllComplaints,
         createComplaint: createComplaint
     };
 
@@ -14,6 +15,19 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     function getAllComplaintCategory() {
         var deferred = $q.defer();
         $http.get(`${COMPLAINTS}/categories`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function getAllComplaints() {
+        var deferred = $q.defer();
+        $http.get(`${COMPLAINTS}/complaints`).then(
             function (response) {
                 deferred.resolve(response.data);
             },

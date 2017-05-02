@@ -83,7 +83,7 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
-        function getServiceToEditById(id) {
+        function getServiceById(id) {
             let deferred = $q.defer();
             $http.get(`${SERVICES}/${id}`).then(
                 function (response) {
@@ -102,7 +102,7 @@ angular.module('phone-company')
             addService: addService,
             getAllCategories: getAllCategories,
             changeServiceStatus: changeServiceStatus,
-            getServiceToEditById: getServiceToEditById,
+            getServiceById: getServiceById,
             performServiceEdit: performServiceEdit
         };
     }]);

@@ -10,7 +10,6 @@ import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
-import com.sun.deploy.security.ValidationState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -48,7 +47,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setString(6, entity.getPictureUrl());
             preparedStatement.setString(7, entity.getDescription());
             preparedStatement.setString(8, entity.getPreviewDescription());
-            preparedStatement.setObject(9, TypeMapper.toSqlDate(entity.getExpiryDate()));
+            preparedStatement.setObject(9, entity.getDurationInDays());
+            preparedStatement.setObject(10, entity.getAmount());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -65,8 +65,10 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setObject(6, entity.getPictureUrl());
             preparedStatement.setObject(7, entity.getDescription());
             preparedStatement.setObject(8, entity.getPreviewDescription());
-            preparedStatement.setObject(9, TypeMapper.toSqlDate(entity.getExpiryDate()));
-            preparedStatement.setDouble(10, TypeMapper.getNullableId(entity));
+            preparedStatement.setObject(9, entity.getDurationInDays());
+            preparedStatement.setObject(9, entity.getDurationInDays());
+            preparedStatement.setObject(10, entity.getAmount());
+            preparedStatement.setDouble(11, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -85,7 +87,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             service.setPictureUrl(resultSet.getString("picture_url"));
             service.setDescription(resultSet.getString("description"));
             service.setPreviewDescription(resultSet.getString("preview_description"));
-            service.setExpiryDate(TypeMapper.toLocalDate((resultSet.getDate("expiry_date"))));
+            service.setDurationInDays((resultSet.getInt("duration_in_days")));
+            service.setAmount((resultSet.getInt("amount")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

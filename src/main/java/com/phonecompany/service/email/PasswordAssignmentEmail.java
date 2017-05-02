@@ -5,8 +5,8 @@ import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
 @Component("passwordAssignmentMessageCreator")
-public class PasswordAssignmentEmail extends AbstractEmailCreator
-        implements MailMessageCreator {
+public class PasswordAssignmentEmail extends AbstractEmailCreator<User>
+        implements MailMessageCreator<User> {
 
         /**
          * {@inheritDoc}

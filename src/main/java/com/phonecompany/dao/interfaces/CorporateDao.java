@@ -2,5 +2,8 @@ package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.Corporate;
 
-public interface CorporateDao extends CrudDao<Corporate> {
+
+public interface CorporateDao extends CrudDao<Corporate>,
+        AbstractPageableDao<Corporate> {
+
 }

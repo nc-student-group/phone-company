@@ -11,8 +11,8 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
-import org.apache.log4j.spi.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +23,7 @@ import java.sql.SQLException;
 @Repository
 public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OrderDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderDaoImpl.class);
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
     private CustomerTariffDao customerTariffDao;
@@ -48,8 +48,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setDate(5 ,entity.getCreationDate());
-            preparedStatement.setDate(6 ,entity.getExecutionDate());
+            preparedStatement.setDate(5, entity.getCreationDate());
+            preparedStatement.setDate(6, entity.getExecutionDate());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -62,8 +62,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setDate(5 ,entity.getCreationDate());
-            preparedStatement.setDate(6 ,entity.getExecutionDate());
+            preparedStatement.setDate(5, entity.getCreationDate());
+            preparedStatement.setDate(6, entity.getExecutionDate());
 
             preparedStatement.setLong(7, entity.getId());
         } catch (SQLException e) {

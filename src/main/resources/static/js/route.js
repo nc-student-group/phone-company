@@ -5,7 +5,7 @@
             "ngMaterial",
             'ngMessages',
             'ngResource',
-            "ImageCropper"]);
+            'ImageCropper']);
 
     app.config(function ($routeProvider, $locationProvider) {
         // $locationProvider.html5Mode(true);
@@ -108,6 +108,11 @@
             {
                 templateUrl: 'view/client/services.html',
                 controller: 'ClientServicesController'
+            });
+        $routeProvider.when('/client/services/:id',
+            {
+                templateUrl: 'view/client/serviceDetail.html',
+                controller: 'ServiceDetailController'
             });
         $routeProvider.when('/client/tariffs/available',
             {

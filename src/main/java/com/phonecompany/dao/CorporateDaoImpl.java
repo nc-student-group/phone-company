@@ -3,10 +3,8 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Complaint;
 import com.phonecompany.model.Corporate;
 import com.phonecompany.util.QueryLoader;
-import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,9 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class CorporateDaoImpl extends CrudDaoImpl<Corporate> implements CorporateDao {
+public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> implements CorporateDao {
 
     private QueryLoader queryLoader;
+    private String partOfName;
 
     @Autowired
     public CorporateDaoImpl(QueryLoader queryLoader) {
@@ -26,7 +25,7 @@ public class CorporateDaoImpl extends CrudDaoImpl<Corporate> implements Corporat
 
     @Override
     public String getQuery(String type) {
-        return queryLoader.getQuery("query.corporate."+type);
+        return queryLoader.getQuery("query.corporate." + type);
     }
 
     @Override
@@ -60,5 +59,14 @@ public class CorporateDaoImpl extends CrudDaoImpl<Corporate> implements Corporat
             throw new EntityInitializationException(e);
         }
         return corporate;
+    }
+
+    @Override
+    public String prepareWhereClause(Object... args) {
+        String where = "";
+        String partOfName = (String) args[0];
+        where +=  " WHERE corporate_name LIKE CONCAT('%',?,'%')";
+        this.preparedStatementParams.add(partOfName);
+        return where;
     }
 }
