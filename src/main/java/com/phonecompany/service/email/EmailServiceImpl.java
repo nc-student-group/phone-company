@@ -20,7 +20,7 @@ import static com.phonecompany.config.EmailConfig.NUMBER_OF_AVAILABLE_THREADS;
 public class EmailServiceImpl<T extends User> implements EmailService<T> {
 
     private ExecutorService executorService = Executors
-            .newFixedThreadPool(NUMBER_OF_AVAILABLE_THREADS);
+            .newFixedThreadPool(10);
     private JavaMailSender mailSender;
 
     @Autowired
