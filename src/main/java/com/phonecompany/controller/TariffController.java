@@ -203,7 +203,7 @@ public class TariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/api/customer/tariff/deactivate")
+    @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
