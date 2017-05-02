@@ -2,6 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.exception.EmailAlreadyPresentException;
 import com.phonecompany.model.Customer;
+import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.User;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -31,15 +33,20 @@ public abstract class AbstractUserServiceImpl<T extends User>
     @Autowired
     private ShaPasswordEncoder shaPasswordEncoder;
     @Autowired
-    private EmailService emailService;
+    private EmailService<User> emailService;
     @Autowired
     @Qualifier("resetPassMessageCreator")
     private MailMessageCreator<User> resetPassMessageCreator;
-    @Autowired
-    @Qualifier("confirmationEmailCreator")
-    private MailMessageCreator<VerificationToken> confirmMessageCreator;
 
     public AbstractUserServiceImpl() {
+    }
+
+    public T getCurrentlyLoggedInUser() {
+        SecuredUser securedUser = new SecuredUser(SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal());
+        T userFoundByEmail = this.findByEmail(securedUser.getUserName());
+        LOG.debug("User retrieved from the security context: {}", userFoundByEmail);
+        return userFoundByEmail;
     }
 
     @Override
@@ -76,5 +83,4 @@ public abstract class AbstractUserServiceImpl<T extends User>
     }
 
     public abstract Status getStatus();
-
 }

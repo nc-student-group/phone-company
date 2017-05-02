@@ -4,9 +4,11 @@
     angular.module('phone-company')
         .controller('CustomerController', CustomerController);
 
-    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService', 'CorporationService', '$rootScope','$mdDialog'];
+    CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService',
+        'CorporationService', '$rootScope', '$mdDialog'];
 
-    function CustomerController($scope, $log, CustomerService, TariffService, CorporationService, $rootScope, $mdDialog) {
+    function CustomerController($scope, $log, CustomerService, TariffService,
+                                CorporationService, $rootScope, $mdDialog) {
         console.log('This is CustomerService');
         $scope.activePage = 'customers';
         $scope.page = 0;
@@ -25,7 +27,7 @@
         $scope.corporateUser = false;
 
         CorporationService.getAllCorporation().then(function (data) {
-           $scope.corporations = data;
+            $scope.corporations = data;
         });
 
         TariffService.getAllRegions().then(function (data) {
@@ -61,7 +63,8 @@
             }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
-                    toastr.success("Customers"+ ${createdCustomer.email}+" has been successfully created. Please, check your email for the password");
+                    toastr.success("Customers" + ${createdCustomer.email}
+                        +" has been successfully created. Please, check your email for the password");
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {

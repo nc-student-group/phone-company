@@ -1,6 +1,7 @@
 package com.phonecompany.model;
 
 import com.phonecompany.model.enums.ProductStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -26,8 +27,10 @@ public class Service extends DomainEntity {
     private String description;
     @NotNull(message = "Preview description must not be null")
     private String previewDescription;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
     @NotNull(message = "Duration must not be null")
     private int durationInDays;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
     @NotNull(message = "Duration must not be null")
     private int amount;
 

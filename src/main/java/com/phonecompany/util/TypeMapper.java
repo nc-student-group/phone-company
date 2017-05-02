@@ -1,6 +1,7 @@
 package com.phonecompany.util;
 
 import com.phonecompany.model.DomainEntity;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.UserRole;
 
 import java.sql.Date;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class TypeMapper {
 
@@ -37,7 +39,6 @@ public class TypeMapper {
      *
      * @param databaseId id that maps an enum instance to its storage entry
      * @return corresponding enum instance
-     *
      * @see UserRole user role enum representation
      */
     public static UserRole getUserRoleByDatabaseId(Long databaseId) {
@@ -58,5 +59,18 @@ public class TypeMapper {
         return Optional.ofNullable(entity)
                 .map(T::getId)
                 .orElse(null);
+    }
+
+
+    /**
+     * Maps service prices to the values reduced by a discount
+     */
+    public static Function<Service, Service> getDiscountMapper(double discount) {
+        return service -> {
+            double price = service.getPrice();
+            price = price * discount;
+            service.setPrice(price);
+            return service;
+        };
     }
 }
