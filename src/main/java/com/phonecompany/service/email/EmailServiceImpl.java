@@ -25,6 +25,8 @@ public class EmailServiceImpl<T extends User> implements EmailService<T> {
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
     private JavaMailSender mailSender;
 
+    private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     @Autowired
     public EmailServiceImpl(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -33,7 +35,6 @@ public class EmailServiceImpl<T extends User> implements EmailService<T> {
     @Override
     public void sendMail(SimpleMailMessage mailMessage,
                          List<T> recipients) {
-                Arrays.toString(this.getArrayOfEmailRecipients(recipients)));
         mailMessage.setTo(this.getArrayOfEmailRecipients(recipients));
         executorService.execute(new EmailDispatchTask(mailSender, mailMessage));
     }
