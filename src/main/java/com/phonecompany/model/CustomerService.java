@@ -4,7 +4,7 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 
 import javax.validation.constraints.NotNull;
 
-public class CustomerService extends DomainEntity{
+public class CustomerService extends DomainEntity {
 
     @NotNull(message = "Customer must not be null")
     private Customer customer;
@@ -15,7 +15,8 @@ public class CustomerService extends DomainEntity{
     @NotNull(message = "Order status must not be null")
     private CustomerProductStatus customerProductStatus;
 
-    public CustomerService(){}
+    public CustomerService() {
+    }
 
     public CustomerService(Customer customer, Service service, double price, CustomerProductStatus customerProductStatus) {
         this.customer = customer;

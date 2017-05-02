@@ -7,6 +7,10 @@ import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
+import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.EmailService;
+import com.phonecompany.service.interfaces.MailMessageCreator;
+import com.phonecompany.service.interfaces.VerificationTokenService;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +35,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private String applicationUrl;
 
     private CustomerDao customerDao;
-    private VerificationTokenDao verificationTokenDao;
+    private VerificationTokenService verificationTokenService;
     private MailMessageCreator<VerificationToken> confirmMessageCreator;
     private EmailService<Customer> emailService;
     private TariffService tariffService;
@@ -39,14 +43,14 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     @Autowired
     public CustomerServiceImpl(CustomerDao customerDao,
-                               VerificationTokenDao verificationTokenDao,
+                               VerificationTokenService verificationTokenService,
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<VerificationToken> confirmMessageCreator,
                                EmailService<Customer> emailService,
                                TariffService tariffService,
                                CustomerTariffService customerTariffService) {
         this.customerDao = customerDao;
-        this.verificationTokenDao = verificationTokenDao;
+        this.verificationTokenService = verificationTokenService;
         this.confirmMessageCreator = confirmMessageCreator;
         this.emailService = emailService;
         this.tariffService = tariffService;
@@ -63,15 +67,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     public void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent) {
         Customer persistedCustomer = registrationCompleteEvent.getPersistedUser();
 
-        String randomID = UUID.randomUUID().toString();
-        String confirmationUrl = applicationUrl + "/confirmRegistration?token=" + randomID;
-        LOG.info("Confirmation url: {}", confirmationUrl);
-
-        VerificationToken verificationToken =
-                this.verificationTokenDao.save(new VerificationToken(persistedCustomer, randomID));
+        VerificationToken persistedToken = verificationTokenService
+                .saveTokenForUser(persistedCustomer);
 
         SimpleMailMessage confirmationMessage =
-                this.confirmMessageCreator.constructMessage(verificationToken);
+                this.confirmMessageCreator.constructMessage(persistedToken);
         LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
         emailService.sendMail(confirmationMessage, persistedCustomer);
     }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private CustomerTariffService customerTariffService;
 
     @Autowired
-    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService, FileService fileService, OrderService orderService, CustomerTariffService customerTariffService) {
+    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService,
+                             FileService fileService, OrderService orderService,
+                             CustomerTariffService customerTariffService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
@@ -89,9 +92,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             Tariff tariff = tariffRegions.get(0).getTariff();
             Tariff temp = this.findByTariffName(tariff.getTariffName());
             if (temp != null && temp.getId() != tariff.getId()) {
-                return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new Error("Tariff with name \""
+                        + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
             }
-            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
+            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/"
+                    + tariff.hashCode()));
             Tariff savedTariff = this.update(tariff);
             LOGGER.debug("Tariff added {}", tariff);
             tariffRegionService.deleteByTariffId(savedTariff.getId());
@@ -138,8 +143,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public void deactivateSingleTariff(CustomerTariff customerTariff) {
         LOGGER.debug("Tariff deactivation for customer id " + customerTariff.getCustomer().getId());
-        Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        Order deactivationOrder = new Order(null, customerTariff, OrderType.DEACTIVATION, OrderStatus.CREATED, date, date);
+        LocalDate currentDate = LocalDate.now();
+        Order deactivationOrder = new Order(null, customerTariff,
+                OrderType.DEACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(deactivationOrder);
         customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
         customerTariffService.update(customerTariff);
@@ -151,8 +157,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public void activateSingleTariff(Customer customer, TariffRegion tariffRegion) {
         LOGGER.debug("Tariff deactivation for customer id " + customer.getId());
-        Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        Order activationOrder = new Order(null, null, OrderType.ACTIVATION, OrderStatus.CREATED, date, date);
+        LocalDate currentDate = LocalDate.now();
+        Order activationOrder = new Order(null, null,
+                OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
         LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()));
         CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getPrice()), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
@@ -166,8 +173,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public void deactivateCorporateTariff(CustomerTariff customerTariff) {
         LOGGER.debug("Tariff deactivation for corporate id " + customerTariff.getCorporate().getId());
-        Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        Order deactivationOrder = new Order(null, customerTariff, OrderType.DEACTIVATION, OrderStatus.CREATED, date, date);
+        LocalDate currentDate = LocalDate.now();
+        Order deactivationOrder = new Order(null, customerTariff,
+                OrderType.DEACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(deactivationOrder);
         customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
         customerTariffService.update(customerTariff);
@@ -179,8 +187,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public void activateCorporateTariff(Corporate corporate, Tariff tariff) {
         LOGGER.debug("Tariff deactivation for corporate id " + corporate.getId());
-        Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        Order activationOrder = new Order(null, null, OrderType.ACTIVATION, OrderStatus.CREATED, date, date);
+        LocalDate currentDate = LocalDate.now();
+        Order activationOrder = new Order(null, null,
+                OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
         LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()));
         CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()), CustomerProductStatus.ACTIVE, tariff);
@@ -238,17 +247,20 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions) {
+    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions){
+        LocalDate currentDate = LocalDate.now();
         if (this.findByTariffName(tariff.getTariffName()) != null) {
-            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("Tariff with name \"" +
+                    tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(new Date(Calendar.getInstance().getTimeInMillis()));
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.getCreationDate().getTime()));
-        Tariff savedTariff = this.save(tariff);
+        tariff.setCreationDate(currentDate);
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
+                "tariff/" + tariff.hashCode())); // no such thing as get time in millis
+        Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
         LOGGER.debug("Tariff added {}", savedTariff);
         this.addTariffRegions(tariffRegions, savedTariff);
-        return new ResponseEntity<Object>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
