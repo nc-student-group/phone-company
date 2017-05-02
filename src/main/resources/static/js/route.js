@@ -129,6 +129,11 @@
                 templateUrl: 'view/client/complaints.html',
                 controller: 'ComplaintController'
             });
+        $routeProvider.when('/csr/corporation/:id',
+            {
+                templateUrl: 'view/csr/corporation.html',
+                controller: 'CorporationController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 

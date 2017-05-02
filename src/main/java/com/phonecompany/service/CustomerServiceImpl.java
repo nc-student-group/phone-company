@@ -95,5 +95,10 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         return customerDao.getEntityCount(regionId, status);
     }
 
+    @Override
+    public List<Customer> getCustomersByCorporate(long corporateId) {
+        return customerDao.getByCorporateId(corporateId);
+    }
+
 }
 

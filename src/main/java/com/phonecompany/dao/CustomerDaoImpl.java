@@ -19,6 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @Repository
@@ -122,8 +124,50 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return null;
     }
 
+    @Override
+    public List<Customer> getByCorporateId(long corporateId) {
+        if (corporateId != 0) {
+            String customersByCorporate = this.getByCorporateIdQuery();
+            LOG.debug("customerByCompany : {}", customersByCorporate);
+            try (Connection conn = dbManager.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+                ps.setLong(1, corporateId);
+                ResultSet rs = ps.executeQuery();
+                List<Customer> customers = new ArrayList<>();
+                while (rs.next()) {
+                    customers.add(this.init(rs));
+                }
+                return customers;
+            } catch (SQLException e) {
+                throw new EntityNotFoundException(corporateId, e);
+            }
+        } else {
+            String customersByCorporate = this.getWithoutCorporateQuery();
+            LOG.debug("customerByVerificationTokenQuery : {}", customersByCorporate);
+            try (Connection conn = dbManager.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+                ResultSet rs = ps.executeQuery();
+                List<Customer> customers = new ArrayList<>();
+                while (rs.next()) {
+                    customers.add(this.init(rs));
+                }
+                return customers;
+            } catch (SQLException e) {
+                throw new EntityNotFoundException(corporateId, e);
+            }
+        }
+    }
+
     private String getByVerificationTokenQuery() {
         return this.getQuery("by.verification.token");
+    }
+
+    private String getByCorporateIdQuery() {
+        return this.getQuery("by.corporate");
+    }
+
+    private String getWithoutCorporateQuery() {
+        return this.getQuery("without.corporate");
     }
 
     @Override
