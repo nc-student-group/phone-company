@@ -6,9 +6,7 @@ angular.module('phone-company').controller('ComplaintController', [
     '$location',
     '$rootScope',
     'ComplaintService',
-    '$anchorScroll',
-    '$window',
-    function ($scope, $http, $location, $rootScope, ComplaintService, $anchorScroll, $window) {
+    function ($scope, $http, $location, $rootScope, ComplaintService) {
         console.log('This is ComplaintController');
         $scope.activePage = 'complaints';
         $scope.complaint = {
@@ -25,29 +23,10 @@ angular.module('phone-company').controller('ComplaintController', [
             $scope.complaintCategories = data;
         });
 
-        $scope.getAllComplaints = function () {
-            console.log('Get all complaints:');
-            $scope.preloader.send = true;
-            ComplaintService.getAllComplaints().then(function (data) {
-                console.log(data);
-                $scope.complaints = data;                
-                $scope.preloader.send = false;
-            }, function () {
-                console.log('Error');
-                $scope.preloader.send = false;
-            });
-        };
-        $scope.getAllComplaints();
-
-        // ComplaintService.getAllComplaints().then(function (data) {
-        //     console.log('Get all complaints');
-        //     $scope.complaints = data;
-        // });
-        
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);
             ComplaintService.createComplaint($scope.complaint).then(function (data) {
-                    toastr.success('Your complaint created successfully!');
+                    toastr.success('User complaint created successfully!');
                     console.log("Complaint added");
                 },
                 function (data) {
@@ -59,6 +38,6 @@ angular.module('phone-company').controller('ComplaintController', [
                     $scope.preloader.send = false;
                 }
             );
-        };        
+        };
 
     }]);
