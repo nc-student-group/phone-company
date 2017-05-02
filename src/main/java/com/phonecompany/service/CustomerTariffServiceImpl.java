@@ -55,16 +55,24 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
 
     @Override
     public CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff) {
+        if(CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
+            Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);
+            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
+            orderService.update(resumingOrder);
+        }
         customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
-        Order order = new Order();
-        order.setCustomerTariff(customerTariff);
         LocalDate now  = LocalDate.now();
-        order.setCreationDate(now);
-        order.setExecutionDate(now);
-        order.setOrderStatus(OrderStatus.DONE);
-        order.setType(OrderType.DEACTIVATION);
+
+        Order deactivationOrder = new Order();
+        deactivationOrder.setCustomerTariff(customerTariff);
+        deactivationOrder.setCreationDate(now);
+        deactivationOrder.setExecutionDate(now);
+        deactivationOrder.setOrderStatus(OrderStatus.DONE);
+        deactivationOrder.setType(OrderType.DEACTIVATION);
+
         customerTariffDao.update(customerTariff);
-        orderService.save(order);
+        orderService.save(deactivationOrder);
+
         return customerTariff;
     }
 
