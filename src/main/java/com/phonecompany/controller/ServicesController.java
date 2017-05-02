@@ -64,7 +64,7 @@ public class ServicesController {
 
     private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
         List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed to receive mailing: {}", agreedCustomers);
+        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
         this.emailService.sendMail(mailMessage, agreedCustomers);
     }
 

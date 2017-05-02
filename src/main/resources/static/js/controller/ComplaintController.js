@@ -9,12 +9,12 @@ angular.module('phone-company').controller('ComplaintController', [
     function ($scope, $http, $location, $rootScope, ComplaintService) {
         console.log('This is ComplaintController');
         $scope.activePage = 'complaints';
-        $scope.complaint = {
-            user: '',
+        $scope.complaint = {            
             status: 'ACCEPTED',
             date:'',
             text: '',
             type: '',
+            user: {},
             subject: ''
         };
         

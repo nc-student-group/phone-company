@@ -83,7 +83,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
-            order.setCreationDate(toLocalDate(rs.getDate("execution_date")));
+            order.setExecutionDate(toLocalDate(rs.getDate("execution_date")));
 
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
