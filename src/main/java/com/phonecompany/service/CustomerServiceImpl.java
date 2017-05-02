@@ -108,6 +108,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
+    public void deactivateCustomer(long id) {
+
+    }
+
+    @Override
     public List<Customer> getCustomersByCorporate(long corporateId) {
         return customerDao.getByCorporateId(corporateId);
     }
