@@ -66,6 +66,19 @@
             return deferred.promise;
         };
 
+        UserService.updateStatus = function (id, status) {
+            var deferred = $q.defer();
+            $http.get("/api/user/status/update/"+id+"/"+status).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
         return UserService;
     }
 }());

@@ -91,9 +91,9 @@
             return deferred.promise;
         };
 
-        CustomerService.getAllCustomer = function(page, size,selectedRegion,selectedStatus) {
+        CustomerService.getAllCustomer = function (page, size, selectedRegion, selectedStatus) {
             var deferred = $q.defer();
-            $http.get(GET_ALL_CUSTOMERS_URL+page+'/'+size+"/"+selectedRegion+"/"+selectedStatus).then(
+            $http.get(GET_ALL_CUSTOMERS_URL + page + '/' + size + "/" + selectedRegion + "/" + selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -108,6 +108,19 @@
             console.log('customer: ' + JSON.stringify(customer));
             var deferred = $q.defer();
             $http.post("api/customer/save", customer).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+
+                });
+            return deferred.promise;
+        };
+        CustomerService.updateStatus = function (id, status) {
+            var deferred = $q.defer();
+            $http.get("/api/customer/status/update/" + id + "/" + status).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

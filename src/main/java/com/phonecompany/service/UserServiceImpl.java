@@ -125,4 +125,9 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public int getCountUsers(int roleId, String status) {
         return userDao.getEntityCount(roleId, status);
     }
+
+    @Override
+    public void updateStatus(long id, Status status){
+        userDao.updateStatus(id, status);
+    }
 }

@@ -150,7 +150,8 @@
                         break;
                     }
                     case 500:
-                        $window.location = './500.html';
+                        toastr.error("500 error");
+                        // $window.location = './500.html';
                         break;
                 }
                 return $q.reject(errorResponse);

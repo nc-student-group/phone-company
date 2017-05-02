@@ -91,5 +91,29 @@
                 });
             }
         };
+
+        $scope.deactivateClick = function (index) {
+            $scope.preloader.send = true;
+            UserService.updateStatus($scope.users[index].id, 'DEACTIVATED').then(function (data) {
+                $scope.users[index].status = 'DEACTIVATED';
+                toastr.success('User "' + $scope.users[index].email + ' " deactivated!', 'Success deactivation');
+                $scope.preloader.send = false;
+            }, function (data) {
+                toastr.error('Some problems with user deactivation, try again!', 'Error');
+                $scope.preloader.send = false;
+            })
+        };
+
+        $scope.activateClick = function (index) {
+            $scope.preloader.send = true;
+            UserService.updateStatus($scope.users[index].id, 'ACTIVATED').then(function (data) {
+                $scope.users[index].status = 'ACTIVATED';
+                toastr.success('User "' + $scope.users[index].email + ' " activated!', 'Success activation');
+                $scope.preloader.send = false;
+            }, function (data) {
+                toastr.error('Some problems with user activation, try again!', 'Error');
+                $scope.preloader.send = false;
+            })
+        };
     }
 }());
