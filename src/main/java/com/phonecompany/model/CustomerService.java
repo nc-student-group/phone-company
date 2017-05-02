@@ -18,7 +18,8 @@ public class CustomerService extends DomainEntity {
     public CustomerService() {
     }
 
-    public CustomerService(Customer customer, Service service, double price, CustomerProductStatus customerProductStatus) {
+    public CustomerService(Customer customer, Service service,
+                           double price, CustomerProductStatus customerProductStatus) {
         this.customer = customer;
         this.service = service;
         this.price = price;

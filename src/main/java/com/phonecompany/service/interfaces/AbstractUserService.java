@@ -6,6 +6,10 @@ import com.phonecompany.model.events.ResetPasswordEvent;
 
 public interface AbstractUserService<T extends User> {
     T resetPassword(ResetPasswordEvent<T> resetPasswordEvent);
+
     T findByEmail(String email);
+
     void updateStatus(long id, Status status);
+
+    T getCurrentlyLoggedInUser();
 }

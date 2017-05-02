@@ -45,9 +45,22 @@
         };
 
 
-        CorporationService.getAllCorporation = function(page, size,partOfName) {
+        CorporationService.getAllCorporationPaging = function(page, size,partOfName) {
             var deferred = $q.defer();
             $http.get(GET_ALL_CORPORATION_URL+page+'/'+size+"?s="+partOfName).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        CorporationService.getAllCorporation = function() {
+            var deferred = $q.defer();
+            $http.get(GET_ALL_CORPORATION_URL).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

@@ -116,14 +116,6 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return password;
     }
 
-    public User getCurrentlyLoggedInUser() {
-        SecuredUser securedUser = new SecuredUser(
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        User user = this.findByEmail(securedUser.getUserName());
-        LOG.debug("User retrieved from the security context: {}", user);
-        return user;
-    }
-
     @Override
     public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {
         return userDao.getPaging(page, size, roleId, status);
