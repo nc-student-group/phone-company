@@ -58,7 +58,6 @@ angular.module('phone-company').factory('CustomerInfoService',
 
         function deactivateTariff(tariff) {
             let deferred = $q.defer();
-            console.log("HELLO" + tariff);
             $http.post(DEACTIVATE_TARIFF_URL, tariff).then(
                 function (response) {
                     deferred.resolve(response.data);

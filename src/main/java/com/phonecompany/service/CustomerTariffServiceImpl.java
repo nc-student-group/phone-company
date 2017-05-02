@@ -1,12 +1,12 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.OrderDaoImpl;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
-import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.CustomerProductStatus;
+import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.CustomerTariffService;
 import com.phonecompany.service.interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +55,15 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     @Override
     public CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff) {
         customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
-        customerTariffDao.update(customerTariff);
         Order order = new Order();
         order.setCustomerTariff(customerTariff);
-//        order.setCreationDate(LocalDate.now());
-        return null;
+        LocalDate now  = LocalDate.now();
+        order.setCreationDate(now);
+        order.setExecutionDate(now);
+        order.setOrderStatus(OrderStatus.DONE);
+        order.setType(OrderType.DEACTIVATION);
+        customerTariffDao.update(customerTariff);
+        orderService.save(order);
+        return customerTariff;
     }
 }

@@ -205,7 +205,7 @@ public class TariffController {
 
     @PostMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
-//        customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
+        customerTariffService.deactivateCustomerTariff(customerTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

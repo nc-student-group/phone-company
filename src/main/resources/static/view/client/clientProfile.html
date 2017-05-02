@@ -92,17 +92,17 @@
                                                         <div class="row">
                                                             <h3 style="text-align: center">{{currentTariff.tariff.tariffName}}</h3>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-3">
                                                             <button style="width: 100%"
                                                                     class="btn btn-danger btn-fill pull-left"
-                                                                    ng-click="showDeactivationModalWindow(currentTariff)">Deactivate
+                                                                    ng-click="showDeactivationModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory)">Deactivate
                                                             </button>
                                                             <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                                    ng-show="currentTariff.customerProductStatus === 'ACTIVATED'"
+                                                                    ng-show="currentTariff.customerProductStatus === 'ACTIVE'"
                                                                     ng-click="">Suspend
                                                             </button>
                                                         </div>
-                                                        <div class="col-md-8">
+                                                        <div class="col-md-7">
                                                         <div class="row row-one">
                                                             <div class="col-md-8 condition"><span>Current status</span></div>
                                                             <div class="col-md-4 conditions-value">
@@ -151,6 +151,7 @@
                                                         </div>
                                                 </div>
                                                     </div>
+                                                    <hr />
                                                     <div class="clearfix"></div>
 
                                                 <div class="header">
