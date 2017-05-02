@@ -8,12 +8,13 @@
 
     function UserController($scope, $log, UserService, $rootScope) {
         console.log('This is UserController');
-        $scope.activePage='users';
+        $scope.activePage = 'users';
+        $scope.editing = false;
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.users = UserService.getUsers();
-        $scope.user ={
+        $scope.user = {
             email: '',
-            role:''
+            role: ''
         };
 
         $scope.page = 0;
@@ -23,7 +24,7 @@
         $scope.selectedStatus = "ALL";
         $scope.selectedRole = 0;
 
-        $scope.createUser = function() {
+        $scope.createUser = function () {
             $log.debug('User: ' + JSON.stringify($scope.user));
             UserService.saveUserByAdmin($scope.user)
                 .then(function (createdUser) {
@@ -41,18 +42,18 @@
 
         $scope.preloader.send = true;
         $scope.getAllUser = function () {
-            UserService.getAllUsers($scope.page, $scope.size,$scope.selectedRole,$scope.selectedStatus).then(function (data) {
+            UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
                 $scope.users = data.users;
                 $scope.usersSelected = data.usersSelected;
                 $scope.preloader.send = false;
-            },function () {
+            }, function () {
                 $scope.preloader.send = false;
             });
         };
 
         $scope.getAllUser();
 
-        $scope.updateData = function() {
+        $scope.updateData = function () {
             $scope.page = 0;
             $scope.preloader.send = true;
             $scope.getAllUser();
@@ -63,12 +64,12 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                UserService.getAllUsers($scope.page, $scope.size,$scope.selectedRole,$scope.selectedStatus).then(function (data) {
+                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
                     $scope.users = data.users;
                     $scope.usersSelected = data.usersSelected;
                     $scope.preloader.send = false;
                     $scope.inProgress = false;
-                },function () {
+                }, function () {
                     $scope.preloader.send = false;
                     $scope.inProgress = false;
                 });
@@ -80,12 +81,12 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                UserService.getAllUsers($scope.page, $scope.size,$scope.selectedRole,$scope.selectedStatus).then(function (data) {
+                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
                     $scope.users = data.users;
                     $scope.usersSelected = data.usersSelected;
                     $scope.preloader.send = false;
                     $scope.inProgress = false;
-                },function () {
+                }, function () {
                     $scope.preloader.send = false;
                     $scope.inProgress = false;
                 });
@@ -115,5 +116,31 @@
                 $scope.preloader.send = false;
             })
         };
+
+        $scope.editClick = function (index) {
+            $scope.userToEdit = $scope.users[index];
+            $scope.editing = true;
+        };
+
+        $scope.saveUser = function () {
+            $scope.preloader.send = true;
+            UserService.updateUserByAdmin($scope.userToEdit).then(function (data) {
+                toastr.success('User "' + $scope.userToEdit.email + ' " updated!', 'Success update');
+                $scope.preloader.send = false;
+                $scope.editing = false;
+            }, function (data) {
+                console.log(data);
+                if (data.data.message != undefined) {
+                    toastr.error(data.data.message, 'Error');
+                } else {
+                    toastr.error('Some problems with user update, try again!', 'Error');
+                }
+                $scope.preloader.send = false;
+            });
+        };
+
+        $scope.cancelClick = function () {
+            $scope.editing=false;
+        }
     }
 }());

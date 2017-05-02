@@ -50,10 +50,12 @@ public class UserController {
     @RequestMapping(method = POST, value = "/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
+        User foundedUser = userService.findByEmail(user.getEmail());
+        if (foundedUser != null && !foundedUser.getId().equals(user.getId())) {
+            return new ResponseEntity<Object>(new Error("User with \""+user.getEmail()+"\" already exist!"), HttpStatus.CONFLICT);
+        }
         userService.update(user);
-
-        User persistedUser = this.userService.save(user);
-        return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/user/get")
@@ -108,7 +110,7 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "/api/user/status/update/{id}/{status}", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/user/update/{id}/{status}", method = RequestMethod.GET)
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
         return new ResponseEntity<Void>(HttpStatus.OK);

@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
+                        <div class="card" ng-hide="editing">
                             <div class="header">
                                 <h4 class="title">User list</h4>
                             </div>
@@ -73,7 +73,7 @@
                                                     ng-click="deactivateClick($index)">Deactivate
                                             </button>
                                             <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                    ng-click="editClick(u.id)">Edit
+                                                    ng-click="editClick($index)">Edit
                                             </button>
                                         </td>
                                     </tr>
@@ -87,7 +87,8 @@
                                         <ul class="pagination">
                                             <li class="paginate_button previous" id="tariffTable_previous">
                                                 <a aria-controls="tariffTable" data-dt-idx="0"
-                                                   tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                   tabindex="0" ng-show="page > 0"
+                                                   ng-click="previousPage()">Previous</a>
                                             </li>
                                             <li class="paginate_button active"><a
                                                     aria-controls="tariffTable"
@@ -107,7 +108,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
+                        <div class="card" ng-hide="editing">
                             <div class="header">
                                 <h4 class="title">Add user</h4>
                             </div>
@@ -120,8 +121,10 @@
                                                 <input name="email" id="email" ng-model="user.email"
                                                        required ng-pattern="emailPattern">
                                                 <div ng-messages="userForm.email.$error" role="alert" multiple>
-                                                    <div ng-message="required" class="my-message">Email is required.</div>
-                                                    <div ng-message="pattern" class="my-message">That doesn't look like a valid
+                                                    <div ng-message="required" class="my-message">Email is required.
+                                                    </div>
+                                                    <div ng-message="pattern" class="my-message">That doesn't look like
+                                                        a valid
                                                         email.
                                                     </div>
                                                 </div>
@@ -131,7 +134,7 @@
 
                                     <div class="row">
                                         <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" >
+                                            <md-input-container class="md-block">
                                                 <label>Role</label>
                                                 <md-select ng-model="user.role" required>
                                                     <md-option value="CSR">CSR</md-option>
@@ -141,12 +144,64 @@
                                         </div>
                                     </div>
 
-                                    <button  ng-class="{unsubmitable : userForm.$invalid,
-                        submitable: !customerForm.$invalid}"
-                                             ng-disabled="userForm.$invalid"
-                                             style="width: 300px;"
-                                             type="submit" class="center-block register-button">
+                                    <button ng-class="{unsubmitable : userForm.$invalid,
+                        submitable: !userForm.$invalid}"
+                                            ng-disabled="userForm.$invalid"
+                                            style="width: 300px;"
+                                            type="submit" class="center-block register-button">
                                         Add user
+                                    </button>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                        <!--USER EDITING-->
+                        <div class="card" ng-show="editing">
+                            <div class="header">
+                                <h4 class="title">Edit user</h4>
+                            </div>
+                            <div class="content">
+                                <form name="editUserForm" ng-submit="saveUser()">
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block">
+                                                <label>Email</label>
+                                                <input name="email" ng-model="userToEdit.email"
+                                                       required ng-pattern="emailPattern">
+                                                <div ng-messages="editUserForm.email.$error" role="alert" multiple>
+                                                    <div ng-message="required" class="my-message">Email is required.
+                                                    </div>
+                                                    <div ng-message="pattern" class="my-message">That doesn't look like
+                                                        a valid
+                                                        email.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block">
+                                                <label>Role</label>
+                                                <md-select ng-model="userToEdit.role" required>
+                                                    <md-option value="CSR">CSR</md-option>
+                                                    <md-option value="PMG">PMG</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
+                                    <button ng-class="{unsubmitable : editUserForm.$invalid,
+                        submitable: !editUserForm.$invalid}"
+                                            ng-disabled="editUserForm.$invalid"
+                                            style="width: 300px;"
+                                            type="submit" class="btn btn-success btn-fill center-block">
+                                        Save user
+                                    </button>
+                                    <button style="width: 300px;" type="button"
+                                            class="btn btn-default btn-fill center-block" ng-click="cancelClick()">
+                                        Back
                                     </button>
                                     <div class="clearfix"></div>
                                 </form>
