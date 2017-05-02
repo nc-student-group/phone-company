@@ -4,9 +4,9 @@
     angular.module('phone-company')
         .controller('CorporationsController', CorporationsController);
 
-    CorporationsController.$inject = ['$scope', '$log', 'CorporationService', '$rootScope'];
+    CorporationsController.$inject = ['$scope', '$log','$location', 'CorporationService'];
 
-    function CorporationsController($scope, $log, CorporationService, $rootScope) {
+    function CorporationsController($scope, $log,$location, CorporationService) {
         console.log('This is CorporationsController');
         $scope.activePage='corporations';
 
@@ -66,6 +66,9 @@
             $scope.editing=true;
             console.log($scope.editing);
             $scope.editCorporation = corporation;
+        };
+        $scope.detailsClick = function (corporation) {
+            $location.path('/csr/corporation/'+corporation.id);
         };
 
         $scope.nextPage = function () {

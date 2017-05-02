@@ -108,6 +108,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
+    public List<Customer> getCustomersByCorporate(long corporateId) {
+        return customerDao.getByCorporateId(corporateId);
+    }
+
+    @Override
     public void updateStatus(long id, Status status) {
         customerDao.updateStatus(id, status);
     }
