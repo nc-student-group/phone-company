@@ -289,48 +289,54 @@
                                                             </div>
                                                         </div>
                                                     </md-input-container>
-
-                                                    <div class="col-md-6">
-                                                        <md-input-container
-                                                                ng-hide="{{currentService.productCategory.categoryName === undefined}}"
-                                                                class="md-block">
-                                                            <input type="number"
-                                                                   placeholder="Amount {{currentService.productCategory.units}}"
-                                                                   name="amount"
-                                                                   ng-model="currentService.amount"
-                                                                   ng-pattern="notNegativeIntegerPattern"/>
-                                                            <div ng-messages="servicesForm.amount.$error"
-                                                                 role="alert"
-                                                                 multiple>
-                                                                <div ng-message="pattern">
-                                                                    This field can only contain positive integers
-                                                                </div>
-                                                            </div>
-                                                        </md-input-container>
-                                                    </div>
                                                 </div>
                                             </div>
+
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div class="col-md-6">
-                                                        <md-input-container class="md-block">
-                                                            <md-select placeholder="Category"
-                                                                       ng-model="currentService.productCategory.categoryName">
-                                                                <md-option ng-repeat="c in categories"
-                                                                           value="{{c.categoryName}}">
-                                                                    {{c.categoryName}}
-                                                                </md-option>
-                                                            </md-select>
-                                                        </md-input-container>
+
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-6">
+                                                            <md-input-container class="md-block">
+                                                                <md-select placeholder="Category"
+                                                                           ng-change="specifyUnits()"
+                                                                           ng-model="currentService.productCategory.categoryName">
+                                                                    <md-option ng-repeat="c in categories"
+                                                                               value="{{c.categoryName}}">
+                                                                        {{c.categoryName}}
+                                                                    </md-option>
+                                                                </md-select>
+                                                            </md-input-container>
+                                                        </div>
+
+                                                        <div class="col-md-6" ng-show="units">
+                                                            <md-input-container
+                                                                    class="md-block">
+                                                                <input type="number"
+                                                                       placeholder="Amount, {{units}}"
+                                                                       name="amount"
+                                                                       ng-model="currentService.amount"
+                                                                       ng-pattern="notNegativeIntegerPattern"/>
+                                                                <div ng-messages="servicesForm.amount.$error"
+                                                                     role="alert"
+                                                                     multiple>
+                                                                    <div ng-message="pattern">
+                                                                        This field can only contain positive integers
+                                                                    </div>
+                                                                </div>
+                                                            </md-input-container>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <img ng-src="{{currentService.pictureUrl}}" alt="">
-                                                <md-button class="md-raised md-primary upload_photo"
-                                                           ng-click="uploadPicture()">
-                                                    <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
-                                                </md-button>
+                                                <div style="margin-left: 20px" class="col-md-offset-1">
+                                                    <img ng-src="{{currentService.pictureUrl}}" alt="">
+                                                    <md-button class="md-raised md-primary upload_photo"
+                                                               ng-click="uploadPicture()">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
+                                                    </md-button>
+                                                </div>
                                                 <div>
                                                     <br/>
                                                     <input type="file" name="fileInput" id="fileInput"
@@ -362,7 +368,7 @@
                                                         </md-button>
                                                     </div>
                                                 </div>
-                                                <div class="content">
+                                                <div style="margin-left: 40px" class="col-md-offset-1">
                                                     <button class="btn btn-info btn-fill pull-left"
                                                             ng-disabled="servicesForm.$invalid"
                                                             ng-click="addService()">Add service
@@ -370,6 +376,7 @@
                                                     <div class="clearfix"></div>
                                                 </div>
                                             </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

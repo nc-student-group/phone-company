@@ -1,10 +1,11 @@
 package com.phonecompany.service;
 
 import com.phonecompany.exception.EmailAlreadyPresentException;
-import com.phonecompany.model.enums.UserRole;
-import com.phonecompany.model.events.ResetPasswordEvent;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.User;
+import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.events.ResetPasswordEvent;
 import com.phonecompany.service.interfaces.AbstractUserService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
@@ -36,7 +37,7 @@ public abstract class AbstractUserServiceImpl<T extends User>
     private MailMessageCreator<User> resetPassMessageCreator;
     @Autowired
     @Qualifier("confirmationEmailCreator")
-    private MailMessageCreator<User> confirmMessageCreator;
+    private MailMessageCreator<VerificationToken> confirmMessageCreator;
 
     public AbstractUserServiceImpl() {
     }
@@ -48,8 +49,9 @@ public abstract class AbstractUserServiceImpl<T extends User>
         Assert.notNull(userToReset, "User should not be null");
         userToReset.setPassword(generatePassword());
         LOG.info("Sending password reset email to: {}", userToReset.getEmail());
-        SimpleMailMessage mailMessage = this.resetPassMessageCreator.constructMessage(userToReset);
-        emailService.sendMail(mailMessage);
+        SimpleMailMessage mailMessage =
+                this.resetPassMessageCreator.constructMessage(userToReset);
+        emailService.sendMail(mailMessage, userToReset);
         LOG.info("Resetting password");
         userToReset.setPassword(shaPasswordEncoder.encodePassword(userToReset.getPassword(), null));
         LOG.info("Password after reset: {}", userToReset.getPassword());

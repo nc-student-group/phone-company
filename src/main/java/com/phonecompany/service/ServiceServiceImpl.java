@@ -55,22 +55,17 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public Service validateAndSave(Service service) {
+    public Service save(Service service) {
         Assert.notNull(service, "Service cannot be null");
         if(this.isExist(service)) {
             throw new ServiceAlreadyPresentException(service.getServiceName());
         }
         String pictureUrl = this.getPictureUrlForService(service);
         service.setPictureUrl(pictureUrl);
-        this.notifyCustomersAboutTheService();
         String productCategoryName = service.getProductCategory().getCategoryName();
         ProductCategory productCategory = productCategoryDao.getByName(productCategoryName);
         service.setProductCategory(productCategory);
         return super.save(service);
-    }
-
-    private void notifyCustomersAboutTheService() {
-
     }
 
     private String getPictureUrlForService(Service service) {

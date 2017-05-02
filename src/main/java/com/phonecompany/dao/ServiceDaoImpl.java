@@ -48,6 +48,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setString(7, entity.getDescription());
             preparedStatement.setString(8, entity.getPreviewDescription());
             preparedStatement.setObject(9, entity.getDurationInDays());
+            preparedStatement.setObject(10, entity.getAmount());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -65,7 +66,9 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setObject(7, entity.getDescription());
             preparedStatement.setObject(8, entity.getPreviewDescription());
             preparedStatement.setObject(9, entity.getDurationInDays());
-            preparedStatement.setDouble(10, TypeMapper.getNullableId(entity));
+            preparedStatement.setObject(9, entity.getDurationInDays());
+            preparedStatement.setObject(10, entity.getAmount());
+            preparedStatement.setDouble(11, TypeMapper.getNullableId(entity));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -85,6 +88,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             service.setDescription(resultSet.getString("description"));
             service.setPreviewDescription(resultSet.getString("preview_description"));
             service.setDurationInDays((resultSet.getInt("duration_in_days")));
+            service.setAmount((resultSet.getInt("amount")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
