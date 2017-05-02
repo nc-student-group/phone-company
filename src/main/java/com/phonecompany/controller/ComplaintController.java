@@ -32,15 +32,26 @@ public class ComplaintController {
         this.userService = userService;
     }
 
-    //TODO: please, do not autowire controllers in controllers
     @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
-        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-        complaint.setUser(loggedInUser);
-        Complaint createdComplaint = complaintService.createComplaint(complaint);
-        LOG.debug("Complaint added {}", createdComplaint);
-
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        if(complaint.getUser().getEmail() == null) {
+            User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+            complaint.setUser(loggedInUser);
+            Complaint createdComplaint = complaintService.createComplaint(complaint);
+            LOG.debug("Complaint added {}", createdComplaint);
+        }
+        else {
+            User persistedUser = this.userService.findByEmail(complaint.getUser().getEmail());
+            if (persistedUser != null) {
+                complaint.setUser(persistedUser);
+                Complaint createdComplaint = complaintService.createComplaint(complaint);
+                LOG.debug("Complaint added {}", createdComplaint);
+            } else {
+                LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
+                //complaint = null;
+            }
+        }
+        return new ResponseEntity<>(complaint, HttpStatus.OK);
     }
 
     //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
