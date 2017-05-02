@@ -27,7 +27,9 @@ public class Service extends DomainEntity {
     @NotNull(message = "Preview description must not be null")
     private String previewDescription;
     @NotNull(message = "Duration must not be null")
-    private Integer durationInDays;
+    private int durationInDays;
+    @NotNull(message = "Duration must not be null")
+    private int amount;
 
     public Service() {
     }
@@ -111,12 +113,20 @@ public class Service extends DomainEntity {
         this.previewDescription = previewDescription;
     }
 
-    public Integer getDurationInDays() {
+    public int getDurationInDays() {
         return durationInDays;
     }
 
-    public void setDurationInDays(Integer durationInDays) {
+    public void setDurationInDays(int durationInDays) {
         this.durationInDays = durationInDays;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     @Override
@@ -131,6 +141,7 @@ public class Service extends DomainEntity {
                 ", description='" + description + '\'' +
                 ", previewDescription='" + previewDescription + '\'' +
                 ", durationInDays=" + durationInDays +
+                ", amount=" + amount +
                 "} " + super.toString();
     }
 }

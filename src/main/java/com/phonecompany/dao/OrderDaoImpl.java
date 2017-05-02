@@ -6,13 +6,12 @@ import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
-import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
-import org.apache.log4j.spi.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,10 +19,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.phonecompany.util.TypeMapper.toLocalDate;
+import static com.phonecompany.util.TypeMapper.toSqlDate;
+
 @Repository
 public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OrderDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderDaoImpl.class);
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
     private CustomerTariffDao customerTariffDao;
@@ -48,8 +50,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setDate(5 ,entity.getCreationDate());
-            preparedStatement.setDate(6 ,entity.getExecutionDate());
+            preparedStatement.setDate(5, toSqlDate(entity.getCreationDate()));
+            preparedStatement.setDate(6, toSqlDate(entity.getExecutionDate()));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -62,8 +64,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());
             preparedStatement.setString(4, entity.getOrderStatus().name());
-            preparedStatement.setDate(5 ,entity.getCreationDate());
-            preparedStatement.setDate(6 ,entity.getExecutionDate());
+            preparedStatement.setDate(5, toSqlDate(entity.getCreationDate()));
+            preparedStatement.setDate(6, toSqlDate(entity.getExecutionDate()));
 
             preparedStatement.setLong(7, entity.getId());
         } catch (SQLException e) {
@@ -80,8 +82,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             order.setCustomerTariff(customerTariffDao.getById(rs.getLong("customer_tariff_id)")));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
-            order.setCreationDate(rs.getDate("creation_date"));
-            order.setCreationDate(rs.getDate("execution_date"));
+            order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
+            order.setCreationDate(toLocalDate(rs.getDate("execution_date")));
 
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

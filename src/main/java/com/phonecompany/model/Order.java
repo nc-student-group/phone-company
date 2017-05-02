@@ -1,11 +1,14 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.CustomerProductStatus;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.phonecompany.config.LocalDateTimeDeserializer;
+import com.phonecompany.config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Order extends DomainEntity {
 
@@ -16,14 +19,20 @@ public class Order extends DomainEntity {
     @NotNull(message = "Order status must not be null")
     private OrderStatus orderStatus;
     @NotNull(message = "Creation date must not be null")
-    private Date creationDate;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDate creationDate;
     @NotNull(message = "Execution date must not be null")
-    private Date executionDate;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDate executionDate;
 
     public Order() {
     }
 
-    public Order(CustomerService customerService, CustomerTariff customerTariff, OrderType type, OrderStatus orderStatus, Date creationDate, Date executionDate) {
+    public Order(CustomerService customerService, CustomerTariff customerTariff,
+                 OrderType type, OrderStatus orderStatus, LocalDate creationDate,
+                 LocalDate executionDate) {
         this.customerService = customerService;
         this.customerTariff = customerTariff;
         this.type = type;
@@ -64,19 +73,19 @@ public class Order extends DomainEntity {
         this.orderStatus = orderStatus;
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Date getExecutionDate() {
+    public LocalDate getExecutionDate() {
         return executionDate;
     }
 
-    public void setExecutionDate(Date executionDate) {
+    public void setExecutionDate(LocalDate executionDate) {
         this.executionDate = executionDate;
     }
 

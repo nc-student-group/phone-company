@@ -11,9 +11,8 @@ public interface MailMessageCreator<T> {
     /**
      * Constructs message for the specific recipient
      *
-     * @param  recipient message receiver
      * @return fully constructed {@code SimpleMailMessage}
      *         object
      */
-    SimpleMailMessage constructMessage(T recipient);
+    SimpleMailMessage constructMessage(T entity);
 }

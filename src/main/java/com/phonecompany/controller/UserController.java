@@ -1,6 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -105,5 +106,11 @@ public class UserController {
         response.put("users", users);
         response.put("usersSelected", userService.getCountUsers(userRole, status));
         return response;
+    }
+
+    @RequestMapping(value = "/api/user/status/update/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
+        userService.updateStatus(id, status);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

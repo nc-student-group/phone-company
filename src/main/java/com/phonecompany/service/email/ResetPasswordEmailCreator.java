@@ -2,13 +2,11 @@ package com.phonecompany.service.email;
 
 import com.phonecompany.model.User;
 import com.phonecompany.service.interfaces.MailMessageCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component("resetPassMessageCreator")
-public class ResetPasswordEmailCreator extends AbstractEmailCreator
-        implements MailMessageCreator {
+public class ResetPasswordEmailCreator extends AbstractEmailCreator<User>
+        implements MailMessageCreator<User> {
 
     /**
      * {@inheritDoc}

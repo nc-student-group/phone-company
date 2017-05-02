@@ -23,13 +23,13 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintServiceImpl.class);
 
     private ComplaintDao complaintDao;
-    private MailMessageCreator<User> complaintAcceptedEmailCreator;
+    private MailMessageCreator<Complaint> complaintAcceptedEmailCreator;
     private EmailService emailService;
 
     @Autowired
     public ComplaintServiceImpl(ComplaintDao complaintDao,
                                 @Qualifier("complaintAcceptedEmailCreator")
-                                        MailMessageCreator<User> complaintAcceptedEmailCreator,
+                                        MailMessageCreator<Complaint> complaintAcceptedEmailCreator,
                                 EmailService emailService){
         super(complaintDao);
         this.complaintDao = complaintDao;
@@ -69,9 +69,9 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
 
     private void sendComplaintAcceptedMessage(User user) {
         SimpleMailMessage complaintAcceptedMessage =
-                this.complaintAcceptedEmailCreator.constructMessage(user);
+                this.complaintAcceptedEmailCreator.constructMessage(null);
         LOG.info("Sending email complaint accepted to: {}", user.getEmail());
-        emailService.sendMail(complaintAcceptedMessage);
+        emailService.sendMail(complaintAcceptedMessage, user);
     }
 
 }

@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
  */
 public class EmailDispatchTask implements Runnable {
 
-    public static final String PHONE_COMPANY_EMAIL = "nc.phone.company.project@gmail.com";
+    static final String PHONE_COMPANY_EMAIL = "nc.phone.company.project@gmail.com";
 
     private JavaMailSender mailSender;
     private SimpleMailMessage mailMessage;

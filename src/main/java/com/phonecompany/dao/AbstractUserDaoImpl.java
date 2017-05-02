@@ -1,8 +1,10 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AbstractUserDao;
+import com.phonecompany.exception.EntityModificationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,5 +41,17 @@ public abstract class AbstractUserDaoImpl<T extends User>
             throw new EntityNotFoundException(email, e);
         }
         return null;
+    }
+
+    @Override
+    public void updateStatus(long id, Status status){
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("updateUserStatus"))) {
+            ps.setString(1, status.name());
+            ps.setLong(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new EntityModificationException(id, e);
+        }
     }
 }

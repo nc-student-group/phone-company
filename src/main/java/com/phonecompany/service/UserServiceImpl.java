@@ -2,16 +2,19 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.SecuredUser;
+import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.service.interfaces.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
@@ -21,9 +24,8 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -31,12 +33,16 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    @Value("${application-url}")
+    private String applicationUrl;
+
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
-    private MailMessageCreator<User> confirmMessageCreator;
-    private MailMessageCreator<User> passwordAssigmentCreator;
+    private MailMessageCreator<VerificationToken> confirmMessageCreator;
+    private MailMessageCreator<User> passwordAssignmentCreator;
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
@@ -44,25 +50,27 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                            @Qualifier("resetPassMessageCreator")
                                    MailMessageCreator<User> resetPassMessageCreator,
                            @Qualifier("confirmationEmailCreator")
-                                   MailMessageCreator<User> confirmMessageCreator,
+                                   MailMessageCreator<VerificationToken> confirmMessageCreator,
                            @Qualifier("passwordAssignmentMessageCreator")
                                    MailMessageCreator<User> passwordAssigmentCreator,
-                           EmailService emailService) {
+                           EmailService emailService,
+                           VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
         this.confirmMessageCreator = confirmMessageCreator;
-        this.passwordAssigmentCreator = passwordAssigmentCreator;
+        this.passwordAssignmentCreator = passwordAssigmentCreator;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @EventListener
     public void confirmRegistration(OnUserCreationEvent onUserCreationEvent) {
         User persistedUser = onUserCreationEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
-                this.passwordAssigmentCreator.constructMessage(persistedUser);
+                this.passwordAssignmentCreator.constructMessage(persistedUser);
         LOG.info("Sending email confirmation message to: {}", persistedUser.getEmail());
-        emailService.sendMail(confirmationMessage);
+        emailService.sendMail(confirmationMessage, persistedUser);
     }
 
     @Override
@@ -96,7 +104,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         SimpleMailMessage resetPasswordMessage =
                 this.resetPassMessageCreator.constructMessage(user);
         LOG.info("Sending email reset password to: {}", user.getEmail());
-        emailService.sendMail(resetPasswordMessage);
+        emailService.sendMail(resetPasswordMessage, user);
     }
 
     public String generatePassword() {
@@ -125,5 +133,10 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     @Override
     public int getCountUsers(int roleId, String status) {
         return userDao.getEntityCount(roleId, status);
+    }
+
+    @Override
+    public void updateStatus(long id, Status status){
+        userDao.updateStatus(id, status);
     }
 }

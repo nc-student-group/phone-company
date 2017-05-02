@@ -56,7 +56,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             statement.setObject(9, TypeMapper.getNullableId(customer.getCorporate()));
             statement.setObject(10, customer.getRepresentative());
             statement.setString(11, customer.getStatus().name());
-            statement.setBoolean(12, customer.getMailingEnabled());
+            statement.setBoolean(12, customer.getIsMailingEnabled());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -76,7 +76,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             statement.setObject(9, TypeMapper.getNullableId(customer.getCorporate()));
             statement.setObject(10, customer.getRepresentative());
             statement.setString(11, customer.getStatus().name());
-            statement.setBoolean(12, customer.getMailingEnabled());
+            statement.setBoolean(12, customer.getIsMailingEnabled());
             statement.setLong(13, customer.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -100,7 +100,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             customer.setCorporate(corporateDao.getById(rs.getLong("corporate_id")));
             customer.setRepresentative(rs.getBoolean("is_representative"));
             customer.setStatus(Status.valueOf(rs.getString("status")));
-            customer.setMailingEnabled(rs.getBoolean("is_mailing_enabled"));
+            customer.setIsMailingEnabled(rs.getBoolean("is_mailing_enabled"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

@@ -1,18 +1,18 @@
 package com.phonecompany.service.email;
 
-import com.phonecompany.model.User;
+import com.phonecompany.model.Complaint;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
 @Component("complaintAcceptedEmailCreator")
-public class ComplaintAcceptedEmailCreator extends AbstractEmailCreator
-        implements MailMessageCreator {
+public class ComplaintAcceptedEmailCreator extends AbstractEmailCreator<Complaint>
+        implements MailMessageCreator<Complaint> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getEmailBody(User recipient) {
+    public String getEmailBody(Complaint complaint) {
         return "Your complaint is accepted.";
     }
 
