@@ -87,13 +87,13 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public List<CustomerTariff> getCustomerTariffsByCustomerId(Long customerId) {
-        String query = this.getQuery("getByCustomerId");
+        String query = this.getQuery("getTariffsByCustomerId");
         return getCustomerTariffsByClientIdQuery(customerId, query);
     }
 
     @Override
     public List<CustomerTariff> getCustomerTariffsByCorporateId(Long corporateId) {
-        String query = this.getQuery("getByCorporateId");
+        String query = this.getQuery("getTariffsByCorporateId");
         return getCustomerTariffsByClientIdQuery(corporateId, query);
 
     }
@@ -143,5 +143,29 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
         return null;
     }
 
+    @Override
+    public CustomerTariff getCurrentActiveOrSuspendedCustomerTariff(long customerId) {
+        String query = this.getQuery("getActiveOrSuspendedByCustomerId");
+        return getCustomerTariffByClientIdQuery(customerId, query);
+    }
 
+    @Override
+    public CustomerTariff getCurrentActiveOrSuspendedCorporateTariff(long corporateId) {
+        String query = this.getQuery("getActiveOrSuspendedByCorporateId");
+        return getCustomerTariffByClientIdQuery(corporateId, query);
+    }
+
+    private CustomerTariff getCustomerTariffByClientIdQuery(Long id, String query) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return init(rs);
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(id, e);
+        }
+        return null;
+    }
 }
