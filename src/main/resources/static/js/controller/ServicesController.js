@@ -12,6 +12,7 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.activePage= 'services';
         $scope.numberPattern = /^[^0-]([0-9]*(\.\d{2}))$/;
         $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
+        $scope.notNegativeIntegerPattern=/^[^-0][1-9]+$/;
         $scope.inProgress = false;
         $scope.currentCategory = 0;
         $scope.page = 0;

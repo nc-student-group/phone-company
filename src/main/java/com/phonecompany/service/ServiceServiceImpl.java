@@ -6,6 +6,7 @@ import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.FileService;
 import com.phonecompany.service.interfaces.ServiceService;
 import org.slf4j.Logger;
@@ -28,15 +29,18 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private ServiceDao serviceDao;
     private ProductCategoryDao productCategoryDao;
     private FileService fileService;
+    private EmailService emailService;
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
-                              FileService fileService) {
+                              FileService fileService,
+                              EmailService emailService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -56,15 +60,25 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         if(this.isExist(service)) {
             throw new ServiceAlreadyPresentException(service.getServiceName());
         }
-        String pictureBase64 = service.getPictureUrl();
-        LOG.debug("Service base64 picture URL: {}", pictureBase64);
-        String pictureUrl = this.fileService.stringToFile(service.getPictureUrl(), "service/" + LocalDate.now().hashCode());
-        LOG.debug("Picture URL after parsing base64 image representation: {}", pictureUrl);
+        String pictureUrl = this.getPictureUrlForService(service);
         service.setPictureUrl(pictureUrl);
+        this.notifyCustomersAboutTheService();
         String productCategoryName = service.getProductCategory().getCategoryName();
         ProductCategory productCategory = productCategoryDao.getByName(productCategoryName);
         service.setProductCategory(productCategory);
         return super.save(service);
+    }
+
+    private void notifyCustomersAboutTheService() {
+
+    }
+
+    private String getPictureUrlForService(Service service) {
+        String pictureBase64 = service.getPictureUrl();
+        LOG.debug("Service base64 picture URL: {}", pictureBase64);
+        String pictureUrl = this.fileService.stringToFile(service.getPictureUrl(), "service/" + LocalDate.now().hashCode());
+        LOG.debug("Picture URL after parsing base64 image representation: {}", pictureUrl);
+        return pictureUrl;
     }
 
     private boolean isExist(Service service) {
