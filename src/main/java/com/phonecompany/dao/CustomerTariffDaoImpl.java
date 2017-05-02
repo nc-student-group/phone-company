@@ -115,43 +115,33 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public CustomerTariff getCurrentCustomerTariff(long customerId) {
-        String query = this.getQuery("getByCustomerId");
-        query += " and tariff_status='ACTIVE' ";
-        return getCustomerTariffByClientIdQuery(customerId, query);
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return null;
     }
 
     @Override
     public CustomerTariff getCurrentCorporateTariff(long corporateId){
-        String query = this.getQuery("getByCorporateId");
-        query += " and tariff_status='ACTIVE' ";
-        return getCustomerTariffByClientIdQuery(corporateId, query);
-    }
-
-    @Override
-    public CustomerTariff getCurrentActiveOrSuspendedCustomerTariff(long customerId) {
-        String query = this.getQuery("getByCustomerId");
-        query += " and tariff_status IN ('ACTIVE', 'SUSPENDED') ";
-        return getCustomerTariffByClientIdQuery(customerId, query);
-    }
-
-    @Override
-    public CustomerTariff getCurrentActiveOrSuspendedCorporateTariff(long corporateId) {
-        String query = this.getQuery("getByCorporateId");
-        query += " and tariff_status IN ('ACTIVE', 'SUSPENDED') ";
-        return getCustomerTariffByClientIdQuery(corporateId, query);
-    }
-
-    private CustomerTariff getCustomerTariffByClientIdQuery(Long id, String query) {
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setLong(1, id);
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCorporateId"))) {
+            ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return init(rs);
+                return (init(rs));
             }
         } catch (SQLException e) {
-            throw new EntityNotFoundException(id, e);
+            throw new EntityNotFoundException(corporateId, e);
         }
         return null;
     }
+
+
 }

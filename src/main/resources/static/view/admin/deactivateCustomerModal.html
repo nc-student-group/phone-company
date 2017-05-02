@@ -1,0 +1,15 @@
+<md-dialog aria-label="Modal Window">
+    <div class="modal-window">
+        <h3>Customer deactivation<span class="close-icon" ng-click="cancel()"></span></h3>
+        <div class="send-review">
+            <div class="row" style="text-align: center;">
+                <h5>Are you sure in {{customer.email}} deactivation?</h5><br>
+                <span ng-show="customer.corporate == undefined">His tariff plan will be deactivated automatically.</span>
+                <span ng-show="customer.corporate != undefined">Customer will be deleted from corporation automatically.</span>
+            </div>
+            <div class="wrap_btn">
+                <input type="submit" class="btn-post-comment" ng-click="answer(message)" value="Deactivate">
+            </div>
+        </div>
+    </div>
+</md-dialog>

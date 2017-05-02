@@ -76,4 +76,5 @@ public abstract class AbstractUserServiceImpl<T extends User>
     }
 
     public abstract Status getStatus();
+
 }

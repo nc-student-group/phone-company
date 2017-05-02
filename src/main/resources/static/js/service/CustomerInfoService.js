@@ -38,7 +38,7 @@ angular.module('phone-company').factory('CustomerInfoService',
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {
-                    console.error(errResponse.toString());
+                    console.error(JSON.stringify(errResponse.data));
                     deferred.reject(errResponse);
                 });
             return deferred.promise;

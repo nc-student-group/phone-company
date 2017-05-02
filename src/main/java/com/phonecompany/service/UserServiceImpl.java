@@ -88,8 +88,6 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public User update(User user) {
         Assert.notNull(user, "User should not be null");
 
-        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
-
         return super.update(user);
     }
 
@@ -97,6 +95,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public User resetPassword(User user) {
         user.setPassword(generatePassword());
         sendResetPasswordMessage(user);
+        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         return update(user);
     }
 
@@ -110,7 +109,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public String generatePassword() {
         SecureRandom random = new SecureRandom();
         String password = new BigInteger(50, random).toString(32);
-        char[] specSymb = "!@#$^&_".toCharArray();
+        char[] specSymb = "!@$".toCharArray();
         char[] passwordWithSS = password.toCharArray();
         passwordWithSS[random.nextInt(passwordWithSS.length)] = specSymb[random.nextInt(specSymb.length)];
         password = String.valueOf(passwordWithSS);
@@ -133,5 +132,10 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     @Override
     public int getCountUsers(int roleId, String status) {
         return userDao.getEntityCount(roleId, status);
+    }
+
+    @Override
+    public void updateStatus(long id, Status status){
+        userDao.updateStatus(id, status);
     }
 }

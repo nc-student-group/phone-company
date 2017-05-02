@@ -16,6 +16,9 @@ import java.util.Properties;
 @PropertySource("classpath:mail.properties")
 public class EmailConfig {
 
+    @Value("${available.email.threads}")
+    public static Integer NUMBER_OF_AVAILABLE_THREADS;
+
     @Value("${mail.host}")
     private String mailHost;
     @Value("${mail.port}")

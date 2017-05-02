@@ -102,7 +102,7 @@ public class TariffController {
     @RequestMapping(value = "/api/tariff/update/single", method = RequestMethod.POST)
     public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
         Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
-        if (temp != null && temp.getId() != tariff.getId()) {
+        if (temp != null && !temp.getId().equals(tariff.getId())) {
             return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
         }
         LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());

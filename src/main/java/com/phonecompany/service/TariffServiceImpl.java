@@ -105,7 +105,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    private void addTariffRegions(List<TariffRegion> tariffRegions, Tariff tariff){
+    private void addTariffRegions(List<TariffRegion> tariffRegions, Tariff tariff) {
         tariffRegions.forEach((TariffRegion tariffRegion) -> {
             if (tariffRegion.getPrice() > 0 && tariffRegion.getRegion() != null) {
                 tariffRegion.setTariff(tariff);
@@ -203,37 +203,47 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     @Override
     public ResponseEntity<?> activateTariff(long tariffId, Customer customer) {
         if (customer.getCorporate() == null) {
-            TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
-            if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
-                return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
-            }
-            CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
-            if (customerTariff != null) {
-                this.deactivateSingleTariff(customerTariff);
-            }
-            if (tariffRegion != null && tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
-                this.activateSingleTariff(customer, tariffRegion);
-            } else {
-                return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
-            }
+            return this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
-            if (customer.getCorporate() != null && customer.getRepresentative()) {
-                Tariff tariff = this.getById(tariffId);
-                if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
-                    return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
-                }
-                CustomerTariff customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
-                if (customerTariff != null) {
-                    this.deactivateCorporateTariff(customerTariff);
-                }
-                if (tariff != null && tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
-                    this.activateCorporateTariff(customer.getCorporate(), tariff);
-                }
+            if (customer.getRepresentative()) {
+                return this.activateTariffForCorporateCustomer(tariffId, customer);
             } else {
                 return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative to change tariff plan."), HttpStatus.CONFLICT);
             }
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<?> activateTariffForSingleCustomer(long tariffId, Customer customer) {
+        TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
+        if (tariffRegion == null || tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+            return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+        }
+        if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+            return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
+        }
+        CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
+        if (customerTariff != null) {
+            this.deactivateSingleTariff(customerTariff);
+        }
+        this.activateSingleTariff(customer, tariffRegion);
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> activateTariffForCorporateCustomer(long tariffId, Customer customer) {
+        Tariff tariff = this.getById(tariffId);
+        if (tariff == null || tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
+            return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+        }
+        if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
+            return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
+        }
+        CustomerTariff customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
+        if (customerTariff != null) {
+            this.deactivateCorporateTariff(customerTariff);
+        }
+        this.activateCorporateTariff(customer.getCorporate(), tariff);
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     @Override

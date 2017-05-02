@@ -1,6 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.User;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -49,10 +50,12 @@ public class UserController {
     @RequestMapping(method = POST, value = "/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
+        User foundedUser = userService.findByEmail(user.getEmail());
+        if (foundedUser != null && !foundedUser.getId().equals(user.getId())) {
+            return new ResponseEntity<Object>(new Error("User with \""+user.getEmail()+"\" already exist!"), HttpStatus.CONFLICT);
+        }
         userService.update(user);
-
-        User persistedUser = this.userService.save(user);
-        return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/user/get")
@@ -105,5 +108,11 @@ public class UserController {
         response.put("users", users);
         response.put("usersSelected", userService.getCountUsers(userRole, status));
         return response;
+    }
+
+    @RequestMapping(value = "/api/user/update/{id}/{status}", method = RequestMethod.GET)
+    public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
+        userService.updateStatus(id, status);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
