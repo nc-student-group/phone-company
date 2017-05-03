@@ -5,7 +5,7 @@ angular.module('phone-company').factory('CustomerInfoService',
 
         const GET_CUSTOMER_TARIFFS_BY_CUSTOMER_ID_URL = "api/tariffs/get/by/client/";
         const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer/tariff/";
-        const GET_CUSTOMER_URL = "api/customer/get/";
+        const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
         const CUSTOMERS = "api/customers/";
         const DEACTIVATE_TARIFF_URL = "api/customer/tariff/deactivate";
         const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
@@ -34,7 +34,7 @@ angular.module('phone-company').factory('CustomerInfoService',
 
         function getCustomer() {
             let deferred = $q.defer();
-            $http.get(GET_CUSTOMER_URL).then(
+            $http.get(CURRENTLY_LOGGED_IN_USER_URL).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

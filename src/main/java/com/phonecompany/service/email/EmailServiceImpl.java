@@ -5,6 +5,8 @@ import com.phonecompany.service.interfaces.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,14 +16,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.phonecompany.config.EmailConfig.NUMBER_OF_AVAILABLE_THREADS;
-
 @Service
 public class EmailServiceImpl<T extends User> implements EmailService<T> {
 
-    private ExecutorService executorService = Executors
-            .newFixedThreadPool(10);
+    private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     private JavaMailSender mailSender;
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Autowired
     public EmailServiceImpl(JavaMailSender mailSender) {
