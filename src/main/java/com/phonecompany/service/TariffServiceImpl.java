@@ -161,8 +161,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()));
-        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getPrice()), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
+        LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100));
+        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()/100), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -191,8 +191,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()));
-        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()), CustomerProductStatus.ACTIVE, tariff);
+        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()/100));
+        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()/100), CustomerProductStatus.ACTIVE, tariff);
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -216,7 +216,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     private ResponseEntity<?> activateTariffForSingleCustomer(long tariffId, Customer customer) {
         TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
-        if (tariffRegion == null || tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+        if (tariffRegion == null) {
             return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
         }
         if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
@@ -232,8 +232,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     private ResponseEntity<?> activateTariffForCorporateCustomer(long tariffId, Customer customer) {
         Tariff tariff = this.getById(tariffId);
-        if (tariff == null || tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
-            return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+        if (tariff == null) {
+            return new ResponseEntity<Object>(new Error("This tariff plan doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
         }
         if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
             return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);

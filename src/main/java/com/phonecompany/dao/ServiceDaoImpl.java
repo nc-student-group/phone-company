@@ -49,8 +49,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setString(4, entity.getProductStatus().name());
             preparedStatement.setDouble(5, entity.getDiscount());
             preparedStatement.setString(6, entity.getPictureUrl());
-            preparedStatement.setString(7, entity.getDescription());
-            preparedStatement.setString(8, entity.getPreviewDescription());
+            preparedStatement.setString(7, entity.getPreviewDescription());
+            preparedStatement.setString(8, entity.getDescription());
             preparedStatement.setObject(9, entity.getDurationInDays());
             preparedStatement.setObject(10, entity.getAmount());
         } catch (SQLException e) {
@@ -67,8 +67,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             preparedStatement.setString(4, service.getProductStatus().name());
             preparedStatement.setDouble(5, service.getDiscount());
             preparedStatement.setObject(6, service.getPictureUrl());
-            preparedStatement.setObject(7, service.getDescription());
-            preparedStatement.setObject(8, service.getPreviewDescription());
+            preparedStatement.setObject(7, service.getPreviewDescription());
+            preparedStatement.setObject(8, service.getDescription());
             preparedStatement.setObject(9, service.getDurationInDays());
             preparedStatement.setObject(10, service.getAmount());
             preparedStatement.setDouble(11, TypeMapper.getNullableId(service));
@@ -88,8 +88,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             service.setProductStatus(ProductStatus.valueOf(resultSet.getString("product_status")));
             service.setDiscount(resultSet.getDouble("discount"));
             service.setPictureUrl(resultSet.getString("picture_url"));
-            service.setDescription(resultSet.getString("description"));
             service.setPreviewDescription(resultSet.getString("preview_description"));
+            service.setDescription(resultSet.getString("description"));
             service.setDurationInDays((resultSet.getInt("duration_in_days")));
             service.setAmount((resultSet.getInt("amount")));
         } catch (SQLException e) {

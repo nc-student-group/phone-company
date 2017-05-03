@@ -12,7 +12,7 @@
                 <div class="col-md-9 modal-label">New tariff plan:</div>
                 <div class="col-md-3 modal-label">New price:</div>
                 <div class="col-md-9 modal-label"><b>"{{newTariff.tariffName}}"</b></div>
-                <div class="col-md-3 modal-label"><b>{{newTariff.price * (1 - newTariff.discount)}} uah</b></div>
+                <div class="col-md-3 modal-label"><b>{{newTariff.price * (1 - newTariff.discount/100)}} uah</b></div>
             </div>
             <div class="wrap_btn">
                 <input type="submit" class="btn-post-comment" ng-click="answer(message)" value="Activate">

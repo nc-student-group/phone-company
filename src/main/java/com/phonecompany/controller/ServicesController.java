@@ -96,16 +96,11 @@ public class ServicesController {
         return serviceFetchedById;
     }
 
-    @GetMapping("/new")
-    public Service getEmptyService() {
-        return new Service();
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long id,
+    public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long serviceId,
                                                  @RequestBody String status) { //TODO: must be enum
-        LOG.debug("Service id to update: {}, status: {}", id, status);
-        this.serviceService.updateServiceStatus(id, ProductStatus.valueOf(status));
+        LOG.debug("Service id to update: {}, status: {}", serviceId, status);
+        this.serviceService.updateServiceStatus(serviceId, ProductStatus.valueOf(status));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

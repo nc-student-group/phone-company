@@ -37,11 +37,10 @@
                                            md-minlength="8"
                                            required ng-pattern="passwordPattern">
 
-
                                     <div ng-messages="registerForm.password.$error" role="alert" multiple>
 
                                         <div ng-message-exp="['required', 'minlength', 'pattern']">
-                                            Password is required and should be at least 8 characters long with one
+                                            Password is required and should be at least 8 latin characters long with one
                                             special character.
                                         </div>
                                     </div>
@@ -162,8 +161,14 @@
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>House number</label>
                                     <input name="houseNumber" type="text" id="houseNumber"
-                                           ng-model="customer.address.houseNumber">
+                                           ng-model="customer.address.houseNumber"
+                                    ng-pattern="houseNumberPattern">
 
+                                    <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
+                                        <div ng-message="pattern">
+                                            This field should not contain special characters
+                                        </div>
+                                    </div>
                                 </md-input-container>
                             </div>
                             <div class="col-md-3">

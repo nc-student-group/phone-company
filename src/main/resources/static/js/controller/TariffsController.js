@@ -18,7 +18,7 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.currentRegion = 0;
         $scope.regionsToSave = [];
         $scope.editing = false;
-        $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
+        $scope.discountPattern = /^([0-9]|([1-9][0-9])|100)$/;
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;

@@ -52,7 +52,7 @@ public class UserController {
         LOG.info("User parsed from the request body: " + user);
         User foundedUser = userService.findByEmail(user.getEmail());
         if (foundedUser != null && !foundedUser.getId().equals(user.getId())) {
-            return new ResponseEntity<Object>(new Error("User with \""+user.getEmail()+"\" already exist!"), HttpStatus.CONFLICT);
+            return new ResponseEntity<Object>(new Error("User with \"" + user.getEmail() + "\" already exist!"), HttpStatus.CONFLICT);
         }
         userService.update(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);

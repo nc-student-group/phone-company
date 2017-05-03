@@ -25,7 +25,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(pagingQuery)) {
-
+            LOG.debug("Opening connection for paging");
             this.transferParamsToPreparedStatement(ps);
 
             LOG.debug("Executing paging query: {}", pagingQuery);
@@ -74,6 +74,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(countQuery)) {
+            LOG.debug("Opening connection for count");
 
             this.transferParamsToPreparedStatement(ps);
 
