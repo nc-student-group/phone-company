@@ -5,7 +5,8 @@ import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 
 import java.util.List;
 
-public interface CustomerService extends CrudService<Customer>, AbstractUserService<Customer> {
+public interface CustomerService extends CrudService<Customer>,
+        AbstractUserService<Customer> {
     void activateUserByToken(String token);
 
     void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent);
@@ -14,7 +15,8 @@ public interface CustomerService extends CrudService<Customer>, AbstractUserServ
 
     int getCountCustomers(long rId, String status);
 
-    public void deactivateCustomer(long id);
+    void deactivateCustomer(long id);
+    public void deactivateCustomerTariff(long id);
 
-    List<Customer>  getCustomersByCorporate(long corporateId);
+    List<Customer> getCustomersByCorporate(long corporateId);
 }

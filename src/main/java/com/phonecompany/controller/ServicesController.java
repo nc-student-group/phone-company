@@ -45,11 +45,13 @@ public class ServicesController {
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
-    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") Long productCategoryId,
+    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
                                                        @PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
-        return serviceService.getServicesByProductCategoryId(productCategoryId, page, size);
+        Map<String, Object> servicesByProductCategoryId = serviceService
+                .getServicesByProductCategoryId(productCategoryId, page, size);
+        return servicesByProductCategoryId;
     }
 
     @PostMapping
@@ -70,7 +72,15 @@ public class ServicesController {
 
     private List<Customer> getAgreedCustomers() {
         return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled).collect(Collectors.toList());
+                .filter(Customer::getIsMailingEnabled)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/activate/{serviceId}")
+    public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
+        Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
+        this.serviceService.activateServiceForUser(loggedInCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/categories")

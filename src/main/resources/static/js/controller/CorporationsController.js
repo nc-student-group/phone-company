@@ -16,7 +16,7 @@
         $scope.editing=false;
         $scope.preloader.send = true;
 
-        CorporationService.getAllCorporation($scope.page, $scope.size,$scope.partOfName).then(function (data) {
+        CorporationService.getAllCorporationPaging($scope.page, $scope.size,$scope.partOfName).then(function (data) {
             $scope.corporations = data.corporates;
             $scope.corporationsSelected = data.corporatesSelected;
             $scope.preloader.send = false;
@@ -32,7 +32,7 @@
         $scope.getAll = function(){
             console.info($scope.partOfName);
             $scope.preloader.send = true;
-            CorporationService.getAllCorporation($scope.page, $scope.size, $scope.partOfName).then(function (data) {
+            CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                 $scope.corporations = data.corporates;
                 $scope.preloader.send = false;
             })
@@ -42,7 +42,7 @@
                 .then(function (createdCorporation) {
                     toastr.success("Corporation created");
                     $log.debug("Created Corporation: ", createdCorporation);
-                    CorporationService.getAllCorporation($scope.page, $scope.size, $scope.partOfName).then(function (data) {
+                    CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                         $scope.corporations=data.corporates;
                     });
                 }, function (error) {
@@ -55,7 +55,7 @@
                 .then(function (createdCorporation) {
                     toastr.success("Corporation created");
                     $log.debug("Created Corporation: ", createdCorporation);
-                    $scope.corporations = CorporationService.getAllCorporation($scope.page, $scope.size, $scope.partOfName);
+                    $scope.corporations = CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName);
                 }, function (error) {
                     toastr.error(error.data.message);
                     $log.error("Failed to save corporation", error);
@@ -76,7 +76,7 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                CustomerService.getAllCorporation($scope.page, $scope.size, $scope.partOfName).then(function (data) {
+                CustomerService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                     $scope.corporations = data.corporates;
                     $scope.corporationsSelected = data.corporatesSelected;
                     $scope.preloader.send = false;
@@ -93,7 +93,7 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                CustomerService.getAllCorporation($scope.page, $scope.size, $scope.partOfName).then(function (data) {
+                CustomerService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                     $scope.corporations = data.corporates;
                     $scope.corporationsSelected = data.corporatesSelected;
                     $scope.preloader.send = false;
