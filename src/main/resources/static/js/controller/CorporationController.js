@@ -56,7 +56,24 @@
                     $scope.customersWithoutCorporation.splice(index, 1);
                 },
                 function (errResponse) {
-                    toastr.error("User wasn't added to corporation");
+                    toastr.error("User wasn't added from corporation");
+                }
+            );
+        };
+        $scope.deleteCustomerFromCompany = function(customer){
+            customer.corporate={
+                id:null
+            };
+            CustomerService.updateCustomer(customer).then(
+                function (response) {
+                    toastr.success("User was removed from corporation");
+                    var index = $scope.customers.indexOf(customer);
+                    $scope.customers.splice(index, 1);
+                    $scope.customersWithoutCorporation.push(customer);
+
+                },
+                function (errResponse) {
+                    toastr.error("User wasn't removed from corporation");
                 }
             );
         };
