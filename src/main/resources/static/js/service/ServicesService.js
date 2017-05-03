@@ -33,7 +33,7 @@ angular.module('phone-company')
 
         function getNewService() {
             let deferred = $q.defer();
-            $http.get(`${SERVICES}/new`).then(
+            $http.get(`${SERVICES}/empty-service`).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

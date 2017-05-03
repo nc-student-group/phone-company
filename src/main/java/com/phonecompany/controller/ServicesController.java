@@ -96,6 +96,11 @@ public class ServicesController {
         return serviceFetchedById;
     }
 
+    @GetMapping("/empty-service")
+    public Service getEmptyService() {
+        return new Service();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long serviceId,
                                                  @RequestBody String status) { //TODO: must be enum
