@@ -126,37 +126,46 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
 
     @Override
     public List<Customer> getByCorporateId(long corporateId) {
-        if (corporateId != 0) {
-            String customersByCorporate = this.getByCorporateIdQuery();
-            LOG.debug("customerByCompany : {}", customersByCorporate);
-            try (Connection conn = dbManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
-                ps.setLong(1, corporateId);
-                ResultSet rs = ps.executeQuery();
-                List<Customer> customers = new ArrayList<>();
-                while (rs.next()) {
-                    customers.add(this.init(rs));
-                }
-                return customers;
-            } catch (SQLException e) {
-                throw new EntityNotFoundException(corporateId, e);
-            }
+        if (corporateId > 0) {
+            return getByCorporate(corporateId);
         } else {
-            String customersByCorporate = this.getWithoutCorporateQuery();
-            LOG.debug("customerByVerificationTokenQuery : {}", customersByCorporate);
-            try (Connection conn = dbManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
-                ResultSet rs = ps.executeQuery();
-                List<Customer> customers = new ArrayList<>();
-                while (rs.next()) {
-                    customers.add(this.init(rs));
-                }
-                return customers;
-            } catch (SQLException e) {
-                throw new EntityNotFoundException(corporateId, e);
-            }
+            return getCustomersWithoutCorporate(corporateId);
         }
     }
+
+    private List<Customer> getByCorporate(long corporateId){
+        String customersByCorporate = this.getByCorporateIdQuery();
+        LOG.debug("customerByCompany : {}", customersByCorporate);
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+            ps.setLong(1, corporateId);
+            ResultSet rs = ps.executeQuery();
+            List<Customer> customers = new ArrayList<>();
+            while (rs.next()) {
+                customers.add(this.init(rs));
+            }
+            return customers;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(corporateId, e);
+        }
+    }
+
+    private List<Customer> getCustomersWithoutCorporate(long corporateId){
+        String customersByCorporate = this.getWithoutCorporateQuery();
+        LOG.debug("customerWithoutCorporate : {}", customersByCorporate);
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+            ResultSet rs = ps.executeQuery();
+            List<Customer> customers = new ArrayList<>();
+            while (rs.next()) {
+                customers.add(this.init(rs));
+            }
+            return customers;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(corporateId, e);
+        }
+    }
+
 
     private String getByVerificationTokenQuery() {
         return this.getQuery("by.verification.token");

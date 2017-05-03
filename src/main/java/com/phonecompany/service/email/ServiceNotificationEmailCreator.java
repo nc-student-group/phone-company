@@ -2,19 +2,38 @@ package com.phonecompany.service.email;
 
 import com.phonecompany.model.Service;
 import com.phonecompany.service.interfaces.MailMessageCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Component("serviceNotificationEmailCreator")
 public class ServiceNotificationEmailCreator extends AbstractEmailCreator<Service>
         implements MailMessageCreator<Service> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceNotificationEmailCreator.class);
+    private TemplateEngine templateEngine;
+
+    @Autowired
+    public ServiceNotificationEmailCreator (TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+    }
+
     @Override
     public String getEmailBody(Service service) {
-        return null;
+        LOG.debug("Building email body");
+        Context context = new Context();
+        context.setVariable("serviceName", service.getServiceName());
+        context.setVariable("price", service.getPrice());
+        LOG.debug("Dispatch");
+        return this.templateEngine
+                .process("new-services-notification", context);
     }
 
     @Override
     public String getEmailSubject() {
-        return "New Services notification";
+        return "New services notification";
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 public class Order extends DomainEntity {
 
-    private CustomerService customerService;
+    private CustomerServiceDto customerService;
     private CustomerTariff customerTariff;
     @NotNull(message = "Type must not be null")
     private OrderType type;
@@ -30,7 +30,7 @@ public class Order extends DomainEntity {
     public Order() {
     }
 
-    public Order(CustomerService customerService, CustomerTariff customerTariff,
+    public Order(CustomerServiceDto customerService, CustomerTariff customerTariff,
                  OrderType type, OrderStatus orderStatus, LocalDate creationDate,
                  LocalDate executionDate) {
         this.customerService = customerService;
@@ -41,11 +41,21 @@ public class Order extends DomainEntity {
         this.executionDate = executionDate;
     }
 
-    public CustomerService getCustomerService() {
+    public Order(CustomerServiceDto customerService,
+                 OrderType type, OrderStatus orderStatus, LocalDate creationDate,
+                 LocalDate executionDate) {
+        this.customerService = customerService;
+        this.type = type;
+        this.orderStatus = orderStatus;
+        this.creationDate = creationDate;
+        this.executionDate = executionDate;
+    }
+
+    public CustomerServiceDto getCustomerService() {
         return customerService;
     }
 
-    public void setCustomerService(CustomerService customerService) {
+    public void setCustomerService(CustomerServiceDto customerService) {
         this.customerService = customerService;
     }
 

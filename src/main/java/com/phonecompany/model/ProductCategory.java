@@ -9,9 +9,11 @@ public class ProductCategory extends DomainEntity {
     @NotNull(message = "Units must not be null")
     private String units;
 
-    public ProductCategory(){}
+    public ProductCategory() {
+    }
 
-    public ProductCategory(String categoryName, String units) {
+    public ProductCategory(Long id, String categoryName, String units) {
+        super(id);
         this.categoryName = categoryName;
         this.units = units;
     }

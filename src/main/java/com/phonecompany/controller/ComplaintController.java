@@ -1,10 +1,8 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
-import com.phonecompany.model.User;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.service.interfaces.ComplaintService;
-import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/complaints")
@@ -23,35 +22,18 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
-    private UserService userService;
 
     @Autowired
-    public ComplaintController(ComplaintService complaintService,
-                               UserService userService) {
+    public ComplaintController(ComplaintService complaintService) {
         this.complaintService = complaintService;
-        this.userService = userService;
     }
 
     @PostMapping(value = "")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
-        if(complaint.getUser().getEmail() == null) {
-            User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-            complaint.setUser(loggedInUser);
-            Complaint createdComplaint = complaintService.createComplaint(complaint);
-            LOG.debug("Complaint added {}", createdComplaint);
-        }
-        else {
-            User persistedUser = this.userService.findByEmail(complaint.getUser().getEmail());
-            if (persistedUser != null) {
-                complaint.setUser(persistedUser);
-                Complaint createdComplaint = complaintService.createComplaint(complaint);
-                LOG.debug("Complaint added {}", createdComplaint);
-            } else {
-                LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
-                //complaint = null;
-            }
-        }
-        return new ResponseEntity<>(complaint, HttpStatus.OK);
+        LOG.debug("Trying to add complaint {}", complaint);
+        Complaint createdComplaint = complaintService.createComplaint(complaint);
+
+        return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
     }
 
     //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
@@ -69,5 +51,13 @@ public class ComplaintController {
         LOG.info("Retrieving all the complaint categories");
 
         return complaintService.getAllComplaintCategory();
+    }
+
+    @GetMapping("/{category}/{page}/{size}")
+    public Map<String, Object> getComplaintsByCategory(@PathVariable("category") String category,
+                                                       @PathVariable("page") int page,
+                                                       @PathVariable("size") int size) {
+        LOG.debug("Fetching complaints for the category: {}", category);
+        return complaintService.getComplaintsByCategory(category, page, size);
     }
 }

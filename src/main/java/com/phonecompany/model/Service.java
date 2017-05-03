@@ -1,6 +1,7 @@
 package com.phonecompany.model;
 
 import com.phonecompany.model.enums.ProductStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -26,35 +27,32 @@ public class Service extends DomainEntity {
     private String description;
     @NotNull(message = "Preview description must not be null")
     private String previewDescription;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
     @NotNull(message = "Duration must not be null")
     private int durationInDays;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
     @NotNull(message = "Duration must not be null")
     private int amount;
 
     public Service() {
     }
 
-    public Service(ProductCategory productCategory, String serviceName,
+    public Service(Long id, String serviceName,
                    double price, ProductStatus productStatus, double discount,
-                   String pictureUrl, String description, String previewDescription,
-                   Integer durationInDays) {
-        this.productCategory = productCategory;
+                   ProductCategory productCategory, String pictureUrl,
+                   String description, String previewDescription,
+                   int durationInDays, int amount) {
+        super(id);
         this.serviceName = serviceName;
         this.price = price;
         this.productStatus = productStatus;
         this.discount = discount;
+        this.productCategory = productCategory;
         this.pictureUrl = pictureUrl;
         this.description = description;
         this.previewDescription = previewDescription;
         this.durationInDays = durationInDays;
-    }
-
-    public ProductCategory getProductCategory() {
-        return productCategory;
-    }
-
-    public void setProductCategory(ProductCategory productCategory) {
-        this.productCategory = productCategory;
+        this.amount = amount;
     }
 
     public String getServiceName() {
@@ -87,6 +85,14 @@ public class Service extends DomainEntity {
 
     public void setDiscount(double discount) {
         this.discount = discount;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
     }
 
     public String getPictureUrl() {

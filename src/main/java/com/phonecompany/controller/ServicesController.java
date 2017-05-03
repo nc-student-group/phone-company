@@ -45,11 +45,12 @@ public class ServicesController {
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
-    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") Long productCategoryId,
+    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
                                                        @PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
-        return serviceService.getServicesByProductCategoryId(productCategoryId, page, size);
+        return serviceService
+                .getServicesByProductCategoryId(productCategoryId, page, size);
     }
 
     @PostMapping
@@ -64,13 +65,21 @@ public class ServicesController {
 
     private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
         List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed to receive mailing: {}", agreedCustomers);
+        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
         this.emailService.sendMail(mailMessage, agreedCustomers);
     }
 
     private List<Customer> getAgreedCustomers() {
         return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled).collect(Collectors.toList());
+                .filter(Customer::getIsMailingEnabled)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/activate/{serviceId}")
+    public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
+        Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
+        this.serviceService.activateServiceForCustomer(serviceId, loggedInCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/categories")
@@ -102,7 +111,7 @@ public class ServicesController {
 
     @PatchMapping
     public ResponseEntity<?> updateService(@RequestBody Service service) {
-        LOG.debug("Service to be updated", service);
+        LOG.debug("Service to be updated: ", service);
         this.serviceService.update(service);
         return new ResponseEntity<>(HttpStatus.OK);
     }

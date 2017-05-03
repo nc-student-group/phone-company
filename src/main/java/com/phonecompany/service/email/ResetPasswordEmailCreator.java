@@ -13,8 +13,7 @@ public class ResetPasswordEmailCreator extends AbstractEmailCreator<User>
      */
     @Override
     public String getEmailBody(User recipient) {
-        return "Your new password is " +
-                recipient.getPassword();
+        return "Your new password is\n" + recipient.getPassword();
     }
 
     /**

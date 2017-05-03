@@ -18,7 +18,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 public class CorporationController {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CorporationController.class);
     private CorporateService corporateService;
 
@@ -28,18 +28,29 @@ public class CorporationController {
     }
 
     @RequestMapping(method = GET, value = "/api/corporations/{page}/{size}")
-    public Map<String, Object> getAllCorporations(@PathVariable("page") int page,
-                                                    @PathVariable("size") int size,
-                                                    @RequestParam("s") String partOfName) {
+    public Map<String, Object> getAllCorporationsPaging(@PathVariable("page") int page,
+                                                        @PathVariable("size") int size,
+                                                        @RequestParam("s") String partOfName) {
         LOG.info("Retrieving all the corporations contained in the database");
 
-        List<Corporate> corporates = this.corporateService.getAllCorporatePaging(page,size,partOfName);
+        List<Corporate> corporates = this.corporateService.getAllCorporatePaging(page, size, partOfName);
 
         LOG.info("Corporates fetched from the database: " + corporates);
         Map<String, Object> response = new HashMap<>();
         response.put("corporates", corporates);
         response.put("corporatesSelected", corporateService.getCountCorporates(partOfName));
+
         return response;
+    }
+
+    @RequestMapping(method = GET, value = "/api/corporations")
+    public List<Corporate> getAllCorporations() {
+        LOG.info("Retrieving all the corporations contained in the database");
+
+        List<Corporate> corporates = this.corporateService.getAll();
+
+        LOG.info("Corporates fetched from the database: " + corporates);
+        return corporates;
     }
 
     @RequestMapping(method = PUT, value = "/api/corporations")

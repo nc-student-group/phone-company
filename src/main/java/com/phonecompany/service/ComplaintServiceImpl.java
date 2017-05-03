@@ -8,6 +8,7 @@ import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
+import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements ComplaintService{
@@ -25,16 +29,19 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     private ComplaintDao complaintDao;
     private MailMessageCreator<Complaint> complaintAcceptedEmailCreator;
     private EmailService emailService;
+    private UserService userService;
 
     @Autowired
     public ComplaintServiceImpl(ComplaintDao complaintDao,
                                 @Qualifier("complaintAcceptedEmailCreator")
                                         MailMessageCreator<Complaint> complaintAcceptedEmailCreator,
-                                EmailService emailService){
+                                EmailService emailService,
+                                UserService userService){
         super(complaintDao);
         this.complaintDao = complaintDao;
         this.complaintAcceptedEmailCreator = complaintAcceptedEmailCreator;
         this.emailService = emailService;
+        this.userService = userService;
     }
 
     @Override
@@ -42,10 +49,28 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     {
         complaint.setStatus(ComplaintStatus.ACCEPTED);
         complaint.setDate(new java.sql.Date(System.currentTimeMillis()));
-        Complaint createdComplaint = complaintDao.save(complaint);
-        sendComplaintAcceptedMessage(complaint.getUser());
-        LOG.debug("Complaint added {}", complaint);
-        return createdComplaint;
+
+        if(complaint.getUser().getEmail() == null) {
+            User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+            complaint.setUser(loggedInUser);
+            complaintDao.save(complaint);
+            sendComplaintAcceptedMessage(complaint.getUser());
+            LOG.debug("Complaint added {}", complaint);
+        }
+        else {
+            User persistedUser = this.userService.findByEmail(complaint.getUser().getEmail());
+            if (persistedUser != null) {
+                complaint.setUser(persistedUser);
+                complaintDao.save(complaint);
+                sendComplaintAcceptedMessage(complaint.getUser());
+                LOG.debug("Complaint added {}", complaint);
+            } else {
+                LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
+                //complaint = null;
+            }
+        }
+
+        return complaint;
     }
 
     @Override
@@ -54,6 +79,16 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
         return Arrays.asList(ComplaintCategory.values());
     }
 
+    @Override
+    public Map<String, Object> getComplaintsByCategory(String category, int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        List<Complaint> complaints = this.complaintDao.getPaging(page, size, category);
+
+        LOG.debug("Fetched complaints: {}", complaints);
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.getEntityCount(category));
+        return response;
+    }
 
 //    @Override
 //    public void setStatusIntraprocess(Complaint complaint){

@@ -58,6 +58,12 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <pagination
+                                        ng-model="currentPage"
+                                        total-items="customersWithoutCorporation.length"
+                                        max-size="maxSize"
+                                        boundary-links="true">
+                                </pagination>
                             </div>
                         </div>
                     </div>
