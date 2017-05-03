@@ -5,7 +5,7 @@ import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.CustomerService;
+import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> implements CustomerServiceDao {
+public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> implements CustomerServiceDao {
 
     private QueryLoader queryLoader;
     private CustomerDao customerDao;
@@ -36,7 +36,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
     }
 
     @Override
-    public void populateSaveStatement(PreparedStatement preparedStatement, CustomerService entity) {
+    public void populateSaveStatement(PreparedStatement preparedStatement, CustomerServiceDto entity) {
         try {
             preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
@@ -48,7 +48,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
     }
 
     @Override
-    public void populateUpdateStatement(PreparedStatement preparedStatement, CustomerService entity) {
+    public void populateUpdateStatement(PreparedStatement preparedStatement, CustomerServiceDto entity) {
         try {
             preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
@@ -61,8 +61,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerService> impleme
     }
 
     @Override
-    public CustomerService init(ResultSet rs) {
-        CustomerService customerService = new CustomerService();
+    public CustomerServiceDto init(ResultSet rs) {
+        CustomerServiceDto customerService = new CustomerServiceDto();
         try {
             customerService.setId(rs.getLong("id"));
             customerService.setCustomer(customerDao.getById(rs.getLong("customer_id)")));

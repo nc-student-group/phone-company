@@ -49,7 +49,8 @@
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a ng-click="logout()">
+                            <a class="pointable-logout"
+                               ng-click="logout()">
                                 Log out
                             </a>
                         </li>
@@ -76,8 +77,9 @@
                                         <div class="col-md-4 col-lg-offset-1">
                                             <div style="width: 360px; height: 240px;">
                                                 <img class="rounded img-thumbnail"
-                                                     ng-src="{{currentService.pictureUrl}}" class="rounded"
-                                                     alt="...">
+                                                     style="width: 360px; height: 240px"
+                                                     ng-src="{{currentService.pictureUrl}}"
+                                                     class="rounded" alt="Image not found">
                                             </div>
                                         </div>
                                         <div class="col-md-5 col-md-offset-1">
@@ -86,7 +88,25 @@
                                                 <tbody>
                                                 <tr>
                                                     <td>Price</td>
-                                                    <td>{{currentService.price}} UAH</td>
+                                                    <td>
+                                                        <div ng-hide="currentService.discount > 0
+                                                        && currentService.discount < 1">
+                                                            {{currentService.price | number : 2}} &#8372;
+                                                        </div>
+                                                        <div ng-show="currentService.discount > 0
+                                                        && currentService.discount < 1"
+                                                             class="service-price-individual"
+                                                             style="text-decoration: line-through">
+                                                            {{currentService.price | number : 2}} &#8372;
+                                                        </div>
+                                                        <div ng-show="currentService.discount > 0
+                                                        && currentService.discount < 1"
+                                                             style="font-weight: 700"
+                                                             class="service-price-individual-discounted">
+                                                            {{currentService.price * currentService.discount |
+                                                            number : 2}} &#8372;
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Duration</td>
@@ -109,7 +129,7 @@
                                                         Back to all services
                                                     </a>
                                                     </td>
-                                                    <td><a
+                                                    <td><a ng-click="activateService()"
                                                            class="pull-right btn btn-success">Order service</a>
                                                     </td>
                                                 </tr>
@@ -125,3 +145,4 @@
             </div>
         </div>
     </div>
+</div>

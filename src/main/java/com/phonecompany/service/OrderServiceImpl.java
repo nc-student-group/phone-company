@@ -1,17 +1,23 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.OrderDao;
+import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+
 @Service
-public class OrderServiceImpl extends CrudServiceImpl<Order> implements OrderService {
+public class OrderServiceImpl extends CrudServiceImpl<Order>
+        implements OrderService {
 
     private OrderDao orderDao;
 
@@ -26,5 +32,14 @@ public class OrderServiceImpl extends CrudServiceImpl<Order> implements OrderSer
         return orderDao.getResumingOrderByCustomerTariffId(customerTariff.getId()).stream().
                 filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
                 .collect(Collectors.toList()).get(0);
+    }
+
+    // CustomerService name changed to CustomerServiceDto because of the name collision
+    public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
+        LocalDate currentDate = LocalDate.now();
+        Order order =
+                new Order(customerService, OrderType.ACTIVATION,
+                        OrderStatus.CREATED, currentDate, currentDate);
+        return super.save(order);
     }
 }

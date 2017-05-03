@@ -43,6 +43,6 @@ public interface CrudService<T> {
     void beginTransaction();
     void commit();
     void rollback();
-    public void setAutoCommit(boolean autoCommit);
+    void setAutoCommit(boolean autoCommit);
 }
 
