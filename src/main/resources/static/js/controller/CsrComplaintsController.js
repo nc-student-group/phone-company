@@ -39,6 +39,20 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                 $scope.preloader.send = false;
             });
         };
+
+        $scope.updateData = function () {
+            $scope.page = 0;
+            $scope.preloader.send = true;
+            ComplaintService.getComplaintByCategory($scope.currentCategory, $scope.page, $scope.size)
+                .then(function (data) {
+                    $scope.complaints = data.complaints;
+                    $scope.complaintsCount = data.complaintsCount;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                });
+        };
+
         $scope.updateData();
 
         $scope.nextPage = function () {
@@ -75,19 +89,6 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                         $scope.preloader.send = false;
                     });
             }
-        };
-
-        $scope.updateData = function () {
-            $scope.page = 0;
-            $scope.preloader.send = true;
-            ComplaintService.getComplaintByCategory($scope.currentCategory, $scope.page, $scope.size)
-                .then(function (data) {
-                    $scope.complaints = data.complaints;
-                    $scope.complaintsCount = data.complaintsCount;
-                    $scope.preloader.send = false;
-                }, function () {
-                    $scope.preloader.send = false;
-                });
         };
 
         $scope.createComplaint = function () {

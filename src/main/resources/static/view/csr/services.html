@@ -199,7 +199,8 @@
                                             <div class="col-md-12">
                                                 <div class="col-md-12">
                                                     <md-input-container class="md-block">
-                                                        <input type="text" placeholder="Service name" name="serviceName"
+                                                        <input md-maxlength="15" type="text"
+                                                               placeholder="Service name" name="serviceName"
                                                                ng-model="currentService.serviceName"
                                                                required/>
                                                     </md-input-container>
@@ -298,7 +299,8 @@
                                                     <div class="col-md-12">
                                                         <div class="col-md-6">
                                                             <md-input-container class="md-block">
-                                                                <md-select placeholder="Category"
+                                                                <md-select required
+                                                                           placeholder="Category"
                                                                            ng-change="specifyUnits()"
                                                                            ng-model="currentService.productCategory.categoryName">
                                                                     <md-option ng-repeat="c in categories"
@@ -311,10 +313,11 @@
 
                                                         <div class="col-md-6">
                                                             <md-input-container ng-show="units"
-                                                                    class="md-block">
+                                                                                class="md-block">
                                                                 <input type="number"
                                                                        placeholder="Amount, {{units}}"
                                                                        name="amount"
+                                                                       value="1"
                                                                        ng-model="currentService.amount"
                                                                        ng-pattern="notNegativeIntegerPattern"/>
                                                                 <div ng-messages="servicesForm.amount.$error"
@@ -393,7 +396,8 @@
                                         <div class="col-md-12">
                                             <div class="col-md-12">
                                                 <md-input-container class="md-block">
-                                                    <input type="text" placeholder="Service name" name="serviceName"
+                                                    <input md-maxlength="15" type="text"
+                                                           placeholder="Service name" name="serviceName"
                                                            ng-model="serviceToEdit.serviceName"
                                                            required/>
                                                 </md-input-container>
@@ -490,8 +494,9 @@
                                             <div class="col-md-12">
                                                 <div class="col-md-12">
                                                     <div class="col-md-6">
-                                                        <md-input-container class="md-block">
-                                                            <md-select placeholder="Category"
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Category:</label>
+                                                            <md-select required
                                                                        ng-change="specifyUnits()"
                                                                        ng-model="serviceToEdit.productCategory.categoryName">
                                                                 <md-option ng-repeat="c in categories"

@@ -3,10 +3,11 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerServiceDto;
+import com.phonecompany.model.ProductCategory;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.CustomerProductStatus;
-import com.phonecompany.model.enums.OrderStatus;
-import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.TypeMapper;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +59,27 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
         List<Service> servicesWithDiscount = this.applyDiscount(pagedServices);
 
-        LOG.debug("Fetched services: {}", servicesWithDiscount);
+        LOG.debug("Services to be put in response: {}", servicesWithDiscount);
+
         response.put("services", servicesWithDiscount);
         response.put("servicesCount", this.serviceDao.getEntityCount(productCategoryId));
 
         return response;
+    }
+
+    private List<Service> applyDiscount(List<Service> services) {
+        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+        LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
+        if (currentlyLoggedInUser.getRepresentative()) {
+            return this.mapToANewPrice(services);
+        }
+        return services;
+    }
+
+    private List<Service> mapToANewPrice(List<Service> services) {
+        return services.stream()
+                .map(TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -82,21 +98,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
             return TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT).apply(service);
         }
         return service;
-    }
-
-    private List<Service> applyDiscount(List<Service> services) {
-        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
-        LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
-        if (currentlyLoggedInUser.getRepresentative()) {
-            return this.mapToANewPrice(services);
-        }
-        return services;
-    }
-
-    private List<Service> mapToANewPrice(List<Service> services) {
-        return services.stream()
-                .map(TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT))
-                .collect(Collectors.toList());
     }
 
     @Override
