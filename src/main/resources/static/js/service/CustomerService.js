@@ -66,7 +66,7 @@
          */
         CustomerService.getNewCustomer = function () {
             var deferred = $q.defer();
-            $http.get("/api/customers/new").then(
+            $http.get("/api/customers/empty-customer").then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

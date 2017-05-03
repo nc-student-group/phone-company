@@ -3,6 +3,7 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
+import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
@@ -109,5 +110,59 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             throw new EntityNotFoundException(customerTariffId, e);
         }
         return orders;
+    }
+
+    @Override
+    public List<Order> getOrdersByCustomerIdPaged(Long customerId, int page, int size) {
+        String query = this.getQuery("getPagedByCustomerId");
+        return getOrdersByClientIdPaged(query, customerId, page, size);
+    }
+
+    @Override
+    public List<Order> getOrdersByCorporateIdPaged(Long corporate, int page, int size) {
+        String query = this.getQuery("getPagedByCorporateId");
+        return getOrdersByClientIdPaged(query, corporate, page, size);
+    }
+
+    @Override
+    public Integer getCountByCustomerId(Long customerId) {
+        String query = this.getQuery("getCountByCustomerId");
+        return getCountByClientId(query, customerId);
+    }
+
+    @Override
+    public Integer getCountByCorporateId(Long corporateId) {
+        String query = this.getQuery("getCountByCorporateId");
+        return getCountByClientId(query, corporateId);
+    }
+
+    private List<Order> getOrdersByClientIdPaged(String query, Long clientId, int page, int size) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setObject(1, clientId);
+            ps.setObject(2, size);
+            ps.setObject(3, page * size);
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    private Integer getCountByClientId(String query, Long clientId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setLong(1, clientId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(clientId, e);
+        }
     }
 }

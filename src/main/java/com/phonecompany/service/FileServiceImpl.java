@@ -28,9 +28,9 @@ public class FileServiceImpl implements FileService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
     @Value("${bucket.name}")
     private String BUCKET_NAME;
-    @Value("${access.key.id}")
+//    @Value("${access.key.id}")
     private String ACCESS_KEY_ID;
-    @Value("${secret.access.key}")
+//    @Value("${secret.access.key}")
     private String SECRET_ACCESS_KEY;
     @Value("${s3.url}")
     private String S3_URL;

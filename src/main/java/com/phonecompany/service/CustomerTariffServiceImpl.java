@@ -88,19 +88,11 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
         LocalDate now  = LocalDate.now();
         LocalDate executionDate = now.plusDays(daysToExecution);
 
-        Order suspensionOrder = new Order();
-        suspensionOrder.setType(OrderType.SUSPENSION);
-        suspensionOrder.setOrderStatus(OrderStatus.DONE);
-        suspensionOrder.setCreationDate(now);
-        suspensionOrder.setCustomerTariff(customerTariff);
-        suspensionOrder.setExecutionDate(now);
+        Order suspensionOrder = new Order(null, customerTariff, OrderType.SUSPENSION,
+                OrderStatus.DONE, now, now);
 
-        Order resumingOrder = new Order();
-        resumingOrder.setType(OrderType.RESUMING);
-        resumingOrder.setOrderStatus(OrderStatus.PENDING);
-        resumingOrder.setCreationDate(now);
-        resumingOrder.setCustomerTariff(customerTariff);
-        resumingOrder.setExecutionDate(executionDate);
+        Order resumingOrder = new Order(null, customerTariff, OrderType.RESUMING,
+                OrderStatus.PENDING, now, executionDate);
 
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);

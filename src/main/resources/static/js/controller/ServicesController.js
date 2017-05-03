@@ -12,7 +12,7 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.activePage = 'services';
         $scope.numberPattern = /^[^0-]([0-9]*(\.\d{2}))$/;
         $scope.discountPattern = /^(0(\.)(\d{1,3})?)|^1$/;
-        $scope.notNegativeIntegerPattern = /^[0-9]*$/;
+        $scope.notNegativeIntegerPattern = /^[1-9][0-9]*$/;
         $scope.inProgress = false;
         $scope.currentCategory = 0;
         $scope.page = 0;
@@ -86,6 +86,7 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.getNewService = function () {
             ServicesService.getNewService().then(function (data) {
                 $scope.currentService = data;
+                $scope.currentService.amount = 1;
             });
         };
 
@@ -182,6 +183,7 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.editing = false;
             $scope.tariffToEdit = undefined;
             $scope.updateData();
+            $scope.gotoAnchor("servicesTable");
         };
 
         $scope.uploadPicture = function () {

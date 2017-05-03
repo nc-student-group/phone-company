@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.events.OnUserCreationEvent;
@@ -38,7 +39,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
-    private EmailService emailService;
+    private EmailService<User> emailService;
     private MailMessageCreator<User> resetPassMessageCreator;
     private MailMessageCreator<VerificationToken> confirmMessageCreator;
     private MailMessageCreator<User> passwordAssignmentCreator;
@@ -53,7 +54,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
                                    MailMessageCreator<VerificationToken> confirmMessageCreator,
                            @Qualifier("passwordAssignmentMessageCreator")
                                    MailMessageCreator<User> passwordAssigmentCreator,
-                           EmailService emailService,
+                           EmailService<User> emailService,
                            VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
