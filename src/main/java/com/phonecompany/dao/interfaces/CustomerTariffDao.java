@@ -11,5 +11,7 @@ public interface CustomerTariffDao extends CrudDao<CustomerTariff>{
     List<CustomerTariff> getCustomerTariffsByCorporateId(Long corporateId);
     CustomerTariff getCurrentCustomerTariff(long customerId);
     CustomerTariff getCurrentCorporateTariff(long corporateId);
+    CustomerTariff getCurrentActiveOrSuspendedCustomerTariff(long customerId);
+    CustomerTariff getCurrentActiveOrSuspendedCorporateTariff(long corporateId);
 
 }

@@ -35,9 +35,6 @@ public class TariffController {
     private CustomerTariffService customerTariffService;
 
     @Autowired
-    private CustomerController customerController;
-
-    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -62,7 +59,9 @@ public class TariffController {
 
     @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
     public List<Tariff> getClientTariffs() {
-        Customer customer = customerController.getCustomerByCurrentUserId();
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
         Long regionId = customer.getAddress().getRegion().getId();
         Boolean isRepresentative = customer.getRepresentative();
         LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
@@ -124,7 +123,9 @@ public class TariffController {
 
     @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
     public List<CustomerTariff> getTariffsByClientId() {
-        Customer customer = customerController.getCustomerByCurrentUserId();
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
         LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
         return this.customerTariffService.getByClientId(customer);
     }
@@ -192,4 +193,26 @@ public class TariffController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return tariffService.activateTariff(id, customerService.findByEmail(securityUser.getUsername()));
     }
+
+    @RequestMapping(value = "/api/customer/tariff", method = RequestMethod.GET)
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
+        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/api/customer/tariff/deactivate")
+    public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+        customerTariffService.deactivateCustomerTariff(customerTariff);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/api/customer/tariff/suspend")
+    public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
+        customerTariffService.suspendCustomerTariff(data);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
