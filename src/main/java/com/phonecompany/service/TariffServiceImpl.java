@@ -216,7 +216,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     private ResponseEntity<?> activateTariffForSingleCustomer(long tariffId, Customer customer) {
         TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
-        if (tariffRegion == null || tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
+        if (tariffRegion == null) {
             return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
         }
         if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
@@ -232,8 +232,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     private ResponseEntity<?> activateTariffForCorporateCustomer(long tariffId, Customer customer) {
         Tariff tariff = this.getById(tariffId);
-        if (tariff == null || tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
-            return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+        if (tariff == null) {
+            return new ResponseEntity<Object>(new Error("This tariff plan doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
         }
         if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
             return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
