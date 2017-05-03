@@ -20,18 +20,19 @@
                                      ng-click="tariffClick(t.id)">
                                     <div class="tariff-picture">
                                         <img ng-src="{{t.pictureUrl}}" width="90%"/>
-                                        <div class="sale-picture" ng-show="t.discount > 0 && t.discount < 1"><b>-{{t.discount * 100}}%</b></div>
+                                        <div class="sale-picture" ng-show="t.discount > 0 && t.discount <= 100"><b>-{{t.discount}}%</b>
+                                        </div>
                                     </div>
                                     <div class="tariff-picture"
                                          style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>
                                     </div>
                                     <div class="row" style="text-align: center; font-size: 16px; color: #161121"
-                                         ng-hide="t.discount > 0 && t.discount < 1">
+                                         ng-hide="t.discount > 0 && t.discount <= 100">
                                         <b>{{t.price}} auh / 30 days</b>
                                     </div>
-                                    <div class="row" ng-show="t.discount > 0 && t.discount < 1"
+                                    <div class="row" ng-show="t.discount > 0 && t.discount <= 100"
                                          style="text-align: center; font-size: 16px; color: #161121">
-                                        <b>{{t.price * (1 - t.discount)}} auh / 30 days</b>
+                                        <b>{{t.price * (1 - t.discount/100)}} auh / 30 days</b>
                                         <s style="font-size: 14px; color: red">{{t.price}} auh / 30 days</s>
                                     </div>
                                     <div class="row">

@@ -86,16 +86,23 @@
                                             <div ng-hide="t.tariff.isCorporate" style="height: 200px; overflow: auto;">
                                                 <table width="100%" style="table-layout: fixed;"
                                                        class="table table-striped" ng-hide="t.tariff.isCorporate">
-                                                    <col width="80%">
+                                                    <col width="70%">
                                                     <!--region price-->
-                                                    <col width="20%">
+                                                    <col width="30%">
+                                                    <tr>
+                                                        <td><b>Discount:</b></td>
+                                                        <td><b>{{t.tariff.discount}}%</b></td>
+                                                    </tr>
                                                     <tr ng-repeat="r in t.regions" class="tariff-td">
                                                         <td>{{r.region.nameRegion}}</td>
                                                         <td style="text-align: left; padding-right: 0;">{{r.price}}</td>
                                                     </tr>
                                                 </table>
                                             </div>
-                                            <span ng-show="t.tariff.isCorporate">Price: {{t.tariff.price}}</span>
+                                            <span ng-show="t.tariff.isCorporate">
+                                                Price: {{t.tariff.price}}<br>
+                                                <b>Discount: {{t.tariff.discount}}%</b>
+                                            </span>
                                         </td>
                                         <td>{{t.tariff.productStatus}}</td>
                                         <td style="padding: 0;">
@@ -384,14 +391,14 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-5" ng-repeat="r in regionsToAdd">
+                                                <div class="col-md-5" ng-repeat="r in regionsToAdd" ng-class="{'first-elem-in-row': $index == 0}">
                                                     <div class="col-md-6">
                                                         <md-checkbox type="checkbox" class="md-block"
                                                                      ng-click="toggle(r, regionsToSave)"
                                                                      ng-checked="exists(r, regionsToSave)"><label>{{r.region.nameRegion}}</label>
                                                         </md-checkbox>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" style="height: 52px;">
                                                         <md-input-container ng-show="exists(r, regionsToSave)"
                                                                             style="margin: 0 0; padding: 0;">
                                                             <input type="number"

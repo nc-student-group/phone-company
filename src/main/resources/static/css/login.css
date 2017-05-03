@@ -316,6 +316,10 @@
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
 
+.first-elem-in-row{
+    padding-left: 6px !important;
+}
+
 /*TARIFF PAGE CSS END*/
 .paginate_button {
     cursor: pointer;
