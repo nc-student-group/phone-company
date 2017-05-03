@@ -215,4 +215,17 @@ public class TariffController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
+    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
+                                                    @PathVariable("size") int size) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        LOGGER.debug("Get all tariff orders by customer id = " + customer);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountByClient(customer));
+        map.put("orders", orderService.getOrdersHistoryByClient(customer, page, size));
+        return map;
+    }
+
 }
