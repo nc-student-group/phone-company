@@ -144,6 +144,7 @@ public class TariffController {
         Customer customer = customerService.findByEmail(securityUser.getUsername());
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
+            LOGGER.debug("Get available tariffs for single customer.");
             response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
             response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
