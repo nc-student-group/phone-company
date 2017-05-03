@@ -25,10 +25,10 @@
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
                 $scope.mailingSwitchDisabled = false;
-                $scope.loading = false;
+                $scope.preloader.send = false;
             });
 
-        $scope.loading = true;
+        $scope.preloader.send = true;
         $scope.loadCurrentTariff = function () {
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {

@@ -13,9 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TariffController {
@@ -42,6 +43,9 @@ public class TariffController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {

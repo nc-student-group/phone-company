@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +44,13 @@ public class ServicesController {
         this.serviceNotificationEmailCreator = emailCreator;
         this.emailService = emailService;
         this.customerService = customerService;
+    }
+
+    @GetMapping
+    public Collection<Service> getAllServices() {
+        List<Service> allServices = this.serviceService.getAll();
+        LOG.debug("Services fetched from the storage: {}", allServices);
+        return allServices;
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
