@@ -39,7 +39,7 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                 $scope.preloader.send = false;
             });
         };
-        $scope.updateData();
+
 
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.complaintsCount) {
@@ -89,6 +89,7 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                     $scope.preloader.send = false;
                 });
         };
+        $scope.updateData();
 
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);
