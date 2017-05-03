@@ -10,6 +10,8 @@ import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +26,8 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     private QueryLoader queryLoader;
     public ProductCategoryDao productCategoryDao;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceDaoImpl.class);
 
     @Autowired
     public ServiceDaoImpl(QueryLoader queryLoader, ProductCategoryDao productCategoryDao) {
@@ -55,20 +59,19 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     @Override
-    public void populateUpdateStatement(PreparedStatement preparedStatement, Service entity) {
+    public void populateUpdateStatement(PreparedStatement preparedStatement, Service service) {
         try {
-            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getProductCategory()));
-            preparedStatement.setString(2, entity.getServiceName());
-            preparedStatement.setDouble(3, entity.getPrice());
-            preparedStatement.setString(4, entity.getProductStatus().name());
-            preparedStatement.setDouble(5, entity.getDiscount());
-            preparedStatement.setObject(6, entity.getPictureUrl());
-            preparedStatement.setObject(7, entity.getDescription());
-            preparedStatement.setObject(8, entity.getPreviewDescription());
-            preparedStatement.setObject(9, entity.getDurationInDays());
-            preparedStatement.setObject(9, entity.getDurationInDays());
-            preparedStatement.setObject(10, entity.getAmount());
-            preparedStatement.setDouble(11, TypeMapper.getNullableId(entity));
+            preparedStatement.setObject(1, TypeMapper.getNullableId(service.getProductCategory()));
+            preparedStatement.setString(2, service.getServiceName());
+            preparedStatement.setDouble(3, service.getPrice());
+            preparedStatement.setString(4, service.getProductStatus().name());
+            preparedStatement.setDouble(5, service.getDiscount());
+            preparedStatement.setObject(6, service.getPictureUrl());
+            preparedStatement.setObject(7, service.getDescription());
+            preparedStatement.setObject(8, service.getPreviewDescription());
+            preparedStatement.setObject(9, service.getDurationInDays());
+            preparedStatement.setObject(10, service.getAmount());
+            preparedStatement.setDouble(11, TypeMapper.getNullableId(service));
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }

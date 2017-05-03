@@ -59,6 +59,7 @@ angular.module('phone-company')
 
         function performServiceEdit(service) {
             let deferred = $q.defer();
+            console.log(`Service ${JSON.stringify(service)} will be edited`);
             $http.patch(SERVICES, service).then(
                 function (response) {
                     deferred.resolve(response.data);
@@ -96,6 +97,19 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function activateService(id) {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/activate/${id}`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         return {
             getServicesByProductCategoryId: getServicesByProductCategoryId,
             getNewService: getNewService,
@@ -103,6 +117,7 @@ angular.module('phone-company')
             getAllCategories: getAllCategories,
             changeServiceStatus: changeServiceStatus,
             getServiceById: getServiceById,
-            performServiceEdit: performServiceEdit
+            performServiceEdit: performServiceEdit,
+            activateService: activateService
         };
     }]);

@@ -45,7 +45,6 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Order entity) {
         try {
-            LOGGER.debug("Order save {}", entity);
             preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomerService()));
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getCustomerTariff()));
             preparedStatement.setString(3, entity.getType().name());

@@ -3,25 +3,22 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.ProductCategory;
-import com.phonecompany.model.Service;
-import com.phonecompany.model.User;
+import com.phonecompany.model.*;
+import com.phonecompany.model.enums.CustomerProductStatus;
+import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.FileService;
-import com.phonecompany.service.interfaces.OrderService;
-import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -29,26 +26,29 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         implements ServiceService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceServiceImpl.class);
-    public static final double REPRESENTATIVE_DISCOUNT = 0.85;
+    public static final double REPRESENTATIVE_DISCOUNT = 15;
 
     private ServiceDao serviceDao;
     private ProductCategoryDao productCategoryDao;
     private FileService fileService;
     private OrderService orderService;
     private CustomerService customerService;
+    private CustomerServiceService customerServiceService;
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
                               FileService fileService,
                               OrderService orderService,
-                              CustomerService customerService) {
+                              CustomerService customerService,
+                              CustomerServiceService customerServiceService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerService = customerService;
+        this.customerServiceService = customerServiceService;
     }
 
     @Override
@@ -57,24 +57,43 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         Map<String, Object> response = new HashMap<>();
         List<Service> pagedServices = this.serviceDao.getPaging(page, size, productCategoryId);
 
-        List<Service> servicesWithDiscount = this.applyDiscountForServices(pagedServices);
+        List<Service> servicesWithDiscount = this.applyDiscount(pagedServices);
 
         LOG.debug("Fetched services: {}", servicesWithDiscount);
         response.put("services", servicesWithDiscount);
         response.put("servicesCount", this.serviceDao.getEntityCount(productCategoryId));
+
         return response;
     }
 
-    private List<Service> applyDiscountForServices(List<Service> services) {
+    @Override
+    public Service getById(Long serviceId) {
+        Service serviceFoundById = super.getById(serviceId);
+        LOG.debug("Service price without a discount: {}", serviceFoundById.getPrice());
+        Service serviceWithDiscount = this.applyDiscount(serviceFoundById);
+        LOG.debug("Service price after applying discount: {}", serviceWithDiscount.getPrice());
+        return serviceWithDiscount;
+    }
+
+    private Service applyDiscount(Service service) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
         if (currentlyLoggedInUser.getRepresentative()) {
-            return this.mapServicesToANewPrice(services);
+            return TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT).apply(service);
+        }
+        return service;
+    }
+
+    private List<Service> applyDiscount(List<Service> services) {
+        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+        LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
+        if (currentlyLoggedInUser.getRepresentative()) {
+            return this.mapToANewPrice(services);
         }
         return services;
     }
 
-    private List<Service> mapServicesToANewPrice(List<Service> services) {
+    private List<Service> mapToANewPrice(List<Service> services) {
         return services.stream()
                 .map(TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT))
                 .collect(Collectors.toList());
@@ -113,7 +132,12 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public void activateServiceForUser(User user) {
-
+    public void activateServiceForCustomer(long serviceId, Customer customer) {
+        Service currentService = this.getById(serviceId);
+        CustomerServiceDto customerService =
+                new CustomerServiceDto(customer, currentService,
+                        currentService.getPrice(), CustomerProductStatus.ACTIVE);
+        this.orderService.saveCustomerServiceActivationOrder(customerService);
+        this.customerServiceService.save(customerService);
     }
 }

@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,700);
+
 figure.snip1174 {
     font-family: 'Raleway', Arial, sans-serif;
     color: #fff;
@@ -13,12 +14,36 @@ figure.snip1174 {
     color: #ffffff;
     text-align: left;
 }
+
+.service-price {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.service-price-discounted {
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    font-size: 18px;
+    color: red;
+}
+
+.service-price-individual {
+}
+
+.service-price-individual-discounted {
+    font-size: 18px;
+    color: red;
+}
+
 figure.snip1174 * {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     -webkit-transition: all 0.35s ease;
     transition: all 0.35s ease;
 }
+
 figure.snip1174 img {
     max-width: 100%;
     -webkit-transform: scale(1.1);
@@ -28,28 +53,33 @@ figure.snip1174 img {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
 }
+
 figure.snip1174 figcaption {
     position: absolute;
     padding: 40px 25px;
     top: 0;
     left: 0;
 }
+
 figure.snip1174 h2,
 figure.snip1174 p {
     margin: 0;
     padding: 0;
 }
+
 figure.snip1174 h2 {
     margin-bottom: 10px;
     display: inline-block;
     font-weight: 700;
     font-size: 1.8em;
 }
+
 figure.snip1174 p {
     font-weight: 300;
     margin-bottom: 20px;
     line-height: 1.4em;
 }
+
 figure.snip1174 a {
     display: inline-block;
     padding: 10px 20px;
@@ -63,6 +93,7 @@ figure.snip1174 a {
     transform: translateY(50%);
     opacity: 0;
 }
+
 figure.snip1174 a:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
@@ -77,6 +108,7 @@ figure.snip1174.hover img {
     -webkit-transform: scale(1);
     transform: scale(1);
 }
+
 figure.snip1174:hover a,
 figure.snip1174.hover a {
     -webkit-transform: translateY(0);

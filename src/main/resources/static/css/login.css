@@ -32,6 +32,10 @@
     cursor: default;
 }
 
+.pointable-logout:hover {
+    cursor: pointer;
+}
+
 .button-if-form-ok, .button-if-form-ok:active, .button-if-form-ok:focus {
     background: #3d51be;
     cursor: pointer;

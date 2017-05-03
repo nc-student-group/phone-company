@@ -49,9 +49,8 @@ public class ServicesController {
                                                        @PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
-        Map<String, Object> servicesByProductCategoryId = serviceService
+        return serviceService
                 .getServicesByProductCategoryId(productCategoryId, page, size);
-        return servicesByProductCategoryId;
     }
 
     @PostMapping
@@ -79,7 +78,7 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
-        this.serviceService.activateServiceForUser(loggedInCustomer);
+        this.serviceService.activateServiceForCustomer(serviceId, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -112,7 +111,7 @@ public class ServicesController {
 
     @PatchMapping
     public ResponseEntity<?> updateService(@RequestBody Service service) {
-        LOG.debug("Service to be updated", service);
+        LOG.debug("Service to be updated: ", service);
         this.serviceService.update(service);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -8,12 +8,10 @@ angular.module('phone-company').controller('ServiceDetailController', [
     'ServicesService',
     function ($scope, $rootScope, $location, $routeParams, ServicesService) {
 
-        // let selectedServiceId = $routeParams['id'];
-
-        console.log(`Selected service id ${$routeParams['id']}`);
+        var currentServiceId = $routeParams['id'];
 
         $scope.loading = true;
-        ServicesService.getServiceById($routeParams['id'])
+        ServicesService.getServiceById(currentServiceId)
             .then(function (data) {
                 $scope.currentService = data;
                 $scope.loading = false;
@@ -23,6 +21,15 @@ angular.module('phone-company').controller('ServiceDetailController', [
 
         $scope.backToServices = function () {
             $location.path = '/client/tariffs';
-        }
+        };
 
+        $scope.activateService = function () {
+            $scope.preloader.send = true;
+            ServicesService.activateService(currentServiceId).then(function (data) {
+                $scope.preloader.send = false;
+                toastr.success(`Your service has been successfully activated`);
+            }, function () {
+                $scope.loading = false;
+            });
+        }
     }]);

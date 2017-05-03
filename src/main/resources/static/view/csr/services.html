@@ -262,7 +262,7 @@
                                                     <md-input-container class="md-block">
                                                 <textarea placeholder="Description"
                                                           ng-model="currentService.description"
-                                                          name="description" md-maxlength="150"></textarea>
+                                                          name="description" md-maxlength="300"></textarea>
                                                         <div ng-messages="currentService.description.$error"
                                                              role="alert">
                                                             <div ng-message="md-maxlength">
@@ -309,8 +309,8 @@
                                                             </md-input-container>
                                                         </div>
 
-                                                        <div class="col-md-6" ng-show="units">
-                                                            <md-input-container
+                                                        <div class="col-md-6">
+                                                            <md-input-container ng-show="units"
                                                                     class="md-block">
                                                                 <input type="number"
                                                                        placeholder="Amount, {{units}}"
@@ -391,72 +391,168 @@
                                       autocomplete="off" novalidate>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <md-input-container class="md-block">
-                                                <input type="text" placeholder="Service name" name="serviceName"
-                                                       ng-model="serviceToEdit.serviceName"
-                                                       required/>
-                                            </md-input-container>
+                                            <div class="col-md-12">
+                                                <md-input-container class="md-block">
+                                                    <input type="text" placeholder="Service name" name="serviceName"
+                                                           ng-model="serviceToEdit.serviceName"
+                                                           required/>
+                                                </md-input-container>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <md-input-container class="md-block">
-                                                <input type="number" placeholder="Price" name="price"
-                                                       ng-model="serviceToEdit.price"
-                                                       ng-pattern="numberPattern" required/>
+                                            <div class="col-md-6">
+                                                <md-input-container class="md-block">
+                                                    <input type="number" placeholder="Price" name="price"
+                                                           ng-model="serviceToEdit.price"
+                                                           ng-pattern="numberPattern" required/>
 
-                                                <div ng-messages="editServicesForm.price.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field should be in decimal format, like 99.99 and not be
-                                                        negative
+                                                    <div ng-messages="editServicesForm.price.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field should be in decimal format, like 99.99 and
+                                                            not be negative
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </md-input-container>
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <md-input-container class="md-block">
+                                                    <input type="number" placeholder="Duration in days"
+                                                           name="durationInDays"
+                                                           ng-model="serviceToEdit.durationInDays"
+                                                           ng-pattern="notNegativeIntegerPattern"/>
+
+                                                    <div ng-messages="editServicesForm.durationInDays.$error"
+                                                         role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain positive integers
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <md-input-container class="md-block">
-                                                <input type="number" placeholder="Discount"
-                                                       ng-model="serviceToEdit.discount" name="discount"
-                                                       ng-pattern="discountPattern" required/>
+                                            <div class="col-md-6">
+                                                <md-input-container class="md-block">
+                                                <textarea placeholder="Preview description"
+                                                          ng-model="serviceToEdit.previewDescription"
+                                                          name="description" md-maxlength="30"></textarea>
+                                                    <div ng-messages="editServicesForm.previewDescription.$error"
+                                                         role="alert">
+                                                        <div ng-message="md-maxlength">
+                                                            Sorry, but your message is too verbose!
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <md-input-container class="md-block">
+                                                <textarea placeholder="Description"
+                                                          ng-model="serviceToEdit.description"
+                                                          name="description" md-maxlength="300"></textarea>
+                                                    <div ng-messages="editServicesForm.description.$error"
+                                                         role="alert">
+                                                        <div ng-message="md-maxlength">
+                                                            Sorry, but your message is too verbose!
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                                <div ng-messages="editServicesForm.discount.$error" role="alert"
-                                                     multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain numbers from 0 to 1
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                <md-input-container class="md-block">
+                                                    <input type="number" placeholder="Discount"
+                                                           ng-model="serviceToEdit.discount" name="discount"
+                                                           ng-pattern="discountPattern" required/>
+
+                                                    <div ng-messages="editServicesForm.discount.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain numbers from 0 to 1
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-6">
+                                                        <md-input-container class="md-block">
+                                                            <md-select placeholder="Category"
+                                                                       ng-change="specifyUnits()"
+                                                                       ng-model="serviceToEdit.productCategory.categoryName">
+                                                                <md-option ng-repeat="c in categories"
+                                                                           value="{{c.categoryName}}">
+                                                                    {{c.categoryName}}
+                                                                </md-option>
+                                                            </md-select>
+                                                        </md-input-container>
                                                     </div>
                                                 </div>
-                                            </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div style="margin-left: 20px" class="col-md-offset-1">
+                                                <img ng-src="{{serviceToEdit.pictureUrl}}" alt="">
+                                                <md-button class="md-raised md-primary upload_photo"
+                                                           ng-click="uploadPicture()">
+                                                    <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
+                                                </md-button>
+                                            </div>
+                                            <div class="bg_crop_modal" ng-show="imageCropStep == 2"
+                                                 ng-click="clear()"></div>
+                                            <div ng-show="imageCropStep == 2" class="crop_files_images">
+                                                <image-crop
+                                                        data-height="240"
+                                                        data-width="360"
+                                                        data-shape="square"
+                                                        data-step="imageCropStep"
+                                                        src="imgSrc"
+                                                        data-result="currentService.pictureUrl"
+                                                        data-result-blob="resultBlob"
+                                                        crop="initCrop"
+                                                        padding="250"
+                                                        max-size="1024"
+                                                ></image-crop>
+                                                <br/>
+                                                <div class="wrp_crop_img_btn">
+                                                    <md-button class="md-raised md-primary" ng-click="clear()">
+                                                        Cancel
+                                                    </md-button>
+                                                    <md-button class="md-raised md-primary"
+                                                               ng-click="initCrop = true">
+                                                        Crop
+                                                    </md-button>
+                                                </div>
+                                            </div>
+                                            <div style="margin-left: 40px" class="col-md-offset-1">
+                                                <button class="btn btn-info btn-fill pull-left"
+                                                        ng-click="submitServiceEdit()"
+                                                        style="margin-right: 10px">Edit service
+                                                </button>
+                                                <button class="btn btn-default btn-fill pull-left"
+                                                        ng-click="cancelEdit()">Cancel edit
+                                                </button>
+                                                <div class="clearfix"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <md-input-container class="md-block">
-                                                <md-select placeholder="Category"
-                                                           ng-model="serviceToEdit.productCategory.categoryName">
-                                                    <md-option ng-repeat="c in categories" value="{{c.categoryName}}">
-                                                        {{c.categoryName}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-info btn-fill pull-left"
-                                            ng-click="submitServiceEdit()"
-                                            style="margin-right: 10px">Edit service
-                                    </button>
-                                    <button class="btn btn-default btn-fill pull-left"
-                                            ng-click="cancelEdit()"
-                                            ng-disabled="serviceToEdit.$invalid">Cancel edit
-                                    </button>
-                                    <div class="clearfix"></div>
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
