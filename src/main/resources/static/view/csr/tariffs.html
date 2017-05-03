@@ -91,7 +91,7 @@
                                                     <col width="30%">
                                                     <tr>
                                                         <td><b>Discount:</b></td>
-                                                        <td><b>{{t.tariff.discount*100}}%</b></td>
+                                                        <td><b>{{t.tariff.discount}}%</b></td>
                                                     </tr>
                                                     <tr ng-repeat="r in t.regions" class="tariff-td">
                                                         <td>{{r.region.nameRegion}}</td>
@@ -101,7 +101,7 @@
                                             </div>
                                             <span ng-show="t.tariff.isCorporate">
                                                 Price: {{t.tariff.price}}<br>
-                                                <b>Discount: {{t.tariff.discount * 100}}%</b>
+                                                <b>Discount: {{t.tariff.discount}}%</b>
                                             </span>
                                         </td>
                                         <td>{{t.tariff.productStatus}}</td>

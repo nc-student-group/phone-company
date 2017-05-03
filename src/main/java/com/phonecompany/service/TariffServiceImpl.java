@@ -161,8 +161,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()));
-        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getPrice()), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
+        LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100));
+        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()/100), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -191,8 +191,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()));
-        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()), CustomerProductStatus.ACTIVE, tariff);
+        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()/100));
+        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()/100), CustomerProductStatus.ACTIVE, tariff);
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
