@@ -40,6 +40,20 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             });
         };
 
+        $scope.updateData = function () {
+            $scope.page = 0;
+            $scope.preloader.send = true;
+            ComplaintService.getComplaintByCategory($scope.currentCategory, $scope.page, $scope.size)
+                .then(function (data) {
+                    $scope.complaints = data.complaints;
+                    $scope.complaintsCount = data.complaintsCount;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                });
+        };
+
+        $scope.updateData();
 
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.complaintsCount) {
@@ -76,20 +90,6 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                     });
             }
         };
-
-        $scope.updateData = function () {
-            $scope.page = 0;
-            $scope.preloader.send = true;
-            ComplaintService.getComplaintByCategory($scope.currentCategory, $scope.page, $scope.size)
-                .then(function (data) {
-                    $scope.complaints = data.complaints;
-                    $scope.complaintsCount = data.complaintsCount;
-                    $scope.preloader.send = false;
-                }, function () {
-                    $scope.preloader.send = false;
-                });
-        };
-        $scope.updateData();
 
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);

@@ -15,7 +15,8 @@ public class Address extends DomainEntity {
     private String street;
     @NotNull(message = "House number must not be null")
     private String houseNumber;
-    @Pattern(regexp = "^[0-9]+$", message = "Apartment number should only be a positive integer")
+    @Pattern(regexp = "^[^!@#$%^&*()_+-]*$",
+            message = "This field should not contain special characters")
     @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
 

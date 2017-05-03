@@ -15,11 +15,8 @@ import static com.phonecompany.service.email.EmailDispatchTask.PHONE_COMPANY_EMA
  *
  * @param <T> message recipient type (e.g. {@link User})
  */
-@PropertySource("classpath:mail.properties")
 public abstract class AbstractEmailCreator<T>
         implements MailMessageCreator<T> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractEmailCreator.class);
 
     /**
      * {@inheritDoc}

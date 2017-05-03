@@ -60,8 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/regions/get").hasAnyRole("CSR","ADMIN")
                 //regions are required for the registration as well. Thats why should be permitted to access
                 .antMatchers("/api/regions/get").permitAll()
-                .antMatchers("/api/customers/new").permitAll()
-                .antMatchers("/api/customer/get/**").hasRole("CLIENT")
+                .antMatchers("/api/customers/empty-customer").permitAll()
+                .antMatchers("/api/customers/logged-in-user/**").hasRole("CLIENT")
                 .antMatchers("/api/tariffs/get/available/").hasRole("CLIENT")
                 .antMatchers("/api/customer/tariff").hasRole("CLIENT")
                 .antMatchers("/api/customer/tariff/deactivate").hasRole("CLIENT")

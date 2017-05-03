@@ -70,7 +70,7 @@ public class CustomerController {
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/api/customers/new")
+    @GetMapping(value = "/api/customers/empty-customer")
     public Customer getEmptyCustomer() {
         return new Customer();
     }
@@ -117,7 +117,7 @@ public class CustomerController {
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = GET, value = "/api/customer/get")
+    @RequestMapping(method = GET, value = "/api/customers/logged-in-user")
     public Customer getCustomerByCurrentUserId() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user retrieved from the security context: {}", loggedInUser);
