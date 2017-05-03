@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/complaints")
@@ -50,5 +51,13 @@ public class ComplaintController {
         LOG.info("Retrieving all the complaint categories");
 
         return complaintService.getAllComplaintCategory();
+    }
+
+    @GetMapping("/{category}/{page}/{size}")
+    public Map<String, Object> getComplaintsByCategory(@PathVariable("category") String category,
+                                                       @PathVariable("page") int page,
+                                                       @PathVariable("size") int size) {
+        LOG.debug("Fetching complaints for the category: {}", category);
+        return complaintService.getComplaintsByCategory(category, page, size);
     }
 }

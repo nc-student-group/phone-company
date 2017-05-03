@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements ComplaintDao {
+public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> implements ComplaintDao {
 
     private QueryLoader queryLoader;
     private UserDao userDao;
@@ -77,5 +77,18 @@ public class ComplaintDaoImpl extends CrudDaoImpl<Complaint> implements Complain
             throw new EntityInitializationException(e);
         }
         return complaint;
+    }
+
+    @Override
+    public String prepareWhereClause(Object... args) {
+
+        String where = "";
+        String category = (String) args[0];
+
+        if (!category.equals("-")) {
+            where += " WHERE type = ?";
+            this.preparedStatementParams.add(category);
+        }
+        return where;
     }
 }

@@ -5,8 +5,9 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     const COMPLAINTS = "api/complaints";
 
     var factory = {
-        getAllComplaintCategory: getAllComplaintCategory,
+        getAllComplaintCategory: getAllComplaintCategory,        
         getAllComplaints: getAllComplaints,
+        getComplaintByCategory: getComplaintByCategory,
         createComplaint: createComplaint
     };
 
@@ -15,6 +16,19 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     function getAllComplaintCategory() {
         var deferred = $q.defer();
         $http.get(`${COMPLAINTS}/categories`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function getComplaintByCategory(category, page, size) {
+        var deferred = $q.defer();
+        $http.get(`${COMPLAINTS}/${category}/${page}/${size}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },

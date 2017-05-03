@@ -17,7 +17,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements ComplaintService{
@@ -77,6 +79,16 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
         return Arrays.asList(ComplaintCategory.values());
     }
 
+    @Override
+    public Map<String, Object> getComplaintsByCategory(String category, int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        List<Complaint> complaints = this.complaintDao.getPaging(page, size, category);
+
+        LOG.debug("Fetched complaints: {}", complaints);
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.getEntityCount(category));
+        return response;
+    }
 
 //    @Override
 //    public void setStatusIntraprocess(Complaint complaint){

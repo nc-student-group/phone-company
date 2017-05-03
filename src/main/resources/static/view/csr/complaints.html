@@ -11,6 +11,33 @@
                             <md-tab label="Complaints/Suggestions">
                                 <md-content class="md-padding">
                                     <!--ALL COMPLAINTS-->
+                                    <div class="col-sm-4">
+                                        <div class="dataTables_length" id="tariffTable_length">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Show entries:</label>
+                                                <md-select ng-model="size" md-on-close="updateData()">
+                                                    <md-option value="5">5</md-option>
+                                                    <md-option value="10">10</md-option>
+                                                    <md-option value="25">25</md-option>
+                                                    <md-option value="50">50</md-option>
+                                                    <md-option value="100">100</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="dataTables_length">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Category:</label>
+                                                <md-select ng-model="currentCategory" md-on-close="updateData()" >
+                                                    <md-option value="-">ALL_CATEGORIES</md-option>
+                                                    <md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                        {{c}}
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
@@ -21,7 +48,7 @@
                                                 <hr />
 
                                                 <div class="content table-responsive ">
-                                                    <table class="table table-striped table-bordered table-hover">
+                                                    <table class="table table-striped table-bordered table-hover" id="complaintsTable">
                                                         <!--id-->
                                                         <col width="5%">
                                                         <!--client-->
@@ -40,7 +67,7 @@
                                                         <th>ID</th>
                                                         <th>Client</th>
                                                         <th>Date</th>
-                                                        <th>Type</th>
+                                                        <th>Category</th>
                                                         <th>Status</th>
                                                         <th>Subject</th>
                                                         <th>Description</th>
@@ -61,6 +88,34 @@
                                                         </tr>
                                                         </tbody>
                                                     </table>
+                                                    <div class="row">
+                                                        <div class="col-sm-7">
+                                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                                 id="complaints_table_paginate">
+                                                                <ul class="pagination">
+                                                                    <li class="paginate_button previous" id="complaintsTable_previous">
+                                                                        <a aria-controls="complaintsTable" data-dt-idx="0"
+                                                                           tabindex="0" ng-show="page > 0"
+                                                                           ng-click="previousPage()">Previous</a>
+                                                                    </li>
+                                                                    <li class="paginate_button active"><a
+                                                                            aria-controls="complaintsTable"
+                                                                            data-dt-idx="1" tabindex="0">{{page + 1}}</a>
+                                                                    </li>
+                                                                    <li class="paginate_button next pointable" id="complaintsTable_next">
+                                                                        <a
+                                                                                aria-controls="complaintsTable" data-dt-idx="2"
+                                                                                tabindex="0" ng-show="(page + 1) * size < complaintsCount"
+                                                                                ng-click="nextPage()">Next</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div>
+                                                                <label><b>Complaints count: {{complaintsCount}}</b></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
