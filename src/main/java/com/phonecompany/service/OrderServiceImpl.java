@@ -36,6 +36,13 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList()).get(0);
     }
 
+    @Override
+    public Order getResumingOrderByCustomerService(CustomerServiceDto customerService) {
+        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId()).stream().
+                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
+                .collect(Collectors.toList()).get(0);
+    }
+
     // CustomerService name changed to CustomerServiceDto because of the name collision
     public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
         LocalDate currentDate = LocalDate.now();
@@ -57,5 +64,15 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         Long clientId = customer.getId();
         return customer.getRepresentative() ? orderDao.getCountByCorporateId(clientId) :
                 orderDao.getCountByCustomerId(clientId);
+    }
+
+    @Override
+    public List<Order> getOrdersHistoryForServicesByClient(Customer customer, int page, int size) {
+        return orderDao.getOrdersForCustomerServicesByCustomerIdPaged(customer.getId(), page, size);
+    }
+
+    @Override
+    public Integer getOrdersCountForServicesByClient(Customer customer) {
+        return orderDao.getCountOfServicesByCustomerId(customer.getId());
     }
 }
