@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.VerificationToken;
@@ -83,6 +84,15 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     @Override
     public Status getStatus() {
         return Status.ACTIVATED;
+    }
+
+    @Override
+    public void validate(User user) {
+        String email = user.getEmail();
+        int countByEmail = this.userDao.getCountByEmail(email);
+        if(countByEmail != 0) {
+            throw new KeyAlreadyPresentException(email);
+        }
     }
 
     @Override

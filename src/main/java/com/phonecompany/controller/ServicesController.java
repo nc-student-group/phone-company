@@ -14,6 +14,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ public class ServicesController {
     private MailMessageCreator<Service> serviceNotificationEmailCreator;
     private EmailService<Customer> emailService;
     private CustomerService customerService;
+    private MailMessageCreator<Service> serviceActivationNotificationEmailCreator;
     private CustomerServiceService customerServiceService;
     private OrderService orderService;
 
@@ -37,11 +40,13 @@ public class ServicesController {
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                                      MailMessageCreator<Service> emailCreator,
+                              MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
-                              OrderService orderService) {
+                              OrderService orderService,
+                              @Qualifier("serviceActivationNotificationEmailCreator")
+                                          MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -49,6 +54,14 @@ public class ServicesController {
         this.customerService = customerService;
         this.customerServiceService = customerServiceService;
         this.orderService = orderService;
+        this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
+    }
+
+    @GetMapping
+    public Collection<Service> getAllServices() {
+        List<Service> allServices = this.serviceService.getAll();
+        LOG.debug("Services fetched from the storage: {}", allServices);
+        return allServices;
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
@@ -85,7 +98,11 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
-        this.serviceService.activateServiceForCustomer(serviceId, loggedInCustomer);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -101,6 +118,11 @@ public class ServicesController {
         Service serviceFetchedById = this.serviceService.getById(serviceId);
         LOG.debug("Service fetched by id: {}", serviceFetchedById);
         return serviceFetchedById;
+    }
+
+    @GetMapping("/empty-service")
+    public Service getEmptyService() {
+        return new Service();
     }
 
     @PutMapping("/{id}")

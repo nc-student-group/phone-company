@@ -8,14 +8,17 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TariffController {
@@ -42,6 +45,17 @@ public class TariffController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private EmailService<User> emailService;
+
+    @Autowired
+    @Qualifier("tariffDeactivationEmailCreator")
+    private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
+
+    @Autowired
+    @Qualifier("tariffNotificationEmailCreator")
+    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -90,6 +104,12 @@ public class TariffController {
         tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
         Tariff savedTariff = tariffService.save(tariff);
+
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+
+        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
+                .constructMessage(savedTariff);
+        this.emailService.sendMail(notificationEmail, customer);
         LOGGER.debug("Tariff added {}", savedTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -207,12 +227,15 @@ public class TariffController {
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
+        SimpleMailMessage notificationMessage = this.tariffDeactivationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
-        customerTariffService.suspendCustomerTariff(data);
+        this.customerTariffService.suspendCustomerTariff(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

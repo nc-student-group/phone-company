@@ -2,6 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.dao.interfaces.VerificationTokenDao;
+import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.VerificationToken;
@@ -60,6 +61,21 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public Status getStatus() {
         return Status.INACTIVE;
+    }
+
+    @Override
+    public void validate(Customer customer) {
+        Assert.notNull(customer);
+        String phone = customer.getPhone();
+        int countByPhone = this.customerDao.getCountByPhone(phone);
+        if(countByPhone != 0) {
+            throw new KeyAlreadyPresentException(phone);
+        }
+        String email = customer.getEmail();
+        int countByEmail = this.customerDao.getCountByEmail(email);
+        if(countByEmail != 0) {
+            throw new KeyAlreadyPresentException(email);
+        }
     }
 
     @Override

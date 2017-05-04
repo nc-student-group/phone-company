@@ -25,13 +25,10 @@ import java.io.IOException;
 @PropertySource("classpath:s3.properties")
 public class FileServiceImpl implements FileService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileServiceImpl.class);
+
     @Value("${bucket.name}")
     private String BUCKET_NAME;
-//    @Value("${access.key.id}")
-    private String ACCESS_KEY_ID;
-//    @Value("${secret.access.key}")
-    private String SECRET_ACCESS_KEY;
     @Value("${s3.url}")
     private String S3_URL;
 
@@ -47,15 +44,15 @@ public class FileServiceImpl implements FileService {
     public String stringToFile(String picture, String path) {
         if (picture != null) {
             if (picture.substring(0, 10).equals("data:image")) {
-                LOGGER.debug("Image metadata: {}", picture.substring(0, 10));
+                LOG.debug("Image metadata: {}", picture.substring(0, 10));
                 String base64Image = picture.split(",")[1];
-                LOGGER.debug("base64 representation of the binary file with an image: {}", base64Image);
+                LOG.debug("base64 representation of the binary file with an image: {}", base64Image);
                 byte[] imageBytes = DatatypeConverter.parseBase64Binary(base64Image);
                 BufferedImage img = null;
                 try {
                     img = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                    LOGGER.debug("picture.split(\";\")[0]: {}", picture.split(";")[0]);
-                    LOGGER.debug("picture.split(\";\")[0].split(\"/\")[1]: {}", picture.split(";")[0].split("/")[1]);
+                    LOG.debug("picture.split(\";\")[0]: {}", picture.split(";")[0]);
+                    LOG.debug("picture.split(\";\")[0].split(\"/\")[1]: {}", picture.split(";")[0].split("/")[1]);
                     File file = new File("picture." + picture.split(";")[0].split("/")[1]);
                     ImageIO.write(img, picture.split(";")[0].split("/")[1], file);
                     return uploadFileToAmazon(file, path);
@@ -68,12 +65,15 @@ public class FileServiceImpl implements FileService {
     }
 
     public String uploadFileToAmazon(File file, String path) {
-        AWSCredentials credentials = new BasicAWSCredentials(ACCESS_KEY_ID, SECRET_ACCESS_KEY);
+        String access_key_id = System.getenv().get("ACCESS_KEY_ID");
+        LOG.debug("Access key id: {}", access_key_id);
+        String secret_access_key = System.getenv().get("SECRET_ACCESS_KEY");
+        LOG.debug("Secret access key: {}", secret_access_key);
+        AWSCredentials credentials = new BasicAWSCredentials(access_key_id, secret_access_key);
         TransferManager tm = new TransferManager(credentials);
         try {
-//            path += path+"/"+ Calendar.getInstance().getTimeInMillis()+"/";
             Upload upload = tm.upload(BUCKET_NAME, path + "/" + file.getName(), file);
-            LOGGER.info("TARIFF PICTURE: " + path + file.getName());
+            LOG.info("TARIFF PICTURE: " + path + file.getName());
             upload.waitForCompletion();
             file.delete();
             return S3_URL + BUCKET_NAME + "/" + path + "/" + file.getName();

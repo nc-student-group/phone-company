@@ -9,7 +9,6 @@
     function CustomerInfoController($scope, $location, $log, CustomerInfoService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
-        $scope.tariffsFound = 0;
         $scope.ordersFound = 0;
         $scope.servicesOrdersFound = 0;
         $scope.mailingSwitchDisabled = true;
@@ -23,7 +22,7 @@
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
-            console.log('Setting mailing agreement to: ${$scope.customer.isMailingEnabled}');
+            console.log(`Setting mailing agreement to: ${$scope.customer.isMailingEnabled}`);
             CustomerInfoService.patchCustomer($scope.customer);
         };
 
@@ -32,10 +31,10 @@
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
                 $scope.mailingSwitchDisabled = false;
-                $scope.loading = false;
+                $scope.preloader.send = false;
             });
 
-        $scope.loading = true;
+        $scope.preloader.send = true;
         $scope.loadCurrentServices = function() {
             CustomerInfoService.getCurrentServices()
                 .then(function(data) {
@@ -50,7 +49,7 @@
         };
         $scope.loadCurrentServices();
 
-        $scope.loading = true;
+        $scope.preloader.send = true;
         $scope.loadCurrentTariff = function () {
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {
@@ -65,7 +64,6 @@
         };
         $scope.loadCurrentTariff();
 
-        $scope.loading = true;
         $scope.loadTariffsHistory = function () {
             $scope.loading = true;
             CustomerInfoService.getTariffsHistory($scope.page, $scope.size)

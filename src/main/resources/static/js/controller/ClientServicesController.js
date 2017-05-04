@@ -6,62 +6,51 @@ angular.module('phone-company').controller('ClientServicesController', [
     '$rootScope',
     'ServicesService',
     '$anchorScroll',
-    function ($scope, $location, $rootScope, ServicesService, $anchorScroll) {
-        $scope.activePage = 'services';
+    'filterFilter',
+    function ($scope, $location, $rootScope, ServicesService, filterFilter) {
+
         $scope.shifted = false;
-        $scope.loading = true;
-        $scope.currentCategory = 0;
         $scope.page = 0;
         $scope.size = 6;
 
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
+            console.log(`$scope.categories[0].categoryName ${$scope.categories[0].categoryName}`);
+            $scope.currentCategory = $scope.categories[0].categoryName;
             let allCategories = JSON.stringify($scope.categories);
             console.log(`All categories: ${allCategories}`);
         });
 
-        $scope.updateServicesByCategory = function () {
-            console.log(`Current category: ${$scope.currentCategory + 1}`);
-            $scope.loading = true;
-            ServicesService.getServicesByProductCategoryId($scope.currentCategory + 1, $scope.page, $scope.size)
+        $scope.preloader.send = true;
+        $scope.getAllServices = function () {
+            ServicesService.getAllServices()
                 .then(function (data) {
-                    $scope.services = data.services;
-                    $scope.servicesCount = data.servicesCount;
-                    console.log(JSON.stringify($scope.services));
-                    $scope.loading = false;
+                    $scope.allServices = data;
+                    $scope.filterServicesByCurrentCategory();
+                    $scope.preloader.send = false;
                 }, function () {
-                    $scope.loading = false;
+                    $scope.preloader.send = false;
                 });
         };
 
-        $scope.loading = true;
-        ServicesService.getServicesByProductCategoryId($scope.currentCategory + 1, $scope.page, $scope.size)
-            .then(function (data) {
-                $scope.services = data.services;
-                console.log(JSON.stringify($scope.services));
-                $scope.servicesCount = data.servicesCount;
-                $scope.loading = false;
-            }, function () {
-                $scope.loading = false;
-            });
+        $scope.getAllServices();
 
-        $scope.showMore = function () {
-            if ($scope.size < $scope.servicesCount) {
-                $scope.loading = true;
-                $scope.size = $scope.size + 3;
-                ServicesService.getServicesByProductCategoryId($scope.currentCategory + 1, $scope.page, $scope.size)
-                    .then(function (data) {
-                        $scope.services = data.services;
-                        $scope.servicesCount = data.servicesCount;
-                        $scope.loading = false;
-                    }, function () {
-                        $scope.loading = false;
-                    });
-            }
+        $scope.filterServicesByCurrentCategory = function () {
+            $scope.services = $scope.allServices.filter(function (service) {
+                return service.productCategory.categoryName === $scope.currentCategory;
+            });
+            console.log(`Filtered services ${JSON.stringify($scope.services)}`);
+        };
+
+        $scope.specifyCurrentCategory = function (category) {
+            $scope.currentCategory = category;
+            console.log(`New Current category: ${category}`);
+            $scope.filterServicesByCurrentCategory();
         };
 
         $scope.showServiceDetails = function (id) {
             $location.path("/client/services/" + id);
         };
     }
-]);
+])
+;

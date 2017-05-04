@@ -19,14 +19,14 @@ import java.sql.SQLException;
  * @param <T> entity type
  */
 public abstract class AbstractUserDaoImpl<T extends User>
-    extends AbstractPageableDaoImpl<T> implements AbstractUserDao<T> {
+        extends AbstractPageableDaoImpl<T> implements AbstractUserDao<T> {
 
     /**
      * Finds entity by its email
      *
      * @param email email to search by
-     * @return      entity found by email or {@literal null}
-     *              if none was found
+     * @return entity found by email or {@literal null}
+     * if none was found
      */
     @Override
     public T findByEmail(String email) {
@@ -44,7 +44,7 @@ public abstract class AbstractUserDaoImpl<T extends User>
     }
 
     @Override
-    public void updateStatus(long id, Status status){
+    public void updateStatus(long id, Status status) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateUserStatus"))) {
             ps.setString(1, status.name());
@@ -53,5 +53,29 @@ public abstract class AbstractUserDaoImpl<T extends User>
         } catch (SQLException e) {
             throw new EntityModificationException(id, e);
         }
+    }
+
+    @Override
+    public int getCountByKey(String key, String countQuery) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(countQuery)) {
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(key, e);
+        }
+    }
+
+    @Override
+    public int getCountByEmail(String email) {
+        return this.getCountByKey(email, this.getCountByEmailQuery());
+    }
+
+    private String getCountByEmailQuery() {
+        return this.getQuery("count.by.email");
     }
 }

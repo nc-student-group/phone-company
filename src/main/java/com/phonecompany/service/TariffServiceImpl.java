@@ -10,8 +10,11 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -29,17 +32,37 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
+    private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
+    private EmailService<User> emailService;
+    private UserService userService;
 
     @Autowired
-    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService,
-                             FileService fileService, OrderService orderService,
-                             CustomerTariffService customerTariffService) {
+    public TariffServiceImpl(TariffDao tariffDao,
+                             TariffRegionService tariffRegionService,
+                             FileService fileService,
+                             OrderService orderService,
+                             CustomerTariffService customerTariffService,
+                             @Qualifier("tariffActivationNotificationEmailCreator")
+                                     MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator,
+                             @Qualifier("tariffActivationNotificationEmailCreator")
+                                     MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator,
+                             @Qualifier("tariffNotificationEmailCreator")
+                                     MailMessageCreator<Tariff> tariffNotificationEmailCreator,
+                             EmailService<User> emailService,
+                             UserService userService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
+        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
+        this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
+        this.emailService = emailService;
+        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
+        this.userService = userService;
     }
 
     @Override
@@ -161,9 +184,15 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100));
-        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()/100), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
+        LOGGER.debug("TARIFF PRICE: "
+                + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100));
+        CustomerTariff customerTariff = new CustomerTariff(customer, null,
+                tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100),
+                CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
         customerTariffService.save(customerTariff);
+        SimpleMailMessage notificationMessage = this.tariffActivationNotificationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
         orderService.update(activationOrder);
@@ -181,6 +210,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         customerTariffService.update(customerTariff);
         deactivationOrder.setOrderStatus(OrderStatus.DONE);
         orderService.update(deactivationOrder);
+        SimpleMailMessage notificationMessage = this.tariffDeactivationNotificationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         LOGGER.debug("Tariff " + customerTariff.getId() + " deactivated.");
     }
 
@@ -191,8 +223,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()/100));
-        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()/100), CustomerProductStatus.ACTIVE, tariff);
+        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount() / 100));
+        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount() / 100), CustomerProductStatus.ACTIVE, tariff);
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -207,6 +239,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         } else {
             if (customer.getRepresentative()) {
                 return this.activateTariffForCorporateCustomer(tariffId, customer);
+
             } else {
                 return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative to change tariff plan."), HttpStatus.CONFLICT);
             }
@@ -227,6 +260,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             this.deactivateSingleTariff(customerTariff);
         }
         this.activateSingleTariff(customer, tariffRegion);
+
+        if (customerTariff != null) {
+            SimpleMailMessage notificationMessage = this.tariffDeactivationNotificationEmailCreator
+                    .constructMessage(customerTariff.getTariff());
+            this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+        }
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
@@ -243,11 +282,16 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             this.deactivateCorporateTariff(customerTariff);
         }
         this.activateCorporateTariff(customer.getCorporate(), tariff);
+        if (customerTariff != null) {
+            SimpleMailMessage notificationMessage = this.tariffDeactivationNotificationEmailCreator
+                    .constructMessage(customerTariff.getTariff());
+            this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+        }
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions){
+    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions) {
         LocalDate currentDate = LocalDate.now();
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             return new ResponseEntity<>(new Error("Tariff with name \"" +
@@ -258,9 +302,18 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
                 "tariff/" + tariff.hashCode())); // no such thing as get time in millis
         Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
+
+        //???????????????
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentlyLoggedInUser = this.userService.findByEmail(securityUser.getUsername());
+        SimpleMailMessage notificationMessage =
+                this.tariffNotificationEmailCreator.constructMessage(savedTariff);
+        this.emailService.sendMail(notificationMessage, currentlyLoggedInUser);
+        //???????????????
+
         LOGGER.debug("Tariff added {}", savedTariff);
         this.addTariffRegions(tariffRegions, savedTariff);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
