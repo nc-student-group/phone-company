@@ -26,9 +26,9 @@ public class TariffNotificationEmailCreator extends AbstractEmailCreator<Tariff>
     public String getEmailBody(Tariff tariff) {
         Context context = new Context();
         context.setVariable("tariffName", tariff.getTariffName());
-        context.setVariable("tariffName", tariff.getPrice());
+        context.setVariable("price", tariff.getPrice());
         return this.templateEngine
-                .process("service-activation-notification", context);
+                .process("new-tariffs-notification", context);
     }
 
     @Override
