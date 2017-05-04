@@ -1,10 +1,7 @@
 package com.phonecompany.service;
 
-import com.phonecompany.exception.EmailAlreadyPresentException;
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.User;
-import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.ResetPasswordEvent;
 import com.phonecompany.service.interfaces.AbstractUserService;
@@ -72,15 +69,12 @@ public abstract class AbstractUserServiceImpl<T extends User>
 
     @Override
     public T save(T entity) {
-        Assert.notNull(entity, "User should not be null");
-        User userByEmail = this.findByEmail(entity.getEmail());
-        if(userByEmail != null) {
-            throw new EmailAlreadyPresentException(entity.getEmail());
-        }
+        this.validate(entity);
         entity.setStatus(this.getStatus());
         entity.setPassword(shaPasswordEncoder.encodePassword(entity.getPassword(), null));
         return super.save(entity);
     }
 
+    public abstract void validate(T entity);
     public abstract Status getStatus();
 }

@@ -59,15 +59,11 @@
             </div>
         </nav>
 
-        <div class="content">
+        <div class="content" ng-show="preloader.send === false" >
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <img class="center-block" style="padding-top: 50px"
-                                 ng-show="loading === true" src="../../css/ring.gif" alt=""/>
-
-                            <div ng-show="loading === false">
                                 <div class="header">
                                     <h4 class="title">{{currentService.serviceName}}</h4>
                                 </div>

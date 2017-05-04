@@ -11,4 +11,8 @@ public interface CustomerDao extends CrudDao<Customer>,
     Customer getByVerificationToken(String token);
 
     List<Customer> getByCorporateId(long corporateId);
+
+    int getCountByPhone(String phone);
+
+    int getCountByEmail(String email);
 }

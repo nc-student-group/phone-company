@@ -22,7 +22,7 @@ angular.module('phone-company').controller('AuthorizeController', [
         $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
         $scope.phonePattern = /^\+38077[0-9]{7}$/;
         $scope.textFieldPattern = /^[a-zA-Z]+$/;
-        $scope.numberPattern = /^[^-e]*[0-9]+$/;
+        $scope.numberPattern = /^[^-e]*[1-9]+$/;
         $scope.houseNumberPattern=/^[^!@#$%^&*()_+-]*$/
 
         $scope.getNewCustomer = function () {
