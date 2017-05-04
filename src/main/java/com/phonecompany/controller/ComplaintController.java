@@ -1,8 +1,10 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.service.interfaces.ComplaintService;
+import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,12 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
+    private CustomerService customerService;
 
     @Autowired
-    public ComplaintController(ComplaintService complaintService) {
+    public ComplaintController(ComplaintService complaintService, CustomerService customerService) {
         this.complaintService = complaintService;
+        this.customerService = customerService;
     }
 
     @PostMapping(value = "")
@@ -59,5 +63,21 @@ public class ComplaintController {
                                                        @PathVariable("size") int size) {
         LOG.debug("Fetching complaints for the category: {}", category);
         return complaintService.getComplaintsByCategory(category, page, size);
+    }
+
+    @GetMapping("/complaint/{id}/{page}/{size}")
+    public Map<String, Object> getComplaintsByCustomer(@PathVariable("id") int id,
+                                                       @PathVariable("page") int page,
+                                                       @PathVariable("size") int size) {
+        LOG.debug("Fetching complaints for the customer with id: {}", id);
+        return complaintService.getComplaintsByCustomer(id, page, size);
+    }
+
+    @GetMapping("/customer/{id}")
+    public Customer getCustomer(@PathVariable("id") long id) {
+        LOG.debug("Customer with id: {}", id);
+        Customer customer = customerService.getById(id);
+        LOG.debug("Found: ", customer);
+        return customer;
     }
 }

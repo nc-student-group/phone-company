@@ -8,7 +8,9 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
         getAllComplaintCategory: getAllComplaintCategory,        
         getAllComplaints: getAllComplaints,
         getComplaintByCategory: getComplaintByCategory,
-        createComplaint: createComplaint
+        getComplaintByCustomer: getComplaintByCustomer,
+        createComplaint: createComplaint,
+        getCustomer: getCustomer
     };
 
     return factory;
@@ -29,6 +31,20 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     function getComplaintByCategory(category, page, size) {
         var deferred = $q.defer();
         $http.get(`${COMPLAINTS}/${category}/${page}/${size}`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function getComplaintByCustomer(id, page, size) {
+        var deferred = $q.defer();
+        console.log(`Complaints for user with id: ${JSON.stringify(id)}`);
+        $http.get(`${COMPLAINTS}/complaint/${id}/${page}/${size}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -64,5 +80,18 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
             });
         return deferred.promise;
     }
+
+    function getCustomer(id) {
+        var deferred = $q.defer();
+        $http.get(`${COMPLAINTS}/customer/${id}`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    };
 
 }]);
