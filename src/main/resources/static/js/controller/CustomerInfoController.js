@@ -9,10 +9,12 @@
     function CustomerInfoController($scope, $location, $log, CustomerInfoService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
-        $scope.tariffsFound = 0;
+        $scope.ordersFound = 0;
         $scope.mailingSwitchDisabled = true;
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
+        $scope.page = 0;
+        $scope.size = 5;
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
@@ -43,17 +45,43 @@
         };
         $scope.loadCurrentTariff();
 
-        $scope.loading = true;
         $scope.loadTariffsHistory = function () {
-            CustomerInfoService.getTariffsByCustomerId()
+            $scope.loading = true;
+            CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
                 .then(function (data) {
-                    $scope.customerTariffs = data;
-                    console.log($scope.customerTariffs);
-                    $scope.tariffsFound = data.length;
+                    $scope.orders = data.orders;
+                    $scope.ordersFound = data.ordersFound;
+                    console.log($scope.orders);
                     $scope.loading = false;
                 });
         };
         $scope.loadTariffsHistory();
+
+        $scope.nextPage = function () {
+            if (($scope.page + 1) * $scope.size < $scope.ordersFound) {
+                $scope.loading = true;
+                $scope.page = $scope.page + 1;
+                CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
+
+        $scope.previousPage = function () {
+            if ($scope.page > 0) {
+                $scope.loading = true;
+                $scope.page = $scope.page - 1;
+                CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
 
         $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({

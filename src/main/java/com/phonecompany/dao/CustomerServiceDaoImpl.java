@@ -65,8 +65,8 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
         CustomerServiceDto customerService = new CustomerServiceDto();
         try {
             customerService.setId(rs.getLong("id"));
-            customerService.setCustomer(customerDao.getById(rs.getLong("customer_id)")));
-            customerService.setService(serviceDao.getById(rs.getLong("service_id)")));
+            customerService.setCustomer(customerDao.getById(rs.getLong("customer_id")));
+            customerService.setService(serviceDao.getById(rs.getLong("service_id")));
             customerService.setPrice(rs.getDouble("price"));
             customerService.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("service_status")));
 

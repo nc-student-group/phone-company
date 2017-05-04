@@ -145,6 +145,7 @@ public class TariffController {
         Customer customer = customerService.findByEmail(securityUser.getUsername());
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
+            LOGGER.debug("Get available tariffs for single customer.");
             response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
             response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
@@ -213,6 +214,19 @@ public class TariffController {
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
         customerTariffService.suspendCustomerTariff(data);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
+    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
+                                                    @PathVariable("size") int size) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        LOGGER.debug("Get all tariff orders by customer id = " + customer);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountByClient(customer));
+        map.put("orders", orderService.getOrdersHistoryByClient(customer, page, size));
+        return map;
     }
 
 }

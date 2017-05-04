@@ -1,13 +1,10 @@
 package com.phonecompany.config;
 
 import com.phonecompany.service.interfaces.EmailService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.annotation.Order;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
@@ -15,9 +12,6 @@ import java.util.Properties;
 @Configuration
 @PropertySource("classpath:mail.properties")
 public class EmailConfig {
-
-    @Value("${available.email.threads}")
-    public static Integer NUMBER_OF_AVAILABLE_THREADS;
 
     @Value("${mail.host}")
     private String mailHost;
@@ -52,4 +46,3 @@ public class EmailConfig {
         return javaMailSender;
     }
 }
-

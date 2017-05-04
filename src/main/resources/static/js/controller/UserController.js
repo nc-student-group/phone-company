@@ -28,7 +28,7 @@
             $log.debug('User: ' + JSON.stringify($scope.user));
             UserService.saveUserByAdmin($scope.user)
                 .then(function (createdUser) {
-                    toastr.success(`User with an email ${createdUser.email} has been successfully created. Please, check your email for the password`);
+                    toastr.success('User with an email ${createdUser.email} has been successfully created. Email with password was sent to user');
 
                     $log.debug("Created user: ", createdUser);
                     $scope.users.push(createdUser);
