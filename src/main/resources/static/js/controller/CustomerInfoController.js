@@ -22,14 +22,14 @@
         $scope.servicesSize = 5;
 
         $scope.setMailingAgreement = function () {
-            console.log('Current customer state ${JSON.stringify($scope.customer)}');
+            console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
             console.log('Setting mailing agreement to: ${$scope.customer.isMailingEnabled}');
             CustomerInfoService.patchCustomer($scope.customer);
         };
 
         CustomerInfoService.getCustomer()
             .then(function (data) {
-                console.log('Retrieved customer ${JSON.stringify(data)}');
+                console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
                 $scope.mailingSwitchDisabled = false;
                 $scope.loading = false;
@@ -40,7 +40,7 @@
             CustomerInfoService.getCurrentServices()
                 .then(function(data) {
                     $scope.hasCurrentServices = false;
-                    console.log('Retrieved current services ${JSON.stringify(data)}}');
+                    console.log(`Retrieved current services ${JSON.stringify(data)}}`);
                     $scope.currentServices = data;
                     if ($scope.currentServices !== "") {
                         $scope.hasCurrentServices = true;
@@ -55,7 +55,7 @@
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {
                     $scope.hasCurrentTariff = false;
-                    console.log('Retrieved current tariff ${JSON.stringify(data)}');
+                    console.log(`Retrieved current tariff ${JSON.stringify(data)}`);
                     $scope.currentTariff = data;
                     if ($scope.currentTariff !== "") {
                         $scope.hasCurrentTariff = true;
@@ -143,6 +143,34 @@
             }
         };
 
+        $scope.showServiceDetails = function (customerService) {
+            $mdDialog.show({
+                controller: ShowServiceDetailsController,
+                templateUrl: '../../view/client/moreAboutCustomerServiceModal.html',
+                locals : {
+                    customerService: customerService
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function(answer){});
+        };
+
+        function ShowServiceDetailsController($scope, $mdDialog, customerService) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                $mdDialog.cancel();
+            };
+        }
 
         $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({

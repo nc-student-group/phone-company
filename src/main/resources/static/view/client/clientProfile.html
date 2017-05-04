@@ -265,9 +265,27 @@
                                                                     <p style="word-break: break-all">
                                                                         {{s.service.previewDescription}}
                                                                     </p>
+                                                                    <p>
+                                                                        <a style="cursor: pointer"
+                                                                           ng-click="showServiceDetails(s)">
+                                                                            Learn more</a>
+                                                                    </p>
                                                                     <a style="cursor: pointer"
-                                                                       ng-click="showServiceDetails(s.id)">
-                                                                        Learn more</a>
+                                                                       ng-show="s.orderStatus === 'ACTIVE'"
+                                                                       ng-click="deactivateCustomerService(s)">
+                                                                        Deactivate</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'ACTIVE'"
+                                                                       ng-click="suspendCustomerService(s)">
+                                                                        Suspend</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'SUSPENDED'"
+                                                                       ng-click="activateCustomerService(s)">
+                                                                        Activate</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'SUSPENDED'"
+                                                                       ng-click="deactivateCustomerService(s)">
+                                                                        Deactivate</a>
                                                                 </figcaption>
                                                             </figure>
                                                         </div>
@@ -281,7 +299,7 @@
                                                     <hr/>
                                                     <div ng-show="servicesOrdersFound === 0">
                                                         <div class="row">
-                                                            <h3 style="text-align: center">No current services available!</h3>
+                                                            <h3 style="text-align: center">There were no actions with services yet!</h3>
                                                         </div>
                                                     </div>
                                                     <div ng-show="servicesOrdersFound > 0">
