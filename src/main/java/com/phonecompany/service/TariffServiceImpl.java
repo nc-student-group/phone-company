@@ -34,8 +34,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private CustomerTariffService customerTariffService;
     private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
-    private EmailService<Customer> emailService;
-    private CustomerService customerService;
+    private EmailService<User> emailService;
+    private UserService userService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
@@ -47,8 +47,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                              MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator,
                              @Qualifier("tariffNotificationEmailCreator")
                              MailMessageCreator<Tariff> tariffNotificationEmailCreator,
-                             EmailService<Customer> emailService,
-                             CustomerService customerService) {
+                             EmailService<User> emailService,
+                             UserService  userService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
@@ -58,7 +58,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
         this.emailService = emailService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
-        this.customerService = customerService;
+        this.userService = userService;
     }
 
     @Override
@@ -279,7 +279,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
 
         //???????????????
-        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentlyLoggedInUser = this.userService.findByEmail(securityUser.getUsername());
         SimpleMailMessage notificationMessage =
                 this.tariffNotificationEmailCreator.constructMessage(savedTariff);
         this.emailService.sendMail(notificationMessage, currentlyLoggedInUser);
