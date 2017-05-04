@@ -8,6 +8,7 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,9 +44,6 @@ public class TariffController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
     @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
     public List<Region> getAllRegions() {
@@ -94,6 +92,8 @@ public class TariffController {
         tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
         Tariff savedTariff = tariffService.save(tariff);
+        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+
         LOGGER.debug("Tariff added {}", savedTariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

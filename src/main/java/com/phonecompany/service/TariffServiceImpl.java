@@ -10,8 +10,11 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -29,17 +32,33 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
+    private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
+    private EmailService<Customer> emailService;
+    private CustomerService customerService;
 
     @Autowired
-    public TariffServiceImpl(TariffDao tariffDao, TariffRegionService tariffRegionService,
-                             FileService fileService, OrderService orderService,
-                             CustomerTariffService customerTariffService) {
+    public TariffServiceImpl(TariffDao tariffDao,
+                             TariffRegionService tariffRegionService,
+                             FileService fileService,
+                             OrderService orderService,
+                             CustomerTariffService customerTariffService,
+                             @Qualifier("tariffActivationNotificationEmailCreator")
+                             MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator,
+                             @Qualifier("tariffNotificationEmailCreator")
+                             MailMessageCreator<Tariff> tariffNotificationEmailCreator,
+                             EmailService<Customer> emailService,
+                             CustomerService customerService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
+        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
+        this.emailService = emailService;
+        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
+        this.customerService = customerService;
     }
 
     @Override
@@ -258,6 +277,14 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
                 "tariff/" + tariff.hashCode())); // no such thing as get time in millis
         Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
+
+        //???????????????
+        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+        SimpleMailMessage notificationMessage =
+                this.tariffNotificationEmailCreator.constructMessage(savedTariff);
+        this.emailService.sendMail(notificationMessage, currentlyLoggedInUser);
+        //???????????????
+
         LOGGER.debug("Tariff added {}", savedTariff);
         this.addTariffRegions(tariffRegions, savedTariff);
         return new ResponseEntity<>(HttpStatus.OK);

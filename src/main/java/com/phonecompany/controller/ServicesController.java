@@ -31,19 +31,23 @@ public class ServicesController {
     private MailMessageCreator<Service> serviceNotificationEmailCreator;
     private EmailService<Customer> emailService;
     private CustomerService customerService;
+    private MailMessageCreator<Service> serviceActivationNotificationEmailCreator;
 
     @Autowired
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                                      MailMessageCreator<Service> emailCreator,
+                              MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
-                              CustomerService customerService) {
+                              CustomerService customerService,
+                              @Qualifier("serviceActivationNotificationEmailCreator")
+                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
         this.emailService = emailService;
         this.customerService = customerService;
+        this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
     }
 
     @GetMapping
@@ -87,7 +91,11 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
-        this.serviceService.activateServiceForCustomer(serviceId, loggedInCustomer);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
