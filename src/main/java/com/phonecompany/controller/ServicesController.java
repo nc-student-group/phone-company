@@ -148,4 +148,10 @@ public class ServicesController {
         customerServiceService.deactivateCustomerService(customerService);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping(value = "/suspend")
+    public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
+        customerServiceService.suspendCustomerService(data);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

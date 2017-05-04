@@ -12,6 +12,7 @@ angular.module('phone-company').factory('CustomerInfoService',
         const DEACTIVATE_TARIFF_URL = "api/customer/tariff/deactivate";
         const DEACTIVATE_SERVICE_URL = "api/services/deactivate";
         const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
+        const SUSPEND_SERVICE_URL = "api/services/suspend";
 
         return {
             getCurrentTariff: getCurrentTariff,
@@ -21,6 +22,7 @@ angular.module('phone-company').factory('CustomerInfoService',
             deactivateTariff: deactivateTariff,
             deactivateService: deactivateService,
             suspendTariff: suspendTariff,
+            suspendService: suspendService,
             getTariffsHistory: getTariffsHistory,
             getServicesHistory: getServicesHistory
         };
@@ -80,6 +82,19 @@ angular.module('phone-company').factory('CustomerInfoService',
         function suspendTariff(data) {
             let deferred = $q.defer();
             $http.post(SUSPEND_TARIFF_URL, data).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function suspendService(data) {
+            let deferred = $q.defer();
+            $http.post(SUSPEND_SERVICE_URL, data).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

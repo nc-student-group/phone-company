@@ -276,7 +276,7 @@
                                                                         Deactivate</a>
                                                                     <a style="cursor: pointer"
                                                                        ng-show="s.orderStatus === 'ACTIVE'"
-                                                                       ng-click="suspendCustomerService(s)">
+                                                                       ng-click="suspendCustomerService(s, daysToExecution, loadCurrentServices, loadServicesHistory)">
                                                                         Suspend</a>
                                                                     <a style="cursor: pointer"
                                                                        ng-show="s.orderStatus === 'SUSPENDED'"

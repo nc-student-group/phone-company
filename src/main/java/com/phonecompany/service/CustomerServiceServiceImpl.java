@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto> implements CustomerServiceService{
@@ -62,29 +63,26 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
         return customerService;
     }
 
-    /*
     @Override
-    public CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff) {
-        if(CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
-            Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);
-            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
-            orderService.update(resumingOrder);
-        }
-        customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
+    public CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData) {
+        CustomerServiceDto customerService = customerServiceDao.
+                getById((new Long((Integer)suspensionData.get("customerServiceId"))));
+        Integer daysToExecution = (Integer) suspensionData.get("daysToExecution");
+
+        customerService.setOrderStatus(CustomerProductStatus.SUSPENDED);
+
         LocalDate now  = LocalDate.now();
+        LocalDate executionDate = now.plusDays(daysToExecution);
 
-        Order deactivationOrder = new Order();
-        deactivationOrder.setCustomerTariff(customerTariff);
-        deactivationOrder.setCreationDate(now);
-        deactivationOrder.setExecutionDate(now);
-        deactivationOrder.setOrderStatus(OrderStatus.DONE);
-        deactivationOrder.setType(OrderType.DEACTIVATION);
+        Order suspensionOrder = new Order(customerService, OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
-        customerTariffDao.update(customerTariff);
-        orderService.save(deactivationOrder);
+        Order resumingOrder = new Order(customerService, OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
 
-        return customerTariff;
+        customerServiceDao.update(customerService);
+        orderService.save(suspensionOrder);
+        orderService.save(resumingOrder);
+
+        return customerService;
     }
-    * */
 }
 

@@ -251,6 +251,57 @@
                 });
             };
         }
+
+        $scope.suspendCustomerService = function (customerService, daysToExecution,
+                                                  loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: SuspendCustomerServiceDialogController,
+                templateUrl: '../../view/client/suspendCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    daysToExecution: daysToExecution,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function SuspendCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
+                                                        loadCurrentServices, loadServicesHistory) {
+            $scope.data = {};
+            $scope.data.customerServiceId = customerService.id;
+            $scope.data.customerService = customerService;
+            $scope.data.daysToExecution = 1;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                if ($scope.data.daysToExecution !== undefined) {
+                    CustomerInfoService.suspendService($scope.data).then(function () {
+                        toastr.success("Your service " + $scope.data.customerService.service.serviceName +
+                            " was successfully suspended for " + $scope.data.daysToExecution +
+                            " days!", "Service suspension");
+                        $mdDialog.cancel();
+                        loadCurrentServices();
+                        loadServicesHistory();
+                    });
+                } else {
+                    toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
+                }
+            };
+        }
+
         $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
                                                      loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({

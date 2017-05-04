@@ -1,0 +1,24 @@
+<md-dialog aria-label="Suspension Modal Window">
+    <div class="modal-window">
+        <h3>Service suspension <span class="close-icon" ng-click="cancel()"></span></h3>
+        <div class="send-review">
+            <div class="row">
+                <div class="col-md-7 modal-label">Your service:</div>
+                <div class="col-md-5 modal-label">Price:</div>
+                <div class="col-md-7 modal-label"><b>"{{customerService.service.serviceName}}"</b></div>
+                <div class="col-md-5 modal-label"><b>{{customerService.price}} uah</b></div>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <div class="col-md-9">
+                    <p>Suspension period (in days):</p>
+                </div>
+                <div class="col-md-9">
+                    <input class="form-control" ng-model="data.daysToExecution" type="number" min="1" max="365" value="1"  />
+                </div>
+            </div>
+            <div class="wrap_btn">
+                <input type="submit" class="btn-post-comment" ng-click="answer()" value="Suspend">
+            </div>
+        </div>
+    </div>
+</md-dialog>
