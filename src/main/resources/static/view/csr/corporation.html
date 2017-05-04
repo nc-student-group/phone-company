@@ -21,6 +21,7 @@
                                         <th>Name</th>
                                         <th>Second name</th>
                                         <th>Last name</th>
+                                        <th></th>
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="c in customers">
@@ -28,6 +29,9 @@
                                             <td>{{c.firstName}}</td>
                                             <td>{{c.secondName}}</td>
                                             <td>{{c.lastName}}</td>
+                                            <td>
+                                                <button class="btn btn-default btn-fill" ng-click="deleteCustomerFromCompany(c)">Remove</button>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

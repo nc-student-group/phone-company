@@ -78,7 +78,7 @@ angular.module('phone-company').controller('TariffDetailController', [
                     $location.path("/client");
                     $scope.preloader.send = false;
                 }, function (data) {
-                    toastr.error(data.message, 'Error');
+                    toastr.error(data.data.message, 'Error');
                     $mdDialog.cancel();
                     $scope.preloader.send = false;
                     $location.path("/client/tariffs/available");

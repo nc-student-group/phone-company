@@ -156,81 +156,69 @@
                                                     <h4 class="title">History of my tariff plans</h4>
                                                 </div>
                                                 <hr/>
-                                                <table class="table table-striped table-bordered table-hover">
-                                                    <!--name-->
-                                                    <col width="10%">
-                                                    <!--price-->
-                                                    <col width="8%">
-                                                    <!--status-->
-                                                    <col width="17%">
-                                                    <!--calls-->
-                                                    <col width="25%">
-                                                    <!--sms-->
-                                                    <col width="15%">
-                                                    <thead>
-                                                    <th>Name</th>
-                                                    <th>Total Price</th>
-                                                    <th>Order Status</th>
-                                                    <th>Calls</th>
-                                                    <th>SMS/MMS/Internet</th>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr ng-repeat="t in customerTariffs" class="tariff-td">
-                                                        <td>{{t.tariff.tariffName}}</td>
-                                                        <td>{{t.totalPrice}}</td>
-                                                        <td>{{t.customerProductStatus}}</td>
-                                                        <td style="padding: 0;">
-                                                            <table width="100%" style="table-layout: fixed;"
-                                                                   class="table table-striped">
-                                                                <tr class="tariff-td">
-                                                                    <td style="word-wrap: break-word;">Calls in
-                                                                        Network
-                                                                    </td>
-                                                                    <td style="text-align: left">
-                                                                        {{t.tariff.callsInNetwork}}
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="tariff-td">
-                                                                    <td style="word-wrap: break-word;">Calls on other
-                                                                        numbers
-                                                                    </td>
-                                                                    <td style="text-align: left">
-                                                                        {{t.tariff.callsOnOtherNumbers}}
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="tariff-td">
-                                                                    <td style="word-wrap: break-word;">Roaming</td>
-                                                                    <td style="text-align: left">{{t.tariff.roaming}}
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                        <td style="padding: 0;">
-                                                            <table width="100%" style="table-layout: fixed;"
-                                                                   class="table table-striped">
-                                                                <tr class="tariff-td">
-                                                                    <td>SMS</td>
-                                                                    <td style="text-align: left">{{t.tariff.sms}}</td>
-                                                                </tr>
-                                                                <tr class="tariff-td">
-                                                                    <td>MMS</td>
-                                                                    <td style="text-align: left">{{t.tariff.mms}}</td>
-                                                                </tr>
-                                                                <tr class="tariff-td">
-                                                                    <td>Internet</td>
-                                                                    <td style="text-align: left">{{t.tariff.internet}}
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                                <div class="col-sm-3">
-                                                    <div>
-                                                        <label><b>Tariff plans found: {{tariffsFound}}</b></label>
+                                                    <div class="content table-responsive">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div class="dataTables_length" id="tariffTable_length">
+                                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                                        <label>Show entries:</label>
+                                                                        <md-select ng-model="size" md-on-close="loadTariffsHistory()">
+                                                                            <md-option value="5">5</md-option>
+                                                                            <md-option value="10">10</md-option>
+                                                                            <md-option value="25">25</md-option>
+                                                                            <md-option value="50">50</md-option>
+                                                                            <md-option value="100">100</md-option>
+                                                                        </md-select>
+                                                                    </md-input-container>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <table id="tariffTable" class="table table-striped table-bordered table-hover">
+                                                            <thead>
+                                                            <th>Tariff Plan</th>
+                                                            <th>Order Type</th>
+                                                            <th>Order Status</th>
+                                                            <th>Creation date</th>
+                                                            <th>Execution Date</th>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr ng-repeat="o in orders" class="tariff-td">
+                                                                <td>{{o.customerTariff.tariff.tariffName}}</td>
+                                                                <td>{{o.type}}</td>
+                                                                <td>{{o.orderStatus}}</td>
+                                                                <td>{{o.creationDate | date:'dd MM yyyy'}}</td>
+                                                                <td>{{o.executionDate | date:'dd MM yyyy'}}</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="row">
+                                                            <div class="col-sm-7">
+                                                                <div class="dataTables_paginate paging_simple_numbers"
+                                                                     id="tariffTable_paginate">
+                                                                    <ul class="pagination">
+                                                                        <li class="paginate_button previous" id="tariffTable_previous">
+                                                                            <a aria-controls="tariffTable" data-dt-idx="0"
+                                                                               tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                                        </li>
+                                                                        <li class="paginate_button active"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="1" tabindex="0">{{page+1}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button next pointable" id="tariffTable_next"><a
+                                                                                aria-controls="tariffTable" data-dt-idx="2"
+                                                                                tabindex="0" ng-show="(page + 1)*size < ordersFound"
+                                                                                ng-click="nextPage()">Next</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div>
+                                                                    <label><b>Orders found: {{ordersFound}}</b></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
-                                                </div>
                                             </div>
                                             </div>
                                         </div>

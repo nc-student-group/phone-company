@@ -84,10 +84,24 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
 
         String where = "";
         String category = (String) args[0];
+        Long userId = (long) args[1];
 
         if (!category.equals("-")) {
-            where += " WHERE type = ?";
-            this.preparedStatementParams.add(category);
+            if (userId > 0) {
+                where += " WHERE type = ? user_id = ?";
+                this.preparedStatementParams.add(category);
+                this.preparedStatementParams.add(userId);
+            }
+            else {
+                where += " WHERE type = ?";
+                this.preparedStatementParams.add(category);
+            }
+        }
+        else {
+            if (userId > 0) {
+                where += " WHERE user_id = ?";
+                this.preparedStatementParams.add(userId);
+            }
         }
         return where;
     }

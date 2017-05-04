@@ -82,11 +82,24 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     @Override
     public Map<String, Object> getComplaintsByCategory(String category, int page, int size) {
         Map<String, Object> response = new HashMap<>();
-        List<Complaint> complaints = this.complaintDao.getPaging(page, size, category);
+        Object[] args = new Object[]{category, new Long(0)};
+        List<Complaint> complaints = this.complaintDao.getPaging(page, size, args);
 
         LOG.debug("Fetched complaints: {}", complaints);
         response.put("complaints", complaints);
-        response.put("complaintsCount", this.complaintDao.getEntityCount(category));
+        response.put("complaintsCount", this.complaintDao.getEntityCount(args));
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getComplaintsByCustomer(int id, int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        Object[] args = new Object[]{"-", new Long(id)};
+        List<Complaint> complaints = this.complaintDao.getPaging(page, size, args);
+
+        LOG.debug("Fetched complaints: {}", complaints);
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.getEntityCount(args));
         return response;
     }
 

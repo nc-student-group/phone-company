@@ -3,7 +3,6 @@ package com.phonecompany.dao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Ignore
@@ -19,7 +18,6 @@ public class AddressDaoImplTest extends AbstractTest {
 
     @Test
     public void save() throws Exception {
-
     }
 
     @Test
