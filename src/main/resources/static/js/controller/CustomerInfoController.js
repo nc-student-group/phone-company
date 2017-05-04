@@ -250,6 +250,46 @@
             };
         }
 
+        $scope.activateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: ActivateCustomerServiceDialogController,
+                templateUrl: '../../view/client/activateCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function ActivateCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
+                                                        loadCurrentServices, loadServicesHistory) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.activateService($scope.customerService).then(function () {
+                    toastr.success("Your service " + $scope.customerService.service.serviceName +
+                        " was successfully activated!", "Service activation");
+                    $mdDialog.cancel();
+                    loadCurrentServices();
+                    loadServicesHistory();
+                });
+            };
+        }
+
         $scope.suspendCustomerService = function (customerService, daysToExecution,
                                                   loadCurrentServices, loadServicesHistory) {
             $mdDialog.show({
