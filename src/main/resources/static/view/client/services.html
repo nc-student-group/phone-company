@@ -15,17 +15,17 @@
                         <div class="container-fluid services-cards">
                             <div ng-repeat="s in services" class="col-md-4">
                                 <figure class="snip1174 blue">
-                                    <p ng-hide="s.discount > 0 && s.discount < 1"
+                                    <p ng-hide="s.discount > 0 && s.discount < 100"
                                        class="service-price">{{s.price | number : 2}} &#8372;</p>
-                                    <p ng-show="s.discount > 0 && s.discount < 1"
+                                    <p ng-show="s.discount > 0 && s.discount < 100"
                                        class="service-price"
                                        style="text-decoration: line-through">
                                         {{s.price | number : 2}} &#8372;
                                     </p>
-                                    <p ng-show="s.discount > 0 && s.discount < 1"
+                                    <p ng-show="s.discount > 0 && s.discount < 100"
                                        style="font-weight: 700"
                                        class="service-price-discounted">
-                                        {{s.price * s.discount | number : 2}} &#8372;
+                                        {{s.price * (1 - s.discount / 100) | number : 2}} &#8372;
                                     </p>
                                     <img style="height: 240px" ng-src="{{s.pictureUrl}}"/>
                                     <figcaption>

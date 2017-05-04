@@ -86,20 +86,20 @@
                                                     <td>Price</td>
                                                     <td>
                                                         <div ng-hide="currentService.discount > 0
-                                                        && currentService.discount < 1">
+                                                        && currentService.discount < 100">
                                                             {{currentService.price | number : 2}} &#8372;
                                                         </div>
                                                         <div ng-show="currentService.discount > 0
-                                                        && currentService.discount < 1"
+                                                        && currentService.discount < 100"
                                                              class="service-price-individual"
                                                              style="text-decoration: line-through">
                                                             {{currentService.price | number : 2}} &#8372;
                                                         </div>
                                                         <div ng-show="currentService.discount > 0
-                                                        && currentService.discount < 1"
+                                                        && currentService.discount < 100"
                                                              style="font-weight: 700"
                                                              class="service-price-individual-discounted">
-                                                            {{currentService.price * currentService.discount |
+                                                            {{currentService.price * (1 - currentService.discount / 100) |
                                                             number : 2}} &#8372;
                                                         </div>
                                                     </td>
@@ -112,7 +112,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Amount</td>
-                                                    <td>???</td>
+                                                    <td>{{currentService.durationInDays}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2" style="word-wrap: break-word">

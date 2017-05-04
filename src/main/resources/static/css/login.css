@@ -212,6 +212,10 @@
     display: none;
 }
 
+#editFileInput {
+    display: none;
+}
+
 .crop_files_images {
     position: fixed;
     top: 50%;

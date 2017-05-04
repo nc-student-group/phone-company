@@ -483,7 +483,7 @@
                                                     <div ng-messages="editServicesForm.discount.$error" role="alert"
                                                          multiple>
                                                         <div ng-message="pattern">
-                                                            This field can only contain numbers from 0 to 1
+                                                            This field can only contain numbers from 0 to 100
                                                         </div>
                                                     </div>
                                                 </md-input-container>
@@ -516,6 +516,11 @@
                                                            ng-click="uploadPicture()">
                                                     <i class="fa fa-upload" aria-hidden="true"></i>Upload picture
                                                 </md-button>
+                                            </div>
+                                            <div>
+                                                <br/>
+                                                <input type="file" name="editFileInput" id="editFileInput"
+                                                       onchange="angular.element(this).scope().fileChanged(event)"/>
                                             </div>
                                             <div class="bg_crop_modal" ng-show="imageCropStep == 2"
                                                  ng-click="clear()"></div>
