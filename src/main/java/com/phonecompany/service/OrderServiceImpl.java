@@ -58,4 +58,14 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return customer.getRepresentative() ? orderDao.getCountByCorporateId(clientId) :
                 orderDao.getCountByCustomerId(clientId);
     }
+
+    @Override
+    public List<Order> getOrdersHistoryForServicesByClient(Customer customer, int page, int size) {
+        return orderDao.getOrdersForCustomerServicesByCustomerIdPaged(customer.getId(), page, size);
+    }
+
+    @Override
+    public Integer getOrdersCountForServicesByClient(Customer customer) {
+        return orderDao.getCountOfServicesByCustomerId(customer.getId());
+    }
 }

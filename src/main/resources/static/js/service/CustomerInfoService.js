@@ -4,19 +4,23 @@ angular.module('phone-company').factory('CustomerInfoService',
     ['$q', '$http', function ($q, $http) {
 
         const GET_TARIFFS_HISTORY_BY_CUSTOMER_ID_URL = "api/customer/tariffs/history/";
+        const GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL = "api/services/history/";
         const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer/tariff/";
         const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
+        const GET_CURRENT_CUSTOMER_SERVICES_URL = "api/services/current/";
         const CUSTOMERS = "api/customers/";
         const DEACTIVATE_TARIFF_URL = "api/customer/tariff/deactivate";
         const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
 
         return {
             getCurrentTariff: getCurrentTariff,
+            getCurrentServices: getCurrentServices,
             getCustomer: getCustomer,
             patchCustomer: patchCustomer,
             deactivateTariff: deactivateTariff,
             suspendTariff: suspendTariff,
-            getTariffsHistory: getTariffsHistory
+            getTariffsHistory: getTariffsHistory,
+            getServicesHistory: getServicesHistory
         };
 
         function patchCustomer(customer) {
@@ -87,6 +91,32 @@ angular.module('phone-company').factory('CustomerInfoService',
         function getTariffsHistory(page, size) {
             var deferred = $q.defer();
             $http.get(GET_TARIFFS_HISTORY_BY_CUSTOMER_ID_URL + page + "/" + size).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getCurrentServices(services) {
+            let deferred = $q.defer();
+            $http.get(GET_CURRENT_CUSTOMER_SERVICES_URL, services).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getServicesHistory(page, size) {
+            var deferred = $q.defer();
+            $http.get(GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL + page + "/" + size).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

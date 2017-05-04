@@ -4,6 +4,7 @@ import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.enums.CustomerProductStatus;
@@ -12,9 +13,12 @@ import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> implements CustomerServiceDao {
@@ -74,5 +78,37 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
             throw new EntityInitializationException(e);
         }
         return customerService;
+    }
+
+    @Override
+    public List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId) {
+        List<CustomerServiceDto> services = new ArrayList<>();
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                services.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return services;
+    }
+
+    @Override
+    public List<CustomerServiceDto> getCurrentCustomerServices(long customerId) {
+        List<CustomerServiceDto> services = new ArrayList<>();
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getActiveOrSuspendedByCustomerId"))) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                services.add(init(rs));
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+        return services;
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import java.util.List;
+
 @Service
 public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto> implements CustomerServiceService{
 
@@ -21,5 +23,15 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao){
         super(customerServiceDao);
         this.customerServiceDao = customerServiceDao;
+    }
+
+    @Override
+    public List<CustomerServiceDto> getCurrentCustomerServices(long customerId) {
+        return customerServiceDao.getCurrentCustomerServices(customerId);
+    }
+
+    @Override
+    public List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId) {
+        return customerServiceDao.getCustomerServicesByCustomerId(customerId);
     }
 }

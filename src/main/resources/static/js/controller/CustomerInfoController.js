@@ -9,33 +9,53 @@
     function CustomerInfoController($scope, $location, $log, CustomerInfoService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
+        $scope.tariffsFound = 0;
         $scope.ordersFound = 0;
+        $scope.servicesOrdersFound = 0;
         $scope.mailingSwitchDisabled = true;
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
+        $scope.hasCurrentServices = false;
         $scope.page = 0;
+        $scope.servicesPage = 0;
         $scope.size = 5;
+        $scope.servicesSize = 5;
 
         $scope.setMailingAgreement = function () {
-            console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
-            console.log(`Setting mailing agreement to: ${$scope.customer.isMailingEnabled}`);
+            console.log('Current customer state ${JSON.stringify($scope.customer)}');
+            console.log('Setting mailing agreement to: ${$scope.customer.isMailingEnabled}');
             CustomerInfoService.patchCustomer($scope.customer);
         };
 
         CustomerInfoService.getCustomer()
             .then(function (data) {
-                console.log(`Retrieved customer ${JSON.stringify(data)}`);
+                console.log('Retrieved customer ${JSON.stringify(data)}');
                 $scope.customer = data;
                 $scope.mailingSwitchDisabled = false;
                 $scope.loading = false;
             });
 
         $scope.loading = true;
+        $scope.loadCurrentServices = function() {
+            CustomerInfoService.getCurrentServices()
+                .then(function(data) {
+                    $scope.hasCurrentServices = false;
+                    console.log('Retrieved current services ${JSON.stringify(data)}}');
+                    $scope.currentServices = data;
+                    if ($scope.currentServices !== "") {
+                        $scope.hasCurrentServices = true;
+                    }
+                    $scope.loading = false;
+                });
+        };
+        $scope.loadCurrentServices();
+
+        $scope.loading = true;
         $scope.loadCurrentTariff = function () {
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {
                     $scope.hasCurrentTariff = false;
-                    console.log(`Retrieved current tariff ${JSON.stringify(data)}`);
+                    console.log('Retrieved current tariff ${JSON.stringify(data)}');
                     $scope.currentTariff = data;
                     if ($scope.currentTariff !== "") {
                         $scope.hasCurrentTariff = true;
@@ -45,6 +65,7 @@
         };
         $scope.loadCurrentTariff();
 
+        $scope.loading = true;
         $scope.loadTariffsHistory = function () {
             $scope.loading = true;
             CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
@@ -82,6 +103,46 @@
                     });
             }
         };
+
+        $scope.loading = true;
+        $scope.loadServicesHistory = function () {
+            $scope.loading = true;
+            CustomerInfoService.getServicesHistory($scope.page, $scope.size)
+                .then(function (data) {
+                    $scope.servicesOrders = data.orders;
+                    $scope.servicesOrdersFound = data.ordersFound;
+                    console.log($scope.servicesOrders);
+                    $scope.loading = false;
+                });
+        };
+        $scope.loadServicesHistory();
+
+        $scope.servicesNextPage = function () {
+            if (($scope.servicesPage + 1) * $scope.servicesSize < $scope.servicesOrdersFound) {
+                $scope.loading = true;
+                $scope.servicesPage = $scope.servicesPage + 1;
+                CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
+                    .then(function (data) {
+                        $scope.servicesOrders = data.orders;
+                        $scope.servicesOrdersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
+
+        $scope.servicesPreviousPage = function () {
+            if ($scope.servicesPage > 0) {
+                $scope.loading = true;
+                $scope.servicesPage = $scope.page - 1;
+                CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
+                    .then(function (data) {
+                        $scope.servicesOrders = data.orders;
+                        $scope.servicesOrdersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
+
 
         $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({

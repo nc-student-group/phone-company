@@ -165,4 +165,36 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             throw new EntityNotFoundException(clientId, e);
         }
     }
+
+    @Override
+    public List<Order> getOrdersForCustomerServicesByCustomerIdPaged(Long customerId, int page, int size) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getPagedForCustomerServicesByCustomerId"))) {
+            ps.setObject(1, customerId);
+            ps.setObject(2, size);
+            ps.setObject(3, page * size);
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public Integer getCountOfServicesByCustomerId(Long customerId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountOfServicesByCustomerId"))) {
+            ps.setLong(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(customerId, e);
+        }
+    }
 }
