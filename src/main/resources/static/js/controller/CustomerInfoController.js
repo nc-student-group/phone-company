@@ -143,7 +143,7 @@
             }
         };
 
-        $scope.showServiceDetails = function (customerService) {
+        $scope.showServiceDetails = function(customerService) {
             $mdDialog.show({
                 controller: ShowServiceDetailsController,
                 templateUrl: '../../view/client/moreAboutCustomerServiceModal.html',
@@ -169,6 +169,46 @@
 
             $scope.answer = function () {
                 $mdDialog.cancel();
+            };
+        }
+
+        $scope.deactivateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: DeactivateCustomerServiceController,
+                templateUrl: '../../view/client/deactivateCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function DeactivateCustomerServiceController($scope, $mdDialog, CustomerInfoService,
+                                                     customerService, loadCurrentServices, loadServicesHistory) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.deactivateService($scope.customerService).then(function () {
+                    toastr.success("Your service " + $scope.customerService.service.serviceName +
+                        " was successfully deactivated!", "Service deactivation");
+                    $mdDialog.cancel();
+                    loadCurrentServices();
+                    loadServicesHistory();
+                });
             };
         }
 

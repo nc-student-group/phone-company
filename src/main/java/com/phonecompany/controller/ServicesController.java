@@ -142,4 +142,10 @@ public class ServicesController {
         map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));
         return map;
     }
+
+    @PatchMapping(value = "/deactivate")
+    public ResponseEntity<Void> deactivateCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.deactivateCustomerService(customerService);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

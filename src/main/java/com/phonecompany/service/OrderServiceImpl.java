@@ -36,6 +36,13 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList()).get(0);
     }
 
+    @Override
+    public Order getResumingOrderByCustomerService(CustomerServiceDto customerService) {
+        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId()).stream().
+                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
+                .collect(Collectors.toList()).get(0);
+    }
+
     // CustomerService name changed to CustomerServiceDto because of the name collision
     public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
         LocalDate currentDate = LocalDate.now();

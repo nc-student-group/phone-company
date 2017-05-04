@@ -272,7 +272,7 @@
                                                                     </p>
                                                                     <a style="cursor: pointer"
                                                                        ng-show="s.orderStatus === 'ACTIVE'"
-                                                                       ng-click="deactivateCustomerService(s)">
+                                                                       ng-click="deactivateCustomerService(s, loadCurrentServices, loadServicesHistory)">
                                                                         Deactivate</a>
                                                                     <a style="cursor: pointer"
                                                                        ng-show="s.orderStatus === 'ACTIVE'"
@@ -284,7 +284,7 @@
                                                                         Activate</a>
                                                                     <a style="cursor: pointer"
                                                                        ng-show="s.orderStatus === 'SUSPENDED'"
-                                                                       ng-click="deactivateCustomerService(s)">
+                                                                       ng-click="deactivateCustomerService(s, loadCurrentServices, loadServicesHistory)">
                                                                         Deactivate</a>
                                                                 </figcaption>
                                                             </figure>
