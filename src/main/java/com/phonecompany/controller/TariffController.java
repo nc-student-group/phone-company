@@ -54,6 +54,12 @@ public class TariffController {
         return tariffRegionService.getTariffsTable(regionId, page, size);
     }
 
+    //TODO: resulting path will be value = "/api/tariffs/api/tariffs/get/available/"
+    //value from @RequestMapping(value = "/api/tariffs") on the top of the class will be appended everywhere
+    //You can write a single annotation @GetMapping with no parameters instead
+    //TODO: @GetMapping
+    //it will generate resulting get mapping: /api/tariffs
+    //which will return all the tariffs List<Tariff>
     @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
     public ResponseEntity<?> getClientTariffs() {
         Customer customer = customerService.getCurrentlyLoggedInUser();
@@ -106,6 +112,12 @@ public class TariffController {
         return response;
     }
 
+
+    //We also have a nice  method: customerService.getCurrentlyLoggedInUser which
+    // no need to call: org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+    //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //every time
+    //TODO: @GetMapping(value = "/current") ??
     @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
     public List<CustomerTariff> getTariffsByClientId() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
@@ -133,6 +145,9 @@ public class TariffController {
         return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId), HttpStatus.OK);
     }
 
+    //TODO: extract to CustomerTariff controller?
+    //@GetMapping(value = "api/customer-tariffs/current") ??
+    //we are actually dealing with customer tariff here
     @GetMapping(value = "/customer/current")
     public ResponseEntity<?> getCurrentCustomerTariff() {
         CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff();
@@ -146,6 +161,9 @@ public class TariffController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    //TODO: extract to CustomerTariff controller?
+    //we are actually dealing with customer tariff here
     @RequestMapping(value = "/api/customer/tariff", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
@@ -155,6 +173,9 @@ public class TariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
+
+    //TODO: extract to CustomerTariff controller?
+    //we are actually dealing with customer tariff here
     @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
