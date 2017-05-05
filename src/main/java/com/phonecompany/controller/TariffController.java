@@ -23,16 +23,14 @@ public class TariffController {
 
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
-    private CustomerTariffService customerTariffService;
     private CustomerService customerService;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
-                            TariffService tariffService, CustomerTariffService customerTariffService,
+                            TariffService tariffService,
                             CustomerService customerService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
-        this.customerTariffService = customerTariffService;
         this.customerService = customerService;
     }
 
@@ -66,29 +64,11 @@ public class TariffController {
         return new Tariff();
     }
 
-    //TODO: it is also natural to extract this one to tariff-regions resource
-    //@RequestMapping(value = "/api/tariff-regions")
-    //public class TariffRegionController
-    //.......................................
-    //@PostMapping
-    @PostMapping(value = "/regions")
-    public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
-        return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
     @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
 
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
-    //TODO: relates to tariff-regions resource as well
-    @PutMapping(value = "/regions")
-    public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
-        return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
     }
 
     @PutMapping

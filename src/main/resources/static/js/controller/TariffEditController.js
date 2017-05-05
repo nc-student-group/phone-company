@@ -131,7 +131,6 @@ angular.module('phone-company').controller('TariffEditController', [
             toastr.success('Your tariff "' + $scope.tariffToEdit.tariffName + '" updated successfully!');
             console.log("Tariff updated");
             $scope.preloader.send = false;
-            $window.scrollTo(0, 0);
         };
 
 

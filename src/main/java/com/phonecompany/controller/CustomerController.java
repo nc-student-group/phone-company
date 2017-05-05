@@ -37,7 +37,6 @@ public class CustomerController {
     private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
-    private TariffService tariffService;
     private CustomerTariffService customerTariffService;
     private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
     private EmailService<User> emailService;
@@ -48,16 +47,14 @@ public class CustomerController {
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
                               UserService userService,
-                              TariffService tariffService,
                               CustomerTariffService customerTariffService,
-                              @Qualifier("tariffDeactivationEmailCreator")
+                              @Qualifier("tariffDeactivationNotificationEmailCreator")
                                       MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
                               EmailService<User> emailService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
-        this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
         this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
         this.emailService = emailService;

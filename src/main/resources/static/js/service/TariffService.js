@@ -5,10 +5,10 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_ALL_REGION_URL = "api/regions";
     var GET_TARIFFS_BY_REGION_ID_URL = "api/tariffs/";
     var GET_NEW_TARIFF_URL = "api/tariffs/empty";
-    var POST_ADD_TARIFF_URL = "api/tariffs/regions";
+    var POST_ADD_TARIFF_URL = "api/tariff-region";
     var POST_ADD_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs/";
-    var POST_SAVE_TARIFF_URL = "api/tariffs/regions";
+    var POST_SAVE_TARIFF_URL = "api/tariff-region";
     var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs/";
     var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";

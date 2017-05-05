@@ -31,37 +31,24 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
 
-    private CustomerService customerService;
-    private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
-    private MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator;
-    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
-    private EmailService<User> emailService;
-    private UserService userService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
                              FileService fileService,
                              OrderService orderService,
-                             CustomerTariffService customerTariffService,
-                             EmailService<User> emailService,
-                             UserService userService) {
+                             CustomerTariffService customerTariffService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
-        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
-        this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
-        this.emailService = emailService;
-        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
-        this.userService = userService;
     }
 
     @Override
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
-        return tariffDao.getByRegionIdAndPaging(regionId, page, size);
+        return this.tariffDao.getPaging(page, size, regionId);
     }
 
     @Override
@@ -74,7 +61,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     @Override
     public Integer getCountByRegionId(long regionId) {
-        return tariffDao.getCountByRegionIdAndPaging(regionId);
+        return tariffDao.getEntityCount(regionId);
     }
 
     @Override
