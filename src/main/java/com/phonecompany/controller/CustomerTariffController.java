@@ -28,7 +28,7 @@ public class CustomerTariffController {
 
     @Autowired
     public CustomerTariffController(CustomerTariffService customerTariffService, CustomerService customerService,
-                                    OrderService orderService){
+                                    OrderService orderService) {
         this.customerTariffService = customerTariffService;
         this.customerService = customerService;
         this.orderService = orderService;
@@ -36,7 +36,7 @@ public class CustomerTariffController {
 
     @GetMapping(value = "/current")
     public ResponseEntity<?> getCurrentCustomerTariff() {
-        CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff();
+        CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customerService.getCurrentlyLoggedInUser());
         LOGGER.debug("Current customer tariff {}", customerTariff);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }

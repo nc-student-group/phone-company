@@ -24,26 +24,16 @@ public class TariffController {
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
-    private FileService fileService;
     private CustomerService customerService;
-    private OrderService orderService;
-    private EmailService<User> emailService;
-    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService, CustomerTariffService customerTariffService,
-                            FileService fileService, CustomerService customerService,
-                            OrderService orderService, EmailService<User> emailService,
-                            @Qualifier("tariffNotificationEmailCreator") MailMessageCreator<Tariff> tariffNotificationEmailCreator) {
+                            CustomerService customerService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
-        this.fileService = fileService;
         this.customerService = customerService;
-        this.orderService = orderService;
-        this.emailService = emailService;
-        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -51,7 +41,7 @@ public class TariffController {
                                                     @PathVariable("page") int page,
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffRegionService.getTariffsTable(regionId, page, size);
+        return tariffService.getTariffsTable(regionId, page, size);
     }
 
     //TODO: resulting path will be value = "/api/tariffs/api/tariffs/get/available/"
@@ -126,29 +116,29 @@ public class TariffController {
 
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
-                                                   @RequestBody ProductStatus productStatus) {
-        this.tariffService.updateTariffStatus(tariffId, productStatus);
+                                                   @RequestBody String productStatus) {
+        this.tariffService.updateTariffStatus(tariffId, ProductStatus.valueOf(productStatus));
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/available/{page}/{size}")
     public ResponseEntity<?> getTariffsAvailableForCustomer(@PathVariable("page") int page,
                                                             @PathVariable("size") int size) {
-        return new ResponseEntity<Object>(tariffService.getTariffsAvailableForCustomer(page, size), HttpStatus.OK);
+        return new ResponseEntity<Object>(tariffService
+                .getTariffsAvailableForCustomer(customerService.getCurrentlyLoggedInUser(),page, size), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/{id}")
     public ResponseEntity<?> getTariffForCustomerById(@PathVariable("id") long tariffId) {
-        return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId), HttpStatus.OK);
+        return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId,
+                customerService.getCurrentlyLoggedInUser()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/activate/{id}")
     public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
-        tariffService.activateTariff(tariffId);
+        tariffService.activateTariff(tariffId, customerService.getCurrentlyLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 
 
 }

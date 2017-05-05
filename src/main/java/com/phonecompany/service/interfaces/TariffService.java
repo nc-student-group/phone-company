@@ -18,7 +18,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Tariff findByTariffName(String tariffName);
 
-    public Map<String, Object> getTariffsAvailableForCustomer(int page, int size);
+    public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size);
 
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
@@ -38,7 +38,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateCorporateTariff(Corporate corporate, Tariff tariff);
 
-    public void activateTariff(long tariffId);
+    public void activateTariff(long tariffId, Customer customer);
 
     public Tariff addNewTariff(List<TariffRegion> tariffRegions);
 
@@ -48,6 +48,8 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Tariff updateTariff(Tariff tariff);
 
-    public Tariff getTariffForCustomer(long tariffId);
+    public Tariff getTariffForCustomer(long tariffId, Customer customer);
+
+    public Map<String, Object> getTariffsTable(long regionId, int page, int size);
 
 }

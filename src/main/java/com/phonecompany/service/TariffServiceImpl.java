@@ -35,7 +35,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
     private EmailService<User> emailService;
     private UserService userService;
-    private CustomerService customerService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
@@ -50,7 +49,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                              @Qualifier("tariffNotificationEmailCreator")
                                      MailMessageCreator<Tariff> tariffNotificationEmailCreator,
                              EmailService<User> emailService,
-                             UserService userService, CustomerService customerService) {
+                             UserService userService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
@@ -62,7 +61,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         this.emailService = emailService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
         this.userService = userService;
-        this.customerService = customerService;
     }
 
     @Override
@@ -129,8 +127,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         });
     }
 
-    public Map<String, Object> getTariffsAvailableForCustomer(int page, int size) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size) {
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
             response.put("tariffs", this.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
@@ -241,8 +238,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public void activateTariff(long tariffId) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public void activateTariff(long tariffId, Customer customer) {
         if (customer.getCorporate() == null) {
             this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
@@ -336,13 +332,28 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public Tariff getTariffForCustomer(long tariffId) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public Tariff getTariffForCustomer(long tariffId, Customer customer) {
         if (customer.getCorporate() == null) {
             return this.getByIdForSingleCustomer(tariffId, customer.getAddress().getRegion().getId());
         } else {
             return this.getById(tariffId);
         }
+    }
+
+    @Override
+    public Map<String, Object> getTariffsTable(long regionId, int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        List<Tariff> tariffs = this.getByRegionIdAndPaging(regionId, page, size);
+        List<Object> rows = new ArrayList<>();
+        tariffs.forEach((Tariff tariff) -> {
+            Map<String, Object> row = new HashMap<>();
+            row.put("tariff", tariff);
+            row.put("regions", tariffRegionService.getAllByTariffId(tariff.getId()));
+            rows.add(row);
+        });
+        response.put("tariffs", rows);
+        response.put("tariffsSelected", this.getCountByRegionId(regionId));
+        return response;
     }
 
 }

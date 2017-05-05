@@ -7,10 +7,10 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_NEW_TARIFF_URL = "api/tariffs/empty";
     var POST_ADD_TARIFF_URL = "api/tariffs/regions";
     var POST_ADD_TARIFF_SINGLE_URL = "api/tariffs";
-    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs";
-    var POST_SAVE_TARIFF_URL = "api/tariffs";
+    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs/";
+    var POST_SAVE_TARIFF_URL = "api/tariffs/regions";
     var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
-    var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs";
+    var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs/";
     var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";
     var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariffs/customer/";
     var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariffs/customer-tariff/current";
