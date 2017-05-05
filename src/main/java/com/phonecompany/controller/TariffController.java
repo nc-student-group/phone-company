@@ -55,6 +55,8 @@ public class TariffController {
         Customer customer = customerService.getCurrentlyLoggedInUser();
         Long regionId = customer.getAddress().getRegion().getId();
         Boolean isRepresentative = customer.getRepresentative();
+        //TODO: you can write logger with no concatenation like follows:
+        // LOGGER.debug("Get all tariffs for customer with id = {}", customer.getId())
         LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
         return new ResponseEntity<Object>(tariffService.getByRegionIdAndClient(regionId, isRepresentative), HttpStatus.OK);
     }
@@ -64,6 +66,11 @@ public class TariffController {
         return new Tariff();
     }
 
+    //TODO: it is also natural to extract this one to tariff-regions resource
+    //@RequestMapping(value = "/api/tariff-regions")
+    //public class TariffRegionController
+    //.......................................
+    //@PostMapping
     @PostMapping(value = "/regions")
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
@@ -74,14 +81,10 @@ public class TariffController {
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
 
-//        Customer customer = customerService.getCurrentlyLoggedInUser();
-//
-//        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
-//                .constructMessage(tariff);
-//        this.emailService.sendMail(notificationEmail, customer);
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
     }
 
+    //TODO: relates to tariff-regions resource as well
     @PutMapping(value = "/regions")
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
@@ -100,18 +103,6 @@ public class TariffController {
         response.put("tariff", tariffService.getById(tariffId));
         response.put("regions", tariffRegionService.getAllByTariffId(tariffId));
         return response;
-    }
-
-    //We also have a nice  method: customerService.getCurrentlyLoggedInUser which
-    // no need to call: org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-    //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    //every time
-    //TODO: @GetMapping(value = "/current") ?? //never calls in js services
-    @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
-    public List<CustomerTariff> getTariffsByClientId() {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
-        return this.customerTariffService.getByClientId(customer);
     }
 
     @PatchMapping(value = "/{id}")
@@ -139,6 +130,8 @@ public class TariffController {
         tariffService.activateTariff(tariffId, customerService.getCurrentlyLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 
 
 }

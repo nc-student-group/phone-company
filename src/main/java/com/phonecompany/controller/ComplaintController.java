@@ -32,7 +32,7 @@ public class ComplaintController {
         this.customerService = customerService;
     }
 
-    @PostMapping(value = "")
+    @PostMapping
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);
         Complaint createdComplaint = complaintService.createComplaint(complaint);
@@ -41,7 +41,7 @@ public class ComplaintController {
     }
 
     //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
-    @GetMapping(value = "/complaints")
+    @GetMapping
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
         List<Complaint> complaints = complaintService.getAll();

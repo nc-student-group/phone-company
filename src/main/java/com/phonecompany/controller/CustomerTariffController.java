@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/customer-tariff")
+//TODO: added "s" letter to the customer-tariff resource
+//previous: @RequestMapping(value = "/api/customer-tariff")
+@RequestMapping(value = "/api/customer-tariffs")
 public class CustomerTariffController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffController.class);
