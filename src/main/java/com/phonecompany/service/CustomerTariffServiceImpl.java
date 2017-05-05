@@ -1,14 +1,12 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.CustomerTariffService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
-import com.phonecompany.service.interfaces.OrderService;
+import com.phonecompany.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,12 +24,14 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     private OrderService orderService;
     private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
     private EmailService<User> emailService;
+    private CustomerService customerService;
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
                                      MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
-                                     EmailService<User> emailService) {
+                                     EmailService<User> emailService,
+                                     CustomerService customerService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
@@ -44,6 +44,20 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         return customer.getRepresentative() ?
                 customerTariffDao.getCustomerTariffsByCorporateId(customer.getCorporate().getId()) :
                 customerTariffDao.getCustomerTariffsByCustomerId(customer.getId());
+    }
+
+    @Override
+    public CustomerTariff getCurrentCustomerTariff(){
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        if (customer.getCorporate() == null) {
+            return this.getCurrentCustomerTariff(customer.getId());
+        } else {
+            if (customer.getCorporate() != null && customer.getRepresentative()) {
+                return  this.getCurrentCorporateTariff(customer.getCorporate().getId());
+            } else {
+                throw new ConflictException("You aren't representative of your company. Contact with your company representative.");
+            }
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.TariffDao;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
@@ -11,13 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,22 +94,29 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> updateTariffAndRegions(List<TariffRegion> tariffRegions) {
+    public Tariff updateTariff(List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
-            Tariff tariff = tariffRegions.get(0).getTariff();
-            Tariff temp = this.findByTariffName(tariff.getTariffName());
-            if (temp != null && temp.getId() != tariff.getId()) {
-                return new ResponseEntity<>(new Error("Tariff with name \""
-                        + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-            }
-            tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/"
-                    + tariff.hashCode()));
-            Tariff savedTariff = this.update(tariff);
-            LOGGER.debug("Tariff added {}", tariff);
+            Tariff savedTariff = updateTariff(tariffRegions.get(0).getTariff());
             tariffRegionService.deleteByTariffId(savedTariff.getId());
             this.addTariffRegions(tariffRegions, savedTariff);
+            return savedTariff;
+        } else {
+            throw new ConflictException("Tariff must contain regions with prices!");
         }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Override
+    public Tariff updateTariff(Tariff tariff) {
+        Tariff temp = this.findByTariffName(tariff.getTariffName());
+        if (temp != null && !temp.getId().equals(tariff.getId())) {
+            throw new ConflictException("Tariff with name \""
+                    + tariff.getTariffName() + "\" already exist!");
+        }
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/"
+                + tariff.hashCode()));
+        Tariff savedTariff = this.update(tariff);
+        LOGGER.debug("Tariff updated {}", tariff);
+        return savedTariff;
     }
 
     private void addTariffRegions(List<TariffRegion> tariffRegions, Tariff tariff) {
@@ -122,6 +127,23 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                 LOGGER.debug("Tariff-region added {}", tariffRegion);
             }
         });
+    }
+
+    public Map<String, Object> getTariffsAvailableForCustomer(int page, int size) {
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        Map<String, Object> response = new HashMap<>();
+        if (customer.getCorporate() == null) {
+            response.put("tariffs", this.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount", this.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
+        } else {
+            if (customer.getRepresentative()) {
+                response.put("tariffs", this.getTariffsAvailableForCorporate(page, size));
+                response.put("tariffsCount", this.getCountTariffsAvailableForCorporate());
+            } else {
+                throw new ConflictException("You aren't representative of your company.");
+            }
+        }
+        return response;
     }
 
     @Override
@@ -219,52 +241,47 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> activateTariff(long tariffId) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+    public void activateTariff(long tariffId) {
+        Customer customer = customerService.getCurrentlyLoggedInUser();
         if (customer.getCorporate() == null) {
-            return this.activateTariffForSingleCustomer(tariffId, customer);
+            this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
             if (customer.getRepresentative()) {
-                return this.activateTariffForCorporateCustomer(tariffId, customer);
-
+                activateTariffForCorporateCustomer(tariffId, customer);
             } else {
-                return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative to change tariff plan."), HttpStatus.CONFLICT);
+                throw new ConflictException("You aren't representative of your company. Contact with your company representative to change tariff plan.");
             }
         }
 
     }
 
-    private ResponseEntity<?> activateTariffForSingleCustomer(long tariffId, Customer customer) {
+    private void activateTariffForSingleCustomer(long tariffId, Customer customer) {
         TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
         if (tariffRegion == null) {
-            return new ResponseEntity<Object>(new Error("This tariff plan for your region doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+            throw new ConflictException("This tariff plan for your region doesn't exist. Choose tariff plan form available list.");
         }
         if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
-            return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
+            throw new ConflictException("This tariff plan is deactivated at the moment.");
         }
         CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
         if (customerTariff != null) {
             this.deactivateSingleTariff(customerTariff);
         }
         this.activateSingleTariff(customer, tariffRegion);
-
         if (customerTariff != null) {
             SimpleMailMessage notificationMessage = this.tariffDeactivationNotificationEmailCreator
                     .constructMessage(customerTariff.getTariff());
             this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         }
-        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
-    private ResponseEntity<?> activateTariffForCorporateCustomer(long tariffId, Customer customer) {
+    private void activateTariffForCorporateCustomer(long tariffId, Customer customer) {
         Tariff tariff = this.getById(tariffId);
         if (tariff == null) {
-            return new ResponseEntity<Object>(new Error("This tariff plan doesn't exist. Choose tariff plan form available list."), HttpStatus.CONFLICT);
+            throw new ConflictException("This tariff plan doesn't exist. Choose tariff plan form available list.");
         }
         if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
-            return new ResponseEntity<Object>(new Error("This tariff plan is deactivated at the moment."), HttpStatus.CONFLICT);
+            throw new ConflictException("This tariff plan is deactivated at the moment.");
         }
         CustomerTariff customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
         if (customerTariff != null) {
@@ -276,14 +293,28 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                     .constructMessage(customerTariff.getTariff());
             this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         }
-        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions) {
+    public Tariff addNewTariff(List<TariffRegion> tariffRegions) {
+        Tariff tariff;
+        if (tariffRegions.size() > 0) {
+            tariff = tariffRegions.get(0).getTariff();
+        } else {
+            throw new ConflictException("Tariff must contain regions with prices!");
+        }
+        Tariff savedTariff = this.addNewTariff(tariff);
+
+        LOGGER.debug("Tariff added {}", savedTariff);
+        this.addTariffRegions(tariffRegions, savedTariff);
+        return savedTariff;
+    }
+
+    @Override
+    public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
-            return new ResponseEntity<>(new Error("Tariff with name \"" +
-                    tariff.getTariffName() + "\" already exist!"), HttpStatus.CONFLICT);
+            throw new ConflictException("Tariff with name \"" +
+                    tariff.getTariffName() + "\" already exist!");
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
@@ -301,10 +332,17 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         //???????????????
 
         LOGGER.debug("Tariff added {}", savedTariff);
-        if (!tariff.getIsCorporate() && tariffRegions != null) {
-            this.addTariffRegions(tariffRegions, savedTariff);
+        return savedTariff;
+    }
+
+    @Override
+    public Tariff getTariffForCustomer(long tariffId) {
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        if (customer.getCorporate() == null) {
+            return this.getByIdForSingleCustomer(tariffId, customer.getAddress().getRegion().getId());
+        } else {
+            return this.getById(tariffId);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

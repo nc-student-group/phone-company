@@ -3,7 +3,6 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.CustomerServiceImpl;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -59,14 +55,12 @@ public class TariffController {
     }
 
     @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
-    public List<Tariff> getClientTariffs() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+    public ResponseEntity<?> getClientTariffs() {
+        Customer customer = customerService.getCurrentlyLoggedInUser();
         Long regionId = customer.getAddress().getRegion().getId();
         Boolean isRepresentative = customer.getRepresentative();
         LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
-        return tariffService.getByRegionIdAndClient(regionId, isRepresentative);
+        return new ResponseEntity<Object>(tariffService.getByRegionIdAndClient(regionId, isRepresentative), HttpStatus.OK);
     }
 
     @GetMapping(value = "/empty")
@@ -76,42 +70,32 @@ public class TariffController {
 
     @PostMapping(value = "/regions")
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        if (tariffRegions.size() > 0) {
-            return tariffService.addNewTariff(tariffRegions.get(0).getTariff(), tariffRegions);
-        }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
+        return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
     }
 
     @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
-        tariffService.addNewTariff(tariff, null);
+        Tariff savedTariff = tariffService.addNewTariff(tariff);
 
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-
-        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
-                .constructMessage(tariff);
-        this.emailService.sendMail(notificationEmail, customer);
-        LOGGER.debug("Tariff added {}", tariff);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+//        Customer customer = customerService.getCurrentlyLoggedInUser();
+//
+//        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
+//                .constructMessage(tariff);
+//        this.emailService.sendMail(notificationEmail, customer);
+        return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/regions")
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        return tariffService.updateTariffAndRegions(tariffRegions);
+        Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
+        return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
-        Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
-        if (temp != null && !temp.getId().equals(tariff.getId())) {
-            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-        }
-        LOGGER.debug("Is tariff corporate: " + tariff.getIsCorporate());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
-        Tariff updatedTariff = tariffService.update(tariff);
-        tariffRegionService.deleteByTariffId(updatedTariff.getId());
-        LOGGER.debug("Tariff added {}", updatedTariff);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        Tariff updatedTariff = tariffService.updateTariff(tariff);
+        return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
@@ -139,53 +123,20 @@ public class TariffController {
     }
 
     @GetMapping(value = "/available/{page}/{size}")
-    public Map<String, Object> getTariffsAvailableForCustomer(@PathVariable("page") int page,
-                                                              @PathVariable("size") int size) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
-        Map<String, Object> response = new HashMap<>();
-        if (customer.getCorporate() == null) {
-            LOGGER.debug("Get available tariffs for single customer.");
-            response.put("tariffs", tariffService.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
-            response.put("tariffsCount", tariffService.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
-        } else {
-            if (customer.getRepresentative()) {
-                response.put("tariffs", tariffService.getTariffsAvailableForCorporate(page, size));
-                response.put("tariffsCount", tariffService.getCountTariffsAvailableForCorporate());
-            }
-        }
-        return response;
+    public ResponseEntity<?> getTariffsAvailableForCustomer(@PathVariable("page") int page,
+                                                            @PathVariable("size") int size) {
+        return new ResponseEntity<Object>(tariffService.getTariffsAvailableForCustomer(page, size), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/{id}")
-    public Tariff getTariffForCustomerById(@PathVariable("id") long id) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
-        if (customer.getCorporate() == null) {
-            return tariffService.getByIdForSingleCustomer(id, customer.getAddress().getRegion().getId());
-        } else {
-            return tariffService.getById(id);
-        }
+    public ResponseEntity<?> getTariffForCustomerById(@PathVariable("id") long tariffId) {
+        return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/current")
     public ResponseEntity<?> getCurrentCustomerTariff() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
-        CustomerTariff customerTariff = null;
-        if (customer.getCorporate() == null) {
-            customerTariff = customerTariffService.getCurrentCustomerTariff(customer.getId());
-        } else {
-            if (customer.getCorporate() != null && customer.getRepresentative()) {
-                customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
-                LOGGER.debug("Corporate tariff {}", customerTariff);
-            } else {
-                return new ResponseEntity<Object>(new Error("You aren't representative of your company. Contact with your company representative."), HttpStatus.CONFLICT);
-            }
-        }
+        CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff();
+        LOGGER.debug("Current customer tariff {}", customerTariff);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
@@ -206,7 +157,7 @@ public class TariffController {
 
     @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
-                                                    @PathVariable("size") int size) {
+                                                     @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
