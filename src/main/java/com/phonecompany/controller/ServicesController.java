@@ -141,7 +141,6 @@ public class ServicesController {
     }
 
     @GetMapping("/current")
-    //@RequestMapping(value = "api/customer/services/", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -151,7 +150,6 @@ public class ServicesController {
         return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
     }
 
-    //@RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
     @GetMapping("/history/{page}/{size}")
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
