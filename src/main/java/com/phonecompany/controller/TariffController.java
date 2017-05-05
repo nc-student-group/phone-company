@@ -8,8 +8,10 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,26 +25,32 @@ public class TariffController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffController.class);
 
-    private RegionService regionService;
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
     private FileService fileService;
     private CustomerService customerService;
     private OrderService orderService;
+    private EmailService<User> emailService;
+    private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
+    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
     @Autowired
-    public TariffController(RegionService regionService, TariffRegionService tariffRegionService,
+    public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService, CustomerTariffService customerTariffService,
                             FileService fileService, CustomerService customerService,
-                            OrderService orderService) {
-        this.regionService = regionService;
+                            OrderService orderService, EmailService<User> emailService,
+                            @Qualifier("tariffDeactivationEmailCreator") MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
+                            @Qualifier("tariffNotificationEmailCreator") MailMessageCreator<Tariff> tariffNotificationEmailCreator) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
         this.fileService = fileService;
         this.customerService = customerService;
         this.orderService = orderService;
+        this.emailService = emailService;
+        this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
+        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -84,9 +92,9 @@ public class TariffController {
         Customer customer = customerService.getCurrentlyLoggedInUser();
 
         SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
-                .constructMessage(savedTariff);
+                .constructMessage(tariff);
         this.emailService.sendMail(notificationEmail, customer);
-        LOGGER.debug("Tariff added {}", savedTariff);
+        LOGGER.debug("Tariff added {}", tariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
