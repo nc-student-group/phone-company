@@ -1,19 +1,20 @@
 package com.phonecompany.controller;
 
 
-import com.phonecompany.model.*;
+import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.TariffRegionService;
+import com.phonecompany.service.interfaces.TariffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/tariffs")
@@ -40,23 +41,6 @@ public class TariffController {
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
         return tariffService.getTariffsTable(regionId, page, size);
-    }
-
-    //TODO: resulting path will be value = "/api/tariffs/api/tariffs/get/available/"
-    //value from @RequestMapping(value = "/api/tariffs") on the top of the class will be appended everywhere
-    //You can write a single annotation @GetMapping with no parameters instead
-    //TODO: @GetMapping
-    //it will generate resulting get mapping: /api/tariffs
-    //which will return all the tariffs List<Tariff>
-    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
-    public ResponseEntity<?> getClientTariffs() {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-        Long regionId = customer.getAddress().getRegion().getId();
-        Boolean isRepresentative = customer.getRepresentative();
-        //TODO: you can write logger with no concatenation like follows:
-        // LOGGER.debug("Get all tariffs for customer with id = {}", customer.getId())
-        LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
-        return new ResponseEntity<Object>(tariffService.getByRegionIdAndClient(regionId, isRepresentative), HttpStatus.OK);
     }
 
     @GetMapping(value = "/empty")

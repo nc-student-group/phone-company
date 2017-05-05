@@ -26,14 +26,12 @@ public class CustomerTariffController {
 
     private CustomerTariffService customerTariffService;
     private CustomerService customerService;
-    private OrderService orderService;
 
     @Autowired
-    public CustomerTariffController(CustomerTariffService customerTariffService, CustomerService customerService,
-                                    OrderService orderService) {
+    public CustomerTariffController(CustomerTariffService customerTariffService,
+                                    CustomerService customerService) {
         this.customerTariffService = customerTariffService;
         this.customerService = customerService;
-        this.orderService = orderService;
     }
 
     @GetMapping(value = "/current")
@@ -43,25 +41,10 @@ public class CustomerTariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
-    //TODO: extract to CustomerTariff controller?
-    //we are actually dealing with customer tariff here
-    @RequestMapping(value = "/tariff", method = RequestMethod.GET)
+    @RequestMapping(value = "/customer-tariff", method = RequestMethod.GET)
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
         Customer customer = customerService.getCurrentlyLoggedInUser();
         CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
-    }
-
-    //TODO: extract to CustomerTariff controller?
-    //we are actually dealing with customer tariff here
-    @RequestMapping(value = "/history/{page}/{size}", method = RequestMethod.GET)
-    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
-                                                     @PathVariable("size") int size) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-        LOGGER.debug("Get all tariff orders by customer id = " + customer);
-        Map<String, Object> map = new HashMap<>();
-        map.put("ordersFound", orderService.getOrdersCountByClient(customer));
-        map.put("orders", orderService.getOrdersHistoryByClient(customer, page, size));
-        return map;
     }
 }
