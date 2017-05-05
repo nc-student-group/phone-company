@@ -64,6 +64,29 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     }
 
     @Override
+    public CustomerServiceDto activateCustomerService(CustomerServiceDto customerService) {
+
+        Order resumingOrder = orderService.getResumingOrderByCustomerService(customerService);
+        resumingOrder.setOrderStatus(OrderStatus.CANCELED);
+        orderService.update(resumingOrder);
+
+        customerService.setOrderStatus(CustomerProductStatus.ACTIVE);
+        LocalDate now  = LocalDate.now();
+
+        Order activationOrder = new Order();
+        activationOrder.setCustomerService(customerService);
+        activationOrder.setCreationDate(now);
+        activationOrder.setExecutionDate(now);
+        activationOrder.setOrderStatus(OrderStatus.DONE);
+        activationOrder.setType(OrderType.ACTIVATION);
+
+        customerServiceDao.update(customerService);
+        orderService.save(activationOrder);
+
+        return customerService;
+    }
+
+    @Override
     public CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData) {
         CustomerServiceDto customerService = customerServiceDao.
                 getById((new Long((Integer)suspensionData.get("customerServiceId"))));

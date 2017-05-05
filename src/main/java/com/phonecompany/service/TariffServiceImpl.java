@@ -37,6 +37,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
     private EmailService<User> emailService;
     private UserService userService;
+    private CustomerService customerService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
@@ -51,7 +52,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                              @Qualifier("tariffNotificationEmailCreator")
                                      MailMessageCreator<Tariff> tariffNotificationEmailCreator,
                              EmailService<User> emailService,
-                             UserService userService) {
+                             UserService userService, CustomerService customerService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
@@ -63,6 +64,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         this.emailService = emailService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
         this.userService = userService;
+        this.customerService = customerService;
     }
 
     @Override
@@ -79,24 +81,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public Integer getCountByRegionIdAndPaging(long regionId) {
+    public Integer getCountByRegionId(long regionId) {
         return tariffDao.getCountByRegionIdAndPaging(regionId);
-    }
-
-    @Override
-    public Map<String, Object> getTariffsTable(long regionId, int page, int size) {
-        Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.getByRegionIdAndPaging(regionId, page, size);
-        List<Object> rows = new ArrayList<>();
-        tariffs.forEach((Tariff tariff) -> {
-            Map<String, Object> row = new HashMap<>();
-            row.put("tariff", tariff);
-            row.put("regions", tariffRegionService.getAllByTariffId(tariff.getId()));
-            rows.add(row);
-        });
-        response.put("tariffs", rows);
-        response.put("tariffsSelected", this.getCountByRegionIdAndPaging(regionId));
-        return response;
     }
 
     @Override
@@ -233,7 +219,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> activateTariff(long tariffId, Customer customer) {
+    public ResponseEntity<?> activateTariff(long tariffId) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
         if (customer.getCorporate() == null) {
             return this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
@@ -292,13 +281,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     @Override
     public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions) {
-        LocalDate currentDate = LocalDate.now();
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             return new ResponseEntity<>(new Error("Tariff with name \"" +
-                    tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
+                    tariff.getTariffName() + "\" already exist!"), HttpStatus.CONFLICT);
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(currentDate);
+        tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
                 "tariff/" + tariff.hashCode())); // no such thing as get time in millis
         Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
@@ -313,7 +301,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         //???????????????
 
         LOGGER.debug("Tariff added {}", savedTariff);
-        this.addTariffRegions(tariffRegions, savedTariff);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (!tariff.getIsCorporate() && tariffRegions != null) {
+            this.addTariffRegions(tariffRegions, savedTariff);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 }

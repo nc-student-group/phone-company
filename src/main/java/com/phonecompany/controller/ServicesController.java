@@ -171,6 +171,12 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/activate")
+    public ResponseEntity<Void> activateCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.activateCustomerService(customerService);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping(value = "/suspend")
     public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
         customerServiceService.suspendCustomerService(data);

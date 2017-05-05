@@ -15,60 +15,47 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
+@RequestMapping(value = "/api/tariffs")
 public class TariffController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffController.class);
 
-    @Autowired
-    private RegionService regionService;
-
-    @Autowired
     private TariffRegionService tariffRegionService;
-
-    @Autowired
     private TariffService tariffService;
-
-    @Autowired
     private CustomerTariffService customerTariffService;
-
-    @Autowired
     private FileService fileService;
-
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    @Autowired
+    private CustomerService customerService;
     private OrderService orderService;
-
-    @Autowired
     private EmailService<User> emailService;
-
-    @Autowired
-    @Qualifier("tariffDeactivationEmailCreator")
-    private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
-
-    @Autowired
-    @Qualifier("tariffNotificationEmailCreator")
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
 
-    @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
-    public List<Region> getAllRegions() {
-        LOGGER.debug("Get all regions.");
-        return regionService.getAll();
+    @Autowired
+    public TariffController(TariffRegionService tariffRegionService,
+                            TariffService tariffService, CustomerTariffService customerTariffService,
+                            FileService fileService, CustomerService customerService,
+                            OrderService orderService, EmailService<User> emailService,
+                            @Qualifier("tariffNotificationEmailCreator") MailMessageCreator<Tariff> tariffNotificationEmailCreator) {
+        this.tariffRegionService = tariffRegionService;
+        this.tariffService = tariffService;
+        this.customerTariffService = customerTariffService;
+        this.fileService = fileService;
+        this.customerService = customerService;
+        this.orderService = orderService;
+        this.emailService = emailService;
+        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
     }
 
-    @RequestMapping(value = "/api/tariffs/get/by/region/{id}/{page}/{size}", method = RequestMethod.GET)
-    public Map<String, Object> getTariffsByRegionId(@PathVariable("id") Long regionId,
+    @GetMapping(value = "/{regionId}/{page}/{size}")
+    public Map<String, Object> getTariffsByRegionId(@PathVariable("regionId") Long regionId,
                                                     @PathVariable("page") int page,
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffService.getTariffsTable(regionId, page, size);
+        return tariffRegionService.getTariffsTable(regionId, page, size);
     }
 
     @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
@@ -82,12 +69,12 @@ public class TariffController {
         return tariffService.getByRegionIdAndClient(regionId, isRepresentative);
     }
 
-    @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
+    @GetMapping(value = "/empty")
     public Tariff getEmptyTariff() {
         return new Tariff();
     }
 
-    @RequestMapping(value = "/api/tariff/add", method = RequestMethod.POST)
+    @PostMapping(value = "/regions")
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             return tariffService.addNewTariff(tariffRegions.get(0).getTariff(), tariffRegions);
@@ -95,31 +82,25 @@ public class TariffController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/tariff/add/single", method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
-        if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
-            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-        }
-        tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(LocalDate.now());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
-        Tariff savedTariff = tariffService.save(tariff);
+        tariffService.addNewTariff(tariff, null);
 
         Customer customer = customerService.getCurrentlyLoggedInUser();
 
         SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
-                .constructMessage(savedTariff);
+                .constructMessage(tariff);
         this.emailService.sendMail(notificationEmail, customer);
-        LOGGER.debug("Tariff added {}", savedTariff);
+        LOGGER.debug("Tariff added {}", tariff);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "api/tariff/update", method = RequestMethod.POST)
+    @PutMapping(value = "/regions")
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
         return tariffService.updateTariffAndRegions(tariffRegions);
     }
 
-    @RequestMapping(value = "/api/tariff/update/single", method = RequestMethod.POST)
+    @PutMapping
     public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
         Tariff temp = tariffService.findByTariffName(tariff.getTariffName());
         if (temp != null && !temp.getId().equals(tariff.getId())) {
@@ -133,7 +114,7 @@ public class TariffController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/tariff/get/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}")
     public Map<String, Object> getTariffToEditById(@PathVariable("id") long tariffId) {
         Map<String, Object> response = new HashMap<>();
         response.put("tariff", tariffService.getById(tariffId));
@@ -157,7 +138,7 @@ public class TariffController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/tariffs/available/get/{page}/{size}", method = RequestMethod.GET)
+    @GetMapping(value = "/available/{page}/{size}")
     public Map<String, Object> getTariffsAvailableForCustomer(@PathVariable("page") int page,
                                                               @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
@@ -177,7 +158,7 @@ public class TariffController {
         return response;
     }
 
-    @RequestMapping(value = "/api/tariff/for/customer/get/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/customer/{id}")
     public Tariff getTariffForCustomerById(@PathVariable("id") long id) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -189,7 +170,7 @@ public class TariffController {
         }
     }
 
-    @RequestMapping(value = "/api/tariff/by/customer/get", method = RequestMethod.GET)
+    @GetMapping(value = "/customer/current")
     public ResponseEntity<?> getCurrentCustomerTariff() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -208,11 +189,10 @@ public class TariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/tariff/activate/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> activateTariff(@PathVariable("id") long id) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return tariffService.activateTariff(id, customerService.findByEmail(securityUser.getUsername()));
+    @GetMapping(value = "/activate/{id}")
+    public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
+        tariffService.activateTariff(tariffId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/customer/tariff", method = RequestMethod.GET)
@@ -222,21 +202,6 @@ public class TariffController {
         Customer customer = customerService.findByEmail(securityUser.getUsername());
         CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
-    }
-
-    @PatchMapping(value = "/api/customer/tariff/deactivate")
-    public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
-        customerTariffService.deactivateCustomerTariff(customerTariff);
-        SimpleMailMessage notificationMessage = this.tariffDeactivationEmailCreator
-                .constructMessage(customerTariff.getTariff());
-        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/api/customer/tariff/suspend")
-    public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
-        this.customerTariffService.suspendCustomerTariff(data);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)

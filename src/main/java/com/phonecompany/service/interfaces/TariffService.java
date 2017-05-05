@@ -12,9 +12,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public List<Tariff> getByRegionIdAndClient(Long regionId, Boolean isRepresentative);
 
-    public Integer getCountByRegionIdAndPaging(long regionId);
-
-    public Map<String, Object> getTariffsTable(long regionId, int page, int size);
+    public Integer getCountByRegionId(long regionId);
 
     public void updateTariffStatus(long tariffId, ProductStatus productStatus);
 
@@ -40,7 +38,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateCorporateTariff(Corporate corporate, Tariff tariff);
 
-    public ResponseEntity<?> activateTariff(long tariffId, Customer customer);
+    public ResponseEntity<?> activateTariff(long tariffId);
 
     public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions);
 }
