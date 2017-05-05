@@ -38,7 +38,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateCorporateTariff(Corporate corporate, Tariff tariff);
 
-    public ResponseEntity<?> activateTariff(long tariffId, Customer customer);
+    public ResponseEntity<?> activateTariff(long tariffId);
 
     public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions);
 }

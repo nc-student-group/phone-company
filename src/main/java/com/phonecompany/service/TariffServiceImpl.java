@@ -37,6 +37,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
     private EmailService<User> emailService;
     private UserService userService;
+    private CustomerService customerService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
@@ -51,7 +52,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                              @Qualifier("tariffNotificationEmailCreator")
                                      MailMessageCreator<Tariff> tariffNotificationEmailCreator,
                              EmailService<User> emailService,
-                             UserService userService) {
+                             UserService userService, CustomerService customerService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
@@ -63,6 +64,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         this.emailService = emailService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
         this.userService = userService;
+        this.customerService = customerService;
     }
 
     @Override
@@ -217,7 +219,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> activateTariff(long tariffId, Customer customer) {
+    public ResponseEntity<?> activateTariff(long tariffId) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
         if (customer.getCorporate() == null) {
             return this.activateTariffForSingleCustomer(tariffId, customer);
         } else {

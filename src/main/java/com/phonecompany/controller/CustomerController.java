@@ -1,9 +1,6 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.Address;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.User;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.model.events.OnUserCreationEvent;
@@ -11,10 +8,12 @@ import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
@@ -40,6 +39,9 @@ public class CustomerController {
     private UserService userService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
+    private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
+    private EmailService<User> emailService;
+
 
     @Autowired
     public CustomerController(CustomerService customerService,
@@ -47,13 +49,18 @@ public class CustomerController {
                               ApplicationEventPublisher eventPublisher,
                               UserService userService,
                               TariffService tariffService,
-                              CustomerTariffService customerTariffService) {
+                              CustomerTariffService customerTariffService,
+                              @Qualifier("tariffDeactivationEmailCreator")
+                                      MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
+                              EmailService<User> emailService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
+        this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
@@ -147,5 +154,20 @@ public class CustomerController {
         }
         customerService.updateStatus(id, status);
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/api/customer/tariff/deactivate")
+    public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+        customerTariffService.deactivateCustomerTariff(customerTariff);
+        SimpleMailMessage notificationMessage = this.tariffDeactivationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/api/customer/tariff/suspend")
+    public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
+        this.customerTariffService.suspendCustomerTariff(data);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

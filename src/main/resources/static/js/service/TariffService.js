@@ -7,14 +7,14 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_NEW_TARIFF_URL = "api/tariffs/empty";
     var POST_ADD_TARIFF_URL = "api/tariffs/regions";
     var POST_ADD_TARIFF_SINGLE_URL = "api/tariffs";
-    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariff/get/";
-    var POST_SAVE_TARIFF_URL = "api/tariff/update";
-    var POST_SAVE_TARIFF_SINGLE_URL = "api/tariff/update/single";
+    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs";
+    var POST_SAVE_TARIFF_URL = "api/tariffs";
+    var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariff/update/status/";
-    var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/get/";
-    var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariff/for/customer/get/";
-    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariff/by/customer/get";
-    var GET_ACTIVATE_TARIFF_URL = "/api/tariff/activate/";
+    var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";
+    var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariffs/customer/";
+    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariffs/customer/current";
+    var GET_ACTIVATE_TARIFF_URL = "/api/tariffs/activate/";
 
     var factory = {
         getAllRegions: getAllRegions,
@@ -114,7 +114,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     function saveTariff(regionsToSave) {
         var deferred = $q.defer();
-        $http.post(POST_SAVE_TARIFF_URL, regionsToSave).then(
+        $http.put(POST_SAVE_TARIFF_URL, regionsToSave).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -127,7 +127,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     function saveTariffSingle(tariff) {
         var deferred = $q.defer();
-        $http.post(POST_SAVE_TARIFF_SINGLE_URL, tariff).then(
+        $http.put(POST_SAVE_TARIFF_SINGLE_URL, tariff).then(
             function (response) {
                 deferred.resolve(response.data);
             },
