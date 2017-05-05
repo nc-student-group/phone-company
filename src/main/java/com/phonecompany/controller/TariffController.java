@@ -1,7 +1,9 @@
 package com.phonecompany.controller;
 
 
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.Tariff;
+import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
@@ -10,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/tariffs")
@@ -24,26 +27,29 @@ public class TariffController {
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
-    private FileService fileService;
     private CustomerService customerService;
-    private OrderService orderService;
-    private EmailService<User> emailService;
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator;
+    private EmailService<Customer> emailService;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService, CustomerTariffService customerTariffService,
-                            FileService fileService, CustomerService customerService,
-                            OrderService orderService, EmailService<User> emailService,
-                            @Qualifier("tariffNotificationEmailCreator") MailMessageCreator<Tariff> tariffNotificationEmailCreator) {
+                            @Qualifier("tariffNotificationEmailCreator")
+                            MailMessageCreator<Tariff> tariffNotificationEmailCreator,
+                            @Qualifier("tariffActivationNotificationEmailCreator")
+                            MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator,
+                            @Qualifier("tariffDeactivationNotificationEmailCreator")
+                            MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator,
+                            EmailService<Customer> emailService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
-        this.fileService = fileService;
-        this.customerService = customerService;
-        this.orderService = orderService;
-        this.emailService = emailService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
+        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
+        this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -91,14 +97,10 @@ public class TariffController {
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
 
-//        Customer customer = customerService.getCurrentlyLoggedInUser();
-//
-//        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
-//                .constructMessage(tariff);
-//        this.emailService.sendMail(notificationEmail, customer);
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
     }
 
+    //TODO: relates to tariff-regions resource as well
     @PutMapping(value = "/regions")
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
@@ -117,18 +119,6 @@ public class TariffController {
         response.put("tariff", tariffService.getById(tariffId));
         response.put("regions", tariffRegionService.getAllByTariffId(tariffId));
         return response;
-    }
-
-    //We also have a nice  method: customerService.getCurrentlyLoggedInUser which
-    // no need to call: org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-    //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    //every time
-    //TODO: @GetMapping(value = "/current") ?? //never gets called in js services
-    @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
-    public List<CustomerTariff> getTariffsByClientId() {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-        LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
-        return this.customerTariffService.getByClientId(customer);
     }
 
     @PatchMapping(value = "/{id}")

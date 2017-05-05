@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,14 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
 
     private ComplaintDao complaintDao;
     private MailMessageCreator<Complaint> complaintAcceptedEmailCreator;
-    private EmailService emailService;
+    private EmailService<User> emailService;
     private UserService userService;
 
     @Autowired
     public ComplaintServiceImpl(ComplaintDao complaintDao,
                                 @Qualifier("complaintAcceptedEmailCreator")
                                         MailMessageCreator<Complaint> complaintAcceptedEmailCreator,
-                                EmailService emailService,
+                                EmailService<User> emailService,
                                 UserService userService){
         super(complaintDao);
         this.complaintDao = complaintDao;
@@ -45,10 +46,8 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     }
 
     @Override
-    public Complaint createComplaint(Complaint complaint)
-    {
+    public Complaint createComplaint(Complaint complaint) {
         complaint.setStatus(ComplaintStatus.ACCEPTED);
-        complaint.setDate(new java.sql.Date(System.currentTimeMillis()));
 
         if(complaint.getUser().getEmail() == null) {
             User loggedInUser = this.userService.getCurrentlyLoggedInUser();
@@ -121,5 +120,4 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
         LOG.info("Sending email complaint accepted to: {}", user.getEmail());
         emailService.sendMail(complaintAcceptedMessage, user);
     }
-
 }
