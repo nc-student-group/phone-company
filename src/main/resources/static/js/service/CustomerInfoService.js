@@ -3,9 +3,9 @@
 angular.module('phone-company').factory('CustomerInfoService',
     ['$q', '$http', function ($q, $http) {
 
-        const GET_TARIFFS_HISTORY_BY_CUSTOMER_ID_URL = "api/customer/tariffs/history/";
+        const GET_TARIFFS_HISTORY_BY_CUSTOMER_ID_URL = "api/customer-tariff/history/";
         const GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL = "api/services/history/";
-        const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer/tariff/";
+        const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer-tariff/tariff";
         const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
         const GET_CURRENT_CUSTOMER_SERVICES_URL = "api/services/current/";
         const CUSTOMERS = "api/customers/";

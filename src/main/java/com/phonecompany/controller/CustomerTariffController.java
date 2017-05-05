@@ -52,7 +52,7 @@ public class CustomerTariffController {
 
     //TODO: extract to CustomerTariff controller?
     //we are actually dealing with customer tariff here
-    @RequestMapping(value = "/tariffs/history/{page}/{size}", method = RequestMethod.GET)
+    @RequestMapping(value = "/history/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
         Customer customer = customerService.getCurrentlyLoggedInUser();

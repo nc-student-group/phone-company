@@ -34,11 +34,11 @@
                 templateUrl: 'view/admin/users.html',
                 controller: 'UserController'
             });
-        $routeProvider.when('/client',
-            {
-                templateUrl: 'view/clientPage.html',
-                controller: 'ClientController'
-            });
+        // $routeProvider.when('/client',
+        //     {
+        //         templateUrl: 'view/clientPage.html',
+        //         controller: 'ClientController'
+        //     });
         $routeProvider.when('/csr',
             {
                 templateUrl: 'view/csr/csrProfile.html',

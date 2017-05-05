@@ -13,7 +13,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs/";
     var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";
     var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariffs/customer/";
-    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariffs/customer-tariff/current";
+    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer-tariff/current";
     var GET_ACTIVATE_TARIFF_URL = "/api/tariffs/activate/";
 
     var factory = {

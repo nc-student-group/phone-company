@@ -34,10 +34,10 @@
                 $scope.preloader.send = false;
             });
 
-        $scope.preloader.send = true;
-        $scope.loadCurrentServices = function() {
+        $scope.loadCurrentServices = function () {
+            $scope.preloader.send = true;
             CustomerInfoService.getCurrentServices()
-                .then(function(data) {
+                .then(function (data) {
                     $scope.hasCurrentServices = false;
                     console.log(`Retrieved current services ${JSON.stringify(data)}}`);
                     $scope.currentServices = data;
@@ -45,12 +45,15 @@
                         $scope.hasCurrentServices = true;
                     }
                     $scope.loading = false;
+                    $scope.preloader.send = false;
+                }, function (data) {
+                    $scope.preloader.send = false;
                 });
         };
-        $scope.loadCurrentServices();
+        // $scope.loadCurrentServices();
 
-        $scope.preloader.send = true;
         $scope.loadCurrentTariff = function () {
+            $scope.preloader.send = true;
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {
                     $scope.hasCurrentTariff = false;
@@ -60,9 +63,30 @@
                         $scope.hasCurrentTariff = true;
                     }
                     $scope.loading = false;
+                    $scope.preloader.send = false;
+                }, function (data) {
+                    $scope.preloader.send = false;
                 });
         };
-        $scope.loadCurrentTariff();
+        // $scope.loadCurrentTariff();
+
+        $scope.myTariffPlansTabClick = function () {
+            if ($scope.currentTariff == undefined) {
+                $scope.loadCurrentTariff();
+            }
+            if ($scope.orders == undefined) {
+                $scope.loadTariffsHistory();
+            }
+        };
+
+        $scope.myServicesTabClick = function () {
+            if ($scope.currentServices == undefined) {
+                $scope.loadCurrentServices();
+            }
+            if ($scope.servicesOrders == undefined) {
+                $scope.loadServicesHistory();
+            }
+        };
 
         $scope.loadTariffsHistory = function () {
             $scope.loading = true;
@@ -74,7 +98,7 @@
                     $scope.loading = false;
                 });
         };
-        $scope.loadTariffsHistory();
+        // $scope.loadTariffsHistory();
 
         $scope.nextPage = function () {
             if (($scope.page + 1) * $scope.size < $scope.ordersFound) {
@@ -113,7 +137,7 @@
                     $scope.loading = false;
                 });
         };
-        $scope.loadServicesHistory();
+        // $scope.loadServicesHistory();
 
         $scope.servicesNextPage = function () {
             if (($scope.servicesPage + 1) * $scope.servicesSize < $scope.servicesOrdersFound) {
@@ -141,18 +165,19 @@
             }
         };
 
-        $scope.showServiceDetails = function(customerService) {
+        $scope.showServiceDetails = function (customerService) {
             $mdDialog.show({
                 controller: ShowServiceDetailsController,
                 templateUrl: '../../view/client/moreAboutCustomerServiceModal.html',
-                locals : {
+                locals: {
                     customerService: customerService
                 },
                 parent: angular.element(document.body),
                 clickOutsideToClose: true,
                 escapeToClose: true
             })
-                .then(function(answer){});
+                .then(function (answer) {
+                });
         };
 
         function ShowServiceDetailsController($scope, $mdDialog, customerService) {
@@ -170,7 +195,7 @@
             };
         }
 
-        $scope.deactivateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+        $scope.deactivateCustomerService = function (customerService, loadCurrentServices, loadServicesHistory) {
             $mdDialog.show({
                 controller: DeactivateCustomerServiceController,
                 templateUrl: '../../view/client/deactivateCustomerServiceModal.html',
@@ -250,7 +275,7 @@
             };
         }
 
-        $scope.activateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+        $scope.activateCustomerService = function (customerService, loadCurrentServices, loadServicesHistory) {
             $mdDialog.show({
                 controller: ActivateCustomerServiceDialogController,
                 templateUrl: '../../view/client/activateCustomerServiceModal.html',
@@ -269,7 +294,7 @@
         };
 
         function ActivateCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
-                                                        loadCurrentServices, loadServicesHistory) {
+                                                         loadCurrentServices, loadServicesHistory) {
             $scope.customerService = customerService;
 
             $scope.hide = function () {
