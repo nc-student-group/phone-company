@@ -112,24 +112,21 @@ public class TariffController {
         return response;
     }
 
-
     //We also have a nice  method: customerService.getCurrentlyLoggedInUser which
     // no need to call: org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
     //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     //every time
-    //TODO: @GetMapping(value = "/current") ??
+    //TODO: @GetMapping(value = "/current") ?? //never calls in js services
     @RequestMapping(value = "/api/tariffs/get/by/client", method = RequestMethod.GET)
     public List<CustomerTariff> getTariffsByClientId() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Customer customer = customerService.getCurrentlyLoggedInUser();
         LOGGER.debug("Trying to retrieve customer tariffs where customer_id = " + customer.getId());
         return this.customerTariffService.getByClientId(customer);
     }
 
-    @RequestMapping(value = "/api/tariff/update/status/{id}/{status}", method = RequestMethod.GET)
+    @PatchMapping(value = "/{id}")
     public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
-                                                   @PathVariable("status") ProductStatus productStatus) {
+                                                   @RequestBody ProductStatus productStatus) {
         this.tariffService.updateTariffStatus(tariffId, productStatus);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -145,16 +142,6 @@ public class TariffController {
         return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId), HttpStatus.OK);
     }
 
-    //TODO: extract to CustomerTariff controller?
-    //@GetMapping(value = "api/customer-tariffs/current") ??
-    //we are actually dealing with customer tariff here
-    @GetMapping(value = "/customer/current")
-    public ResponseEntity<?> getCurrentCustomerTariff() {
-        CustomerTariff customerTariff = customerTariffService.getCurrentCustomerTariff();
-        LOGGER.debug("Current customer tariff {}", customerTariff);
-        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
-    }
-
     @GetMapping(value = "/activate/{id}")
     public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
         tariffService.activateTariff(tariffId);
@@ -162,31 +149,6 @@ public class TariffController {
     }
 
 
-    //TODO: extract to CustomerTariff controller?
-    //we are actually dealing with customer tariff here
-    @RequestMapping(value = "/api/customer/tariff", method = RequestMethod.GET)
-    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
-        CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
-        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
-    }
 
-
-    //TODO: extract to CustomerTariff controller?
-    //we are actually dealing with customer tariff here
-    @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
-    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
-                                                     @PathVariable("size") int size) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
-        LOGGER.debug("Get all tariff orders by customer id = " + customer);
-        Map<String, Object> map = new HashMap<>();
-        map.put("ordersFound", orderService.getOrdersCountByClient(customer));
-        map.put("orders", orderService.getOrdersHistoryByClient(customer, page, size));
-        return map;
-    }
 
 }
