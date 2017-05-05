@@ -2,19 +2,19 @@
 
 angular.module('phone-company').factory('TariffService', ['$q', '$http', function ($q, $http) {
 
-    var GET_ALL_REGION_URL = "api/regions/get";
-    var GET_TARIFFS_BY_REGION_ID_URL = "api/tariffs/get/by/region/";
-    var GET_NEW_TARIFF_URL = "api/tariff/new/get";
-    var POST_ADD_TARIFF_URL = "api/tariff/add";
-    var POST_ADD_TARIFF_SINGLE_URL = "api/tariff/add/single";
-    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariff/get/";
-    var POST_SAVE_TARIFF_URL = "api/tariff/update";
-    var POST_SAVE_TARIFF_SINGLE_URL = "api/tariff/update/single";
-    var GET_CHANGE_TARIFF_STATUS_URL = "api/tariff/update/status/";
-    var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/get/";
-    var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariff/for/customer/get/";
-    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariff/by/customer/get";
-    var GET_ACTIVATE_TARIFF_URL = "/api/tariff/activate/";
+    var GET_ALL_REGION_URL = "api/regions";
+    var GET_TARIFFS_BY_REGION_ID_URL = "api/tariffs/";
+    var GET_NEW_TARIFF_URL = "api/tariffs/empty";
+    var POST_ADD_TARIFF_URL = "api/tariffs/regions";
+    var POST_ADD_TARIFF_SINGLE_URL = "api/tariffs";
+    var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs";
+    var POST_SAVE_TARIFF_URL = "api/tariffs";
+    var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
+    var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs";
+    var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";
+    var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariffs/customer/";
+    var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/tariffs/customer-tariff/current";
+    var GET_ACTIVATE_TARIFF_URL = "/api/tariffs/activate/";
 
     var factory = {
         getAllRegions: getAllRegions,
@@ -114,7 +114,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     function saveTariff(regionsToSave) {
         var deferred = $q.defer();
-        $http.post(POST_SAVE_TARIFF_URL, regionsToSave).then(
+        $http.put(POST_SAVE_TARIFF_URL, regionsToSave).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -127,7 +127,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     function saveTariffSingle(tariff) {
         var deferred = $q.defer();
-        $http.post(POST_SAVE_TARIFF_SINGLE_URL, tariff).then(
+        $http.put(POST_SAVE_TARIFF_SINGLE_URL, tariff).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -140,7 +140,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     function changeTariffStatus(id, status) {
         var deferred = $q.defer();
-        $http.get(GET_CHANGE_TARIFF_STATUS_URL + id + "/" + status).then(
+        $http.patch(GET_CHANGE_TARIFF_STATUS_URL + id, status).then(
             function (response) {
                 deferred.resolve(response.data);
             },
