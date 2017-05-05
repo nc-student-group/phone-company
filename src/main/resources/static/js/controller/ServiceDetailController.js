@@ -10,13 +10,13 @@ angular.module('phone-company').controller('ServiceDetailController', [
 
         var currentServiceId = $routeParams['id'];
 
-        $scope.loading = true;
+        $scope.preloader.send = true;
         ServicesService.getServiceById(currentServiceId)
             .then(function (data) {
                 $scope.currentService = data;
-                $scope.loading = false;
+                $scope.preloader.send = false;
             }, function () {
-                $scope.loading = false;
+                $scope.preloader.send = false;
             });
 
         $scope.backToServices = function () {

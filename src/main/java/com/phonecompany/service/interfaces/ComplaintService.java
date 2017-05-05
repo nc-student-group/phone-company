@@ -10,4 +10,5 @@ public interface ComplaintService extends CrudService<Complaint> {
     public Complaint createComplaint(Complaint complaint);
     public List<ComplaintCategory> getAllComplaintCategory();
     public Map<String, Object> getComplaintsByCategory(String category, int page, int size);
+    public Map<String, Object> getComplaintsByCustomer(int id, int page, int size);
 }

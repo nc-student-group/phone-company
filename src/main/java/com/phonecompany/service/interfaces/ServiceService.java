@@ -13,7 +13,7 @@ public interface ServiceService extends CrudService<Service> {
 
     void updateServiceStatus(long serviceId, ProductStatus productStatus);
 
-    void activateServiceForCustomer(long serviceId, Customer customer);
+    void activateServiceForCustomer(Service service, Customer customer);
 
     Service getById(Long id);
 }

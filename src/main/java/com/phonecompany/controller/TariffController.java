@@ -53,7 +53,7 @@ public class TariffController {
         return tariffRegionService.getTariffsTable(regionId, page, size);
     }
 
-    @RequestMapping(value = "/get/available/", method = RequestMethod.GET)
+    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
     public List<Tariff> getClientTariffs() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -77,10 +77,17 @@ public class TariffController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @PostMapping
+    @RequestMapping(value = "/api/tariff/add/single", method = RequestMethod.POST)
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         tariffService.addNewTariff(tariff, null);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+
+        SimpleMailMessage notificationEmail = this.tariffNotificationEmailCreator
+                .constructMessage(savedTariff);
+        this.emailService.sendMail(notificationEmail, customer);
+        LOGGER.debug("Tariff added {}", savedTariff);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "api/tariff/update", method = RequestMethod.POST)
@@ -196,18 +203,21 @@ public class TariffController {
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
+        SimpleMailMessage notificationMessage = this.tariffDeactivationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
-        customerTariffService.suspendCustomerTariff(data);
+        this.customerTariffService.suspendCustomerTariff(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
-                                                     @PathVariable("size") int size) {
+                                                    @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());

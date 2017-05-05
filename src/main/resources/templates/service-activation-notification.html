@@ -14,11 +14,9 @@
     background: linear-gradient(to right, rgba(0,27,152,0.78), rgba(80,114,177,0.76));
     ">
 
+<h1 th:inline="text" style="font-size: 2em; padding-top: 30px; margin-left: 20px;
+    color: #151515; text-transform: uppercase">Thank you for ordering our service <p th:text="${serviceName}"></p></h1>
 <div style="margin-left: 20px; margin-right: 20px; font-size: 1.5em">
-    <h1 th:inline="text" style="font-size: 2em; padding-top: 30px; margin-left: 20px;
-    color: #151515; text-transform: uppercase">We have added a new service you might be interested in:
-        <p th:text="${serviceName}"></p>, price: <p th:text="${price}"></p></h1>
-
     <p style="margin-left: 290px; color: #151515;
     padding-bottom: 40px;">
         Regards, <br/>

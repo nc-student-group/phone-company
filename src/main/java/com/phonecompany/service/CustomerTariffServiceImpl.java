@@ -1,15 +1,17 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Order;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.CustomerTariffService;
+import com.phonecompany.service.interfaces.EmailService;
+import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,16 +19,24 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> implements CustomerTariffService {
+public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
+        implements CustomerTariffService {
 
     private CustomerTariffDao customerTariffDao;
     private OrderService orderService;
+    private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
+    private EmailService<User> emailService;
 
     @Autowired
-    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService){
+    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
+                                     @Qualifier("tariffSuspensionNotificationEmailCreator")
+                                     MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                     EmailService<User> emailService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
+        this.tariffSuspensionNotificationEmailCreator = tariffSuspensionNotificationEmailCreator;
+        this.emailService = emailService;
     }
 
     @Override
@@ -37,12 +47,12 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     }
 
     @Override
-    public CustomerTariff getCurrentCustomerTariff(long customerId){
+    public CustomerTariff getCurrentCustomerTariff(long customerId) {
         return this.customerTariffDao.getCurrentCustomerTariff(customerId);
     }
 
     @Override
-    public CustomerTariff getCurrentCorporateTariff(long corporateId){
+    public CustomerTariff getCurrentCorporateTariff(long corporateId) {
         return this.customerTariffDao.getCurrentCorporateTariff(corporateId);
     }
 
@@ -55,13 +65,13 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
 
     @Override
     public CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff) {
-        if(CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
+        if (CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
             Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);
             resumingOrder.setOrderStatus(OrderStatus.CANCELED);
             orderService.update(resumingOrder);
         }
         customerTariff.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
-        LocalDate now  = LocalDate.now();
+        LocalDate now = LocalDate.now();
 
         Order deactivationOrder = new Order();
         deactivationOrder.setCustomerTariff(customerTariff);
@@ -80,12 +90,12 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
     public CustomerTariff suspendCustomerTariff(Map<String, Object> suspensionData) {
 
         CustomerTariff customerTariff = customerTariffDao.
-                getById((new Long((Integer)suspensionData.get("currentTariffId"))));
+                getById((new Long((Integer) suspensionData.get("currentTariffId"))));
         Integer daysToExecution = (Integer) suspensionData.get("daysToExecution");
 
         customerTariff.setCustomerProductStatus(CustomerProductStatus.SUSPENDED);
 
-        LocalDate now  = LocalDate.now();
+        LocalDate now = LocalDate.now();
         LocalDate executionDate = now.plusDays(daysToExecution);
 
         Order suspensionOrder = new Order(null, customerTariff, OrderType.SUSPENSION,
@@ -97,6 +107,10 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff> i
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
+
+        SimpleMailMessage notificationMessage = this.tariffSuspensionNotificationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
 
         return customerTariff;
     }

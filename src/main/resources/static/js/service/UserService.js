@@ -39,9 +39,9 @@
             return deferred.promise;
         };
 
-        UserService.getAllUsers = function(page, size,selectedRole,selectedStatus) {
+        UserService.getAllUsers = function (page, size, selectedRole, selectedStatus) {
             var deferred = $q.defer();
-            $http.get(GET_ALL_USERS_URL+page+'/'+size+"/"+selectedRole+"/"+selectedStatus).then(
+            $http.get(GET_ALL_USERS_URL + page + '/' + size + "/" + selectedRole + "/" + selectedStatus).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -68,7 +68,7 @@
 
         UserService.updateStatus = function (id, status) {
             var deferred = $q.defer();
-            $http.get("/api/user/update/"+id+"/"+status).then(
+            $http.get("/api/user/update/" + id + "/" + status).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

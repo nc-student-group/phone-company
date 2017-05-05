@@ -133,7 +133,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
-    private List<Customer> getByCorporate(long corporateId){
+    private List<Customer> getByCorporate(long corporateId) {
         String customersByCorporate = this.getByCorporateIdQuery();
         LOG.debug("customerByCompany : {}", customersByCorporate);
         try (Connection conn = dbManager.getConnection();
@@ -150,7 +150,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
-    private List<Customer> getCustomersWithoutCorporate(long corporateId){
+    private List<Customer> getCustomersWithoutCorporate(long corporateId) {
         String customersByCorporate = this.getWithoutCorporateQuery();
         LOG.debug("customerWithoutCorporate : {}", customersByCorporate);
         try (Connection conn = dbManager.getConnection();
@@ -166,6 +166,14 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
+    @Override
+    public int getCountByPhone(String phone) {
+        return this.getCountByKey(phone, this.getCountByPhoneQuery());
+    }
+
+    private String getCountByPhoneQuery() {
+        return this.getQuery("count.by.phone");
+    }
 
     private String getByVerificationTokenQuery() {
         return this.getQuery("by.verification.token");

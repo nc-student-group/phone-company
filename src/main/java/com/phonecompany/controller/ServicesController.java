@@ -1,10 +1,9 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.ProductCategory;
-import com.phonecompany.model.Service;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,19 +32,36 @@ public class ServicesController {
     private MailMessageCreator<Service> serviceNotificationEmailCreator;
     private EmailService<Customer> emailService;
     private CustomerService customerService;
+    private MailMessageCreator<Service> serviceActivationNotificationEmailCreator;
+    private CustomerServiceService customerServiceService;
+    private OrderService orderService;
 
     @Autowired
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                                      MailMessageCreator<Service> emailCreator,
+                              MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
-                              CustomerService customerService) {
+                              CustomerService customerService,
+                              CustomerServiceService customerServiceService,
+                              OrderService orderService,
+                              @Qualifier("serviceActivationNotificationEmailCreator")
+                                          MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
         this.emailService = emailService;
         this.customerService = customerService;
+        this.customerServiceService = customerServiceService;
+        this.orderService = orderService;
+        this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
+    }
+
+    @GetMapping
+    public Collection<Service> getAllServices() {
+        List<Service> allServices = this.serviceService.getAll();
+        LOG.debug("Services fetched from the storage: {}", allServices);
+        return allServices;
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
@@ -78,7 +98,11 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
-        this.serviceService.activateServiceForCustomer(serviceId, loggedInCustomer);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -96,6 +120,11 @@ public class ServicesController {
         return serviceFetchedById;
     }
 
+    @GetMapping("/empty-service")
+    public Service getEmptyService() {
+        return new Service();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long serviceId,
                                                  @RequestBody String status) { //TODO: must be enum
@@ -108,6 +137,49 @@ public class ServicesController {
     public ResponseEntity<?> updateService(@RequestBody Service service) {
         LOG.debug("Service to be updated: ", service);
         this.serviceService.update(service);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/current")
+    //@RequestMapping(value = "api/customer/services/", method = RequestMethod.GET)
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        List<CustomerServiceDto> customerServices =
+                customerServiceService.getCurrentCustomerServices(customer.getId());
+        return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
+    }
+
+    //@RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
+    @GetMapping("/history/{page}/{size}")
+    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
+                                                     @PathVariable("size") int size) {
+        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        LOG.debug("Get all service orders by customer id = " + customer);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
+        map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));
+        return map;
+    }
+
+    @PatchMapping(value = "/deactivate")
+    public ResponseEntity<Void> deactivateCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.deactivateCustomerService(customerService);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/activate")
+    public ResponseEntity<Void> activateCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.activateCustomerService(customerService);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/suspend")
+    public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
+        customerServiceService.suspendCustomerService(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

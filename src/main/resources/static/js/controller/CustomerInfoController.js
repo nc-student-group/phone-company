@@ -10,11 +10,15 @@
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
         $scope.ordersFound = 0;
+        $scope.servicesOrdersFound = 0;
         $scope.mailingSwitchDisabled = true;
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
+        $scope.hasCurrentServices = false;
         $scope.page = 0;
+        $scope.servicesPage = 0;
         $scope.size = 5;
+        $scope.servicesSize = 5;
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
@@ -27,10 +31,25 @@
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
                 $scope.mailingSwitchDisabled = false;
-                $scope.loading = false;
+                $scope.preloader.send = false;
             });
 
-        $scope.loading = true;
+        $scope.preloader.send = true;
+        $scope.loadCurrentServices = function() {
+            CustomerInfoService.getCurrentServices()
+                .then(function(data) {
+                    $scope.hasCurrentServices = false;
+                    console.log(`Retrieved current services ${JSON.stringify(data)}}`);
+                    $scope.currentServices = data;
+                    if ($scope.currentServices !== "") {
+                        $scope.hasCurrentServices = true;
+                    }
+                    $scope.loading = false;
+                });
+        };
+        $scope.loadCurrentServices();
+
+        $scope.preloader.send = true;
         $scope.loadCurrentTariff = function () {
             CustomerInfoService.getCurrentTariff()
                 .then(function (data) {
@@ -83,6 +102,114 @@
             }
         };
 
+        $scope.loading = true;
+        $scope.loadServicesHistory = function () {
+            $scope.loading = true;
+            CustomerInfoService.getServicesHistory($scope.page, $scope.size)
+                .then(function (data) {
+                    $scope.servicesOrders = data.orders;
+                    $scope.servicesOrdersFound = data.ordersFound;
+                    console.log($scope.servicesOrders);
+                    $scope.loading = false;
+                });
+        };
+        $scope.loadServicesHistory();
+
+        $scope.servicesNextPage = function () {
+            if (($scope.servicesPage + 1) * $scope.servicesSize < $scope.servicesOrdersFound) {
+                $scope.loading = true;
+                $scope.servicesPage = $scope.servicesPage + 1;
+                CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
+                    .then(function (data) {
+                        $scope.servicesOrders = data.orders;
+                        $scope.servicesOrdersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
+
+        $scope.servicesPreviousPage = function () {
+            if ($scope.servicesPage > 0) {
+                $scope.loading = true;
+                $scope.servicesPage = $scope.page - 1;
+                CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
+                    .then(function (data) {
+                        $scope.servicesOrders = data.orders;
+                        $scope.servicesOrdersFound = data.ordersFound;
+                        $scope.loading = false;
+                    });
+            }
+        };
+
+        $scope.showServiceDetails = function(customerService) {
+            $mdDialog.show({
+                controller: ShowServiceDetailsController,
+                templateUrl: '../../view/client/moreAboutCustomerServiceModal.html',
+                locals : {
+                    customerService: customerService
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function(answer){});
+        };
+
+        function ShowServiceDetailsController($scope, $mdDialog, customerService) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                $mdDialog.cancel();
+            };
+        }
+
+        $scope.deactivateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: DeactivateCustomerServiceController,
+                templateUrl: '../../view/client/deactivateCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function DeactivateCustomerServiceController($scope, $mdDialog, CustomerInfoService,
+                                                     customerService, loadCurrentServices, loadServicesHistory) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.deactivateService($scope.customerService).then(function () {
+                    toastr.success("Your service " + $scope.customerService.service.serviceName +
+                        " was successfully deactivated!", "Service deactivation");
+                    $mdDialog.cancel();
+                    loadCurrentServices();
+                    loadServicesHistory();
+                });
+            };
+        }
+
         $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({
                 controller: DeactivateDialogController,
@@ -122,6 +249,97 @@
                 });
             };
         }
+
+        $scope.activateCustomerService = function(customerService, loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: ActivateCustomerServiceDialogController,
+                templateUrl: '../../view/client/activateCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function ActivateCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
+                                                        loadCurrentServices, loadServicesHistory) {
+            $scope.customerService = customerService;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.activateService($scope.customerService).then(function () {
+                    toastr.success("Your service " + $scope.customerService.service.serviceName +
+                        " was successfully activated!", "Service activation");
+                    $mdDialog.cancel();
+                    loadCurrentServices();
+                    loadServicesHistory();
+                });
+            };
+        }
+
+        $scope.suspendCustomerService = function (customerService, daysToExecution,
+                                                  loadCurrentServices, loadServicesHistory) {
+            $mdDialog.show({
+                controller: SuspendCustomerServiceDialogController,
+                templateUrl: '../../view/client/suspendCustomerServiceModal.html',
+                locals: {
+                    customerService: customerService,
+                    daysToExecution: daysToExecution,
+                    loadCurrentServices: loadCurrentServices,
+                    loadServicesHistory: loadServicesHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function SuspendCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
+                                                        loadCurrentServices, loadServicesHistory) {
+            $scope.data = {};
+            $scope.data.customerServiceId = customerService.id;
+            $scope.data.customerService = customerService;
+            $scope.data.daysToExecution = 1;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                if ($scope.data.daysToExecution !== undefined) {
+                    CustomerInfoService.suspendService($scope.data).then(function () {
+                        toastr.success("Your service " + $scope.data.customerService.service.serviceName +
+                            " was successfully suspended for " + $scope.data.daysToExecution +
+                            " days!", "Service suspension");
+                        $mdDialog.cancel();
+                        loadCurrentServices();
+                        loadServicesHistory();
+                    });
+                } else {
+                    toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
+                }
+            };
+        }
+
         $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
                                                      loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({

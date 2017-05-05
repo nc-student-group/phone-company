@@ -3,10 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerServiceDto;
-import com.phonecompany.model.ProductCategory;
-import com.phonecompany.model.Service;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
@@ -14,6 +11,8 @@ import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
@@ -34,6 +33,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private OrderService orderService;
     private CustomerService customerService;
     private CustomerServiceService customerServiceService;
+
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
@@ -133,11 +133,10 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public void activateServiceForCustomer(long serviceId, Customer customer) {
-        Service currentService = this.getById(serviceId);
+    public void activateServiceForCustomer(Service service, Customer customer) {
         CustomerServiceDto customerService =
-                new CustomerServiceDto(customer, currentService,
-                        currentService.getPrice(), CustomerProductStatus.ACTIVE);
+                new CustomerServiceDto(customer, service,
+                        service.getPrice(), CustomerProductStatus.ACTIVE);
         this.orderService.saveCustomerServiceActivationOrder(customerService);
         this.customerServiceService.save(customerService);
     }
