@@ -56,24 +56,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public Integer getCountByRegionIdAndPaging(long regionId) {
+    public Integer getCountByRegionId(long regionId) {
         return tariffDao.getCountByRegionIdAndPaging(regionId);
-    }
-
-    @Override
-    public Map<String, Object> getTariffsTable(long regionId, int page, int size) {
-        Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.getByRegionIdAndPaging(regionId, page, size);
-        List<Object> rows = new ArrayList<>();
-        tariffs.forEach((Tariff tariff) -> {
-            Map<String, Object> row = new HashMap<>();
-            row.put("tariff", tariff);
-            row.put("regions", tariffRegionService.getAllByTariffId(tariff.getId()));
-            rows.add(row);
-        });
-        response.put("tariffs", rows);
-        response.put("tariffsSelected", this.getCountByRegionIdAndPaging(regionId));
-        return response;
     }
 
     @Override
@@ -162,7 +146,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
         LOGGER.debug("TARIFF PRICE: " + tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100));
-        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount()/100), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
+        CustomerTariff customerTariff = new CustomerTariff(customer, null, tariffRegion.getPrice() * (1 - tariffRegion.getTariff().getDiscount() / 100), CustomerProductStatus.ACTIVE, tariffRegion.getTariff());
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -191,8 +175,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Order activationOrder = new Order(null, null,
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
-        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount()/100));
-        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount()/100), CustomerProductStatus.ACTIVE, tariff);
+        LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount() / 100));
+        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount() / 100), CustomerProductStatus.ACTIVE, tariff);
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -247,20 +231,21 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions){
-        LocalDate currentDate = LocalDate.now();
+    public ResponseEntity<?> addNewTariff(Tariff tariff, List<TariffRegion> tariffRegions) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             return new ResponseEntity<>(new Error("Tariff with name \"" +
-                    tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
+                    tariff.getTariffName() + "\" already exist!"), HttpStatus.CONFLICT);
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(currentDate);
+        tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
                 "tariff/" + tariff.hashCode())); // no such thing as get time in millis
         Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
         LOGGER.debug("Tariff added {}", savedTariff);
-        this.addTariffRegions(tariffRegions, savedTariff);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (!tariff.getIsCorporate() && tariffRegions != null) {
+            this.addTariffRegions(tariffRegions, savedTariff);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

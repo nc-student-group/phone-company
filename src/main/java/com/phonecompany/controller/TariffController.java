@@ -18,46 +18,42 @@ import java.time.LocalDate;
 import java.util.*;
 
 @RestController
+@RequestMapping(value = "/api/tariffs")
 public class TariffController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffController.class);
 
-    @Autowired
     private RegionService regionService;
-
-    @Autowired
     private TariffRegionService tariffRegionService;
-
-    @Autowired
     private TariffService tariffService;
-
-    @Autowired
     private CustomerTariffService customerTariffService;
-
-    @Autowired
     private FileService fileService;
-
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    @Autowired
+    private CustomerService customerService;
     private OrderService orderService;
 
-    @RequestMapping(value = "/api/regions/get", method = RequestMethod.GET)
-    public List<Region> getAllRegions() {
-        LOGGER.debug("Get all regions.");
-        return regionService.getAll();
+    @Autowired
+    public TariffController(RegionService regionService, TariffRegionService tariffRegionService,
+                            TariffService tariffService, CustomerTariffService customerTariffService,
+                            FileService fileService, CustomerService customerService,
+                            OrderService orderService) {
+        this.regionService = regionService;
+        this.tariffRegionService = tariffRegionService;
+        this.tariffService = tariffService;
+        this.customerTariffService = customerTariffService;
+        this.fileService = fileService;
+        this.customerService = customerService;
+        this.orderService = orderService;
     }
 
-    @RequestMapping(value = "/api/tariffs/get/by/region/{id}/{page}/{size}", method = RequestMethod.GET)
-    public Map<String, Object> getTariffsByRegionId(@PathVariable("id") Long regionId,
+    @GetMapping(value = "/{regionId}/{page}/{size}")
+    public Map<String, Object> getTariffsByRegionId(@PathVariable("regionId") Long regionId,
                                                     @PathVariable("page") int page,
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffService.getTariffsTable(regionId, page, size);
+        return tariffRegionService.getTariffsTable(regionId, page, size);
     }
 
-    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
+    @RequestMapping(value = "/get/available/", method = RequestMethod.GET)
     public List<Tariff> getClientTariffs() {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -68,12 +64,12 @@ public class TariffController {
         return tariffService.getByRegionIdAndClient(regionId, isRepresentative);
     }
 
-    @RequestMapping(value = "/api/tariff/new/get", method = RequestMethod.GET)
+    @GetMapping(value = "/empty")
     public Tariff getEmptyTariff() {
         return new Tariff();
     }
 
-    @RequestMapping(value = "/api/tariff/add", method = RequestMethod.POST)
+    @PostMapping(value = "/regions")
     public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             return tariffService.addNewTariff(tariffRegions.get(0).getTariff(), tariffRegions);
@@ -81,17 +77,10 @@ public class TariffController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/tariff/add/single", method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
-        if (tariffService.findByTariffName(tariff.getTariffName()) != null) {
-            return new ResponseEntity<>(new Error("Tariff with name \"" + tariff.getTariffName() + "\" already exist!"), HttpStatus.BAD_REQUEST);
-        }
-        tariff.setProductStatus(ProductStatus.ACTIVATED);
-        tariff.setCreationDate(LocalDate.now());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(), "tariff/" + tariff.hashCode()));
-        Tariff savedTariff = tariffService.save(tariff);
-        LOGGER.debug("Tariff added {}", savedTariff);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        tariffService.addNewTariff(tariff, null);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "api/tariff/update", method = RequestMethod.POST)
@@ -218,7 +207,7 @@ public class TariffController {
 
     @RequestMapping(value = "api/customer/tariffs/history/{page}/{size}", method = RequestMethod.GET)
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
-                                                    @PathVariable("size") int size) {
+                                                     @PathVariable("size") int size) {
         org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Customer customer = customerService.findByEmail(securityUser.getUsername());
