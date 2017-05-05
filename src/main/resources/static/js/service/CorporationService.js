@@ -13,7 +13,7 @@
 
         var GET_ALL_CORPORATION_URL = "api/corporations/";
         var SAVE_EDITED_CORPORATION_URL = "api/corporations/";
-        var SAVE_CORPORATION_URL = "api/corporation/save";
+        var SAVE_CORPORATION_URL = "api/corporations";
         var GET_CUSTOMER_URL = "api/customer/getByCorporateId/";
 
         CorporationService.saveCorporation = function (corporation) {

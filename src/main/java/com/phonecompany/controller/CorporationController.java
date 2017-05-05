@@ -17,6 +17,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
+@RequestMapping(value = "/api/corporations")
 public class CorporationController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CorporationController.class);
@@ -27,7 +28,7 @@ public class CorporationController {
         this.corporateService = corporateService;
     }
 
-    @RequestMapping(method = GET, value = "/api/corporations/{page}/{size}")
+    @RequestMapping(method = GET, value = "/{page}/{size}")
     public Map<String, Object> getAllCorporationsPaging(@PathVariable("page") int page,
                                                         @PathVariable("size") int size,
                                                         @RequestParam("s") String partOfName) {
@@ -43,7 +44,7 @@ public class CorporationController {
         return response;
     }
 
-    @RequestMapping(method = GET, value = "/api/corporations")
+    @RequestMapping(method = GET)
     public List<Corporate> getAllCorporations() {
         LOG.info("Retrieving all the corporations contained in the database");
 
@@ -53,14 +54,14 @@ public class CorporationController {
         return corporates;
     }
 
-    @RequestMapping(method = PUT, value = "/api/corporations")
+    @RequestMapping(method = PUT)
     public ResponseEntity<?> saveEditedCorporationByAdmin(@RequestBody Corporate corporate) {
         LOG.debug("Corporate retrieved from the http request: " + corporate);
         Corporate persistedCorporate = this.corporateService.update(corporate);
         return new ResponseEntity<>(persistedCorporate, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = POST, value = "/api/corporation/save")
+    @RequestMapping(method = POST)
     public ResponseEntity<?> saveCorporationByAdmin(@RequestBody Corporate corporate) {
         LOG.debug("Corporate retrieved from the http request: " + corporate);
         Corporate persistedCorporate = this.corporateService.save(corporate);
