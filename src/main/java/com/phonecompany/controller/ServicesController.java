@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,14 +40,14 @@ public class ServicesController {
     @Autowired
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
-                              @Qualifier("serviceNotificationEmailCreator")
-                              MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
+                              @Qualifier("serviceNotificationEmailCreator")
+                              MailMessageCreator<Service> emailCreator,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                                          MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
+                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -57,6 +58,7 @@ public class ServicesController {
         this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
     }
 
+    @PreAuthorize("hasRole(permitAll())")
     @GetMapping
     public Collection<Service> getAllServices() {
         List<Service> allServices = this.serviceService.getAll();
@@ -64,6 +66,7 @@ public class ServicesController {
         return allServices;
     }
 
+    @PreAuthorize("hasRole(permitAll())")
     @GetMapping("/category/{id}/{page}/{size}")
     public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
                                                        @PathVariable("page") int page,
@@ -73,6 +76,7 @@ public class ServicesController {
                 .getServicesByProductCategoryId(productCategoryId, page, size);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CSR')")
     @PostMapping
     public ResponseEntity<?> addService(@RequestBody Service service) {
         LOG.debug("Service parsed from the request body: {}", service);
@@ -95,6 +99,7 @@ public class ServicesController {
                 .collect(Collectors.toList());
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
@@ -106,6 +111,7 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/categories")
     public List<ProductCategory> getAllCategories() {
         List<ProductCategory> productCategoryList = this.productCategoryService.getAll();
@@ -113,6 +119,7 @@ public class ServicesController {
         return productCategoryList;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public Service getServiceById(@PathVariable("id") long serviceId) {
         Service serviceFetchedById = this.serviceService.getById(serviceId);
@@ -120,6 +127,7 @@ public class ServicesController {
         return serviceFetchedById;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CSR')")
     @GetMapping("/empty-service")
     public Service getEmptyService() {
         return new Service();
@@ -142,11 +150,9 @@ public class ServicesController {
 
     @GetMapping("/current")
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         List<CustomerServiceDto> customerServices =
-                customerServiceService.getCurrentCustomerServices(customer.getId());
+                customerServiceService.getCurrentCustomerServices(currentlyLoggedInUser.getId());
         return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
     }
 

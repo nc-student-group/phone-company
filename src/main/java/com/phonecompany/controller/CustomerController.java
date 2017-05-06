@@ -50,7 +50,7 @@ public class CustomerController {
                               UserService userService,
                               TariffService tariffService,
                               CustomerTariffService customerTariffService,
-                              @Qualifier("tariffDeactivationEmailCreator")
+                              @Qualifier("tariffDeactivationNotificationEmailCreator")
                                       MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
                               EmailService<User> emailService) {
         this.customerService = customerService;

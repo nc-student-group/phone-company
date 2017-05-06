@@ -26,8 +26,6 @@ public class TariffController {
 
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
-    private CustomerTariffService customerTariffService;
-    private CustomerService customerService;
     private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
     private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
     private MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator;
@@ -35,7 +33,7 @@ public class TariffController {
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
-                            TariffService tariffService, CustomerTariffService customerTariffService,
+                            TariffService tariffService,
                             @Qualifier("tariffNotificationEmailCreator")
                             MailMessageCreator<Tariff> tariffNotificationEmailCreator,
                             @Qualifier("tariffActivationNotificationEmailCreator")
@@ -45,7 +43,6 @@ public class TariffController {
                             EmailService<Customer> emailService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
-        this.customerTariffService = customerTariffService;
         this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
         this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
         this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
@@ -58,23 +55,6 @@ public class TariffController {
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
         return tariffRegionService.getTariffsTable(regionId, page, size);
-    }
-
-    //TODO: resulting path will be value = "/api/tariffs/api/tariffs/get/available/"
-    //value from @RequestMapping(value = "/api/tariffs") on the top of the class will be appended everywhere
-    //You can write a single annotation @GetMapping with no parameters instead
-    //TODO: @GetMapping
-    //it will generate resulting get mapping: /api/tariffs
-    //which will return all the tariffs List<Tariff>
-    @RequestMapping(value = "api/tariffs/get/available/", method = RequestMethod.GET)
-    public ResponseEntity<?> getClientTariffs() {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
-        Long regionId = customer.getAddress().getRegion().getId();
-        Boolean isRepresentative = customer.getRepresentative();
-        //TODO: you can write logger with no concatenation like follows:
-        // LOGGER.debug("Get all tariffs for customer with id = {}", customer.getId())
-        LOGGER.debug("Get all tariffs for customer with id = " + customer.getId());
-        return new ResponseEntity<Object>(tariffService.getByRegionIdAndClient(regionId, isRepresentative), HttpStatus.OK);
     }
 
     @GetMapping(value = "/empty")

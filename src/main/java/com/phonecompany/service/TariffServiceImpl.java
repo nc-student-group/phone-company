@@ -39,19 +39,13 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                              FileService fileService,
                              OrderService orderService,
                              CustomerTariffService customerTariffService,
-                             EmailService<User> emailService,
-                             UserService userService, CustomerService customerService) {
+                             CustomerService customerService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
-        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
-        this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
-        this.emailService = emailService;
-        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
-        this.userService = userService;
         this.customerService = customerService;
     }
 
@@ -119,6 +113,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         });
     }
 
+    //TODO: please, remove currently logged in user from service
     public Map<String, Object> getTariffsAvailableForCustomer(int page, int size) {
         Customer customer = customerService.getCurrentlyLoggedInUser();
         Map<String, Object> response = new HashMap<>();
@@ -224,6 +219,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         LOGGER.debug("Tariff " + customerTariff.getId() + " activated.");
     }
 
+    //TODO: please, remove currently logged in user from service
     @Override
     public void activateTariff(long tariffId) {
         Customer customer = customerService.getCurrentlyLoggedInUser();
@@ -299,6 +295,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return savedTariff;
     }
 
+    //TODO: please, remove currently logged in user from service
     @Override
     public Tariff getTariffForCustomer(long tariffId) {
         Customer customer = customerService.getCurrentlyLoggedInUser();
