@@ -1,0 +1,127 @@
+<div class="wrapper">
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title"><b>{{tariff.tariffName}}</b></h4>
+                                <p class="category" ng-hide="tariff.isCorporate">Individual tariff plan</p>
+                                <p class="category" ng-show="tariff.isCorporate">Corporate tariff plan</p>
+                            </div>
+                            <hr/>
+                            <div class="row" style="margin: 0; padding: 20px;">
+                                <div class="col-md-4">
+                                    <div class="tariff-picture">
+                                        <img ng-src="{{tariff.pictureUrl}}" width="90%"/>
+                                        <div class="sale-picture"
+                                             ng-show="tariff.discount > 0 && tariff.discount <= 100">
+                                            <b>-{{tariff.discount}}%</b></div>
+                                    </div>
+                                    <div class="row" style="padding-top: 20px;">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="editClick(tariff.id)">
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-default btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="toListClick()">
+                                            To list
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row" style="text-align: center; font-size: 20px;">
+                                        <b>Conditions</b>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition">
+                                            <span>Calls in network</span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{tariff.callsInNetwork}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{tariff.callsOnOtherNumbers}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Roaming</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Internet</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.internet}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>SMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.sms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>MMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.mms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-one" ng-show="tariff.isCorporate">
+                                        <div class="col-md-8 condition"><span>Monthly payment</span></div>
+                                        <div class="col-md-4"
+                                             style="text-align: center; font-size: 16px; color: #161121"
+                                             ng-hide="tariff.discount > 0 && tariff.discount <=100"><span>
+                                            <b>{{tariff.price}} uah</b></span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value"
+                                             ng-show="tariff.discount > 0 && tariff.discount <= 100">
+                                            <span><b>{{tariff.price * (1 - tariff.discount/100)}} uah</b><br>
+                                                <s style="font-size: 14px; color: red">{{tariff.price}} uah</s></span>
+                                        </div>
+                                        <!--<div class="col-md-4">{{tariff.price * (1 - tariff.discount)}}</div>-->
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Creation date</span></div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{tariff.creationDate}}</b></span></div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Corporate</span></div>
+                                        <div class="col-md-4 conditions-value" ng-show="tariff.isCorporate">
+                                            <span><b>+</b></span></div>
+                                        <div class="col-md-4 conditions-value" ng-hide="tariff.isCorporate">
+                                            <span><b>-</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Discount</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{tariff.discount}}%</b></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6" ng-repeat="r in regions" style="height: 40px; font-size: 16px;">
+                                    <div class="col-md-8" >{{r.region.nameRegion}}</div>
+                                    <div class="col-md-4">{{r.price}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>
