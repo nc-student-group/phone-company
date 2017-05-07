@@ -4,8 +4,11 @@ angular.module('phone-company').factory('CustomerInfoService',
     ['$q', '$http', function ($q, $http) {
 
         const GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_URL = "api/orders/history/";
-        const GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL = "api/services/history/";
+        const GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_ID_URL = "api/orders/history/customer/";
+        const GET_SERVICES_HISTORY_BY_CUSTOMER_URL = "api/services/history/";
+        const GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL = "api/services/history/customer/";
         const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer-tariffs/customer-tariff";
+        const GET_CURRENT_CUSTOMER_TARIFF_BY_CUSTOMER_ID_URL = "api/customer-tariffs/customer/";
         const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
         const GET_CURRENT_CUSTOMER_SERVICES_URL = "api/services/current/";
         const CUSTOMERS = "api/customers/";
@@ -14,6 +17,7 @@ angular.module('phone-company').factory('CustomerInfoService',
         const ACTIVATE_SERVICE_URL = "api/services/activate";
         const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
         const SUSPEND_SERVICE_URL = "api/services/suspend";
+        const GET_CURRENT_CUSTOMER_SERVICES_BY_CUSTOMER_ID_URL = "api/services/current/customer/";
 
         return {
             getCurrentTariff: getCurrentTariff,
@@ -26,7 +30,11 @@ angular.module('phone-company').factory('CustomerInfoService',
             suspendTariff: suspendTariff,
             suspendService: suspendService,
             getTariffsHistory: getTariffsHistory,
-            getServicesHistory: getServicesHistory
+            getServicesHistory: getServicesHistory,
+            getCurrentTariffByCustomerId: getCurrentTariffByCustomerId,
+            getTariffsHistoryByCustomerId: getTariffsHistoryByCustomerId,
+            getCurrentServicesByCustomerId: getCurrentServicesByCustomerId,
+            getServicesHistoryByCustomerId: getServicesHistoryByCustomerId
         };
 
         function patchCustomer(customer) {
@@ -133,9 +141,35 @@ angular.module('phone-company').factory('CustomerInfoService',
             return deferred.promise;
         }
 
+        function getCurrentTariffByCustomerId(id) {
+            var deferred = $q.defer();
+            $http.get(GET_CURRENT_CUSTOMER_TARIFF_BY_CUSTOMER_ID_URL + id).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getTariffsHistory(page, size) {
             var deferred = $q.defer();
             $http.get(GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_URL + page + "/" + size).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getTariffsHistoryByCustomerId(id, page, size) {
+            var deferred = $q.defer();
+            $http.get(GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_ID_URL + id + "/" + page + "/" + size).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -159,9 +193,35 @@ angular.module('phone-company').factory('CustomerInfoService',
             return deferred.promise;
         }
 
+        function getCurrentServicesByCustomerId(id) {
+            var deferred = $q.defer();
+            $http.get(GET_CURRENT_CUSTOMER_SERVICES_BY_CUSTOMER_ID_URL + id).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getServicesHistory(page, size) {
             var deferred = $q.defer();
-            $http.get(GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL + page + "/" + size).then(
+            $http.get(GET_SERVICES_HISTORY_BY_CUSTOMER_URL + page + "/" + size).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getServicesHistoryByCustomerId(id, page, size) {
+            var deferred = $q.defer();
+            $http.get(GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL + id + "/" + page + "/" + size).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

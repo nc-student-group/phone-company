@@ -1,0 +1,428 @@
+<div class="wrapper">
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom>
+                            <md-tab label="Personal information">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Edit Profile</h4>
+                                                </div>
+                                                <div class="content">
+                                                    <form>
+                                                        <div class="row">
+                                                            <div class="form-group col-md-4">
+                                                                <label>Email Address</label>
+                                                                <input type="text" class="form-control" disabled
+                                                                       value="{{customer.email}}"/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>First Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                           value="{{customer.firstName}}"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Second Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                           value="{{customer.secondName}}"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Last Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                           value="{{customer.lastName}}"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-info btn-fill pull-right">
+                                                            Update Profile
+                                                        </button>
+
+                                                        <div class="clearfix"></div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Tariff plan" ng-click="myTariffPlansTabClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div>
+                                                    <div class="header">
+                                                        <h4 class="title">Customer tariff plans</h4>
+                                                    </div>
+                                                    <!--<hr/>-->
+                                                    <div class="content">
+                                                        <div ng-show="hasCurrentTariff === false">
+                                                            <div class="row">
+                                                                <h3 style="text-align: center">No current tariff plans
+                                                                    available!</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="hasCurrentTariff === true">
+                                                            <div class="row">
+                                                                <h3 style="text-align: center">
+                                                                    {{currentTariff.tariff.tariffName}}</h3>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <button style="width: 100%"
+                                                                        class="btn btn-danger btn-fill pull-left"
+                                                                        ng-click="showDeactivationModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory)">
+                                                                    Deactivate
+                                                                </button>
+                                                                <button style="width: 100%"
+                                                                        class="btn btn-toggle btn-fill pull-left"
+                                                                        ng-show="currentTariff.customerProductStatus === 'ACTIVE'"
+                                                                        ng-click="showSuspensionModalWindow(currentTariff, daysToExecution, loadCurrentTariff, loadTariffsHistory)">
+                                                                    Suspend
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-md-7">
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Current status</span></div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.customerProductStatus}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>Roaming</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.roaming}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Calls in network</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.tariff.callsInNetwork}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>Calls on other numbers</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.tariff.callsOnOtherNumbers}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition"><span>Roaming</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.roaming}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Internet</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.internet}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition"><span>SMS</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.sms}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>MMS</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.mms}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Monthly payment</span></div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.price}} uah</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Services" ng-click="myServicesTabClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="container-fluid services-cards">
+                                                    <div class="header">
+                                                        <h4 class="title">Manage my services</h4>
+                                                    </div>
+                                                    <div ng-show="hasCurrentServices === false">
+                                                        <div class="row">
+                                                            <h3 style="text-align: center">No current services
+                                                                available!</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-show="hasCurrentServices === true">
+                                                        <div ng-repeat="s in currentServices" class="col-md-4">
+                                                            <figure class="snip1174 blue">
+                                                                <p ng-hide="s.service.discount > 0 && s.service.discount < 1"
+                                                                   class="service-price">{{s.price | number : 2}}
+                                                                    &#8372;</p>
+                                                                <p ng-show="s.service.discount > 0 && s.service.discount < 1"
+                                                                   class="service-price"
+                                                                   style="text-decoration: line-through">
+                                                                    {{s.price | number : 2}} &#8372;
+                                                                </p>
+                                                                <p ng-show="s.service.discount > 0 && s.service.discount < 1"
+                                                                   style="font-weight: 700"
+                                                                   class="service-price-discounted">
+                                                                    {{s.service.price * s.service.discount | number :
+                                                                    2}} &#8372;
+                                                                </p>
+                                                                <img style="height: 240px"
+                                                                     ng-src="{{s.service.pictureUrl}}"/>
+                                                                <figcaption>
+                                                                    <h2>{{s.service.serviceName}}</h2>
+                                                                    <p style="word-break: break-all">
+                                                                        {{s.service.previewDescription}}
+                                                                    </p>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'ACTIVE'"
+                                                                       ng-click="deactivateCustomerService(s, loadCurrentServices, loadServicesHistory)">
+                                                                        Deactivate</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'ACTIVE'"
+                                                                       ng-click="suspendCustomerService(s, daysToExecution, loadCurrentServices, loadServicesHistory)">
+                                                                        Suspend</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'SUSPENDED'"
+                                                                       ng-click="activateCustomerService(s, loadCurrentServices, loadServicesHistory)">
+                                                                        Activate</a>
+                                                                    <a style="cursor: pointer"
+                                                                       ng-show="s.orderStatus === 'SUSPENDED'"
+                                                                       ng-click="deactivateCustomerService(s, loadCurrentServices, loadServicesHistory)">
+                                                                        Deactivate</a>
+                                                                </figcaption>
+                                                            </figure>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Tariff plans History" ng-click="tariffsHistoryClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div>
+                                                    <div class="header">
+                                                        <h4 class="title">Tariff plans history</h4>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="content table-responsive">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div class="dataTables_length">
+                                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                                        <label>Show entries:</label>
+                                                                        <md-select ng-model="size"
+                                                                                   md-on-close="loadTariffsHistory()">
+                                                                            <md-option value="5">5</md-option>
+                                                                            <md-option value="10">10</md-option>
+                                                                            <md-option value="25">25</md-option>
+                                                                            <md-option value="50">50</md-option>
+                                                                            <md-option value="100">100</md-option>
+                                                                        </md-select>
+                                                                    </md-input-container>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <table class="table table-striped table-bordered table-hover">
+                                                            <thead>
+                                                            <th>Tariff Plan</th>
+                                                            <th>Order Type</th>
+                                                            <th>Order Status</th>
+                                                            <th>Creation date</th>
+                                                            <th>Execution Date</th>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr ng-repeat="o in orders" class="tariff-td">
+                                                                <td>{{o.customerTariff.tariff.tariffName}}</td>
+                                                                <td>{{o.type}}</td>
+                                                                <td>{{o.orderStatus}}</td>
+                                                                <td>{{o.creationDate | date:'dd MM yyyy'}}</td>
+                                                                <td>{{o.executionDate | date:'dd MM yyyy'}}</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="row">
+                                                            <div class="col-sm-7">
+                                                                <div class="dataTables_paginate paging_simple_numbers">
+                                                                    <ul class="pagination">
+                                                                        <li class="paginate_button previous">
+                                                                            <a aria-controls="tariffTable"
+                                                                               data-dt-idx="0"
+                                                                               tabindex="0" ng-show="page > 0"
+                                                                               ng-click="previousPage()">Previous</a>
+                                                                        </li>
+                                                                        <li class="paginate_button active"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="1"
+                                                                                tabindex="0">{{page+1}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button next pointable"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="2"
+                                                                                tabindex="0"
+                                                                                ng-show="(page + 1)*size < ordersFound"
+                                                                                ng-click="nextPage()">Next</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div>
+                                                                    <label><b>Orders found: {{ordersFound}}</b></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Services history" ng-click="servicesHistoryClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="container-fluid services-cards">
+                                                <div>
+                                                    <div class="header">
+                                                        <h4 class="title">History of my services</h4>
+                                                    </div>
+                                                    <hr/>
+                                                    <div ng-show="servicesOrdersFound === 0">
+                                                        <div class="row">
+                                                            <h3 style="text-align: center">There were no actions with
+                                                                services yet!</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-show="servicesOrdersFound > 0">
+                                                        <div class="content table-responsive">
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="dataTables_length">
+                                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                                            <label>Show entries:</label>
+                                                                            <md-select ng-model="size"
+                                                                                       md-on-close="loadServicesHistory()">
+                                                                                <md-option value="5">5</md-option>
+                                                                                <md-option value="10">10</md-option>
+                                                                                <md-option value="25">25</md-option>
+                                                                                <md-option value="50">50</md-option>
+                                                                                <md-option value="100">100</md-option>
+                                                                            </md-select>
+                                                                        </md-input-container>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <table class="table table-striped table-bordered table-hover">
+                                                                <thead>
+                                                                <th>Service</th>
+                                                                <th>Order Type</th>
+                                                                <th>Order Status</th>
+                                                                <th>Creation date</th>
+                                                                <th>Execution Date</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr ng-repeat="o in servicesOrders" class="tariff-td">
+                                                                    <td>{{o.customerService.service.serviceName}}</td>
+                                                                    <td>{{o.type}}</td>
+                                                                    <td>{{o.orderStatus}}</td>
+                                                                    <td>{{o.creationDate | date:'dd MM yyyy'}}</td>
+                                                                    <td>{{o.executionDate | date:'dd MM yyyy'}}</td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="row">
+                                                                <div class="col-sm-7">
+                                                                    <div class="dataTables_paginate paging_simple_numbers">
+                                                                        <ul class="pagination">
+                                                                            <li class="paginate_button previous">
+                                                                                <a aria-controls="serviceTable"
+                                                                                   data-dt-idx="0"
+                                                                                   tabindex="0"
+                                                                                   ng-show="servicesPage > 0"
+                                                                                   ng-click="servicesPreviousPage()">Previous</a>
+                                                                            </li>
+                                                                            <li class="paginate_button active"><a
+                                                                                    aria-controls="serviceTable"
+                                                                                    data-dt-idx="1" tabindex="0">{{page+1}}</a>
+                                                                            </li>
+                                                                            <li class="paginate_button next pointable"><a
+                                                                                    aria-controls="serviceTable"
+                                                                                    data-dt-idx="2"
+                                                                                    tabindex="0"
+                                                                                    ng-show="(servicesPage + 1)*servicesSize < servicesOrdersFound"
+                                                                                    ng-click="servicesNextPage()">Next</a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div>
+                                                                        <label><b>Orders found:
+                                                                            {{servicesOrdersFound}}</b></label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

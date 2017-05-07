@@ -40,13 +40,13 @@ public class ServicesController {
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                              MailMessageCreator<Service> emailCreator,
+                                      MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                                          MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
+                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -142,9 +142,15 @@ public class ServicesController {
 
     @GetMapping("/current")
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        List<CustomerServiceDto> customerServices =
+                customerServiceService.getCurrentCustomerServices(customer.getId());
+        return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
+    }
+
+    @GetMapping("/current/customer/{id}")
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff(@PathVariable("id") long customerId) {
+        Customer customer = customerService.getById(customerId);
         List<CustomerServiceDto> customerServices =
                 customerServiceService.getCurrentCustomerServices(customer.getId());
         return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
@@ -153,9 +159,19 @@ public class ServicesController {
     @GetMapping("/history/{page}/{size}")
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        LOG.debug("Get all service orders by customer id = " + customer);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
+        map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));
+        return map;
+    }
+
+    @GetMapping("/history/customer/{id}/{page}/{size}")
+    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("id") long id,
+                                                     @PathVariable("page") int page,
+                                                     @PathVariable("size") int size) {
+        Customer customer = customerService.getById(id);
         LOG.debug("Get all service orders by customer id = " + customer);
         Map<String, Object> map = new HashMap<>();
         map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));

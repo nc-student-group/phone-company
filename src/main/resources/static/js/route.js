@@ -139,10 +139,15 @@
                 templateUrl: 'view/csr/corporation.html',
                 controller: 'CorporationController'
             });
-        $routeProvider.when('/csr/clients/',
+        $routeProvider.when('/csr/clients',
             {
                 templateUrl: 'view/csr/clients.html',
                 controller: 'CustomerController'
+            });
+        $routeProvider.when('/csr/clients/:id',
+            {
+                templateUrl: 'view/csr/clientDetail.html',
+                controller: 'CsrClientDetailController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
