@@ -10,7 +10,7 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
         getComplaintByCategory: getComplaintByCategory,
         getComplaintByCustomer: getComplaintByCustomer,
         createComplaint: createComplaint,
-        getCustomer: getCustomer
+        createComplaintByEmail: createComplaintByEmail
     };
 
     return factory;
@@ -57,7 +57,7 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
 
     function getAllComplaints() {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/complaints`).then(
+        $http.get(`${COMPLAINTS}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -81,17 +81,17 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
         return deferred.promise;
     }
 
-    function getCustomer(id) {
+    function createComplaintByEmail(email, complaint) {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/customer/${id}`).then(
+        $http.post(`${COMPLAINTS}/${email}`, complaint, email).then(
             function (response) {
                 deferred.resolve(response.data);
             },
             function (errResponse) {
                 console.error(errResponse.toString());
-                deferred.reject(errResponse);
+                deferred.reject(errResponse.data);
             });
         return deferred.promise;
-    };
+    }
 
 }]);
