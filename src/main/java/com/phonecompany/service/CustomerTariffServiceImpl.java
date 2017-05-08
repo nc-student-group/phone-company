@@ -28,7 +28,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
-                                     MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                             MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
                                      EmailService<User> emailService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
@@ -45,13 +45,12 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     }
 
     @Override
-    public CustomerTariff getCurrentCustomerTariff(Customer customer){
-
+    public CustomerTariff getCurrentCustomerTariff(Customer customer) {
         if (customer.getCorporate() == null) {
             return this.getCurrentCustomerTariff(customer.getId());
         } else {
             if (customer.getCorporate() != null && customer.getRepresentative()) {
-                return  this.getCurrentCorporateTariff(customer.getCorporate().getId());
+                return this.getCurrentCorporateTariff(customer.getCorporate().getId());
             } else {
                 throw new ConflictException("You aren't representative of your company. Contact with your company representative.");
             }
@@ -124,6 +123,28 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
                 .constructMessage(customerTariff.getTariff());
         this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
 
+        return customerTariff;
+    }
+
+    @Override
+    public CustomerTariff resumeCustomerTariff(CustomerTariff customerTariff) {
+        if (CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
+            Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);
+            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
+            orderService.update(resumingOrder);
+            customerTariff.setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+            LocalDate now = LocalDate.now();
+
+            Order resumingOrder1 = new Order();
+            resumingOrder1.setCustomerTariff(customerTariff);
+            resumingOrder1.setCreationDate(now);
+            resumingOrder1.setExecutionDate(now);
+            resumingOrder1.setOrderStatus(OrderStatus.DONE);
+            resumingOrder1.setType(OrderType.RESUMING);
+
+            customerTariffDao.update(customerTariff);
+            orderService.save(resumingOrder1);
+        }
         return customerTariff;
     }
 }

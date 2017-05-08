@@ -105,8 +105,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size) {
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
-            response.put("tariffs", this.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
-            response.put("tariffsCount", this.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
+            response.put("tariffs",
+                    this.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
+            response.put("tariffsCount",
+                    this.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
             if (customer.getRepresentative()) {
                 response.put("tariffs", this.getTariffsAvailableForCorporate(page, size));
@@ -116,6 +118,19 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             }
         }
         return response;
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCustomer(Customer customer) {
+        if (customer.getCorporate() == null) {
+            return tariffDao.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId());
+        } else {
+            if (customer.getRepresentative()) {
+                return tariffDao.getTariffsAvailableForCorporate();
+            } else {
+                throw new ConflictException("You aren't representative of your company.");
+            }
+        }
     }
 
     @Override
@@ -198,7 +213,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
                 OrderType.ACTIVATION, OrderStatus.CREATED, currentDate, currentDate);
         orderService.save(activationOrder);
         LOGGER.debug("TARIFF PRICE: " + tariff.getPrice() * (1 - tariff.getDiscount() / 100));
-        CustomerTariff customerTariff = new CustomerTariff(null, corporate, tariff.getPrice() * (1 - tariff.getDiscount() / 100), CustomerProductStatus.ACTIVE, tariff);
+        CustomerTariff customerTariff = new CustomerTariff(null, corporate,
+                tariff.getPrice() * (1 - tariff.getDiscount() / 100), CustomerProductStatus.ACTIVE, tariff);
         customerTariffService.save(customerTariff);
         activationOrder.setCustomerTariff(customerTariff);
         activationOrder.setOrderStatus(OrderStatus.DONE);
@@ -214,16 +230,19 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             if (customer.getRepresentative()) {
                 activateTariffForCorporateCustomer(tariffId, customer);
             } else {
-                throw new ConflictException("You aren't representative of your company. Contact with your company representative to change tariff plan.");
+                throw new ConflictException("You aren't representative of your company." +
+                        " Contact with your company representative to change tariff plan.");
             }
         }
 
     }
 
     private void activateTariffForSingleCustomer(long tariffId, Customer customer) {
-        TariffRegion tariffRegion = tariffRegionService.getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
+        TariffRegion tariffRegion = tariffRegionService
+                .getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
         if (tariffRegion == null) {
-            throw new ConflictException("This tariff plan for your region doesn't exist. Choose tariff plan form available list.");
+            throw new ConflictException("This tariff plan for your region doesn't exist." +
+                    " Choose tariff plan form available list.");
         }
         if (!tariffRegion.getTariff().getProductStatus().equals(ProductStatus.ACTIVATED)) {
             throw new ConflictException("This tariff plan is deactivated at the moment.");
