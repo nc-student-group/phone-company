@@ -8,7 +8,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
         '$routeParams',
         'CustomerService',
         'TariffService',
-        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService, TariffService) {
+        'ServicesService',
+        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService, TariffService, ServicesService) {
             console.log('This is CsrClientDetailController');
             $scope.activePage = 'clients';
             $scope.ordersFound = 0;
@@ -18,8 +19,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
             $scope.hasCurrentServices = false;
             $scope.page = 0;
             $scope.servicesPage = 0;
-            $scope.size = 10;
-            $scope.servicesSize = 10;
+            $scope.size = 5;
+            $scope.servicesSize = 5;
             $scope.inProgress = false;
             $scope.inProgressHistory = false;
 
@@ -46,7 +47,34 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.preloader.send = false;
                             $scope.inProgress = false;
                         });
+                    ServicesService.getAllCategories().then(function (data) {
+                        $scope.categories = data;
+                        $scope.selectedCategoryId = $scope.categories[0].id;
+                    });
+                    ServicesService.getAllServices().then(function (data) {
+                        $scope.availableServices = data;
+                        $scope.selectedServiceId = 0;
+                        $scope.filter();
+                    });
                 }
+            };
+
+
+            $scope.activateServiceClick = function () {
+                $scope.preloader.send = true;
+                ServicesService.activateServiceForCustomerId($scope.servicesList[$scope.selectedServiceId].id, $scope.customer.id).then(function () {
+                    $scope.loadCurrentServices();
+                });
+            };
+
+            $scope.filter = function () {
+                $scope.servicesList = [];
+                for (var i = 0; i < $scope.availableServices.length; i++) {
+                    if ($scope.availableServices[i].productCategory.id == $scope.selectedCategoryId) {
+                        $scope.servicesList.push($scope.availableServices[i]);
+                    }
+                }
+                $scope.selectedServiceId = 0;
             };
 
 

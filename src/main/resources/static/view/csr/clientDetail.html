@@ -295,6 +295,65 @@
                                                 </div>
                                                 <hr/>
                                             </div>
+                                            <div class="card">
+                                                <div ng-show="availableServices.length > 0">
+                                                    <div class="header">
+                                                        <h4 class="title">Activate service</h4>
+                                                    </div>
+                                                    <div class="content">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Category:</label>
+                                                                    <md-select ng-model="selectedCategoryId"
+                                                                               md-on-close="filter()">
+                                                                        <md-option ng-repeat="c in categories"
+                                                                                   value="{{c.id}}">{{c.categoryName}}
+                                                                        </md-option>
+                                                                    </md-select>
+                                                                </md-input-container>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Service:</label>
+                                                                    <md-select ng-model="selectedServiceId">
+                                                                        <md-option ng-repeat="s in servicesList"
+                                                                                   value="{{$index}}">{{s.serviceName}}
+                                                                        </md-option>
+                                                                    </md-select>
+                                                                </md-input-container>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <md-input-container class="md-block">
+                                                                    <input type="text" class="form-control"
+                                                                           placeholder="Price"
+                                                                           readonly
+                                                                           value="{{availableServices[selectedServiceId].price *
+                                                                                (1 - availableServices[selectedServiceId].discount/100)}}"/>
+
+                                                                </md-input-container>
+                                                            </div>
+                                                            <div class="col-md-3" style="padding-top: 10px;">
+                                                                <button class="btn btn-success btn-fill"
+                                                                        ng-click="activateServiceClick()">
+                                                                    Activate
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </div>
+                                                <div ng-show="availableServices == 0 && customer.corporate != null && customer.isRepresentative">
+                                                    <div class="header">
+                                                        <h4 class="title">There are no available services</h4>
+                                                    </div>
+                                                </div>
+                                                <div ng-show="availableServices == 0 && customer.corporate != null && !customer.isRepresentative">
+                                                    <div class="header">
+                                                        <h4 class="title">Client is not representative!</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </md-content>
@@ -444,8 +503,18 @@
                                                                         class="tariff-td">
                                                                         <td>{{o.customerService.service.serviceName}}
                                                                         </td>
-                                                                        <td>{{o.type}}</td>
-                                                                        <td>{{o.orderStatus}}</td>
+                                                                        <td ng-class="{red: o.type == 'DEACTIVATION',
+                                                                                green: o.type =='ACTIVATION' ||
+                                                                                o.type == 'RESUMING',
+                                                                                yellow: o.type == 'SUSPENSION'}">
+                                                                            {{o.type}}
+                                                                        </td>
+                                                                        <td ng-class="{red: o.orderStatus == 'CANCELED',
+                                                                                green: o.orderStatus =='DONE' ||
+                                                                                o.orderStatus == 'CREATED',
+                                                                                yellow: o.orderStatus == 'PENDING'}">
+                                                                            {{o.orderStatus}}
+                                                                        </td>
                                                                         <td>{{o.creationDate | date:'dd MM yyyy'}}</td>
                                                                         <td>{{o.executionDate | date:'dd MM yyyy'}}</td>
                                                                     </tr>

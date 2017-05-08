@@ -104,6 +104,18 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/activate/{serviceId}/{customerId}")
+    public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
+                                                    @PathVariable("customerId") long customerId) {
+        Customer loggedInCustomer = this.customerService.getById(customerId);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/categories")
     public List<ProductCategory> getAllCategories() {
         List<ProductCategory> productCategoryList = this.productCategoryService.getAll();
