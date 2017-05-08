@@ -34,11 +34,11 @@
                 templateUrl: 'view/admin/users.html',
                 controller: 'UserController'
             });
-        $routeProvider.when('/client',
-            {
-                templateUrl: 'view/clientPage.html',
-                controller: 'ClientController'
-            });
+        // $routeProvider.when('/client',
+        //     {
+        //         templateUrl: 'view/clientPage.html',
+        //         controller: 'ClientController'
+        //     });
         $routeProvider.when('/csr',
             {
                 templateUrl: 'view/csr/csrProfile.html',
@@ -59,6 +59,16 @@
                 templateUrl: 'view/csr/tariffs.html',
                 controller: 'TariffsController'
             });
+        $routeProvider.when('/csr/tariff/:id',
+            {
+                templateUrl: 'view/csr/tariffDetail.html',
+                controller: 'CsrTariffDetailController'
+            });
+        $routeProvider.when('/csr/tariff/edit/:id',
+            {
+                templateUrl: 'view/csr/tariffEdit.html',
+                controller: 'TariffEditController'
+            });
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',
@@ -78,6 +88,11 @@
             {
                 templateUrl: 'view/csr/corporations.html',
                 controller: 'CorporationsController'
+            });
+        $routeProvider.when('/csr/charts',
+            {
+                templateUrl: 'view/csr/csrCharts.html',
+                controller: 'CsrChartsController'
             });
         $routeProvider.when('/admin/users',
             {

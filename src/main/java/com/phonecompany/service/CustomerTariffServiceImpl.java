@@ -24,14 +24,12 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     private OrderService orderService;
     private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
     private EmailService<User> emailService;
-    private CustomerService customerService;
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
                                      MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
-                                     EmailService<User> emailService,
-                                     CustomerService customerService) {
+                                     EmailService<User> emailService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
@@ -47,8 +45,8 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     }
 
     @Override
-    public CustomerTariff getCurrentCustomerTariff(){
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public CustomerTariff getCurrentCustomerTariff(Customer customer){
+
         if (customer.getCorporate() == null) {
             return this.getCurrentCustomerTariff(customer.getId());
         } else {

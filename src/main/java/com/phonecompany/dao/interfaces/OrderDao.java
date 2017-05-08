@@ -14,4 +14,6 @@ public interface OrderDao extends CrudDao<Order> {
     Integer getCountByCustomerId(Long customerId);
     Integer getCountByCorporateId(Long corporateId);
     Integer getCountOfServicesByCustomerId(Long customerId);
+    List<Order> getTariffOrdersByRegionId(long regionId);
+    List<Order> getAllServiceOrders();
 }

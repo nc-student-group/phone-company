@@ -101,40 +101,6 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
         return tariff;
     }
 
-    @Override
-    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
-        List<Object> params = new ArrayList<>();
-        String query = buildQuery(this.getQuery("getAll"), params, regionId);
-        query += " LIMIT ? OFFSET ?";
-        params.add(size);
-        params.add(page * size);
-
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        }
-    }
-
-    private String buildQuery(String query, List params, long regionId) {
-        if (regionId != 0) {
-            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
-            params.add(regionId);
-        }
-        query += " ORDER BY t.creation_date DESC ";
-
-        return query;
-    }
 
     @Override
     public List<Tariff> getByRegionId(Long regionId) {
@@ -151,25 +117,6 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             throw new EntityNotFoundException(regionId, e);
         }
         return tariffs;
-    }
-
-    @Override
-    public Integer getCountByRegionIdAndPaging(long regionId) {
-        String query = this.getQuery("getCount");
-        if (regionId != 0) {
-            query += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
-        }
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            if (regionId != 0) {
-                ps.setLong(1, regionId);
-            }
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(regionId, e);
-        }
     }
 
     @Override
@@ -203,9 +150,9 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     public String prepareWhereClause(Object... args) {
         String where = "";
         long regionId = (long) args[0];
-
         if (regionId != 0) {
             where += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
+            this.preparedStatementParams.add(regionId);
         }
         return where;
     }
@@ -246,10 +193,8 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
-        String query = this.getQuery("getAll");
-        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ORDER BY t.creation_date DESC LIMIT ? OFFSET ? ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"))) {
             ps.setObject(1,size);
             ps.setObject(2,page*size);
             ResultSet rs = ps.executeQuery();
@@ -266,10 +211,8 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public Integer getCountTariffsAvailableForCorporate(){
-        String query = this.getQuery("getCount");
-        query += " where t.product_status='ACTIVATED' and t.is_corporate = true ";
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"))) {
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt(1);

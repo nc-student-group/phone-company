@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -58,7 +60,6 @@ public class ServicesController {
         this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
     }
 
-    @PreAuthorize("hasRole(permitAll())")
     @GetMapping
     public Collection<Service> getAllServices() {
         List<Service> allServices = this.serviceService.getAll();
@@ -66,7 +67,6 @@ public class ServicesController {
         return allServices;
     }
 
-    @PreAuthorize("hasRole(permitAll())")
     @GetMapping("/category/{id}/{page}/{size}")
     public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
                                                        @PathVariable("page") int page,
@@ -76,7 +76,6 @@ public class ServicesController {
                 .getServicesByProductCategoryId(productCategoryId, page, size);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CSR')")
     @PostMapping
     public ResponseEntity<?> addService(@RequestBody Service service) {
         LOG.debug("Service parsed from the request body: {}", service);
@@ -99,7 +98,6 @@ public class ServicesController {
                 .collect(Collectors.toList());
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
@@ -111,7 +109,6 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/categories")
     public List<ProductCategory> getAllCategories() {
         List<ProductCategory> productCategoryList = this.productCategoryService.getAll();
@@ -119,7 +116,6 @@ public class ServicesController {
         return productCategoryList;
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public Service getServiceById(@PathVariable("id") long serviceId) {
         Service serviceFetchedById = this.serviceService.getById(serviceId);
@@ -127,7 +123,6 @@ public class ServicesController {
         return serviceFetchedById;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CSR')")
     @GetMapping("/empty-service")
     public Service getEmptyService() {
         return new Service();

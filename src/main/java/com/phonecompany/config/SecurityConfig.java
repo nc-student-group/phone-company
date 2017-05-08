@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
@@ -60,12 +59,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/regions/get").permitAll()
                 .antMatchers("/api/customers/empty-customer").permitAll()
                 .antMatchers("/api/customers/logged-in-user/**").hasRole("CLIENT")
-                .antMatchers("/api/tariffs/get/available/").hasRole("CLIENT")
-                .antMatchers("/api/customer/tariff").hasRole("CLIENT")
+                .antMatchers("/api/customer-tariffs/customer-tariff").hasRole("CLIENT")
                 .antMatchers("/api/customer/tariff/deactivate").hasRole("CLIENT")
                 .antMatchers("/api/customer/tariff/suspend").hasRole("CLIENT")
-                .antMatchers("/api/customer/tariffs/history/**").hasRole("CLIENT")
+                .antMatchers("/api/orders/history/**").hasRole("CLIENT")
                 .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
+                .antMatchers("/api/services/**").permitAll()
                 .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/add/single").hasAnyRole("CSR","ADMIN")
@@ -73,11 +72,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
                 .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
-                .antMatchers("/api/tariffs/get/by/client/**").hasRole("CLIENT")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
                 .antMatchers("/api/complaints").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
                 .antMatchers("/api/complaints/**").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
+                .antMatchers("/dialog.report.html").permitAll()
 //                .antMatchers("/api/complaint/add").hasAnyRole("CLIENT", "CSR", "ADMIN")
 //                .antMatchers("/api/complaintCategory/get").hasAnyRole("CLIENT", "CSR", "ADMIN")
                 .anyRequest().authenticated();

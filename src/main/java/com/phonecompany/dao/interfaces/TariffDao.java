@@ -5,12 +5,9 @@ import com.phonecompany.model.enums.ProductStatus;
 
 import java.util.List;
 
-public interface TariffDao extends CrudDao<Tariff> {
-    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
+public interface TariffDao extends AbstractPageableDao<Tariff> {
 
     public List<Tariff> getByRegionId(Long regionId);
-
-    public Integer getCountByRegionIdAndPaging(long regionId);
 
     public void updateTariffStatus(long tariffId, ProductStatus productStatus);
 

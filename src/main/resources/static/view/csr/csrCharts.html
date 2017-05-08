@@ -1,0 +1,57 @@
+<div class="wrapper">
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+    <div class="main-panel">
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Reports</h4>
+                            </div>
+                            <hr/>
+                            <div class="content">
+
+                                <md-button class="md-primary md-raised"
+                                           ng-click="showGenerateReportDialog($event)">
+                                    generate report
+                                </md-button>
+
+                                <div style="display: none">
+                                    <div class="md-dialog-container" id="generateReport">
+                                        <md-dialog layout-padding>
+                                            <md-content layout-padding>
+                                                <h3>Generate report</h3>
+                                                <div layout-gt-xs="row">
+                                                    <div flex-gt-xs>
+                                                        <h4>Pick start date</h4>
+                                                        <md-datepicker ng-model="myDate"
+                                                                       md-placeholder="Enter date"></md-datepicker>
+                                                    </div>
+                                                    <div flex-gt-xs>
+                                                        <h4>Pick end date</h4>
+                                                        <md-datepicker ng-model="myDate"
+                                                                       md-placeholder="Enter date"></md-datepicker>
+                                                    </div>
+                                                </div>
+                                            </md-content>
+                                        </md-dialog>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <p class="copyright">
+                        &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

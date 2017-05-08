@@ -31,40 +31,28 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
 
-    private CustomerService customerService;
-
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
                              FileService fileService,
                              OrderService orderService,
-                             CustomerTariffService customerTariffService,
-                             CustomerService customerService) {
+                             CustomerTariffService customerTariffService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
-        this.customerService = customerService;
     }
 
     @Override
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
-        return tariffDao.getByRegionIdAndPaging(regionId, page, size);
-    }
-
-    @Override
-    public List<Tariff> getByRegionIdAndClient(Long regionId, Boolean isRepresentative) {
-        return tariffDao.getByRegionId(regionId).stream()
-                .filter(t -> (t.getProductStatus().equals(ProductStatus.ACTIVATED) &&
-                        isRepresentative.equals(t.isCorporate())))
-                .collect(Collectors.toList());
+        return this.tariffDao.getPaging(page, size, regionId);
     }
 
     @Override
     public Integer getCountByRegionId(long regionId) {
-        return tariffDao.getCountByRegionIdAndPaging(regionId);
+        return tariffDao.getEntityCount(regionId);
     }
 
     @Override
@@ -113,9 +101,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         });
     }
 
-    //TODO: please, remove currently logged in user from service
-    public Map<String, Object> getTariffsAvailableForCustomer(int page, int size) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size) {
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
             response.put("tariffs", this.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId(), page, size));
@@ -219,10 +205,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         LOGGER.debug("Tariff " + customerTariff.getId() + " activated.");
     }
 
-    //TODO: please, remove currently logged in user from service
     @Override
-    public void activateTariff(long tariffId) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public void activateTariff(long tariffId, Customer customer) {
         if (customer.getCorporate() == null) {
             this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
@@ -289,20 +273,35 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
-                "tariff/" + tariff.hashCode())); // no such thing as get time in millis
-        Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
+                "tariff/" + tariff.hashCode()));
+        Tariff savedTariff = this.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
         return savedTariff;
     }
 
-    //TODO: please, remove currently logged in user from service
     @Override
-    public Tariff getTariffForCustomer(long tariffId) {
-        Customer customer = customerService.getCurrentlyLoggedInUser();
+    public Tariff getTariffForCustomer(long tariffId, Customer customer) {
         if (customer.getCorporate() == null) {
             return this.getByIdForSingleCustomer(tariffId, customer.getAddress().getRegion().getId());
         } else {
             return this.getById(tariffId);
         }
     }
+
+    @Override
+    public Map<String, Object> getTariffsTable(long regionId, int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        List<Tariff> tariffs = this.getByRegionIdAndPaging(regionId, page, size);
+        List<Object> rows = new ArrayList<>();
+        tariffs.forEach((Tariff tariff) -> {
+            Map<String, Object> row = new HashMap<>();
+            row.put("tariff", tariff);
+            row.put("regions", tariffRegionService.getAllByTariffId(tariff.getId()));
+            rows.add(row);
+        });
+        response.put("tariffs", rows);
+        response.put("tariffsSelected", this.getCountByRegionId(regionId));
+        return response;
+    }
+
 }

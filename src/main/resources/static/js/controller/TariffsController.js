@@ -204,23 +204,24 @@ angular.module('phone-company').controller('TariffsController', [
         };
 
         $scope.editClick = function (id) {
-            $scope.preloader.send = true;
-            TariffService.getTariffToEditById(id).then(function (data) {
-                $scope.tariffToEdit = data.tariff;
-                $scope.regionsToEdit = data.regions;
-                for (var i = 0; i < data.regions.length; i++) {
-                    for (var j = 0; j < $scope.regionsToAdd.length; j++) {
-                        if (data.regions[i].region.id == $scope.regionsToAdd[j].region.id) {
-                            $scope.regionsToAdd[j].price = data.regions[i].price;
-                        }
-                    }
-                }
-                $scope.preloader.send = false;
-                $scope.editing = true;
-                $window.scrollTo(0, 0);
-            }, function () {
-                $scope.preloader.send = false;
-            });
+            $location.path("/csr/tariff/edit/"+id);
+            // $scope.preloader.send = true;
+            // TariffService.getTariffToEditById(id).then(function (data) {
+            //     $scope.tariffToEdit = data.tariff;
+            //     $scope.regionsToEdit = data.regions;
+            //     for (var i = 0; i < data.regions.length; i++) {
+            //         for (var j = 0; j < $scope.regionsToAdd.length; j++) {
+            //             if (data.regions[i].region.id == $scope.regionsToAdd[j].region.id) {
+            //                 $scope.regionsToAdd[j].price = data.regions[i].price;
+            //             }
+            //         }
+            //     }
+            //     $scope.preloader.send = false;
+            //     $scope.editing = true;
+            //     $window.scrollTo(0, 0);
+            // }, function () {
+            //     $scope.preloader.send = false;
+            // });
         };
 
         $scope.toggleEdit = function (item, list) {
@@ -414,5 +415,9 @@ angular.module('phone-company').controller('TariffsController', [
             delete $scope.result;
             delete $scope.resultBlob;
         };
+
+        $scope.detailClick = function(id){
+            $location.path("/csr/tariff/"+id);
+        }
 
     }]);

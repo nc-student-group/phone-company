@@ -1,21 +1,19 @@
 package com.phonecompany.controller;
 
 
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
-import com.phonecompany.model.TariffRegion;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.TariffRegionService;
+import com.phonecompany.service.interfaces.TariffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,27 +24,15 @@ public class TariffController {
 
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
-    private MailMessageCreator<Tariff> tariffNotificationEmailCreator;
-    private MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator;
-    private MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator;
-    private EmailService<Customer> emailService;
+    private CustomerService customerService;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService,
-                            @Qualifier("tariffNotificationEmailCreator")
-                            MailMessageCreator<Tariff> tariffNotificationEmailCreator,
-                            @Qualifier("tariffActivationNotificationEmailCreator")
-                            MailMessageCreator<Tariff> tariffActivationNotificationEmailCreator,
-                            @Qualifier("tariffDeactivationNotificationEmailCreator")
-                            MailMessageCreator<Tariff> tariffDeactivationNotificationEmailCreator,
-                            EmailService<Customer> emailService) {
+                            CustomerService customerService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
-        this.tariffNotificationEmailCreator = tariffNotificationEmailCreator;
-        this.tariffActivationNotificationEmailCreator = tariffActivationNotificationEmailCreator;
-        this.tariffDeactivationNotificationEmailCreator = tariffDeactivationNotificationEmailCreator;
-        this.emailService = emailService;
+        this.customerService = customerService;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -54,7 +40,7 @@ public class TariffController {
                                                     @PathVariable("page") int page,
                                                     @PathVariable("size") int size) {
         LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffRegionService.getTariffsTable(regionId, page, size);
+        return tariffService.getTariffsTable(regionId, page, size);
     }
 
     @GetMapping(value = "/empty")
@@ -62,29 +48,11 @@ public class TariffController {
         return new Tariff();
     }
 
-    //TODO: it is also natural to extract this one to tariff-regions resource
-    //@RequestMapping(value = "/api/tariff-regions")
-    //public class TariffRegionController
-    //.......................................
-    //@PostMapping
-    @PostMapping(value = "/regions")
-    public ResponseEntity<?> saveTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
-        return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
     @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
 
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
-    //TODO: relates to tariff-regions resource as well
-    @PutMapping(value = "/regions")
-    public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
-        Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
-        return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
     }
 
     @PutMapping
@@ -103,25 +71,31 @@ public class TariffController {
 
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
-                                                   @RequestBody ProductStatus productStatus) {
-        this.tariffService.updateTariffStatus(tariffId, productStatus);
+                                                   @RequestBody String productStatus) {
+        this.tariffService.updateTariffStatus(tariffId, ProductStatus.valueOf(productStatus));
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/available/{page}/{size}")
     public ResponseEntity<?> getTariffsAvailableForCustomer(@PathVariable("page") int page,
                                                             @PathVariable("size") int size) {
-        return new ResponseEntity<Object>(tariffService.getTariffsAvailableForCustomer(page, size), HttpStatus.OK);
+        return new ResponseEntity<Object>(tariffService
+                .getTariffsAvailableForCustomer(customerService.getCurrentlyLoggedInUser(),page, size), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/{id}")
     public ResponseEntity<?> getTariffForCustomerById(@PathVariable("id") long tariffId) {
-        return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId), HttpStatus.OK);
+        return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId,
+                customerService.getCurrentlyLoggedInUser()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/activate/{id}")
     public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
-        tariffService.activateTariff(tariffId);
+        tariffService.activateTariff(tariffId, customerService.getCurrentlyLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+
+
 }

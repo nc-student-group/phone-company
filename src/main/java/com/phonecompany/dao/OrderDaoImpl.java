@@ -212,4 +212,35 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             throw new EntityNotFoundException(customerId, e);
         }
     }
+
+    @Override
+    public List<Order> getTariffOrdersByRegionId(long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"))) {
+            ps.setLong(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Order> tariffOrders = new ArrayList<>();
+            while (rs.next()) {
+                tariffOrders.add(this.init(rs));
+            }
+            return tariffOrders;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+    }
+
+    @Override
+    public List<Order> getAllServiceOrders() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("services"))) {
+            ResultSet rs = ps.executeQuery();
+            List<Order> serviceOrders = new ArrayList<>();
+            while (rs.next()) {
+                serviceOrders.add(this.init(rs));
+            }
+            return serviceOrders;
+        } catch (SQLException e) {
+            throw new CrudException("Could not extract service orders", e);
+        }
+    }
 }

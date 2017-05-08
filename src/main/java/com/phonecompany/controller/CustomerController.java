@@ -37,7 +37,6 @@ public class CustomerController {
     private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
-    private TariffService tariffService;
     private CustomerTariffService customerTariffService;
     private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
     private EmailService<User> emailService;
@@ -48,7 +47,6 @@ public class CustomerController {
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
                               UserService userService,
-                              TariffService tariffService,
                               CustomerTariffService customerTariffService,
                               @Qualifier("tariffDeactivationNotificationEmailCreator")
                                       MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
@@ -57,7 +55,6 @@ public class CustomerController {
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
-        this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
         this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
         this.emailService = emailService;
@@ -156,6 +153,7 @@ public class CustomerController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    //TODO: extract to customer tariff controller ??
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
