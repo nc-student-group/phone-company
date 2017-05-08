@@ -55,4 +55,10 @@ public class CustomerTariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/resume")
+    public ResponseEntity<?> resumeTariff(@RequestBody CustomerTariff customerTariff){
+        CustomerTariff updatedCustomerTariff = customerTariffService.resumeCustomerTariff(customerTariff);
+        return new ResponseEntity<Object>(updatedCustomerTariff, HttpStatus.OK);
+    }
+
 }

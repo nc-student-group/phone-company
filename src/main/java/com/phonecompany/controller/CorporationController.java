@@ -54,6 +54,16 @@ public class CorporationController {
         return corporates;
     }
 
+    @RequestMapping(method = GET,value = "/{id}")
+    public Corporate getCorporationById(@PathVariable("id") long id) {
+        LOG.info("Retrieving corporation by id");
+
+        Corporate corporate = this.corporateService.getById(id);
+
+        LOG.info("Corporates fetched from the database: " + corporate);
+        return corporate;
+    }
+
     @RequestMapping(method = PUT)
     public ResponseEntity<?> saveEditedCorporationByAdmin(@RequestBody Corporate corporate) {
         LOG.debug("Corporate retrieved from the http request: " + corporate);

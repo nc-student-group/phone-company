@@ -37,10 +37,12 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
-    public Order getResumingOrderByCustomerService(CustomerServiceDto customerService) {
-        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId()).stream().
-                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
-                .collect(Collectors.toList()).get(0);
+    public List<Order> getResumingOrderByCustomerService(CustomerServiceDto customerService) {
+        //?????????????????????
+//        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId()).stream().
+//                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
+//                .collect(Collectors.toList()).get(0);
+        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId());
     }
 
     // CustomerService name changed to CustomerServiceDto because of the name collision

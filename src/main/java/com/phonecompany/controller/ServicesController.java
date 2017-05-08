@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +104,18 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/activate/{serviceId}/{customerId}")
+    public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
+                                                    @PathVariable("customerId") long customerId) {
+        Customer loggedInCustomer = this.customerService.getById(customerId);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/categories")
     public List<ProductCategory> getAllCategories() {
         List<ProductCategory> productCategoryList = this.productCategoryService.getAll();
@@ -185,9 +195,9 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/activate")
-    public ResponseEntity<Void> activateCustomerService(@RequestBody CustomerServiceDto customerService) {
-        customerServiceService.activateCustomerService(customerService);
+    @PatchMapping(value = "/resume")
+    public ResponseEntity<Void> resumeCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.resumeCustomerService(customerService);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

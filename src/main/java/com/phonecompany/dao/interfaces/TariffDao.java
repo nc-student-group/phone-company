@@ -15,9 +15,13 @@ public interface TariffDao extends AbstractPageableDao<Tariff> {
 
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId);
+
     public Integer getCountTariffsAvailableForCustomer(long regionId);
 
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size);
+
+    public List<Tariff> getTariffsAvailableForCorporate();
 
     public Integer getCountTariffsAvailableForCorporate();
 
