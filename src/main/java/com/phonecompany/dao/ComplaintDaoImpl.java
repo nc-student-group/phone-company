@@ -41,6 +41,8 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
+            preparedStatement.setObject(7,TypeMapper.getNullableId(entity.getResponsiblePmg()));
+            preparedStatement.setString(8, entity.getComment());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -55,8 +57,10 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
+            preparedStatement.setObject(7,TypeMapper.getNullableId(entity.getResponsiblePmg()));
+            preparedStatement.setString(8, entity.getComment());
 
-            preparedStatement.setLong(7, entity.getId());
+            preparedStatement.setLong(9, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -73,6 +77,8 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             complaint.setType(ComplaintCategory.valueOf(rs.getString("type")));
             complaint.setUser(userDao.getById(rs.getLong("user_id")));
             complaint.setSubject(rs.getString("subject"));
+            complaint.setResponsiblePmg(userDao.getById(rs.getLong("responsible_pmg")));
+            complaint.setComment(rs.getString("comment"));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }
@@ -84,25 +90,34 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
 
         String where = "";
         String category = (String) args[0];
-        Long userId = (long) args[1];
+        String status = (String) args[1];
+        Long userId = (long) args[2];
+        Long responsibleId = (long) args[3];
 
+        if ((!category.equals("-"))||(!status.equals("-"))||(userId > 0)) where += " WHERE ";
+
+        boolean moreThenOne = false;
         if (!category.equals("-")) {
-            if (userId > 0) {
-                where += " WHERE type = ? user_id = ?";
-                this.preparedStatementParams.add(category);
-                this.preparedStatementParams.add(userId);
-            }
-            else {
-                where += " WHERE type = ?";
-                this.preparedStatementParams.add(category);
-            }
+            where += " type = ? ";
+            this.preparedStatementParams.add(category);
+            moreThenOne = true;
         }
-        else {
-            if (userId > 0) {
-                where += " WHERE user_id = ?";
-                this.preparedStatementParams.add(userId);
-            }
+        if (!status.equals("-")) {
+            where += moreThenOne ? " and status = ? " : " status = ? ";
+            this.preparedStatementParams.add(status);
+            moreThenOne = true;
+        }
+        if (userId > 0) {
+            where += moreThenOne ? " and user_id = ? " : " user_id = ? ";
+            this.preparedStatementParams.add(userId);
+            moreThenOne = true;
+        }
+        if (responsibleId > 0) {
+            where += moreThenOne ? " and responsible_pmg = ? " : " responsible_pmg = ? ";
+            this.preparedStatementParams.add(responsibleId);
+            //moreThenOne = true;
         }
         return where;
     }
+
 }

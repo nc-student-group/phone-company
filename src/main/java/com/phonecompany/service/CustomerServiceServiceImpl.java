@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto> implements CustomerServiceService {
+public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto>
+        implements CustomerServiceService {
 
     private CustomerServiceDao customerServiceDao;
     private OrderService orderService;

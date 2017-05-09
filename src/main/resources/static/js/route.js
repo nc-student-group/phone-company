@@ -89,6 +89,11 @@
                 templateUrl: 'view/csr/corporations.html',
                 controller: 'CorporationsController'
             });
+        $routeProvider.when('/csr/charts',
+            {
+                templateUrl: 'view/csr/csrCharts.html',
+                controller: 'CsrChartsController'
+            });
         $routeProvider.when('/admin/users',
             {
                 templateUrl: 'view/admin/users.html',
@@ -137,7 +142,7 @@
         $routeProvider.when('/csr/corporation/:id',
             {
                 templateUrl: 'view/csr/corporation.html',
-                controller: 'CorporationController'
+                controller: 'CsrCorporationController'
             });
         $routeProvider.when('/csr/clients',
             {
@@ -152,7 +157,7 @@
         $routeProvider.when('/pmg/complaints',
             {
                 templateUrl: 'view/pmg/complaints.html',
-                controller: 'CsrComplaintsController'
+                controller: 'PmgComplaintsController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
             {

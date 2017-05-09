@@ -154,6 +154,7 @@ public class CustomerController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    //TODO: extract to customer tariff controller ??
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);

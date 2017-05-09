@@ -37,6 +37,7 @@
             }
         );
 
+
         $scope.updateCustomer = function () {
             CustomerService.updateCustomer($scope.customer).then(
                 function (response) {

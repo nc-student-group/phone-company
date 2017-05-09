@@ -5,32 +5,21 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     const COMPLAINTS = "api/complaints";
 
     var factory = {
-        getAllComplaintCategory: getAllComplaintCategory,        
         getAllComplaints: getAllComplaints,
-        getComplaintByCategory: getComplaintByCategory,
+        getComplaints: getComplaints,
         getComplaintByCustomer: getComplaintByCustomer,
+        getComplaintsByResponsible: getComplaintsByResponsible,
         createComplaint: createComplaint,
-        createComplaintByEmail: createComplaintByEmail
+        createComplaintByCsr: createComplaintByCsr,
+        handleComplaint: handleComplaint,
+        completeComplaint: completeComplaint
     };
 
     return factory;
 
-    function getAllComplaintCategory() {
+    function getComplaints(category, status, page, size) {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/categories`).then(
-            function (response) {
-                deferred.resolve(response.data);
-            },
-            function (errResponse) {
-                console.error(errResponse.toString());
-                deferred.reject(errResponse);
-            });
-        return deferred.promise;
-    }
-
-    function getComplaintByCategory(category, page, size) {
-        var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/${category}/${page}/${size}`).then(
+        $http.get(`${COMPLAINTS}/${category}/${status}/${page}/${size}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -44,7 +33,20 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     function getComplaintByCustomer(id, page, size) {
         var deferred = $q.defer();
         console.log(`Complaints for user with id: ${JSON.stringify(id)}`);
-        $http.get(`${COMPLAINTS}/complaint/${id}/${page}/${size}`).then(
+        $http.get(`${COMPLAINTS}/${id}/${page}/${size}`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+    
+    function getComplaintsByResponsible(category, page, size) {
+        var deferred = $q.defer();
+        $http.get(`${COMPLAINTS}/pmg/${category}/${page}/${size}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -70,7 +72,7 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
 
     function createComplaint(complaint) {
         var deferred = $q.defer();
-        $http.post(COMPLAINTS, complaint).then(
+        $http.post(`${COMPLAINTS}/customer`, complaint).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -81,9 +83,35 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
         return deferred.promise;
     }
 
-    function createComplaintByEmail(email, complaint) {
+    function createComplaintByCsr(complaint) {
         var deferred = $q.defer();
-        $http.post(`${COMPLAINTS}/${email}`, complaint, email).then(
+        $http.post(`${COMPLAINTS}/csr`, complaint).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse.data);
+            });
+        return deferred.promise;
+    }
+
+    function handleComplaint(complaintId) {
+        var deferred = $q.defer();
+        $http.put(`${COMPLAINTS}/pmg`, complaintId).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse.data);
+            });
+        return deferred.promise;
+    }
+
+    function completeComplaint(complaintId, comment) {
+        var deferred = $q.defer();
+        $http.put(`${COMPLAINTS}/pmg/${complaintId}`, comment).then(
             function (response) {
                 deferred.resolve(response.data);
             },

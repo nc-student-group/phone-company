@@ -10,6 +10,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -24,19 +25,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
 public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderDaoImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
+
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
     private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader, CustomerServiceDao customerServiceDao, CustomerTariffDao customerTariffDao) {
+    public OrderDaoImpl(QueryLoader queryLoader,
+                        CustomerServiceDao customerServiceDao,
+                        CustomerTariffDao customerTariffDao) {
         this.queryLoader = queryLoader;
         this.customerServiceDao = customerServiceDao;
         this.customerTariffDao = customerTariffDao;
@@ -82,8 +88,10 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
         Order order = new Order();
         try {
             order.setId(rs.getLong("id"));
-            order.setCustomerService(customerServiceDao.getById(rs.getLong("customer_service_id")));
-            order.setCustomerTariff(customerTariffDao.getById(rs.getLong("customer_tariff_id")));
+            long customerServiceId = rs.getLong("customer_service_id");
+            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            long customerTariffId = rs.getLong("customer_tariff_id");
+            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
@@ -209,6 +217,37 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             return rs.getInt(1);
         } catch (SQLException e) {
             throw new EntityNotFoundException(customerId, e);
+        }
+    }
+
+    @Override
+    public List<Order> getTariffOrdersByRegionId(long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"))) {
+            ps.setLong(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Order> tariffOrders = new ArrayList<>();
+            while (rs.next()) {
+                tariffOrders.add(this.init(rs));
+            }
+            return tariffOrders;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(regionId, e);
+        }
+    }
+
+    @Override
+    public List<Order> getAllServiceOrders() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("services"))) {
+            ResultSet rs = ps.executeQuery();
+            List<Order> serviceOrders = new ArrayList<>();
+            while (rs.next()) {
+                serviceOrders.add(this.init(rs));
+            }
+            return serviceOrders;
+        } catch (SQLException e) {
+            throw new CrudException("Could not extract service orders", e);
         }
     }
 }
