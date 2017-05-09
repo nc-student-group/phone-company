@@ -134,6 +134,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
+    public List<Tariff> getTariffsAvailableForCorporate() {
+        return this.tariffDao.getTariffsAvailableForCorporate();
+    }
+
+    @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
         return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
     }
@@ -228,7 +233,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
             this.activateTariffForSingleCustomer(tariffId, customer);
         } else {
             if (customer.getRepresentative()) {
-                activateTariffForCorporateCustomer(tariffId, customer);
+                activateTariffForCorporateCustomer(tariffId, customer.getCorporate());
             } else {
                 throw new ConflictException("You aren't representative of your company." +
                         " Contact with your company representative to change tariff plan.");
@@ -237,7 +242,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
 
     }
 
-    private void activateTariffForSingleCustomer(long tariffId, Customer customer) {
+    @Override
+    public void activateTariffForSingleCustomer(long tariffId, Customer customer) {
         TariffRegion tariffRegion = tariffRegionService
                 .getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
         if (tariffRegion == null) {
@@ -254,7 +260,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         this.activateSingleTariff(customer, tariffRegion);
     }
 
-    private void activateTariffForCorporateCustomer(long tariffId, Customer customer) {
+    @Override
+    public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate) {
         Tariff tariff = this.getById(tariffId);
         if (tariff == null) {
             throw new ConflictException("This tariff plan doesn't exist. Choose tariff plan form available list.");
@@ -262,11 +269,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         if (!tariff.getProductStatus().equals(ProductStatus.ACTIVATED)) {
             throw new ConflictException("This tariff plan is deactivated at the moment.");
         }
-        CustomerTariff customerTariff = customerTariffService.getCurrentCorporateTariff(customer.getCorporate().getId());
+        CustomerTariff customerTariff = customerTariffService.getCurrentCorporateTariff(corporate.getId());
         if (customerTariff != null) {
             this.deactivateCorporateTariff(customerTariff);
         }
-        this.activateCorporateTariff(customer.getCorporate(), tariff);
+        this.activateCorporateTariff(corporate, tariff);
     }
 
     @Override
