@@ -11,6 +11,8 @@
 
         console.log('This is RepresentativeCustomerController');
         $scope.activePage = 'clients';
+
+
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer().then(function (data) {
                 $scope.preloader.send = true;
@@ -21,14 +23,16 @@
             });
         $scope.preloader.send = false;
 
+        $scope.preloader.send = true;
         $scope.getCustomersByCompany = function () {
             CustomerService.getCustomerByCompany($scope.customer.corporate.id).then(
                 function (data) {
                     $scope.customers = data;
+                    $scope.preloader.send = false;
                 }
             );
         };
-
+        $scope.preloader.send = false;
         $scope.activateClick = function(customer){
             customer.status="ACTIVATED";
             CustomerService.updateCustomer(customer).then(
@@ -45,7 +49,7 @@
             customer.status="INACTIVE";
             CustomerService.updateCustomer(customer).then(
                 function (data) {
-                    toastr.success("Customer was activated");
+                    toastr.success("Customer was deactivated");
                 },
                 function (err) {
                     toastr.error("Customer wasn't activated");
