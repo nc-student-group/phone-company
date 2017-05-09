@@ -1,4 +1,4 @@
-active: localds
+active: prod
 profiles:
   - name: prod
     datasource:
@@ -12,9 +12,3 @@ profiles:
       driver-class-name: org.postgresql.Driver
       username: postgres
       password: 1111
-  - name: localds
-    datasource:
-      url: jdbc:postgresql://localhost:5432/nc_phone_company_local?user=yzrllkhondutsx&password=root
-      driver-class-name: org.postgresql.Driver
-      username: yzrllkhondutsx
-      password: root
