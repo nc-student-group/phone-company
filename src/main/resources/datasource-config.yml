@@ -1,4 +1,4 @@
-active: dev
+active: prod
 profiles:
   - name: prod
     datasource:
@@ -8,7 +8,7 @@ profiles:
       password: 99ecc04560666945bc95824b30d33b575478c323076284b6e4ea39362633dd4d
   - name: dev
     datasource:
-      url: jdbc:postgresql://localhost:5432/nc_phone_company_local?user=yzrllkhondutsx&password=root
+      url: jdbc:postgresql://localhost:5432/phone-company?user=postgres&password=1111
       driver-class-name: org.postgresql.Driver
-      username: yzrllkhondutsx
-      password: root
+      username: postgres
+      password: 1111
