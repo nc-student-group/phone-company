@@ -32,6 +32,12 @@
                     <p>Complaints</p>
                 </a>
             </li>
+            <li ng-show="customer.isRepresentative" ng-class="{'active': activePage == 'clients'}">
+                <a href="/#/client/companyClients">
+                    <i class="pe-7s-attention"></i>
+                    <p>Clients</p>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

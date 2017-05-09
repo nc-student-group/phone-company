@@ -149,6 +149,16 @@
                 templateUrl: 'view/csr/clientDetail.html',
                 controller: 'CsrClientDetailController'
             });
+        $routeProvider.when('/csr/editCustomer/:id',
+            {
+                templateUrl: 'view/csr/editCustomer.html',
+                controller: 'CsrClientEditController'
+            });
+        $routeProvider.when('/client/companyClients',
+            {
+                templateUrl: 'view/client/representativesClients.html',
+                controller: 'RepresentativeCustomerController'
+            });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
 

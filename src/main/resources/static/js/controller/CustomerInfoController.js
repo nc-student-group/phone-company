@@ -26,6 +26,7 @@
             CustomerInfoService.patchCustomer($scope.customer);
         };
 
+        $scope.preloader.send = true;
         CustomerInfoService.getCustomer()
             .then(function (data) {
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
@@ -33,7 +34,7 @@
                 $scope.mailingSwitchDisabled = false;
                 $scope.preloader.send = false;
             });
-
+        $scope.preloader.send = false;
         $scope.loadCurrentServices = function () {
             $scope.preloader.send = true;
             CustomerInfoService.getCurrentServices()

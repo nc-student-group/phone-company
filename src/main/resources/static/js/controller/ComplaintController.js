@@ -6,7 +6,8 @@ angular.module('phone-company').controller('ComplaintController', [
     '$location',
     '$rootScope',
     'ComplaintService',
-    function ($scope, $http, $location, $rootScope, ComplaintService) {
+    'CustomerInfoService',
+    function ($scope, $http, $location, $rootScope, ComplaintService,CustomerInfoService) {
         console.log('This is ComplaintController');
         $scope.activePage = 'complaints';
         $scope.complaint = {            
@@ -22,6 +23,14 @@ angular.module('phone-company').controller('ComplaintController', [
             console.log('Get all categories of complaint');
             $scope.complaintCategories = data;
         });
+
+        $scope.preloader.send = true;
+        CustomerInfoService.getCustomer()
+            .then(function (data) {
+                $scope.customer = data;
+                $scope.preloader.send = false;
+            });
+        $scope.preloader.send = false;
 
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);

@@ -12,7 +12,8 @@
         var CustomerService = {};
 
         var GET_ALL_CUSTOMERS_URL = "api/customers/";
-        var GET_CUSTOMER_BY_ID = "/api/customers/"
+        var GET_CUSTOMER_BY_ID = "/api/customers/";
+        var GET_CUSTOMER_BY_COMPANY = "/api/customer/getByCorporateId/"
         CustomerService.saveCustomerByAdmin = function (customer) {
             console.log('customer: ' + JSON.stringify(customer));
             var deferred = $q.defer();
@@ -150,6 +151,20 @@
         CustomerService.getCustomerById = function (id) {
             var deferred = $q.defer();
             $http.get(GET_CUSTOMER_BY_ID + id).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+
+                });
+            return deferred.promise;
+        };
+
+        CustomerService.getCustomerByCompany = function (id) {
+            var deferred = $q.defer();
+            $http.get(GET_CUSTOMER_BY_COMPANY + id).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

@@ -134,6 +134,11 @@
             $location.path("/csr/clients/"+id);
         };
 
+        $scope.editClick = function (id) {
+            $location.path("/csr/editCustomer/"+id);
+        };
+
+
         $scope.deactivateClick = function (index) {
             $scope.showModalWindow($scope.preloader, $scope.customers[index]);
         };

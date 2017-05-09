@@ -139,7 +139,7 @@ public class CustomerController {
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
-        customerService.deactivateCustomerTariff(customer.getId());
+
         this.customerService.update(customer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
