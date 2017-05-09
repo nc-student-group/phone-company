@@ -8,17 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +37,14 @@ public class ServicesController {
     @Autowired
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
+                              @Qualifier("serviceNotificationEmailCreator")
+                                      MailMessageCreator<Service> emailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
-                              @Qualifier("serviceNotificationEmailCreator")
-                              MailMessageCreator<Service> emailCreator,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
+                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -109,6 +104,18 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/activate/{serviceId}/{customerId}")
+    public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
+                                                    @PathVariable("customerId") long customerId) {
+        Customer loggedInCustomer = this.customerService.getById(customerId);
+        Service currentService = this.serviceService.getById(serviceId);
+        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        SimpleMailMessage notificationMessage = this
+                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+        this.emailService.sendMail(notificationMessage, loggedInCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/categories")
     public List<ProductCategory> getAllCategories() {
         List<ProductCategory> productCategoryList = this.productCategoryService.getAll();
@@ -145,18 +152,36 @@ public class ServicesController {
 
     @GetMapping("/current")
     public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff() {
-        Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
+        Customer customer = customerService.getCurrentlyLoggedInUser();
         List<CustomerServiceDto> customerServices =
-                customerServiceService.getCurrentCustomerServices(currentlyLoggedInUser.getId());
+                customerServiceService.getCurrentCustomerServices(customer.getId());
+        return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
+    }
+
+    @GetMapping("/current/customer/{id}")
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff(@PathVariable("id") long customerId) {
+        Customer customer = customerService.getById(customerId);
+        List<CustomerServiceDto> customerServices =
+                customerServiceService.getCurrentCustomerServices(customer.getId());
         return new ResponseEntity<Object>(customerServices, HttpStatus.OK);
     }
 
     @GetMapping("/history/{page}/{size}")
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
-        org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Customer customer = customerService.findByEmail(securityUser.getUsername());
+        Customer customer = customerService.getCurrentlyLoggedInUser();
+        LOG.debug("Get all service orders by customer id = " + customer);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
+        map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));
+        return map;
+    }
+
+    @GetMapping("/history/customer/{id}/{page}/{size}")
+    public Map<String, Object> getOrdersHistoryPaged(@PathVariable("id") long id,
+                                                     @PathVariable("page") int page,
+                                                     @PathVariable("size") int size) {
+        Customer customer = customerService.getById(id);
         LOG.debug("Get all service orders by customer id = " + customer);
         Map<String, Object> map = new HashMap<>();
         map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
@@ -170,9 +195,9 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/activate")
-    public ResponseEntity<Void> activateCustomerService(@RequestBody CustomerServiceDto customerService) {
-        customerServiceService.activateCustomerService(customerService);
+    @PatchMapping(value = "/resume")
+    public ResponseEntity<Void> resumeCustomerService(@RequestBody CustomerServiceDto customerService) {
+        customerServiceService.resumeCustomerService(customerService);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

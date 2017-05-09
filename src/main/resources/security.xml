@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+    <http auto-config="true" authentication-manager-ref="authenticationManager">
+        <!--<intercept-url pattern="/**" access="permitAll"/>-->
+        <intercept-url pattern="/#/login" access="permitAll()"/>
+        <intercept-url pattern="/css/**" access="permitAll()"/>
+        <intercept-url pattern="/js/**" access="permitAll()"/>
+        <intercept-url pattern="/favicon.ico" access="permitAll()"/>
+        <intercept-url pattern="/index" access="permitAll()"/>
+        <intercept-url pattern="/register" access="permitAll()"/>
+        <intercept-url pattern="/view/**" access="permitAll()"/>
+        <intercept-url pattern="/api/users" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/api/customers" access="permitAll()"/>
+        <intercept-url pattern="/api/user/reset" access="permitAll()"/>
+        <intercept-url pattern="/api/confirmRegistration" access="permitAll()"/>
+        <intercept-url pattern="/api/roles" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/api/services/empty-service" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
+        <intercept-url pattern="/api/services/categories" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
+        <intercept-url pattern="/api/services/category/**" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
+        <intercept-url pattern="/api/services" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
+        <intercept-url pattern="/api/services/current/customer/**" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/services/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/services/resume" method="PATCH" access="hasAnyRole('CLIENT','CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/services/activate/**" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/services/**" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
+        <intercept-url pattern="/api/regions/get" access="permitAll()"/>
+        <intercept-url pattern="/api/customers/empty-customer" access="permitAll()"/>
+        <intercept-url pattern="/api/customers/logged-in-user/**" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customers/**" method="GET" access="hasAnyRole('CSR','ADMIN','PMG')"/>
+        <intercept-url pattern="/api/customer-tariffs/customer-tariff" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customer-tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/customer-tariffs/resume" method="PATCH"
+                       access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/customer/tariff/deactivate" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/customer/tariff/suspend" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/orders/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/orders/history/**" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/tariffs/available/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/empty" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs" method="POST" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs" method="PUT" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/**" method="PATCH" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/activate/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/reports/**" method="GET" access="hasRole('CSR')"/>
+
+        <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/complaints" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/complaints/**" access="hasAnyRole('PMG', 'CSR', 'ADMIN')"/>
+        <form-login login-page='/login'/>
+        <logout logout-success-url="/#/index"/>
+        <http-basic entry-point-ref="authenticationEntryPoint"/>
+        <form-login authentication-success-handler-ref="authenticationSuccessHandler"/>
+        <form-login authentication-failure-handler-ref="authenticationFailureHandler"/>
+        <csrf disabled="true"/>
+    </http>
+
+
+    <authentication-manager id="authenticationManager">
+        <authentication-provider user-service-ref="userDetailsService">
+            <password-encoder ref="shaPasswordEncoder"/>
+        </authentication-provider>
+    </authentication-manager>
+    <beans:bean class="com.phonecompany.config.RESTAuthenticationEntryPoint" id="authenticationEntryPoint"/>
+    <beans:bean class="com.phonecompany.config.RESTAuthenticationFailureHandler" id="authenticationFailureHandler"/>
+    <beans:bean class="com.phonecompany.config.RESTAuthenticationSuccessHandler" id="authenticationSuccessHandler"/>
+    <beans:bean class="com.phonecompany.service.UserDetailsServiceImpl" id="userDetailsService"/>
+    <beans:bean id="shaPasswordEncoder"
+                class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+</beans:beans>

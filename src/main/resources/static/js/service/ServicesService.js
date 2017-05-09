@@ -123,6 +123,19 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function activateServiceForCustomerId(serviceId, customerId) {
+            var deferred = $q.defer();
+            $http.get(SERVICES+"/activate/"+serviceId+"/"+customerId).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         return {
             getServicesByProductCategoryId: getServicesByProductCategoryId,
             getNewService: getNewService,
@@ -132,6 +145,7 @@ angular.module('phone-company')
             changeServiceStatus: changeServiceStatus,
             getServiceById: getServiceById,
             performServiceEdit: performServiceEdit,
-            activateService: activateService
+            activateService: activateService,
+            activateServiceForCustomerId:activateServiceForCustomerId
         };
     }]);

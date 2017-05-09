@@ -30,13 +30,16 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 @Repository
 public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderDaoImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
+
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
     private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader, CustomerServiceDao customerServiceDao, CustomerTariffDao customerTariffDao) {
+    public OrderDaoImpl(QueryLoader queryLoader,
+                        CustomerServiceDao customerServiceDao,
+                        CustomerTariffDao customerTariffDao) {
         this.queryLoader = queryLoader;
         this.customerServiceDao = customerServiceDao;
         this.customerTariffDao = customerTariffDao;
@@ -215,12 +218,16 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public List<Order> getTariffOrdersByRegionId(long regionId) {
+        LOG.debug("Will try to open connection");
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"))) {
             ps.setLong(1, regionId);
+            LOG.debug("Executing result query");
             ResultSet rs = ps.executeQuery();
+            LOG.debug("Result set has been obtained");
             List<Order> tariffOrders = new ArrayList<>();
             while (rs.next()) {
+                LOG.debug("Adding values to list");
                 tariffOrders.add(this.init(rs));
             }
             return tariffOrders;

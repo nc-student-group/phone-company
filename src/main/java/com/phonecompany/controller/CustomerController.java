@@ -168,4 +168,9 @@ public class CustomerController {
         this.customerTariffService.suspendCustomerTariff(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping(value = "/api/customers/{id}")
+    public ResponseEntity<?> getCustomerById(@PathVariable("id") long id){
+        return new ResponseEntity<Object>(customerService.getById(id), HttpStatus.OK);
+    }
 }

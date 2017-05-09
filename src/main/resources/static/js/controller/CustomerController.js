@@ -5,9 +5,9 @@
         .controller('CustomerController', CustomerController);
 
     CustomerController.$inject = ['$scope', '$log', 'CustomerService', 'TariffService',
-        'CorporationService', '$rootScope', '$mdDialog'];
+        'CorporationService', '$rootScope', '$mdDialog', '$location'];
     function CustomerController($scope, $log, CustomerService, TariffService,
-                                CorporationService, $rootScope, $mdDialog) {
+                                CorporationService, $rootScope, $mdDialog, $location) {
         console.log('This is CustomerService');
         $scope.activePage = 'customers';
         $scope.page = 0;
@@ -129,6 +129,9 @@
                     $scope.inProgress = false;
                 });
             }
+        };
+        $scope.moreClick = function (id) {
+            $location.path("/csr/clients/"+id);
         };
 
         $scope.deactivateClick = function (index) {

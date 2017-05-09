@@ -75,6 +75,7 @@ public class UserController {
 
     @RequestMapping(method = POST, value = "/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
+        LOG.info(user.toString());
         if (userService.findByEmail(user.getEmail()) == null) {
             user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
             eventPublisher.publishEvent(new OnUserCreationEvent(user));

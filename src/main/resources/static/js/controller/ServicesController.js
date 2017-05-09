@@ -187,7 +187,13 @@ angular.module('phone-company').controller('ServicesController', [
         };
 
         $scope.uploadPicture = function () {
+            console.log(`uploadPicture`);
             $('#fileInput').click();
+        };
+
+        $scope.uploadPictureForEdit = function () {
+            console.log(`uploadPictureForEdit`);
+            $('#editFileInput').click();
         };
 
         /**
@@ -220,6 +226,7 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.clear = function () {
                 $scope.imageCropStep = 1;
                 $('#fileInput').val('');
+                $('#editFileInput').val('');
                 delete $scope.imgSrc;
                 delete $scope.result;
                 delete $scope.resultBlob;

@@ -10,84 +10,90 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private UserDetailsService userDetailsService;
-    private ShaPasswordEncoder shaPasswordEncoder;
-
-    @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService,
-                          ShaPasswordEncoder shaPasswordEncoder) {
-        this.userDetailsService = userDetailsService;
-        this.shaPasswordEncoder = shaPasswordEncoder;
-    }
-
-    @Autowired
-    public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(shaPasswordEncoder);
-    }
-
-    @Autowired
-    private RESTAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private RESTAuthenticationFailureHandler authenticationFailureHandler;
-
-    @Autowired
-    private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/css/**").permitAll()
-                .antMatchers("/js/**").permitAll()
-                .antMatchers("/view/**").permitAll()
-                .antMatchers("/assets/**").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/index").permitAll()
-                .antMatchers("/register").permitAll()
-                .antMatchers("/api/users").hasRole("ADMIN")
-                .antMatchers("/api/customers").permitAll()
-                .antMatchers("/api/user/reset").permitAll()
-                .antMatchers("/api/confirmRegistration").permitAll()
-                .antMatchers("/api/roles").hasRole("ADMIN")
-                .antMatchers("/api/regions/get").permitAll()
-                .antMatchers("/api/customers/empty-customer").permitAll()
-                .antMatchers("/api/customers/logged-in-user/**").hasRole("CLIENT")
-                .antMatchers("/api/customer-tariffs/customer-tariff").hasRole("CLIENT")
-                .antMatchers("/api/customer/tariff/deactivate").hasRole("CLIENT")
-                .antMatchers("/api/customer/tariff/suspend").hasRole("CLIENT")
-                .antMatchers("/api/orders/history/**").hasRole("CLIENT")
-                .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/services/**").permitAll()
-                .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/add/single").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/update").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
-                .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
-                .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
-                .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
-                .antMatchers("/api/complaints").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
-                .antMatchers("/api/complaints/**").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
-                .antMatchers("/dialog.report.html").permitAll()
-//                .antMatchers("/api/complaint/add").hasAnyRole("CLIENT", "CSR", "ADMIN")
-//                .antMatchers("/api/complaintCategory/get").hasAnyRole("CLIENT", "CSR", "ADMIN")
-                .anyRequest().authenticated();
-
-        http.csrf().disable();
-        http
-                .formLogin().loginPage("/login").permitAll()
-                .and()
-                .logout().logoutSuccessUrl("/#/index").permitAll();
-        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.formLogin().successHandler(authenticationSuccessHandler);
-        http.formLogin().failureHandler(authenticationFailureHandler);
-    }
+//
+//    private UserDetailsService userDetailsService;
+//    private ShaPasswordEncoder shaPasswordEncoder;
+//
+//    @Autowired
+//    public SecurityConfig(UserDetailsService userDetailsService,
+//                          ShaPasswordEncoder shaPasswordEncoder) {
+//        this.userDetailsService = userDetailsService;
+//        this.shaPasswordEncoder = shaPasswordEncoder;
+//    }
+//
+//    @Autowired
+//    public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+//        auth
+//                .userDetailsService(userDetailsService)
+//                .passwordEncoder(shaPasswordEncoder);
+//    }
+//
+//    @Autowired
+//    private RESTAuthenticationEntryPoint authenticationEntryPoint;
+//
+//    @Autowired
+//    private RESTAuthenticationFailureHandler authenticationFailureHandler;
+//
+//    @Autowired
+//    private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.authorizeRequests()
+//                .antMatchers("/").permitAll()
+//                .antMatchers("/css/**").permitAll()
+//                .antMatchers("/js/**").permitAll()
+//                .antMatchers("/view/**").permitAll()
+//                .antMatchers("/assets/**").permitAll()
+//                .antMatchers("/favicon.ico").permitAll()
+//                .antMatchers("/index").permitAll()
+//                .antMatchers("/register").permitAll()
+//                .antMatchers("/api/users").hasRole("ADMIN")
+//                .antMatchers("/api/customers").permitAll()
+//                .antMatchers("/api/user/reset").permitAll()
+//                .antMatchers("/api/confirmRegistration").permitAll()
+//                .antMatchers("/api/roles").hasRole("ADMIN")
+//                .antMatchers("/api/services/empty-service").hasAnyRole("CSR", "ADMIN", "CLIENT")
+//                .antMatchers("/api/services/categories").hasAnyRole("CSR", "ADMIN", "CLIENT")
+//                .antMatchers("/api/services/category/**").hasAnyRole("CSR", "ADMIN", "CLIENT")
+//                .antMatchers("/api/services").hasAnyRole("CSR", "ADMIN", "CLIENT")
+//                .antMatchers("/api/services/**").hasAnyRole("CSR", "ADMIN", "CLIENT")
+////                .antMatchers("/api/regions/get").hasAnyRole("CSR","ADMIN")
+//                //regions are required for the registration as well. Thats why should be permitted to access
+//                .antMatchers("/api/regions/get").permitAll()
+//                .antMatchers("/api/customers/empty-customer").permitAll()
+//                .antMatchers("/api/customers/logged-in-user/**").hasRole("CLIENT")
+//                .antMatchers("/api/customer-tariffs/customer-tariff").hasRole("CLIENT")
+//                .antMatchers("/api/customer/tariff/deactivate").hasRole("CLIENT")
+//                .antMatchers("/api/customer/tariff/suspend").hasRole("CLIENT")
+//                .antMatchers("/api/orders/history/**").hasRole("CLIENT")
+//                .antMatchers("/api/tariffs/get/by/region/**").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/new/get").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/add").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/add/single").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/update").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/update/single").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/get/*").hasAnyRole("CSR","ADMIN")
+//                .antMatchers("/api/tariff/update/status/**").hasAnyRole("CSR", "ADMIN")
+//                .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
+//                .antMatchers("api/corporations/").hasAnyRole("CSR", "ADMIN")
+//                .antMatchers("/api/complaints").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
+//                .antMatchers("/api/complaints/**").hasAnyRole("CLIENT", "PMG", "CSR", "ADMIN")
+////                .antMatchers("/api/complaint/add").hasAnyRole("CLIENT", "CSR", "ADMIN")
+////                .antMatchers("/api/complaintCategory/get").hasAnyRole("CLIENT", "CSR", "ADMIN")
+//                .anyRequest().authenticated();
+//
+//        http.csrf().disable();
+//        http
+//                .formLogin().loginPage("/login").permitAll()
+//                .and()
+//                .logout().logoutSuccessUrl("/#/index").permitAll();
+//        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+//        http.formLogin().successHandler(authenticationSuccessHandler);
+//        http.formLogin().failureHandler(authenticationFailureHandler);
+//    }
 }

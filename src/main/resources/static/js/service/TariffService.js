@@ -12,9 +12,12 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs/";
     var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_URL = "api/tariffs/available/";
+    var GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_BY_ID_URL = "api/tariffs/available/";
     var GET_TARIFF_FOR_CUSTOMER_BY_UD_URL = "api/tariffs/customer/";
     var GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer-tariff/current";
     var GET_ACTIVATE_TARIFF_URL = "/api/tariffs/activate/";
+    var GET_ACTIVATE_TARIFF_FOR_CUSTOMER_ID_URL = "/api/tariffs/activate/";
+    var GET_RESUME_TARIFF_URL = "/api/customer-tariffs/resume";
 
     var factory = {
         getAllRegions: getAllRegions,
@@ -27,9 +30,12 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
         saveTariffSingle: saveTariffSingle,
         changeTariffStatus: changeTariffStatus,
         getTariffsAvailableForCustomer: getTariffsAvailableForCustomer,
+        getTariffsAvailableForCustomerById: getTariffsAvailableForCustomerById,
         getTariffForCustomerById: getTariffForCustomerById,
         getCurrentCustomerTariff: getCurrentCustomerTariff,
-        activateTariff: activateTariff
+        activateTariff: activateTariff,
+        activateTariffForCustomerId: activateTariffForCustomerId,
+        resumeCustomerTariff: resumeCustomerTariff
     };
 
     return factory;
@@ -164,6 +170,19 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
         return deferred.promise;
     }
 
+    function getTariffsAvailableForCustomerById(id) {
+        var deferred = $q.defer();
+        $http.get(GET_TARIFFS_AVAILABLE_FOR_CUSTOMER_BY_ID_URL + id).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
     function getTariffForCustomerById(id) {
         var deferred = $q.defer();
         $http.get(GET_TARIFF_FOR_CUSTOMER_BY_UD_URL + id).then(
@@ -193,6 +212,32 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     function activateTariff(id) {
         var deferred = $q.defer();
         $http.get(GET_ACTIVATE_TARIFF_URL + id).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function activateTariffForCustomerId(tariffId, customerId) {
+        var deferred = $q.defer();
+        $http.get(GET_ACTIVATE_TARIFF_FOR_CUSTOMER_ID_URL + tariffId + "/" + customerId).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function resumeCustomerTariff(customerTariff) {
+        var deferred = $q.defer();
+        $http.patch(GET_RESUME_TARIFF_URL, customerTariff).then(
             function (response) {
                 deferred.resolve(response.data);
             },

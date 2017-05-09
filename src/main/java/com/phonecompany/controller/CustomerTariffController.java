@@ -47,4 +47,18 @@ public class CustomerTariffController {
         CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/customer/{id}")
+    public ResponseEntity<?> getCustomerTariff(@PathVariable("id") long customerId) {
+        Customer customer = customerService.getById(customerId);
+        CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedClientTariff(customer);
+        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/resume")
+    public ResponseEntity<?> resumeTariff(@RequestBody CustomerTariff customerTariff){
+        CustomerTariff updatedCustomerTariff = customerTariffService.resumeCustomerTariff(customerTariff);
+        return new ResponseEntity<Object>(updatedCustomerTariff, HttpStatus.OK);
+    }
+
 }

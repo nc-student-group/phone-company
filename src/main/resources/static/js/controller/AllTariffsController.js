@@ -12,7 +12,7 @@ angular.module('phone-company').controller('AllTariffsController', [
         $scope.inProgress = false;
 
         $scope.preloader.send = true;
-        TariffService.getTariffsAvailableForCustomer($scope.page, 5).then(function (data) {
+        TariffService.getTariffsAvailableForCustomer($scope.page, $scope.size).then(function (data) {
             $scope.tariffs = data.tariffs;
             $scope.tariffsCount = data.tariffsCount;
             $scope.preloader.send = false;

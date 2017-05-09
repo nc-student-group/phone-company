@@ -46,8 +46,8 @@
             });
         $routeProvider.when('/pmg',
             {
-                templateUrl: 'view/pmgPage.html'
-                // controller: ''
+                templateUrl: 'view/pmg/pmgProfile.html',
+                controller: 'CsrProfileController'
             });
         $routeProvider.when('/user/profile/:success',
             {
@@ -143,6 +143,21 @@
             {
                 templateUrl: 'view/csr/corporation.html',
                 controller: 'CorporationController'
+            });
+        $routeProvider.when('/csr/clients',
+            {
+                templateUrl: 'view/csr/clients.html',
+                controller: 'CustomerController'
+            });
+        $routeProvider.when('/csr/clients/:id',
+            {
+                templateUrl: 'view/csr/clientDetail.html',
+                controller: 'CsrClientDetailController'
+            });
+        $routeProvider.when('/pmg/complaints',
+            {
+                templateUrl: 'view/pmg/complaints.html',
+                controller: 'CsrComplaintsController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });

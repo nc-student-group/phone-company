@@ -13,6 +13,7 @@
         $scope.size = 5;
         $scope.partOfName = "";
         $scope.preloader.send = true;
+        $scope.activePage = 'corporations';
 
         var companyId = $routeParams.id;
         $scope.partOfEmail="";
@@ -78,7 +79,17 @@
             );
         };
 
-
+        $scope.getCorporateById = function(id){
+            CorporationService.getById(id).then(
+                function (data) {
+                    $scope.corporation = data;
+                },
+                function (errResponse) {
+                    toastr.error("Corporation name wasn't found");
+                }
+            )
+        };
+        $scope.getCorporateById(companyId);
         $scope.getCustomers();
         $scope.getCustomersWithoutCompany();
     }

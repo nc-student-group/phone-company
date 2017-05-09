@@ -24,19 +24,30 @@
                                         <md-dialog layout-padding>
                                             <md-content layout-padding>
                                                 <h3>Generate report</h3>
+
+                                                <md-input-container class="md-block">
+                                                    <input type="number"
+                                                           placeholder="Region id" name="regionId"
+                                                           ng-model="regionId"
+                                                           required/>
+                                                </md-input-container>
                                                 <div layout-gt-xs="row">
                                                     <div flex-gt-xs>
                                                         <h4>Pick start date</h4>
-                                                        <md-datepicker ng-model="myDate"
-                                                                       md-placeholder="Enter date"></md-datepicker>
+                                                        <md-datepicker ng-model="startDate"
+                                                                       md-placeholder="Start date"></md-datepicker>
                                                     </div>
                                                     <div flex-gt-xs>
                                                         <h4>Pick end date</h4>
-                                                        <md-datepicker ng-model="myDate"
-                                                                       md-placeholder="Enter date"></md-datepicker>
+                                                        <md-datepicker ng-model="endDate"
+                                                                       md-placeholder="End date"></md-datepicker>
                                                     </div>
                                                 </div>
                                             </md-content>
+                                            <md-button class="md-raised md-primary"
+                                                       ng-click="generateReport()">
+                                                Generate report
+                                            </md-button>
                                         </md-dialog>
                                     </div>
                                 </div>

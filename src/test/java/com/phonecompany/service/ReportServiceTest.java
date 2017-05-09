@@ -1,15 +1,14 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.OrderDao;
-import com.phonecompany.dao.interfaces.TariffDao;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -39,5 +38,18 @@ public class ReportServiceTest {
 
         //then
 
+    }
+
+    @Test
+    public void shouldFindFileAtFileSystem() {
+        //given
+        File dir = new File("./");
+
+        File[] files = dir.listFiles((dir1, filename) -> filename.endsWith(".xlsx"));
+
+
+        //when
+
+        //then
     }
 }

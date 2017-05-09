@@ -5,19 +5,18 @@ import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,13 +28,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class XSSFServiceImpl {
+@Service
+public class XSSFServiceImpl implements XSSFService {
 
     private static final Logger LOG = LoggerFactory.getLogger(XSSFServiceImpl.class);
     private static final String FILE_NAME = "report-";
     private static final String FILE_FORMAT = ".xlsx";
-    public static final String TARIFFS = "Tariffs";
-    public static final int DISTANCE_BETWEEN_TABLES = 8;
+    private static final String TARIFFS = "Tariffs";
+    private static final int DISTANCE_BETWEEN_TABLES = 8;
 
     private OrderDao orderDao;
 
@@ -44,20 +44,24 @@ public class XSSFServiceImpl {
         this.orderDao = orderDao;
     }
 
+    @Override
     public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
+        LOG.debug("In main report method");
         XSSFWorkbook workbook = new XSSFWorkbook();
         workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        workbook = this.getServiceReport(workbook, startDate, endDate);
+        LOG.debug("Workbook returned for saving");
         this.saveWorkBook(workbook);
     }
 
     private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
                                          LocalDate startDate, LocalDate endDate) {
-
+        LOG.debug("In tariff report method");
         List<Order> tariffOrdersByRegionId = this.orderDao.getTariffOrdersByRegionId(regionId);
+        LOG.debug("Tariffs returned from order dao");
         List<Order> tariffOrdersFilteredByDate = this.filterOrdersByDate(
                 tariffOrdersByRegionId, startDate, endDate);
 
+        LOG.debug("Orders filtered by date");
         Map<String, List<Order>> tariffOrdersMap = this.getTariffOrdersMap(tariffOrdersFilteredByDate);
         List<LocalDate> timeLine = this.generateTimeLine(tariffOrdersFilteredByDate);
 
@@ -72,6 +76,7 @@ public class XSSFServiceImpl {
                                       List<LocalDate> timeLine) {
         int rowPosition = 0;
         for (OrderStatus orderStatus : OrderStatus.values()) {
+            LOG.debug("Generating table for status");
             this.createTableByStatus(sheet, rowPosition, orderStatus, ordersMap, timeLine);
             rowPosition += DISTANCE_BETWEEN_TABLES;
         }
@@ -87,10 +92,13 @@ public class XSSFServiceImpl {
             int colPosition = 1;
             List<Order> orders = this
                     .filterOrdersByStatus(ordersMap.get(productName), orderStatus);
+            LOG.debug("Filtered orders list by status");
             XSSFRow row = this.generateRowHeading(sheet, rowPosition++, productName);
             this.fillRow(row, colPosition, orders, timeLine);
         }
+        LOG.debug("Generating column headings");
         this.generateColHeadings(sheet.createRow(rowPosition), timeLine);
+        LOG.debug("Drawing chart");
         this.drawChart(sheet, initialRowPosition, rowPosition, timeLine.size());
     }
 
@@ -134,6 +142,7 @@ public class XSSFServiceImpl {
     private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int lastColIndex) {
         XSSFChart chart = this.createChart(sheet, rowIndex);
 
+        LOG.debug("Chart created");
         // Create data for the chart
         XSSFLineChartData data = chart.getChartDataFactory().createLineChartData();
 
@@ -152,20 +161,19 @@ public class XSSFServiceImpl {
     private void addChartSeries(XSSFSheet sheet, LineChartData data,
                                 int initialRowPosition, int rowIndex,
                                 int lastColIndex) {
+        LOG.debug("Adding chart series");
         ChartDataSource<String> x = this.getDatePointsDataSource(sheet, rowIndex, lastColIndex);
         while (initialRowPosition < rowIndex) {
+            LOG.debug("Generating data rows");
             ChartDataSource<Number> y = this.getOrderNumberDatasource(sheet, initialRowPosition++, lastColIndex);
-            data.addSeries(x, y);
+            LineChartSeries lineChartSeries = data.addSeries(x, y);
+            lineChartSeries.setTitle(new CellReference(initialRowPosition - 1, 0));
         }
     }
 
     private ChartDataSource<String> getDatePointsDataSource(XSSFSheet sheet,
                                                             int rowIndex,
                                                             int lastCellPosition) {
-        LOG.debug("Configuring coordinates for x axis values");
-        LOG.debug("First row number: {}", rowIndex);
-        LOG.debug("First column of the datarange: {}", 1);
-        LOG.debug("Last column of the datarange: {}", lastCellPosition);
         return DataSources.fromStringCellRange(sheet,
                 new CellRangeAddress(rowIndex, rowIndex, 1, lastCellPosition));
     }
@@ -251,17 +259,15 @@ public class XSSFServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook,
-                                          LocalDate startDate, LocalDate endDate) {
-        List<Order> serviceOrdersFilteredByDate = this.filterOrdersByDate(
-                this.orderDao.getAllServiceOrders(), startDate, endDate);
-        return workbook;
-    }
-
     private void saveWorkBook(XSSFWorkbook workbook) {
         try {
+            LOG.debug("Opening stream");
             FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);
             workbook.write(out);
+            workbook.close();
+            LOG.debug("Closing workbook");
+            out.flush();
+            LOG.debug("Closing stream");
             out.close();
         } catch (IOException e) {
             e.printStackTrace();

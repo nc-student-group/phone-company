@@ -4,7 +4,6 @@
     <div class="main-panel">
         <ng-include src="'../../view/admin/adminHeader.html'"></ng-include>
 
-
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -212,12 +211,22 @@
                                             </md-input-container>
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
+                                                <md-checkbox ng-model="corporateUser"
+                                                             aria-label="There are a corporate client">
+                                                    There are a corporate client
+                                                </md-checkbox>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" ng-hide="corporateUser">
+                                        <div class="form-group col-sm-11">
+                                            <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Region</label>
-                                                <md-select ng-model="customer.address.region" required>
+                                                <md-select ng-model="customer.address.region" ng-required="!corporateUser">
                                                     <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
                                                         {{r.nameRegion}}
                                                     </md-option>
@@ -225,7 +234,7 @@
                                             </md-input-container>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-hide="corporateUser">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Locality</label>
@@ -241,7 +250,7 @@
                                             </md-input-container>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-hide="corporateUser">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Street</label>
@@ -258,7 +267,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row" ng-hide="corporateUser">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>House number</label>
@@ -276,7 +285,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row" ng-hide="corporateUser">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Apartment number</label>
@@ -293,16 +302,7 @@
                                             </md-input-container>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <md-checkbox ng-model="corporateUser"
-                                                             aria-label="There are a corporate client">
-                                                    There are a corporate client
-                                                </md-checkbox>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
+
                                     <div class="row" ng-show="corporateUser">
                                         <div class="form-group col-sm-11">
                                             <md-input-container class="md-block" flex-gt-sm>
@@ -340,9 +340,7 @@
                                 </form>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>

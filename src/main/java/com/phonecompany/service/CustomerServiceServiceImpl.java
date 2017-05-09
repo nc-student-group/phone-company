@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto> implements CustomerServiceService{
+public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto>
+        implements CustomerServiceService {
 
     private CustomerServiceDao customerServiceDao;
     private OrderService orderService;
 
     @Autowired
-    public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao, OrderService orderService){
+    public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao, OrderService orderService) {
         super(customerServiceDao);
         this.customerServiceDao = customerServiceDao;
         this.orderService = orderService;
@@ -42,13 +43,15 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
 
     @Override
     public CustomerServiceDto deactivateCustomerService(CustomerServiceDto customerService) {
-        if(CustomerProductStatus.SUSPENDED.equals(customerService.getOrderStatus())) {
-            Order resumingOrder = orderService.getResumingOrderByCustomerService(customerService);
-            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
-            orderService.update(resumingOrder);
+        if (CustomerProductStatus.SUSPENDED.equals(customerService.getOrderStatus())) {
+            List<Order> resumingOrders = orderService.getResumingOrderByCustomerService(customerService);
+            resumingOrders.forEach((Order resumingOrder) -> {
+                resumingOrder.setOrderStatus(OrderStatus.CANCELED);
+                orderService.update(resumingOrder);
+            });
         }
         customerService.setOrderStatus(CustomerProductStatus.DEACTIVATED);
-        LocalDate now  = LocalDate.now();
+        LocalDate now = LocalDate.now();
 
         Order deactivationOrder = new Order();
         deactivationOrder.setCustomerService(customerService);
@@ -64,14 +67,15 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     }
 
     @Override
-    public CustomerServiceDto activateCustomerService(CustomerServiceDto customerService) {
-
-        Order resumingOrder = orderService.getResumingOrderByCustomerService(customerService);
-        resumingOrder.setOrderStatus(OrderStatus.CANCELED);
-        orderService.update(resumingOrder);
+    public CustomerServiceDto resumeCustomerService(CustomerServiceDto customerService) {
+        List<Order> resumingOrders = orderService.getResumingOrderByCustomerService(customerService);
+        resumingOrders.forEach((Order resumingOrder) -> {
+            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
+            orderService.update(resumingOrder);
+        });
 
         customerService.setOrderStatus(CustomerProductStatus.ACTIVE);
-        LocalDate now  = LocalDate.now();
+        LocalDate now = LocalDate.now();
 
         Order activationOrder = new Order();
         activationOrder.setCustomerService(customerService);
@@ -89,12 +93,12 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     @Override
     public CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData) {
         CustomerServiceDto customerService = customerServiceDao.
-                getById((new Long((Integer)suspensionData.get("customerServiceId"))));
+                getById((new Long((Integer) suspensionData.get("customerServiceId"))));
         Integer daysToExecution = (Integer) suspensionData.get("daysToExecution");
 
         customerService.setOrderStatus(CustomerProductStatus.SUSPENDED);
 
-        LocalDate now  = LocalDate.now();
+        LocalDate now = LocalDate.now();
         LocalDate executionDate = now.plusDays(daysToExecution);
 
         Order suspensionOrder = new Order(customerService, OrderType.SUSPENSION, OrderStatus.DONE, now, now);

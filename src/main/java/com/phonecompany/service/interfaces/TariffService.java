@@ -18,6 +18,8 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size);
 
+    public List<Tariff> getTariffsAvailableForCustomer(Customer customer);
+
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
     public Integer getCountTariffsAvailableForCustomer(long regionId);

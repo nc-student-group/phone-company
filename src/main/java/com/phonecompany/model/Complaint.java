@@ -1,14 +1,20 @@
 package com.phonecompany.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.phonecompany.config.LocalDateTimeDeserializer;
+import com.phonecompany.config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Complaint extends DomainEntity {
 
     private ComplaintStatus status;
-    private Date date;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDate date;
     private String text;
     private ComplaintCategory type;
     private User user;
@@ -16,7 +22,7 @@ public class Complaint extends DomainEntity {
 
     public Complaint(){}
 
-    public Complaint(ComplaintStatus status, Date date, String text, ComplaintCategory type, User user, String subject) {
+    public Complaint(ComplaintStatus status, LocalDate date, String text, ComplaintCategory type, User user, String subject) {
         this.status = status;
         this.date = date;
         this.text = text;
@@ -33,11 +39,11 @@ public class Complaint extends DomainEntity {
         this.status = status;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -73,11 +79,11 @@ public class Complaint extends DomainEntity {
     public String toString() {
         return "Complaint{" +
                 "status='" + status + '\'' +
-                ", date=" + date +
+                ", date='" + date + '\'' +
                 ", text='" + text + '\'' +
                 ", type='" + type + '\'' +
-                ", user=" + user +
-                ", subject=" + subject +
+                ", user='" + user + '\'' +
+                ", subject='" + subject + "\'" +
                 '}';
     }
 }
