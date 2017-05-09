@@ -7,7 +7,9 @@ angular.module('phone-company').controller('CsrClientDetailController',
         '$mdDialog',
         '$routeParams',
         'CustomerService',
-        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService) {
+        'TariffService',
+        'ServicesService',
+        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService, TariffService, ServicesService) {
             console.log('This is CsrClientDetailController');
             $scope.activePage = 'clients';
             $scope.ordersFound = 0;
@@ -36,7 +38,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                         .then(function (data) {
                             $scope.hasCurrentServices = false;
                             $scope.currentServices = data;
-                            if ($scope.currentServices !== undefined) {
+                            if ($scope.currentServices !== "") {
                                 $scope.hasCurrentServices = true;
                             }
                             $scope.preloader.send = false;
@@ -45,7 +47,34 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.preloader.send = false;
                             $scope.inProgress = false;
                         });
+                    ServicesService.getAllCategories().then(function (data) {
+                        $scope.categories = data;
+                        $scope.selectedCategoryId = $scope.categories[0].id;
+                    });
+                    ServicesService.getAllServices().then(function (data) {
+                        $scope.availableServices = data;
+                        $scope.selectedServiceId = 0;
+                        $scope.filter();
+                    });
                 }
+            };
+
+
+            $scope.activateServiceClick = function () {
+                $scope.preloader.send = true;
+                ServicesService.activateServiceForCustomerId($scope.servicesList[$scope.selectedServiceId].id, $scope.customer.id).then(function () {
+                    $scope.loadCurrentServices();
+                });
+            };
+
+            $scope.filter = function () {
+                $scope.servicesList = [];
+                for (var i = 0; i < $scope.availableServices.length; i++) {
+                    if ($scope.availableServices[i].productCategory.id == $scope.selectedCategoryId) {
+                        $scope.servicesList.push($scope.availableServices[i]);
+                    }
+                }
+                $scope.selectedServiceId = 0;
             };
 
 
@@ -57,7 +86,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                         .then(function (data) {
                             $scope.hasCurrentTariff = false;
                             $scope.currentTariff = data;
-                            if ($scope.currentTariff !== undefined) {
+                            if ($scope.currentTariff !== "") {
                                 $scope.hasCurrentTariff = true;
                             }
                             $scope.preloader.send = false;
@@ -69,22 +98,66 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 }
             };
 
+            $scope.getAvailableTariffs = function () {
+                TariffService.getTariffsAvailableForCustomerById($routeParams['id']).then(function (data) {
+                    $scope.availableTariffs = data;
+                    if ($scope.availableTariffs.length > 0) {
+                        $scope.selectedTariffPlan = 0;//$scope.availableTariffs[0];
+                    }
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                });
+            };
+
+            $scope.tariffDetailClick = function (id) {
+                $location.path("/csr/tariff/" + id);
+            };
+
+            $scope.activateClick = function () {
+                if ($scope.currentTariff.tariff != undefined &&
+                    $scope.currentTariff.tariff.id == $scope.availableTariffs[$scope.selectedTariffPlan].id) {
+                    toastr.error("This tariff plan is already activated for you!", 'Error');
+                } else {
+                    $scope.showChangeTariffModalWindow($scope.currentTariff,
+                        $scope.availableTariffs[$scope.selectedTariffPlan],
+                        $scope.preloader,
+                        $scope.customer.id, $scope.loadCurrentTariff);
+                }
+            };
+
+            $scope.resumeTariffClick = function () {
+                $scope.preloader.send = true;
+                TariffService.resumeCustomerTariff($scope.currentTariff).then(function (data) {
+                    $scope.currentTariff = data;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                })
+            };
+
 
             $scope.myTariffPlansTabClick = function () {
                 if ($scope.currentTariff == undefined) {
                     $scope.loadCurrentTariff();
                 }
+                if ($scope.availableTariffs == undefined) {
+                    $scope.getAvailableTariffs();
+                }
             };
+
             $scope.myServicesTabClick = function () {
                 if ($scope.currentServices == undefined) {
                     $scope.loadCurrentServices();
                 }
             };
+
             $scope.tariffsHistoryClick = function () {
                 if ($scope.orders == undefined) {
                     $scope.loadTariffsHistory();
                 }
             };
+
             $scope.servicesHistoryClick = function () {
                 if ($scope.servicesOrders == undefined) {
                     $scope.loadServicesHistory();
@@ -221,14 +294,14 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
             }
 
-            $scope.deactivateCustomerService = function (customerService, loadCurrentServices, loadServicesHistory) {
+            $scope.deactivateCustomerService = function (customerService, loadCurrentServices, preloader) {
                 $mdDialog.show({
                     controller: DeactivateCustomerServiceController,
                     templateUrl: '../../view/client/deactivateCustomerServiceModal.html',
                     locals: {
                         customerService: customerService,
                         loadCurrentServices: loadCurrentServices,
-                        loadServicesHistory: loadServicesHistory
+                        preloader: preloader
                     },
                     parent: angular.element(document.body),
                     clickOutsideToClose: true,
@@ -240,9 +313,9 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             function DeactivateCustomerServiceController($scope, $mdDialog, CustomerInfoService,
-                                                         customerService, loadCurrentServices, loadServicesHistory) {
+                                                         customerService, loadCurrentServices, preloader) {
                 $scope.customerService = customerService;
-
+                $scope.preloader = preloader;
                 $scope.hide = function () {
                     $mdDialog.hide();
                 };
@@ -251,24 +324,27 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
 
                 $scope.answer = function () {
+                    $scope.preloader.send = true;
                     CustomerInfoService.deactivateService($scope.customerService).then(function () {
                         toastr.success("Your service " + $scope.customerService.service.serviceName +
                             " was successfully deactivated!", "Service deactivation");
                         $mdDialog.cancel();
                         loadCurrentServices();
-                        loadServicesHistory();
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
                 };
             }
 
-            $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
+            $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory, preloader) {
                 $mdDialog.show({
                     controller: DeactivateDialogController,
                     templateUrl: '../../view/client/deactivateCurrentTariffModal.html',
                     locals: {
                         currentTariff: currentTariff,
                         loadCurrentTariff: loadCurrentTariff,
-                        loadTariffsHistory: loadTariffsHistory
+                        loadTariffsHistory: loadTariffsHistory,
+                        preloader: preloader
                     },
                     parent: angular.element(document.body),
                     clickOutsideToClose: true,
@@ -280,9 +356,9 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             function DeactivateDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                                loadCurrentTariff, loadTariffsHistory) {
+                                                loadCurrentTariff, loadTariffsHistory, preloader) {
                 $scope.currentTariff = currentTariff;
-
+                $scope.preloader = preloader;
                 $scope.hide = function () {
                     $mdDialog.hide();
                 };
@@ -291,24 +367,28 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
 
                 $scope.answer = function () {
+                    $scope.preloader.send = true;
                     CustomerInfoService.deactivateTariff($scope.currentTariff).then(function () {
                         toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
                             " was successfully deactivated!", "Tariff plan deactivation");
                         $mdDialog.cancel();
                         loadCurrentTariff();
                         loadTariffsHistory();
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
                 };
             }
 
-            $scope.activateCustomerService = function (customerService, loadCurrentServices, loadServicesHistory) {
+            $scope.activateCustomerService = function (customerService, loadCurrentServices, preloader) {
                 $mdDialog.show({
                     controller: ActivateCustomerServiceDialogController,
                     templateUrl: '../../view/client/activateCustomerServiceModal.html',
                     locals: {
                         customerService: customerService,
                         loadCurrentServices: loadCurrentServices,
-                        loadServicesHistory: loadServicesHistory
+                        preloader: preloader
                     },
                     parent: angular.element(document.body),
                     clickOutsideToClose: true,
@@ -320,8 +400,10 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             function ActivateCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
-                                                             loadCurrentServices, loadServicesHistory) {
+                                                             loadCurrentServices, preloader) {
                 $scope.customerService = customerService;
+                $scope.preloader = preloader;
+                console.log(customerService);
 
                 $scope.hide = function () {
                     $mdDialog.hide();
@@ -331,18 +413,20 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
 
                 $scope.answer = function () {
+                    $scope.preloader.send = true;
                     CustomerInfoService.activateService($scope.customerService).then(function () {
                         toastr.success("Your service " + $scope.customerService.service.serviceName +
                             " was successfully activated!", "Service activation");
                         $mdDialog.cancel();
                         loadCurrentServices();
-                        loadServicesHistory();
+                    }, function (data) {
+                        $scope.preloader.send = false;
                     });
                 };
             }
 
             $scope.suspendCustomerService = function (customerService, daysToExecution,
-                                                      loadCurrentServices, loadServicesHistory) {
+                                                      loadCurrentServices, preloader) {
                 $mdDialog.show({
                     controller: SuspendCustomerServiceDialogController,
                     templateUrl: '../../view/client/suspendCustomerServiceModal.html',
@@ -350,7 +434,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                         customerService: customerService,
                         daysToExecution: daysToExecution,
                         loadCurrentServices: loadCurrentServices,
-                        loadServicesHistory: loadServicesHistory
+                        preloader: preloader
                     },
                     parent: angular.element(document.body),
                     clickOutsideToClose: true,
@@ -362,11 +446,12 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             function SuspendCustomerServiceDialogController($scope, $mdDialog, customerService, CustomerInfoService,
-                                                            loadCurrentServices, loadServicesHistory) {
+                                                            loadCurrentServices, preloader) {
                 $scope.data = {};
                 $scope.data.customerServiceId = customerService.id;
                 $scope.data.customerService = customerService;
                 $scope.data.daysToExecution = 1;
+                $scope.preloader = preloader;
 
                 $scope.hide = function () {
                     $mdDialog.hide();
@@ -377,13 +462,15 @@ angular.module('phone-company').controller('CsrClientDetailController',
 
                 $scope.answer = function () {
                     if ($scope.data.daysToExecution !== undefined) {
+                        $scope.preloader.send = true;
                         CustomerInfoService.suspendService($scope.data).then(function () {
                             toastr.success("Your service " + $scope.data.customerService.service.serviceName +
                                 " was successfully suspended for " + $scope.data.daysToExecution +
                                 " days!", "Service suspension");
                             $mdDialog.cancel();
                             loadCurrentServices();
-                            loadServicesHistory();
+                        }, function (data) {
+                            $scope.preloader.send = false;
                         });
                     } else {
                         toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
@@ -392,7 +479,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
             }
 
             $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
-                                                         loadCurrentTariff, loadTariffsHistory) {
+                                                         loadCurrentTariff, loadTariffsHistory, preloader) {
                 $mdDialog.show({
                     controller: SuspendDialogController,
                     templateUrl: '../../view/client/suspendCurrentTariffModal.html',
@@ -400,7 +487,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
                         currentTariff: currentTariff,
                         daysToExecution: daysToExecution,
                         loadCurrentTariff: loadCurrentTariff,
-                        loadTariffsHistory: loadTariffsHistory
+                        loadTariffsHistory: loadTariffsHistory,
+                        preloader: preloader
                     },
                     parent: angular.element(document.body),
                     clickOutsideToClose: true,
@@ -412,12 +500,12 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             function SuspendDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                             loadCurrentTariff, loadTariffsHistory) {
+                                             loadCurrentTariff, loadTariffsHistory, preloader) {
                 $scope.data = {};
                 $scope.data.currentTariffId = currentTariff.id;
                 $scope.data.currentTariff = currentTariff;
                 $scope.data.daysToExecution = 1;
-
+                $scope.preloader = preloader;
                 $scope.hide = function () {
                     $mdDialog.hide();
                 };
@@ -427,6 +515,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
 
                 $scope.answer = function () {
                     if ($scope.data.daysToExecution !== undefined) {
+                        $scope.preloader.send = true;
                         CustomerInfoService.suspendTariff($scope.data).then(function () {
                             toastr.success("Your tariff plan " + $scope.data.currentTariff.tariff.tariffName +
                                 " was successfully suspended for " + $scope.data.daysToExecution +
@@ -434,6 +523,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $mdDialog.cancel();
                             loadCurrentTariff();
                             loadTariffsHistory();
+                        }, function () {
+                            $scope.preloader.send = false;
                         });
                     } else {
                         toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")

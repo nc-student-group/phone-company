@@ -80,7 +80,13 @@ public class TariffController {
     public ResponseEntity<?> getTariffsAvailableForCustomer(@PathVariable("page") int page,
                                                             @PathVariable("size") int size) {
         return new ResponseEntity<Object>(tariffService
-                .getTariffsAvailableForCustomer(customerService.getCurrentlyLoggedInUser(),page, size), HttpStatus.OK);
+                .getTariffsAvailableForCustomer(customerService.getCurrentlyLoggedInUser(), page, size), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/available/{customerId}")
+    public ResponseEntity<?> getTariffsAvailableForCustomerById(@PathVariable("customerId") long customerId) {
+        return new ResponseEntity<Object>(tariffService
+                .getTariffsAvailableForCustomer(customerService.getById(customerId)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customer/{id}")
@@ -95,7 +101,12 @@ public class TariffController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @GetMapping(value = "/activate/{tariffId}/{customerId}")
+    public ResponseEntity<?> activateTariff(@PathVariable("tariffId") long tariffId,
+                                            @PathVariable("customerId") long customerId) {
+        tariffService.activateTariff(tariffId, customerService.getById(customerId));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
 }

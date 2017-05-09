@@ -1,10 +1,9 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.service.interfaces.ComplaintService;
-import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +23,32 @@ public class ComplaintController {
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintController.class);
 
     private ComplaintService complaintService;
-    private CustomerService customerService;
+    private UserService userService;
 
     @Autowired
-    public ComplaintController(ComplaintService complaintService, CustomerService customerService) {
+    public ComplaintController(ComplaintService complaintService, UserService userService) {
         this.complaintService = complaintService;
-        this.customerService = customerService;
+        this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);
+        complaint.setUser(userService.getCurrentlyLoggedInUser());
         Complaint createdComplaint = complaintService.createComplaint(complaint);
 
         return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
     }
 
-    //TODO: resulting path: /api/complaints/complaints (@RequestMapping(value = "api/complaints") at the top of the class)
+    @PostMapping("/{email}")
+    public ResponseEntity<?> createComplaintByEmail(@RequestBody Complaint complaint,
+                                                    @PathVariable("email") String email) {
+        LOG.debug("Trying to add complaint {}", complaint);
+        Complaint createdComplaint = complaintService.createComplaintByEmail(complaint, email);
+
+        return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
+    }
+
     @GetMapping
     public Collection<Complaint> getAllComplaints() {
         LOG.info("Retrieving all the complaints contained in the database");
@@ -73,11 +81,11 @@ public class ComplaintController {
         return complaintService.getComplaintsByCustomer(id, page, size);
     }
 
-    @GetMapping("/customer/{id}")
-    public Customer getCustomer(@PathVariable("id") long id) {
-        LOG.debug("Customer with id: {}", id);
-        Customer customer = customerService.getById(id);
-        LOG.debug("Found: ", customer);
-        return customer;
-    }
+//    @GetMapping("/customer/{id}")
+//    public Customer getCustomer(@PathVariable("id") long id) {
+//        LOG.debug("Customer with id: {}", id);
+//        Customer customer = customerService.getById(id);
+//        LOG.debug("Found: ", customer);
+//        return customer;
+//    }
 }

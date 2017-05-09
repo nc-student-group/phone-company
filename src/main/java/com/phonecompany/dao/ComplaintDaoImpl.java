@@ -36,7 +36,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
     public void populateSaveStatement(PreparedStatement preparedStatement, Complaint entity) {
         try {
             preparedStatement.setString(1, entity.getStatus().name());
-            preparedStatement.setDate(2, entity.getDate());
+            preparedStatement.setDate(2, TypeMapper.toSqlDate(entity.getDate()));
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
@@ -50,7 +50,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
     public void populateUpdateStatement(PreparedStatement preparedStatement, Complaint entity) {
         try {
             preparedStatement.setString(1, entity.getStatus().name());
-            preparedStatement.setDate(2, entity.getDate());
+            preparedStatement.setDate(2, TypeMapper.toSqlDate(entity.getDate()));
             preparedStatement.setString(3, entity.getText());
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
@@ -68,7 +68,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
         try {
             complaint.setId(rs.getLong("id"));
             complaint.setStatus(ComplaintStatus.valueOf(rs.getString("status")));
-            complaint.setDate(rs.getDate("date"));
+            complaint.setDate(TypeMapper.toLocalDate(rs.getDate("date")));
             complaint.setText(rs.getString("text"));
             complaint.setType(ComplaintCategory.valueOf(rs.getString("type")));
             complaint.setUser(userDao.getById(rs.getLong("user_id")));

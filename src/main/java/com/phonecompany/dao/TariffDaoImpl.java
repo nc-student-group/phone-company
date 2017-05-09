@@ -177,6 +177,23 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"))) {
+            ps.setObject(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
     public Integer getCountTariffsAvailableForCustomer(long regionId) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
@@ -197,6 +214,22 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"))) {
             ps.setObject(1,size);
             ps.setObject(2,page*size);
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        }
+    }
+
+    @Override
+    public List<Tariff> getTariffsAvailableForCorporate() {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"))) {
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
             while (rs.next()) {

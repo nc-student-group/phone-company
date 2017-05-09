@@ -29,7 +29,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
-                                     MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                                MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
                                      @Qualifier("tariffResumingNotificationEmailCreator")
                                                  MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator,
                                      EmailService<User> emailService) {
@@ -49,13 +49,12 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     }
 
     @Override
-    public CustomerTariff getCurrentCustomerTariff(Customer customer){
-
+    public CustomerTariff getCurrentCustomerTariff(Customer customer) {
         if (customer.getCorporate() == null) {
             return this.getCurrentCustomerTariff(customer.getId());
         } else {
             if (customer.getCorporate() != null && customer.getRepresentative()) {
-                return  this.getCurrentCorporateTariff(customer.getCorporate().getId());
+                return this.getCurrentCorporateTariff(customer.getCorporate().getId());
             } else {
                 throw new ConflictException("You aren't representative of your company. Contact with your company representative.");
             }

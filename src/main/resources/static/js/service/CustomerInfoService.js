@@ -14,7 +14,7 @@ angular.module('phone-company').factory('CustomerInfoService',
         const CUSTOMERS = "api/customers/";
         const DEACTIVATE_TARIFF_URL = "api/customer/tariff/deactivate";
         const DEACTIVATE_SERVICE_URL = "api/services/deactivate";
-        const ACTIVATE_SERVICE_URL = "api/services/activate";
+        const ACTIVATE_SERVICE_URL = "api/services/resume";
         const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
         const SUSPEND_SERVICE_URL = "api/services/suspend";
         const RESUME_TARIFF_URL = "api/customer/tariff/resume";
