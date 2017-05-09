@@ -1,6 +1,8 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.Corporate;
 import com.phonecompany.model.Customer;
+import com.phonecompany.service.interfaces.CorporateService;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.OrderService;
 import org.slf4j.Logger;
@@ -19,12 +21,15 @@ public class OrderController {
 
     private CustomerService customerService;
     private OrderService orderService;
+    private CorporateService corporateService;
 
     @Autowired
     public OrderController(CustomerService customerService,
-                           OrderService orderService) {
+                           OrderService orderService,
+                           CorporateService corporateService) {
         this.customerService = customerService;
         this.orderService = orderService;
+        this.corporateService = corporateService;
     }
 
     @GetMapping(value = "/history/{page}/{size}")
@@ -47,6 +52,16 @@ public class OrderController {
         Map<String, Object> map = new HashMap<>();
         map.put("ordersFound", orderService.getOrdersCountByClient(customer));
         map.put("orders", orderService.getOrdersHistoryByClient(customer, page, size));
+        return map;
+    }
+
+    @GetMapping(value = "/history/corporate/{id}/{page}/{size}")
+    public Map<String, Object> getOrdersHistoryByCorporateIdPaged(@PathVariable("id") long corporateId,
+                                                                  @PathVariable("page") int page,
+                                                                  @PathVariable("size") int size) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("ordersFound", orderService.getOrdersCountByCorporateId(corporateId));
+        map.put("orders", orderService.getOrdersHistoryByCorporateId(corporateId, page, size));
         return map;
     }
 }

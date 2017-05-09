@@ -142,7 +142,7 @@
         $routeProvider.when('/csr/corporation/:id',
             {
                 templateUrl: 'view/csr/corporation.html',
-                controller: 'CorporationController'
+                controller: 'CsrCorporationController'
             });
         $routeProvider.when('/csr/clients',
             {

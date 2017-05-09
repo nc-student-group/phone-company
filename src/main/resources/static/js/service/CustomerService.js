@@ -13,7 +13,8 @@
 
         var GET_ALL_CUSTOMERS_URL = "api/customers/";
         var GET_CUSTOMER_BY_ID = "/api/customers/";
-        var GET_CUSTOMER_BY_COMPANY = "/api/customer/getByCorporateId/"
+        var GET_CUSTOMER_BY_COMPANY = "/api/customer/getByCorporateId/";
+        var GET_CURRENT_TARIFF_BY_COMPANY_ID = "/api/customer-tariffs/corporate/";
         CustomerService.saveCustomerByAdmin = function (customer) {
             console.log('customer: ' + JSON.stringify(customer));
             var deferred = $q.defer();
@@ -165,6 +166,19 @@
         CustomerService.getCustomerByCompany = function (id) {
             var deferred = $q.defer();
             $http.get(GET_CUSTOMER_BY_COMPANY + id).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+
+                });
+            return deferred.promise;
+        };
+        CustomerService.getCurrentTariffByCompanyId = function (id) {
+            var deferred = $q.defer();
+            $http.get(GET_CURRENT_TARIFF_BY_COMPANY_ID + id).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

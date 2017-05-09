@@ -3,6 +3,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.interfaces.CorporateService;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.TariffRegionService;
 import com.phonecompany.service.interfaces.TariffService;
@@ -25,14 +26,17 @@ public class TariffController {
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private CustomerService customerService;
+    private CorporateService corporateService;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService,
-                            CustomerService customerService) {
+                            CustomerService customerService,
+                            CorporateService corporateService) {
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
         this.customerService = customerService;
+        this.corporateService = corporateService;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -89,6 +93,12 @@ public class TariffController {
                 .getTariffsAvailableForCustomer(customerService.getById(customerId)), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/corporate/available")
+    public ResponseEntity<?> getTariffsAvailableForCorporate() {
+        return new ResponseEntity<Object>(tariffService
+                .getTariffsAvailableForCorporate(), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/customer/{id}")
     public ResponseEntity<?> getTariffForCustomerById(@PathVariable("id") long tariffId) {
         return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId,
@@ -105,6 +115,13 @@ public class TariffController {
     public ResponseEntity<?> activateTariff(@PathVariable("tariffId") long tariffId,
                                             @PathVariable("customerId") long customerId) {
         tariffService.activateTariff(tariffId, customerService.getById(customerId));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/corporate/activate/{tariffId}/{corporateId}")
+    public ResponseEntity<?> activateCorporateTariff(@PathVariable("tariffId") long tariffId,
+                                                     @PathVariable("corporateId") long corporateId) {
+        tariffService.activateTariffForCorporateCustomer(tariffId, corporateService.getById(corporateId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
