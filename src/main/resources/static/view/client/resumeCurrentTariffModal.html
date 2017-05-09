@@ -1,0 +1,16 @@
+<md-dialog aria-label="Resuming Modal Window">
+    <div class="modal-window">
+        <h3>Tariff plan resuming <span class="close-icon" ng-click="cancel()"></span></h3>
+        <div class="send-review">
+            <div class="row">
+                <div class="col-md-9 modal-label">Your current tariff plan:</div>
+                <div class="col-md-3 modal-label">Price:</div>
+                <div class="col-md-9 modal-label"><b>"{{currentTariff.tariff.tariffName}}"</b></div>
+                <div class="col-md-3 modal-label"><b>{{currentTariff.totalPrice}} uah</b></div>
+            </div>
+            <div class="wrap_btn">
+                <input type="submit" class="btn-post-comment" ng-click="answer()" value="Resume">
+            </div>
+        </div>
+    </div>
+</md-dialog>

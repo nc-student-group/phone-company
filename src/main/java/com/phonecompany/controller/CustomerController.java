@@ -168,6 +168,12 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/api/customer/tariff/resume")
+    public ResponseEntity<Void> resumeCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+        customerTariffService.resumeCustomerTariff(customerTariff);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping(value = "/api/customers/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") long id){
         return new ResponseEntity<Object>(customerService.getById(id), HttpStatus.OK);

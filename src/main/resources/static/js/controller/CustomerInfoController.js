@@ -235,9 +235,9 @@
             };
         }
 
-        $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
+        $scope.showTariffDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({
-                controller: DeactivateDialogController,
+                controller: DeactivateTariffDialogController,
                 templateUrl: '../../view/client/deactivateCurrentTariffModal.html',
                 locals: {
                     currentTariff: currentTariff,
@@ -253,7 +253,7 @@
                 });
         };
 
-        function DeactivateDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+        function DeactivateTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
                                             loadCurrentTariff, loadTariffsHistory) {
             $scope.currentTariff = currentTariff;
 
@@ -365,10 +365,10 @@
             };
         }
 
-        $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
+        $scope.showTariffSuspensionModalWindow = function (currentTariff, daysToExecution,
                                                      loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({
-                controller: SuspendDialogController,
+                controller: SuspendTariffDialogController,
                 templateUrl: '../../view/client/suspendCurrentTariffModal.html',
                 locals: {
                     currentTariff: currentTariff,
@@ -385,7 +385,7 @@
                 });
         };
 
-        function SuspendDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+        function SuspendTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
                                          loadCurrentTariff, loadTariffsHistory) {
             $scope.data = {};
             $scope.data.currentTariffId = currentTariff.id;
@@ -410,9 +410,50 @@
                         loadTariffsHistory();
                     });
                 } else {
-                    toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
+                    toastr.error("Suspension period must be from 1 to 30 days!", "Wrong suspension period!")
                 }
             };
         }
+
+        function ResumeTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+                                         loadCurrentTariff, loadTariffsHistory) {
+            $scope.currentTariff = currentTariff;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.resumeTariff($scope.currentTariff).then(function () {
+                    toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
+                        " was successfully resumed!", "Tariff plan resuming");
+                    $mdDialog.cancel();
+                    loadCurrentTariff();
+                    loadTariffsHistory();
+                });
+            };
+        }
+
+        $scope.showTariffResumingModalWindow = function (currentTariff, loadCurrentTariff,
+                                                         loadTariffsHistory) {
+            $mdDialog.show({
+                controller: ResumeTariffDialogController,
+                templateUrl: '../../view/client/resumeCurrentTariffModal.html',
+                locals: {
+                    currentTariff: currentTariff,
+                    loadCurrentTariff: loadCurrentTariff,
+                    loadTariffsHistory: loadTariffsHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
     }
 }());

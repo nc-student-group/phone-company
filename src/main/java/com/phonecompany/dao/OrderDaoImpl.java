@@ -96,19 +96,18 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     }
 
     @Override
-    public List<Order> getResumingOrderByCustomerTariffId(Long customerTariffId) {
-        List<Order> orders = new ArrayList<>();
+    public Order getResumingOrderByCustomerTariffId(Long customerTariffId) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getResumingByCustomerId"))) {
             ps.setLong(1, customerTariffId);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                orders.add(init(rs));
+            if (rs.next()) {
+                return init(rs);
             }
         } catch (SQLException e) {
             throw new EntityNotFoundException(customerTariffId, e);
         }
-        return orders;
+        return null;
     }
 
     @Override
