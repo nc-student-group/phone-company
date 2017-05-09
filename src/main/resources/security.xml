@@ -36,7 +36,7 @@
         <intercept-url pattern="/api/customer-tariffs/customer-tariff" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/customer-tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/customer/tariff/deactivate" access="hasRole('CLIENT')"/>
-        <intercept-url pattern="/api/customer/tariff/suspend" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customer/tariff/suspend" method="POST" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
         <intercept-url pattern="/api/customer/tariff/resume" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/orders/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/orders/history/**" access="hasRole('CLIENT')"/>

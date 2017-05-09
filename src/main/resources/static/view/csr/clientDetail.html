@@ -15,48 +15,71 @@
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="header">
-                                                    <h4 class="title">Edit Profile</h4>
+                                                    <h4 class="title">Customer profile</h4>
                                                 </div>
                                                 <div class="content">
-                                                    <form>
-                                                        <div class="row">
-                                                            <div class="form-group col-md-4">
-                                                                <label>Email Address</label>
-                                                                <input type="text" class="form-control" disabled
-                                                                       value="{{customer.email}}"/>
-                                                            </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Email</div>
+                                                        <div class="col-md-8">{{customer.email}}</div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Full name</div>
+                                                        <div class="col-md-8">{{customer.firstName}}
+                                                            {{customer.secondName}} {{customer.lastName}}
                                                         </div>
-
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>First Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.firstName}}"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>Second Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.secondName}}"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>Last Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.lastName}}"/>
-                                                                </div>
-                                                            </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Phone</div>
+                                                        <div class="col-md-8">{{customer.phone}}
                                                         </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Mailing</div>
+                                                        <div class="col-md-8"><span
+                                                                ng-show="customer.isMailingEnabled">Yes</span><span
+                                                                ng-hide="customer.isMailingEnabled">No</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Region</div>
+                                                        <div class="col-md-8">{{customer.address.region.nameRegion}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Address</div>
+                                                        <div class="col-md-8">{{customer.address.locality}},
+                                                            {{customer.address.street}},
+                                                            {{customer.address.houseNumber}},
+                                                            {{customer.address.apartmentNumber}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Status</div>
+                                                        <div class="col-md-8">
+                                                            {{customer.status}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row" ng-show="isCorporate">
+                                                        <div class="col-md-4">Corporate</div>
+                                                        <div class="col-md-8">{{customer.corporate.corporateName}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row" ng-show="isCorporate">
+                                                        <div class="col-md-4">Representative</div>
+                                                        <div class="col-md-8"><span
+                                                                ng-show="customer.isRepresentative">Yes</span><span
+                                                                ng-hide="customer.isRepresentative">No</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <button class="btn btn-default btn-fill left-button"
+                                                                    ng-click="editClick(customer.id)">Edit
+                                                            </button>
+                                                        </div>
+                                                    </div>
 
-                                                        <button type="submit" class="btn btn-info btn-fill pull-right">
-                                                            Update Profile
-                                                        </button>
-
-                                                        <div class="clearfix"></div>
-                                                    </form>
+                                                    <div class="clearfix"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -170,7 +193,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card">
+                                            <div class="card" ng-show="customer.corporate != undefined">
                                                 <div ng-show="availableTariffs.length > 0">
                                                     <div class="header">
                                                         <h4 class="title">Activate tariff plan</h4>

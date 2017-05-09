@@ -48,9 +48,6 @@
             );
         };
 
-        CorporationService.getAllCorporation().then(function (data) {
-            $scope.corporations = data;
-        });
 
         $scope.preloader.send = true;
         CustomerService.getCustomerById($routeParams["id"]).then(

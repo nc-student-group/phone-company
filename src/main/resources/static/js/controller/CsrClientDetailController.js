@@ -23,12 +23,24 @@ angular.module('phone-company').controller('CsrClientDetailController',
             $scope.servicesSize = 5;
             $scope.inProgress = false;
             $scope.inProgressHistory = false;
+            $scope.isCorporate = false;
 
             $scope.preloader.send = true;
             CustomerService.getCustomerById($routeParams['id']).then(function (data) {
                 $scope.customer = data;
+                if ($scope.customer.corporate === null) {
+                    $scope.isCorporate = false;
+                } else {
+                    $scope.isCorporate = true;
+                }
+                $scope.preloader.send = false;
+            }, function () {
                 $scope.preloader.send = false;
             });
+
+            $scope.editClick = function (id) {
+                $location.path("/csr/editCustomer/" + id);
+            };
 
             $scope.loadCurrentServices = function () {
                 if (!$scope.inProgress) {
@@ -141,7 +153,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 if ($scope.currentTariff == undefined) {
                     $scope.loadCurrentTariff();
                 }
-                if ($scope.availableTariffs == undefined) {
+                console.log($scope.customer);
+                if ($scope.availableTariffs == undefined && $scope.customer.corporate == undefined) {
                     $scope.getAvailableTariffs();
                 }
             };
@@ -173,9 +186,11 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.orders = data.orders;
                             $scope.ordersFound = data.ordersFound;
                             console.log($scope.orders);
+                            $scope.inProgressHistory = false;
                             $scope.preloader.send = false;
                         }, function (data) {
                             $scope.preloader.send = false;
+                            $scope.inProgressHistory = false;
                         });
                 }
             };
