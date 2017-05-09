@@ -10,6 +10,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
@@ -85,8 +88,10 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
         Order order = new Order();
         try {
             order.setId(rs.getLong("id"));
-            order.setCustomerService(customerServiceDao.getById(rs.getLong("customer_service_id")));
-            order.setCustomerTariff(customerTariffDao.getById(rs.getLong("customer_tariff_id")));
+            long customerServiceId = rs.getLong("customer_service_id");
+            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            long customerTariffId = rs.getLong("customer_tariff_id");
+            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
