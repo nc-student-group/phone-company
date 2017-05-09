@@ -137,7 +137,7 @@
 
         CustomerService.updateCustomer = function (customer) {
             var deferred = $q.defer();
-            $http.patch("api/customers/", customer).then(
+            $http.patch("/api/customers/", customer).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

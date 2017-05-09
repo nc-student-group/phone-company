@@ -4,9 +4,35 @@
     angular.module('phone-company')
         .controller('CustomerInfoController', CustomerInfoController);
 
-    CustomerInfoController.$inject = ['$scope', '$location', '$log', 'CustomerInfoService', '$rootScope', '$mdDialog'];
+    angular.module('phone-company')
+        .directive('passwordConfirm', ['$parse', function ($parse) {
+            return {
+                restrict: 'A',
+                scope: {
+                    matchTarget: '=',
+                },
+                require: 'ngModel',
+                link: function link(scope, elem, attrs, ctrl) {
+                    var validator = function (value) {
+                        ctrl.$setValidity('match', value === scope.matchTarget);
+                        return value;
+                    };
 
-    function CustomerInfoController($scope, $location, $log, CustomerInfoService, $rootScope, $mdDialog) {
+                    ctrl.$parsers.unshift(validator);
+                    ctrl.$formatters.push(validator);
+
+                    // This is to force validator when the original password gets changed
+                    scope.$watch('matchTarget', function(newval, oldval) {
+                        validator(ctrl.$viewValue);
+                    });
+
+                }
+            };
+        }]);
+
+    CustomerInfoController.$inject = ['$scope', '$location', '$log', 'CustomerInfoService', 'CustomerService', 'TariffService', '$rootScope', '$mdDialog'];
+
+    function CustomerInfoController($scope, $location, $log, CustomerInfoService, CustomerService, TariffService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
         $scope.ordersFound = 0;
@@ -15,10 +41,17 @@
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
         $scope.hasCurrentServices = false;
+        $scope.corporateUser = false;
         $scope.page = 0;
         $scope.servicesPage = 0;
         $scope.size = 5;
         $scope.servicesSize = 5;
+        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
+        $scope.textFieldPattern = /^[a-zA-Z]+$/;
+        $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
+        $scope.numberPattern = /^[0-9]+$/;
+        $scope.newPassword = null;
+        $scope.passwordConfirmation = null;
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
@@ -31,6 +64,7 @@
             .then(function (data) {
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
+                $scope.corporateUser = data.isRepresentative;
                 $scope.mailingSwitchDisabled = false;
                 $scope.preloader.send = false;
             });
@@ -69,7 +103,7 @@
                     $scope.preloader.send = false;
                 });
         };
-        // $scope.loadCurrentTariff();
+        $scope.loadCurrentTariff();
 
         $scope.myTariffPlansTabClick = function () {
             if ($scope.currentTariff == undefined) {
@@ -455,6 +489,22 @@
                 .then(function (answer) {
 
                 });
+        };
+
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+        });
+
+        $scope.updateCustomer = function () {
+            $scope.customer.password = $scope.newPassword;
+            CustomerService.updateCustomer($scope.customer).then(
+                function (response) {
+                    toastr.success("Your profile has been updated");
+                },
+                function(error){
+                    toastr.error("Error, profile  wasn't updated");
+                }
+            );
         };
     }
 }());
