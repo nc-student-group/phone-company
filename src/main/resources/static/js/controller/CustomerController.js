@@ -33,9 +33,6 @@
                 toastr.error(error.data.message);
             }
         );
-        CorporationService.getAllCorporation().then(function (data) {
-            $scope.corporations = data;
-        });
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
