@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.OrderDao;
+import com.phonecompany.service.interfaces.OrderService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +20,14 @@ public class ReportServiceTest {
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private OrderService orderService;
+
     private XSSFServiceImpl xssfService;
 
     @Before
     public void setUp() {
-        xssfService = new XSSFServiceImpl(orderDao);
+        xssfService = new XSSFServiceImpl(orderService, orderDao);
     }
 
     @Test

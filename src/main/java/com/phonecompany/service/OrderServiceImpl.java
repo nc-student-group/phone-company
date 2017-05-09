@@ -45,7 +45,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getResumingOrderByCustomerServiceId(customerService.getId());
     }
 
-    // CustomerService name changed to CustomerServiceDto because of the name collision
     public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
         LocalDate currentDate = LocalDate.now();
         Order order =
@@ -77,4 +76,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     public Integer getOrdersCountForServicesByClient(Customer customer) {
         return orderDao.getCountOfServicesByCustomerId(customer.getId());
     }
+
+
 }
