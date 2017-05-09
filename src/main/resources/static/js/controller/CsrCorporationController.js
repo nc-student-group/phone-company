@@ -5,10 +5,10 @@
         .controller('CsrCorporationController', CsrCorporationController);
 
     CsrCorporationController.$inject = ['$scope', '$log', '$routeParams', 'CorporationService', 'CustomerService',
-        '$rootScope', 'TariffService', '$location'];
+        '$rootScope', 'TariffService', '$location', 'CustomerInfoService'];
 
     function CsrCorporationController($scope, $log, $routeParams, CorporationService, CustomerService, $rootScope,
-                                      TariffService, $location) {
+                                      TariffService, $location, CustomerInfoService) {
         console.log('This is CsrCorporationController');
 
         $scope.page = 0;
@@ -106,6 +106,11 @@
                 $scope.loadTariff();
             }
         };
+        $scope.tariffsHistoryClick = function () {
+            if ($scope.orders == undefined) {
+                $scope.loadTariffsHistory();
+            }
+        };
 
         $scope.loadTariff = function () {
             $scope.preloader.send = true;
@@ -165,7 +170,54 @@
         };
 
         $scope.loadTariffsHistory = function () {
+            if (!$scope.inProgressHistory) {
+                $scope.inProgressHistory = true;
+                $scope.preloader.send = true;
+                CustomerInfoService.getTariffsHistoryByCorporateId($routeParams['id'], $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        console.log($scope.orders);
+                        $scope.inProgressHistory = false;
+                        $scope.preloader.send = false;
+                    }, function (data) {
+                        $scope.preloader.send = false;
+                        $scope.inProgressHistory = false;
+                    });
+            }
+        };
 
-        }
+        $scope.nextPage = function () {
+            if (($scope.page + 1) * $scope.size < $scope.ordersFound) {
+                $scope.loading = true;
+                $scope.page = $scope.page + 1;
+                $scope.preloader.send = true;
+                CustomerInfoService.getTariffsHistoryByCorporateId($routeParams['id'], $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        $scope.preloader.send = false;
+                    }, function (data) {
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
+        $scope.previousPage = function () {
+            if ($scope.page > 0) {
+                $scope.loading = true;
+                $scope.page = $scope.page - 1;
+                $scope.preloader.send = true;
+                CustomerInfoService.getTariffsHistoryByCorporateId($routeParams['id'], $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        $scope.preloader.send = false;
+                    }, function (data) {
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
     }
 }());

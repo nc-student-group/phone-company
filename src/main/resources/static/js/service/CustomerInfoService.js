@@ -5,6 +5,7 @@ angular.module('phone-company').factory('CustomerInfoService',
 
         const GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_URL = "api/orders/history/";
         const GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_ID_URL = "api/orders/history/customer/";
+        const GET_TARIFF_ORDERS_HISTORY_BY_CORPORATE_ID_URL = "api/orders/history/corporate/";
         const GET_SERVICES_HISTORY_BY_CUSTOMER_URL = "api/services/history/";
         const GET_SERVICES_HISTORY_BY_CUSTOMER_ID_URL = "api/services/history/customer/";
         const GET_CURRENT_CUSTOMER_TARIFF_URL = "api/customer-tariffs/customer-tariff";
@@ -35,6 +36,7 @@ angular.module('phone-company').factory('CustomerInfoService',
             getServicesHistory: getServicesHistory,
             getCurrentTariffByCustomerId: getCurrentTariffByCustomerId,
             getTariffsHistoryByCustomerId: getTariffsHistoryByCustomerId,
+            getTariffsHistoryByCorporateId: getTariffsHistoryByCorporateId,
             getCurrentServicesByCustomerId: getCurrentServicesByCustomerId,
             getServicesHistoryByCustomerId: getServicesHistoryByCustomerId
         };
@@ -185,6 +187,19 @@ angular.module('phone-company').factory('CustomerInfoService',
         function getTariffsHistoryByCustomerId(id, page, size) {
             var deferred = $q.defer();
             $http.get(GET_TARIFF_ORDERS_HISTORY_BY_CUSTOMER_ID_URL + id + "/" + page + "/" + size).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getTariffsHistoryByCorporateId(id, page, size) {
+            var deferred = $q.defer();
+            $http.get(GET_TARIFF_ORDERS_HISTORY_BY_CORPORATE_ID_URL + id + "/" + page + "/" + size).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
