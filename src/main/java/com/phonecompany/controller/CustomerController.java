@@ -139,7 +139,7 @@ public class CustomerController {
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
-        customerService.deactivateCustomerTariff(customer.getId());
+
         this.customerService.update(customer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -153,6 +153,7 @@ public class CustomerController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    //TODO: extract to customer tariff controller ??
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
@@ -165,6 +166,12 @@ public class CustomerController {
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
         this.customerTariffService.suspendCustomerTariff(data);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/api/customer/tariff/resume")
+    public ResponseEntity<Void> resumeCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+        customerTariffService.resumeCustomerTariff(customerTariff);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

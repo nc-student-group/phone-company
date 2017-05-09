@@ -110,6 +110,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public Customer update(Customer user) {
         Assert.notNull(user, "User should not be null");
+        Customer notUpdatedCustomer = this.getById(user.getId());
+        LOG.info(notUpdatedCustomer.toString());
+        LOG.info(user.toString());
+        if((notUpdatedCustomer.getCorporate().getId()!=user.getCorporate().getId()) || (notUpdatedCustomer.getAddress().getRegion().getId()!=user.getAddress().getRegion().getId())){
+            this.deactivateCustomerTariff(user.getId());
+        }
         return super.update(user);
     }
 

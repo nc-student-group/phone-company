@@ -67,6 +67,10 @@
             console.log($scope.editing);
             $scope.editCorporation = corporation;
         };
+        $scope.goBackClick = function () {
+            $scope.editing=false;
+        };
+
         $scope.detailsClick = function (corporation) {
             $location.path('/csr/corporation/'+corporation.id);
         };

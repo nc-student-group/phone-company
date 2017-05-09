@@ -38,6 +38,7 @@ public class DbManager {
      * the connection acquirement process
      */
     private DbManager() {
+        LOG.debug("Initializing dbmanager");
         ConfigManager configManager = ConfigManager.getInstance();
         this.dataSourceInfo = configManager.getDataSourceInfo();
         this.dataSource = this.acquirePooledDataSource();
@@ -70,6 +71,7 @@ public class DbManager {
             dataSource.setAcquireRetryAttempts(ACQUIRE_RETRY_ATTEMPTS);
             LOG.debug("Setting max connection age to: {}", MAX_CONNECTION_AGE);
             dataSource.setMaxConnectionAge(MAX_CONNECTION_AGE);
+            dataSource.setTestConnectionOnCheckin(false);
 
             Properties p = new Properties(System.getProperties());
             p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");

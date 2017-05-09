@@ -33,9 +33,6 @@
                 toastr.error(error.data.message);
             }
         );
-        CorporationService.getAllCorporation().then(function (data) {
-            $scope.corporations = data;
-        });
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
@@ -133,6 +130,11 @@
         $scope.moreClick = function (id) {
             $location.path("/csr/clients/"+id);
         };
+
+        $scope.editClick = function (id) {
+            $location.path("/csr/editCustomer/"+id);
+        };
+
 
         $scope.deactivateClick = function (index) {
             $scope.showModalWindow($scope.preloader, $scope.customers[index]);

@@ -290,22 +290,25 @@
     color: #161121;
 }
 
-.condition{
+.condition {
     font-size: 16px;
     color: #161121;
     text-align: left;
 }
 
-.row-one{
+.row-one {
     background-color: #bdbdbd;
 }
 
-.row-one div{
+.row-one div {
     height: 50px;
 }
 
 .row-one div span {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .row-two {
@@ -316,11 +319,14 @@
     height: 50px;
 }
 
-.row-two div span{
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+.row-two div span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.first-elem-in-row{
+.first-elem-in-row {
     padding-left: 6px !important;
 }
 
@@ -335,6 +341,7 @@
     height: auto;
     background-color: #f1f3f7;
 }
+
 .modal-window h3 {
     padding: 12px 0;
     background-color: #9355e9;
@@ -376,6 +383,7 @@
     align-items: center;
     border-right: 1px solid rgba(255, 255, 255, 0.5);
 }
+
 .send-review form input, .send-review form textarea {
     width: 100%;
     border: none;
@@ -387,15 +395,18 @@
     color: #5f5f5f;
     font: 16px "OpenSans-Light";
 }
+
 .send-review form input::-webkit-input-placeholder, .send-review form textarea::-webkit-input-placeholder {
     color: #5f5f5f;
     font: 16px "OpenSans-Light";
     font-style: italic;
 }
+
 .send-review form textarea {
     margin-bottom: 15px;
     resize: none;
 }
+
 .send-review .stars-raiting {
     width: 100%;
     border-bottom: 1px solid #d3d5d9;
@@ -410,11 +421,13 @@
     justify-content: space-between;
     margin-bottom: 25px;
 }
+
 .send-review .stars-raiting .raiting-col {
     width: 40%;
     margin-bottom: 6px;
     margin-top: 4px;
 }
+
 .raiting-col .ttl-raiting {
     margin-bottom: 14px;
     font-family: "OpenSans-Light";
@@ -431,6 +444,7 @@
     -ms-flex-align: center;
     align-items: center;
 }
+
 .send-review input.btn-post-comment {
     border: 2px solid #3d51be;
     padding: 8px 45px;
@@ -442,33 +456,41 @@
     cursor: pointer;
     margin: auto;
 }
+
 .send-review input.btn-post-comment:hover {
     background-color: transparent;
     color: #6d97d7;
 }
 
-.modal-label{
+.modal-label {
     font-size: 16px;
     text-align: center;
 }
+
 /*MODAL WINDOW END*/
 
 .vertical-center {
-    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100%; /* Fallback for browsers do NOT support vh unit */
     min-height: 100vh; /* These two lines are counted as one :-)       */
 
     display: flex;
     align-items: center;
 }
 
-.red{
+.red {
     color: red;
 }
 
-.green{
+.green {
     color: green;
 }
 
-.yellow{
+.yellow {
     color: #898900;
+}
+
+.customer-profile-row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 18px;
 }

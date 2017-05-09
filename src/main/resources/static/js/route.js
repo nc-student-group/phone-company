@@ -89,6 +89,11 @@
                 templateUrl: 'view/csr/corporations.html',
                 controller: 'CorporationsController'
             });
+        $routeProvider.when('/csr/charts',
+            {
+                templateUrl: 'view/csr/csrCharts.html',
+                controller: 'CsrChartsController'
+            });
         $routeProvider.when('/admin/users',
             {
                 templateUrl: 'view/admin/users.html',
@@ -153,6 +158,16 @@
             {
                 templateUrl: 'view/pmg/complaints.html',
                 controller: 'PmgComplaintsController'
+            });
+        $routeProvider.when('/csr/editCustomer/:id',
+            {
+                templateUrl: 'view/csr/editCustomer.html',
+                controller: 'CsrClientEditController'
+            });
+        $routeProvider.when('/client/companyClients',
+            {
+                templateUrl: 'view/client/representativesClients.html',
+                controller: 'RepresentativeCustomerController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });

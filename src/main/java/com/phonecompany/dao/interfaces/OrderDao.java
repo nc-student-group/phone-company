@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderDao extends CrudDao<Order> {
 
-    List<Order> getResumingOrderByCustomerTariffId(Long customerId);
+    Order getResumingOrderByCustomerTariffId(Long customerId);
     List<Order> getResumingOrderByCustomerServiceId(Long customerId);
     List<Order> getOrdersByCustomerIdPaged(Long customerId, int page, int size);
     List<Order> getOrdersByCorporateIdPaged(Long corporate, int page, int size);
@@ -14,4 +14,6 @@ public interface OrderDao extends CrudDao<Order> {
     Integer getCountByCustomerId(Long customerId);
     Integer getCountByCorporateId(Long corporateId);
     Integer getCountOfServicesByCustomerId(Long customerId);
+    List<Order> getTariffOrdersByRegionId(long regionId);
+    List<Order> getAllServiceOrders();
 }

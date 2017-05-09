@@ -4,12 +4,14 @@ angular.module('phone-company').controller('AllTariffsController', [
     '$rootScope',
     '$location',
     'TariffService',
-    function ($scope, $rootScope, $location, TariffService) {
+    'CustomerInfoService',
+    function ($scope, $rootScope, $location, TariffService,CustomerInfoService) {
         console.log('This is AllTariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
         $scope.size = 6;
         $scope.inProgress = false;
+
 
         $scope.preloader.send = true;
         TariffService.getTariffsAvailableForCustomer($scope.page, $scope.size).then(function (data) {
@@ -20,6 +22,13 @@ angular.module('phone-company').controller('AllTariffsController', [
             $scope.preloader.send = false;
         });
 
+        $scope.preloader.send = true;
+        CustomerInfoService.getCustomer()
+            .then(function (data) {
+                $scope.customer = data;
+                $scope.preloader.send = false;
+            });
+        $scope.preloader.send = false;
         $scope.tariffClick = function (id) {
             $location.path("/client/tariff/" + id);
         };
@@ -39,6 +48,4 @@ angular.module('phone-company').controller('AllTariffsController', [
                 });
             }
         };
-
-
     }]);
