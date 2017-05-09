@@ -23,17 +23,21 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     private CustomerTariffDao customerTariffDao;
     private OrderService orderService;
     private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
+    private MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator;
     private EmailService<User> emailService;
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
-                                             MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                                MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                     @Qualifier("tariffResumingNotificationEmailCreator")
+                                                 MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator,
                                      EmailService<User> emailService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
         this.tariffSuspensionNotificationEmailCreator = tariffSuspensionNotificationEmailCreator;
+        this.tariffResumingNotificationEmailCreator = tariffResumingNotificationEmailCreator;
         this.emailService = emailService;
     }
 
@@ -98,6 +102,30 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     }
 
     @Override
+    public CustomerTariff resumeCustomerTariff(CustomerTariff customerTariff) {
+        LocalDate now = LocalDate.now();
+
+        Order pendingResumingOrder = orderService.
+                getResumingOrderByCustomerTariff(customerTariff);
+        pendingResumingOrder.setOrderStatus(OrderStatus.CANCELED);
+
+        Order resumingOrder = new Order(null, customerTariff,
+                OrderType.RESUMING, OrderStatus.DONE, now, now);
+
+        customerTariff.setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+
+        customerTariffDao.update(customerTariff);
+        orderService.update(pendingResumingOrder);
+        orderService.save(resumingOrder);
+
+        SimpleMailMessage notificationMessage = this.tariffResumingNotificationEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+
+        return customerTariff;
+    }
+
+    @Override
     public CustomerTariff suspendCustomerTariff(Map<String, Object> suspensionData) {
 
         CustomerTariff customerTariff = customerTariffDao.
@@ -109,11 +137,11 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         LocalDate now = LocalDate.now();
         LocalDate executionDate = now.plusDays(daysToExecution);
 
-        Order suspensionOrder = new Order(null, customerTariff, OrderType.SUSPENSION,
-                OrderStatus.DONE, now, now);
+        Order suspensionOrder = new Order(null, customerTariff,
+                OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
-        Order resumingOrder = new Order(null, customerTariff, OrderType.RESUMING,
-                OrderStatus.PENDING, now, executionDate);
+        Order resumingOrder = new Order(null, customerTariff,
+                OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
 
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);
@@ -123,28 +151,6 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
                 .constructMessage(customerTariff.getTariff());
         this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
 
-        return customerTariff;
-    }
-
-    @Override
-    public CustomerTariff resumeCustomerTariff(CustomerTariff customerTariff) {
-        if (CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
-            Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);
-            resumingOrder.setOrderStatus(OrderStatus.CANCELED);
-            orderService.update(resumingOrder);
-            customerTariff.setCustomerProductStatus(CustomerProductStatus.ACTIVE);
-            LocalDate now = LocalDate.now();
-
-            Order resumingOrder1 = new Order();
-            resumingOrder1.setCustomerTariff(customerTariff);
-            resumingOrder1.setCreationDate(now);
-            resumingOrder1.setExecutionDate(now);
-            resumingOrder1.setOrderStatus(OrderStatus.DONE);
-            resumingOrder1.setType(OrderType.RESUMING);
-
-            customerTariffDao.update(customerTariff);
-            orderService.save(resumingOrder1);
-        }
         return customerTariff;
     }
 }

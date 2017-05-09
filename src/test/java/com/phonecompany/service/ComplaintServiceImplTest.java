@@ -2,6 +2,8 @@ package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.enums.ComplaintCategory;
+import com.phonecompany.model.enums.ComplaintStatus;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,13 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Ignore
 public class ComplaintServiceImplTest {
@@ -59,6 +60,7 @@ public class ComplaintServiceImplTest {
         Complaint complaint = createComplaint(id);
 
         complaintService.save(complaint);
+        System.out.println("Complaint:" + complaint);
 
         verify(complaintDao, atLeastOnce()).save(complaint);
     }
@@ -83,8 +85,13 @@ public class ComplaintServiceImplTest {
 
     private Complaint createComplaint(Long id) {
         Complaint complaint = new Complaint();
-        complaint.setId(id);
+        //complaint.setId(id);
         complaint.setText("This is a complaint!");
+        complaint.setSubject("Subject");
+        complaint.setStatus(ComplaintStatus.ACCEPTED);
+        complaint.setType(ComplaintCategory.CUSTOMER_SERVICE);
+        complaint.setUser(null);
+        complaint.setDate(LocalDate.now());
         return complaint;
     }
 }

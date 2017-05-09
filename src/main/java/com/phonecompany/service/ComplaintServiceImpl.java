@@ -48,25 +48,26 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     @Override
     public Complaint createComplaint(Complaint complaint) {
         complaint.setStatus(ComplaintStatus.ACCEPTED);
+        complaint.setDate(LocalDate.now());
+        complaintDao.save(complaint);
+        sendComplaintAcceptedMessage(complaint.getUser());
+        LOG.debug("Complaint added {}", complaint);
 
-        if(complaint.getUser().getEmail() == null) {
-            User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-            complaint.setUser(loggedInUser);
+        return complaint;
+    }
+
+    @Override
+    public Complaint createComplaintByEmail(Complaint complaint, String email) {
+        User persistedUser = userService.findByEmail(complaint.getUser().getEmail());
+        if (persistedUser != null) {
+            complaint.setUser(persistedUser);
+            complaint.setStatus(ComplaintStatus.ACCEPTED);
+            complaint.setDate(LocalDate.now());
             complaintDao.save(complaint);
             sendComplaintAcceptedMessage(complaint.getUser());
             LOG.debug("Complaint added {}", complaint);
-        }
-        else {
-            User persistedUser = this.userService.findByEmail(complaint.getUser().getEmail());
-            if (persistedUser != null) {
-                complaint.setUser(persistedUser);
-                complaintDao.save(complaint);
-                sendComplaintAcceptedMessage(complaint.getUser());
-                LOG.debug("Complaint added {}", complaint);
-            } else {
-                LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
-                //complaint = null;
-            }
+        } else {
+            LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
         }
 
         return complaint;

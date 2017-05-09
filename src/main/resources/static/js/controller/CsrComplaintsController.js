@@ -5,7 +5,8 @@ angular.module('phone-company').controller('CsrComplaintsController', [
     '$location',
     '$window',
     'ComplaintService',
-    function ($scope, $rootScope, $location,  $window, ComplaintService) {
+    'CustomerService',
+    function ($scope, $rootScope, $location,  $window, ComplaintService, CustomerService) {
         console.log('This is CsrComplaintsController');
         $scope.activePage = 'complaints';
         $scope.page = 0;
@@ -16,8 +17,6 @@ angular.module('phone-company').controller('CsrComplaintsController', [
         $scope.complaintsCount = 0;
         $scope.complaint = {
             user: {},
-            status: 'ACCEPTED',
-            date:'',
             text: '',
             type: '',
             subject: ''
@@ -35,10 +34,10 @@ angular.module('phone-company').controller('CsrComplaintsController', [
         // };
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
 
-        ComplaintService.getAllComplaintCategory().then(function (data) {
-            console.log('Get all categories of complaint');
-            $scope.complaintCategories = data;
-        });
+        // ComplaintService.getAllComplaintCategory().then(function (data) {
+        //     console.log('Get all categories of complaint');
+        //     $scope.complaintCategories = data;
+        // });
 
         $scope.getAllComplaints = function () {
             console.log('Get all complaints:');
@@ -97,6 +96,10 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             ComplaintService.getComplaintByCategory($scope.currentCategory, $scope.page, $scope.size)
                 .then(function (data) {
                     $scope.complaints = data.complaints;
+                    // $scope.complaints.forEach()
+                    //     .date = new Date($scope.complaints.date.year,
+                    //     $scope.complaints.date.month,
+                    //     $scope.complaints.date.dayOfMonth).format("yyyy-mm-dd");
                     $scope.complaintsCount = data.complaintsCount;
                     $scope.preloader.send = false;
                 }, function () {
@@ -147,15 +150,16 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             $scope.selectedCustomer.email = email;
             $scope.selectedCustomer.id = id;
             $scope.preloader.send = true;
-            ComplaintService.getCustomer($scope.selectedCustomer.id).then(function (data) {
+            CustomerService.getCustomerById($scope.selectedCustomer.id).then(function (data) {
                     console.log("Customer:", data);
                     $scope.customer = data;
-                    $scope.customer.address = $scope.customer.address.region.nameRegion
-                        + ", " + $scope.customer.address.locality
-                        + ", " + $scope.customer.address.street
-                        + ", " + $scope.customer.address.houseNumber;
-                    $scope.customer.address +=  ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
-
+                    if ($scope.customer.address != undefined) {
+                        $scope.customer.address = $scope.customer.address.region.nameRegion
+                            + ", " + $scope.customer.address.locality
+                            + ", " + $scope.customer.address.street
+                            + ", " + $scope.customer.address.houseNumber;
+                        $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
+                    }
                 },
                 function (data) {
                     if (data.message != undefined) {
@@ -165,13 +169,6 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                     }
                 }
             );
-            // ComplaintService.getComplaintByCustomer(id, $scope.page, $scope.size).then(function(data) {
-            //
-            //
-            // }, function () {
-            //     console.log("Error");
-            //     $scope.preloader.send = false;
-            // });
             ComplaintService.getComplaintByCustomer($scope.selectedCustomer.id, $scope.page, $scope.size)
                 .then(function (data) {
                     console.log("Customer complaints getting");
@@ -185,27 +182,44 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             $window.scrollTo(0, 0);
         };
 
-        $scope.createComplaint = function () {
+        // $scope.createComplaint = function () {
+        //     console.log("Complaint:", $scope.complaint);
+        //     ComplaintService.createComplaint($scope.complaint).then(function (data) {
+        //             $scope.complaint = data;
+        //         },
+        //         function (data) {
+        //             if (data.message != undefined) {
+        //                 toastr.error(data.message, 'Error');
+        //             } else {
+        //                 toastr.error('Error during complaint creating. Try again!', 'Error');
+        //             }
+        //             $scope.preloader.send = false;
+        //         }
+        //     );
+        // };
+
+        $scope.createComplaintByEmail = function () {
             console.log("Complaint:", $scope.complaint);
-            ComplaintService.createComplaint($scope.complaint).then(function (data) {
-                    $scope.complaint = data;
-                    if ($scope.complaint.user.id != undefined) {
-                        toastr.success('Complaint created successfully!');
-                        console.log("Complaint added", $scope.complaint);
-                    } else {
-                        toastr.error('Error during complaint creating. User undefined!', 'Error');
-                        console.log("User undefined");
+            ComplaintService.createComplaintByEmail($scope.complaint.user.email, $scope.complaint)
+                .then(function (data) {
+                        $scope.complaint = data;
+                        if ($scope.complaint.user.id != undefined) {
+                            toastr.success('Complaint created successfully!');
+                            console.log("Complaint added", $scope.complaint);
+                        } else {
+                            toastr.error('Error during complaint creating. User undefined!', 'Error');
+                            console.log("User undefined");
+                        }
+                    },
+                    function (data) {
+                        if (data.message != undefined) {
+                            toastr.error(data.message, 'Error');
+                        } else {
+                            toastr.error('Error during complaint creating. Try again!', 'Error');
+                        }
+                        $scope.preloader.send = false;
                     }
-                },
-                function (data) {
-                    if (data.message != undefined) {
-                        toastr.error(data.message, 'Error');
-                    } else {
-                        toastr.error('Error during complaint creating. Try again!', 'Error');
-                    }
-                    $scope.preloader.send = false;
-                }
-            );
-        };        
+                );
+        };
 
     }]);

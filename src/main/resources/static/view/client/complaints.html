@@ -23,9 +23,12 @@
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Category</label>
                                                 <md-select ng-model="complaint.type" name="complaintCategory" required>
-                                                    <md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                    <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
+                                                    <md-option value="SUGGESTION">SUGGESTION</md-option>
+                                                    <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                    <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
                                                         {{c}}
-                                                    </md-option>
+                                                    </md-option-->
                                                 </md-select>
                                                 <div ng-messages="createComplaintForm.complaintCategory.$error" role="alert"
                                                      multiple>

@@ -31,9 +31,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Override
     public Order getResumingOrderByCustomerTariff(CustomerTariff customerTariff) {
-        return orderDao.getResumingOrderByCustomerTariffId(customerTariff.getId()).stream().
-                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
-                .collect(Collectors.toList()).get(0);
+        return orderDao.getResumingOrderByCustomerTariffId(customerTariff.getId());
     }
 
     @Override

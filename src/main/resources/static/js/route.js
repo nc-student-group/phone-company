@@ -46,8 +46,8 @@
             });
         $routeProvider.when('/pmg',
             {
-                templateUrl: 'view/pmgPage.html'
-                // controller: ''
+                templateUrl: 'view/pmg/pmgProfile.html',
+                controller: 'CsrProfileController'
             });
         $routeProvider.when('/user/profile/:success',
             {
@@ -148,6 +148,11 @@
             {
                 templateUrl: 'view/csr/clientDetail.html',
                 controller: 'CsrClientDetailController'
+            });
+        $routeProvider.when('/pmg/complaints',
+            {
+                templateUrl: 'view/pmg/complaints.html',
+                controller: 'CsrComplaintsController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
             {

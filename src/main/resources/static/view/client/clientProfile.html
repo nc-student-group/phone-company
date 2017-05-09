@@ -93,11 +93,15 @@
                                                         <div class="col-md-3">
                                                             <button style="width: 100%"
                                                                     class="btn btn-danger btn-fill pull-left"
-                                                                    ng-click="showDeactivationModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory)">Deactivate
+                                                                    ng-click="showTariffDeactivationModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory)">Deactivate
+                                                            </button>
+                                                            <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
+                                                                    ng-show="currentTariff.customerProductStatus === 'SUSPENDED'"
+                                                                    ng-click="showTariffResumingModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory)">Resume
                                                             </button>
                                                             <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
                                                                     ng-show="currentTariff.customerProductStatus === 'ACTIVE'"
-                                                                    ng-click="showSuspensionModalWindow(currentTariff, daysToExecution, loadCurrentTariff, loadTariffsHistory)">Suspend
+                                                                    ng-click="showTariffSuspensionModalWindow(currentTariff, daysToExecution, loadCurrentTariff, loadTariffsHistory)">Suspend
                                                             </button>
                                                         </div>
                                                         <div class="col-md-7">
