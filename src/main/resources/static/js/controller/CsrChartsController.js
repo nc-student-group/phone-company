@@ -23,6 +23,15 @@ angular.module('phone-company').controller('CsrChartsController', [
             });
         };
 
+        $scope.colors = ['#ff6384', '#32a9a4'];
+        $scope.labels = ['2006', '2007', '2008', '2009'];
+        $scope.series = ['Deactivations', 'Activations'];
+
+        $scope.data = [
+            [65, 59, 80, 81, 56, 55, 40],
+            [28, 48, 40, 19, 86, 27, 90]
+        ];
+
         $scope.generateReport = function() {
             let convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");
             console.log(`Converted start date ${convertedStartDate}`);

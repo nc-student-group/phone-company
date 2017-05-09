@@ -5,6 +5,8 @@ import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
+import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
@@ -22,12 +24,11 @@ import org.springframework.stereotype.Service;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 @Service
 public class XSSFServiceImpl implements XSSFService {
@@ -39,9 +40,12 @@ public class XSSFServiceImpl implements XSSFService {
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
     private OrderDao orderDao;
+    private OrderService orderService;
 
     @Autowired
-    public XSSFServiceImpl(OrderDao orderDao) {
+    public XSSFServiceImpl(OrderService orderService,
+                           OrderDao orderDao) {
+        this.orderService = orderService;
         this.orderDao = orderDao;
     }
 
@@ -71,22 +75,23 @@ public class XSSFServiceImpl implements XSSFService {
                                       Map<String, List<Order>> ordersMap,
                                       List<LocalDate> timeLine) {
         int rowPosition = 0;
-        for (OrderStatus orderStatus : OrderStatus.values()) {
-            this.createTableByStatus(sheet, rowPosition, orderStatus, ordersMap, timeLine);
+        List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
+        for (OrderType orderType : orderTypes) {
+            this.createTableByType(sheet, rowPosition, orderType, ordersMap, timeLine);
             rowPosition += DISTANCE_BETWEEN_TABLES;
         }
     }
 
-    private void createTableByStatus(XSSFSheet sheet, int rowPosition,
-                                     OrderStatus orderStatus,
-                                     Map<String, List<Order>> ordersMap,
-                                     List<LocalDate> timeLine) {
-        this.createTableHeading(sheet, rowPosition++, orderStatus.toString());
+    private void createTableByType(XSSFSheet sheet, int rowPosition,
+                                   OrderType orderType,
+                                   Map<String, List<Order>> ordersMap,
+                                   List<LocalDate> timeLine) {
+        this.createTableHeading(sheet, rowPosition++, orderType.toString());
         int initialRowPosition = rowPosition;
         for (String productName : ordersMap.keySet()) {
             int colPosition = 1;
             List<Order> orders = this
-                    .filterOrdersByStatus(ordersMap.get(productName), orderStatus);
+                    .filterCompletedOrdersByType(ordersMap.get(productName), orderType);
             XSSFRow row = this.generateRowHeading(sheet, rowPosition++, productName);
             this.fillRow(row, colPosition, orders, timeLine);
         }
@@ -219,9 +224,10 @@ public class XSSFServiceImpl implements XSSFService {
                 .count();
     }
 
-    private List<Order> filterOrdersByStatus(List<Order> orders, OrderStatus status) {
+    private List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type) {
         return orders.stream()
-                .filter(o -> o.getOrderStatus().equals(status))
+                .filter(o -> o.getType().equals(type))
+                .filter(o -> o.getOrderStatus().equals(OrderStatus.DONE))
                 .collect(Collectors.toList());
     }
 

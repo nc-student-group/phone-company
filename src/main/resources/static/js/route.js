@@ -5,7 +5,8 @@
             "ngMaterial",
             'ngMessages',
             'ngResource',
-            'ImageCropper']);
+            'ImageCropper',
+            'chart.js']);
 
     app.config(function ($routeProvider, $locationProvider) {
         // $locationProvider.html5Mode(true);

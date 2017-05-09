@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,13 @@ public class ReportController {
     private static final String CURRENT_DIRECTORY = "./";
 
     private XSSFService xssfService;
+    private OrderService orderService;
 
     @Autowired
-    public ReportController(XSSFService xssfService) {
+    public ReportController(XSSFService xssfService,
+                            OrderService orderService) {
         this.xssfService = xssfService;
+        this.orderService = orderService;
     }
 
     @RequestMapping(value = "/api/reports/{regionId}/{startDate}/{endDate}",
@@ -56,5 +60,16 @@ public class ReportController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @GetMapping("/orders-statistics")
+    public ResponseEntity<?> getOrdersStatisticsForTheLastMonthByWeeks() {
+
+        InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(xlsFileInputStream));
     }
 }
