@@ -52,10 +52,13 @@
         <intercept-url pattern="/api/tariffs/**" method="PATCH" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/activate/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/reports/**" method="GET" access="hasRole('CSR')"/>
 
         <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
-        <intercept-url pattern="/api/complaints" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/complaints/customer" access="hasAnyRole('CLIENT', 'ADMIN')"/>
+        <intercept-url pattern="/api/complaints/" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/complaints/pmg/**" access="hasAnyRole('PMG','ADMIN')"/>
         <intercept-url pattern="/api/complaints/**" access="hasAnyRole('PMG', 'CSR', 'ADMIN')"/>
         <form-login login-page='/login'/>
         <logout logout-success-url="/#/index"/>

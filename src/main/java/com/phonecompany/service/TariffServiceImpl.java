@@ -31,7 +31,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
 
-
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
@@ -300,8 +299,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
         tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
-                "tariff/" + tariff.hashCode())); // no such thing as get time in millis
-        Tariff savedTariff = this.save(tariff);       // in LocalDate class -> changed to hashcode
+                "tariff/" + tariff.hashCode()));
+        Tariff savedTariff = this.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
         return savedTariff;
     }

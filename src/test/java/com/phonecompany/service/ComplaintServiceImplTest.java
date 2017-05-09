@@ -60,7 +60,6 @@ public class ComplaintServiceImplTest {
         Complaint complaint = createComplaint(id);
 
         complaintService.save(complaint);
-        System.out.println("Complaint:" + complaint);
 
         verify(complaintDao, atLeastOnce()).save(complaint);
     }

@@ -101,6 +101,16 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    public Service update(Service service) {
+        Assert.notNull(service, "Service cannot be null");
+        LOG.debug("Input service picture url: {}", service.getPictureUrl());
+        String pictureUrl = this.getPictureUrlForService(service);
+        service.setPictureUrl(pictureUrl);
+        LOG.debug("New picture url: {}", pictureUrl);
+        return super.update(service);
+    }
+
+    @Override
     public Service save(Service service) {
         Assert.notNull(service, "Service cannot be null");
         if (this.isExist(service)) {
