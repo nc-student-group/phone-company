@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +15,15 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.Month;
 
+import static com.phonecompany.util.FileUtil.getFilesWithExtensionFromPath;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 public class ReportController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportController.class);
+    private static final String EXCEL_EXTENSION = "xlsx";
+    private static final String CURRENT_DIRECTORY = "./";
 
     private XSSFService xssfService;
 
@@ -28,35 +32,26 @@ public class ReportController {
         this.xssfService = xssfService;
     }
 
-    @RequestMapping(value = "/api/reports/{regionId}", method = GET, produces = "application/vnd.ms-excel")
-    public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId) {
-        LOG.debug("Generating xls report");
-        LOG.debug("Input regionId parameter: {}", regionId);
-        LocalDate startDate = LocalDate.of(2017, Month.MAY, 1);
-        LocalDate topDate = LocalDate.of(2017, Month.MAY, 5);
+    @RequestMapping(value = "/api/reports/{regionId}/{startDate}/{endDate}",
+            method = GET, produces = "application/vnd.ms-excel")
+    public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
+            @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
+        this.xssfService.generateReport(regionId, startDate, endDate);
 
-        this.xssfService.generateReport(1, startDate, topDate);
-        InputStream xlsFileInputStream = this.getXlsFileInputStream();
+        InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
 
         return ResponseEntity
                 .ok()
-                .headers(headers)
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(new InputStreamResource(xlsFileInputStream));
     }
 
-    private InputStream getXlsFileInputStream() {
+    private InputStream getXlsStreamFromRootDirectory() {
         try {
-            File rootDir = new File("./");
-            File[] files = rootDir.listFiles((dir, filename) -> filename.endsWith(".xlsx"));
-            File file = files[0];
-            LOG.debug("Report file: {}", file);
-            return new FileInputStream(file);
+            File[] files = getFilesWithExtensionFromPath(EXCEL_EXTENSION, CURRENT_DIRECTORY);
+            return new FileInputStream(files[0]);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

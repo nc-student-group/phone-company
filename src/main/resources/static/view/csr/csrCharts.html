@@ -25,11 +25,13 @@
                                             <md-content layout-padding>
                                                 <h3>Generate report</h3>
 
-                                                <md-input-container class="md-block">
-                                                    <input type="number"
-                                                           placeholder="Region id" name="regionId"
-                                                           ng-model="regionId"
-                                                           required/>
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Region:</label>
+                                                    <md-select ng-model="currentRegion">
+                                                        <md-option ng-repeat="r in regions" value="{{r.id}}">
+                                                            {{r.nameRegion}}
+                                                        </md-option>
+                                                    </md-select>
                                                 </md-input-container>
                                                 <div layout-gt-xs="row">
                                                     <div flex-gt-xs>

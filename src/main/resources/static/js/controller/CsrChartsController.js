@@ -3,13 +3,16 @@ angular.module('phone-company').controller('CsrChartsController', [
     '$scope',
     '$rootScope',
     '$http',
-    '$q',
-    '$location',
-    '$routeParams',
     '$mdDialog',
-    function ($scope, $rootScope, $http, $q, $location, $routeParams, $mdDialog) {
+    '$filter',
+    'TariffService',
+    function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService) {
 
         $scope.message = 'Charts page';
+
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+        });
 
         $scope.showGenerateReportDialog = function(ev) {
             $mdDialog.show({
@@ -21,10 +24,13 @@ angular.module('phone-company').controller('CsrChartsController', [
         };
 
         $scope.generateReport = function() {
-            console.log(`Generating report`);
+            let convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");
+            console.log(`Converted start date ${convertedStartDate}`);
+            let convertedEndDate = $filter('date')($scope.endDate, "yyyy-MM-dd");
+            console.log(`Converted end date ${convertedEndDate}`);
             $scope.preloader.send = true;
             $http({
-                url: 'api/reports/1',
+                url: `api/reports/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
                 method: 'GET',
                 responseType: 'arraybuffer',
                 headers: {
@@ -36,7 +42,9 @@ angular.module('phone-company').controller('CsrChartsController', [
                 let blob = new Blob([data], {
                     type: 'application/vnd.ms-excel'
                 });
-                saveAs(blob, 'File_Name_With_Some_Unique_Id_Time' + '.xlsx');
+                let currentDate = new Date();
+                let uniqueIdentifier = currentDate >>> 3;
+                saveAs(blob, `report-${currentDate.getUTCDate()}-${uniqueIdentifier}.xlsx`);
             }).error(function(){
                 $scope.preloader.send = false;
             });

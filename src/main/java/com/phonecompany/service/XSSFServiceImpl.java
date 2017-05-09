@@ -13,6 +13,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String FILE_NAME = "report-";
     private static final String FILE_FORMAT = ".xlsx";
     private static final String TARIFFS = "Tariffs";
-    private static final int DISTANCE_BETWEEN_TABLES = 8;
+    private static final int DISTANCE_BETWEEN_TABLES = 25;
 
     private OrderDao orderDao;
 
@@ -46,22 +47,17 @@ public class XSSFServiceImpl implements XSSFService {
 
     @Override
     public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
-        LOG.debug("In main report method");
         XSSFWorkbook workbook = new XSSFWorkbook();
         workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        LOG.debug("Workbook returned for saving");
         this.saveWorkBook(workbook);
     }
 
     private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
                                          LocalDate startDate, LocalDate endDate) {
-        LOG.debug("In tariff report method");
         List<Order> tariffOrdersByRegionId = this.orderDao.getTariffOrdersByRegionId(regionId);
-        LOG.debug("Tariffs returned from order dao");
         List<Order> tariffOrdersFilteredByDate = this.filterOrdersByDate(
                 tariffOrdersByRegionId, startDate, endDate);
 
-        LOG.debug("Orders filtered by date");
         Map<String, List<Order>> tariffOrdersMap = this.getTariffOrdersMap(tariffOrdersFilteredByDate);
         List<LocalDate> timeLine = this.generateTimeLine(tariffOrdersFilteredByDate);
 
@@ -76,7 +72,6 @@ public class XSSFServiceImpl implements XSSFService {
                                       List<LocalDate> timeLine) {
         int rowPosition = 0;
         for (OrderStatus orderStatus : OrderStatus.values()) {
-            LOG.debug("Generating table for status");
             this.createTableByStatus(sheet, rowPosition, orderStatus, ordersMap, timeLine);
             rowPosition += DISTANCE_BETWEEN_TABLES;
         }
@@ -92,13 +87,10 @@ public class XSSFServiceImpl implements XSSFService {
             int colPosition = 1;
             List<Order> orders = this
                     .filterOrdersByStatus(ordersMap.get(productName), orderStatus);
-            LOG.debug("Filtered orders list by status");
             XSSFRow row = this.generateRowHeading(sheet, rowPosition++, productName);
             this.fillRow(row, colPosition, orders, timeLine);
         }
-        LOG.debug("Generating column headings");
         this.generateColHeadings(sheet.createRow(rowPosition), timeLine);
-        LOG.debug("Drawing chart");
         this.drawChart(sheet, initialRowPosition, rowPosition, timeLine.size());
     }
 
@@ -140,9 +132,10 @@ public class XSSFServiceImpl implements XSSFService {
     }
 
     private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int lastColIndex) {
-        XSSFChart chart = this.createChart(sheet, rowIndex);
 
-        LOG.debug("Chart created");
+        XSSFChart chart = this.createChart(sheet, initialRowPosition);
+        this.useGapsOnBlankCells(chart);
+
         // Create data for the chart
         XSSFLineChartData data = chart.getChartDataFactory().createLineChartData();
 
@@ -156,15 +149,31 @@ public class XSSFServiceImpl implements XSSFService {
 
         // Plot the chart with the inputs from data and chart axis
         chart.plot(data, bottomAxis, leftAxis);
+        this.makeChartNotToUserSmoothedLines(chart);
+    }
+
+    private void makeChartNotToUserSmoothedLines(XSSFChart chart) {
+        CTPlotArea plotArea = chart.getCTChart().getPlotArea();
+        for (CTLineChart ch : plotArea.getLineChartList()) {
+            for (CTLineSer ser : ch.getSerList()) {
+                CTBoolean ctBool = CTBoolean.Factory.newInstance();
+                ctBool.setVal(false);
+                ser.setSmooth(ctBool);
+            }
+        }
+    }
+
+    private void useGapsOnBlankCells(XSSFChart chart) {
+        CTDispBlanksAs disp = CTDispBlanksAs.Factory.newInstance();
+        disp.setVal(STDispBlanksAs.GAP);
+        chart.getCTChart().setDispBlanksAs(disp);
     }
 
     private void addChartSeries(XSSFSheet sheet, LineChartData data,
                                 int initialRowPosition, int rowIndex,
                                 int lastColIndex) {
-        LOG.debug("Adding chart series");
         ChartDataSource<String> x = this.getDatePointsDataSource(sheet, rowIndex, lastColIndex);
         while (initialRowPosition < rowIndex) {
-            LOG.debug("Generating data rows");
             ChartDataSource<Number> y = this.getOrderNumberDatasource(sheet, initialRowPosition++, lastColIndex);
             LineChartSeries lineChartSeries = data.addSeries(x, y);
             lineChartSeries.setTitle(new CellReference(initialRowPosition - 1, 0));
@@ -191,7 +200,8 @@ public class XSSFServiceImpl implements XSSFService {
 
         // Define anchor points in the worksheet to position the chart
         XSSFClientAnchor anchor = drawing.createAnchor(
-                0, 0, 0, 0, 7, rowIndex, 17, rowIndex + 25);
+                0, 0, 0, 0, 7, rowIndex - 1,
+                17, rowIndex + 20);
 
         // Create the chart object based on the anchor point
         XSSFChart chart = drawing.createChart(anchor);
@@ -261,13 +271,10 @@ public class XSSFServiceImpl implements XSSFService {
 
     private void saveWorkBook(XSSFWorkbook workbook) {
         try {
-            LOG.debug("Opening stream");
             FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);
             workbook.write(out);
             workbook.close();
-            LOG.debug("Closing workbook");
             out.flush();
-            LOG.debug("Closing stream");
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
