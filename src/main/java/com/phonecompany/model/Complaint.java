@@ -19,16 +19,20 @@ public class Complaint extends DomainEntity {
     private ComplaintCategory type;
     private User user;
     private String subject;
+    private User responsiblePmg;
+    private String comment;
 
     public Complaint(){}
 
-    public Complaint(ComplaintStatus status, LocalDate date, String text, ComplaintCategory type, User user, String subject) {
+    public Complaint(ComplaintStatus status, LocalDate date, String text, ComplaintCategory type, User user, String subject, User responsiblePmg, String comment) {
         this.status = status;
         this.date = date;
         this.text = text;
         this.type = type;
         this.user = user;
         this.subject = subject;
+        this.responsiblePmg = responsiblePmg;
+        this.comment = comment;
     }
 
     public ComplaintStatus getStatus() {
@@ -75,6 +79,14 @@ public class Complaint extends DomainEntity {
 
     public void setSubject(String subject) { this.subject = subject; }
 
+    public User getResponsiblePmg() { return responsiblePmg; }
+
+    public void setResponsiblePmg(User responsiblePmg) { this.responsiblePmg = responsiblePmg; }
+
+    public String getComment() { return comment; }
+
+    public void setComment(String comment) { this.comment = comment; }
+
     @Override
     public String toString() {
         return "Complaint{" +
@@ -84,6 +96,8 @@ public class Complaint extends DomainEntity {
                 ", type='" + type + '\'' +
                 ", user='" + user + '\'' +
                 ", subject='" + subject + "\'" +
+                ", responsiblePmg='" + responsiblePmg + '\'' +
+                ", comment='" + comment + "\'" +
                 '}';
     }
 }

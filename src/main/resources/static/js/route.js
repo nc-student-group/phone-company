@@ -152,7 +152,7 @@
         $routeProvider.when('/pmg/complaints',
             {
                 templateUrl: 'view/pmg/complaints.html',
-                controller: 'CsrComplaintsController'
+                controller: 'PmgComplaintsController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });

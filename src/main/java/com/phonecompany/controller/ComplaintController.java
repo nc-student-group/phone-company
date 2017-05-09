@@ -1,7 +1,6 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
-import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
@@ -31,20 +30,21 @@ public class ComplaintController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/customer")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);
         complaint.setUser(userService.getCurrentlyLoggedInUser());
         Complaint createdComplaint = complaintService.createComplaint(complaint);
+        complaintService.sendComplaintChangeStatusMessage(createdComplaint);
 
         return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
     }
 
-    @PostMapping("/{email}")
-    public ResponseEntity<?> createComplaintByEmail(@RequestBody Complaint complaint,
-                                                    @PathVariable("email") String email) {
+    @PostMapping("/csr")
+    public ResponseEntity<?> createComplaintByCsr(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);
-        Complaint createdComplaint = complaintService.createComplaintByEmail(complaint, email);
+        Complaint createdComplaint = complaintService.createComplaintByCsr(complaint);
+        complaintService.sendComplaintChangeStatusMessage(createdComplaint);
 
         return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
     }
@@ -58,22 +58,16 @@ public class ComplaintController {
         return Collections.unmodifiableCollection(complaints);
     }
 
-    @GetMapping(value = "/categories")
-    public Collection<ComplaintCategory> getAllComplaintCategory() {
-        LOG.info("Retrieving all the complaint categories");
-
-        return complaintService.getAllComplaintCategory();
+    @GetMapping("/{category}/{status}/{page}/{size}")
+    public Map<String, Object> getComplaints(@PathVariable("category") String category,
+                                             @PathVariable("status") String status,
+                                             @PathVariable("page") int page,
+                                             @PathVariable("size") int size) {
+        LOG.debug("Fetching complaints with the category: {}", category);
+        return complaintService.getComplaints(category, status, page, size);
     }
 
-    @GetMapping("/{category}/{page}/{size}")
-    public Map<String, Object> getComplaintsByCategory(@PathVariable("category") String category,
-                                                       @PathVariable("page") int page,
-                                                       @PathVariable("size") int size) {
-        LOG.debug("Fetching complaints for the category: {}", category);
-        return complaintService.getComplaintsByCategory(category, page, size);
-    }
-
-    @GetMapping("/complaint/{id}/{page}/{size}")
+    @GetMapping("/{id}/{page}/{size}")
     public Map<String, Object> getComplaintsByCustomer(@PathVariable("id") int id,
                                                        @PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
@@ -81,11 +75,31 @@ public class ComplaintController {
         return complaintService.getComplaintsByCustomer(id, page, size);
     }
 
-//    @GetMapping("/customer/{id}")
-//    public Customer getCustomer(@PathVariable("id") long id) {
-//        LOG.debug("Customer with id: {}", id);
-//        Customer customer = customerService.getById(id);
-//        LOG.debug("Found: ", customer);
-//        return customer;
-//    }
+    @GetMapping("/pmg/{category}/{page}/{size}")
+    public Map<String, Object> getComplaintsByResponsible(@PathVariable("category") String category,
+                                                          @PathVariable("page") int page,
+                                                          @PathVariable("size") int size) {
+        LOG.debug("Fetching complaints with category: {} for the responsible", category);
+        return complaintService.getComplaintsByResponsible(userService.getCurrentlyLoggedInUser().getId(),
+                category, page, size);
+    }
+
+    @PutMapping("/pmg")
+    public ResponseEntity<?> handleComplaint(@RequestBody long complaintId) {
+        LOG.debug("Handled complaint id: {}", complaintId);
+        Complaint complaint = complaintService.getById(complaintId);
+        complaint.setResponsiblePmg(userService.getCurrentlyLoggedInUser());
+        Complaint updatedComplaint = complaintService.setStatusIntraprocess(complaint);
+        complaintService.sendComplaintChangeStatusMessage(updatedComplaint);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/pmg/{id}")
+    public ResponseEntity<?> completeComplaint(@PathVariable("id") long complaintId,
+                                               @RequestBody String comment) {
+        LOG.debug("Complete complaint id: {}, comment: {}", complaintId, comment);
+        Complaint updatedComplaint = complaintService.setStatusAccomplished(complaintService.getById(complaintId), comment);
+        complaintService.sendComplaintChangeStatusMessage(updatedComplaint);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

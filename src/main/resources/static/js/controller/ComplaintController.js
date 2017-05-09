@@ -15,10 +15,10 @@ angular.module('phone-company').controller('ComplaintController', [
             subject: ''
         };
         
-        ComplaintService.getAllComplaintCategory().then(function (data) {
-            console.log('Get all categories of complaint');
-            $scope.complaintCategories = data;
-        });
+        // ComplaintService.getAllComplaintCategory().then(function (data) {
+        //     console.log('Get all categories of complaint');
+        //     $scope.complaintCategories = data;
+        // });
 
         $scope.createComplaint = function () {
             console.log("Complaint:", $scope.complaint);

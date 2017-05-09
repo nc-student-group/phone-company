@@ -5,7 +5,7 @@ import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
 @Component("complaintAcceptedEmailCreator")
-public class ComplaintAcceptedEmailCreator extends AbstractEmailCreator<Complaint>
+public class ComplaintChangeStatusEmailCreator extends AbstractEmailCreator<Complaint>
         implements MailMessageCreator<Complaint> {
 
     /**
@@ -13,7 +13,9 @@ public class ComplaintAcceptedEmailCreator extends AbstractEmailCreator<Complain
      */
     @Override
     public String getEmailBody(Complaint complaint) {
-        return "Your complaint is accepted.";
+        String msg = "Your complaint is " + complaint.getStatus() + ". \n";
+        if (complaint.getComment() != null) msg += complaint.getComment();
+        return msg;
     }
 
     /**

@@ -50,6 +50,19 @@
                                                         </md-input-container>
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Category:</label>
+                                                            <md-select ng-model="currentStatus" md-on-close="updateData()" >
+                                                                <md-option value="-">ALL STATUS</md-option>
+                                                                <md-option value="ACCEPTED">ACCEPTED</md-option>
+                                                                <md-option value="INTRAPROCESS">INTRAPROCESS</md-option>
+                                                                <md-option value="ACCOMPLISHED">ACCOMPLISHED</md-option>
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
                                                 <div class="content table-responsive ">
                                                     <table class="table table-striped table-bordered table-hover" id="complaintsTable">
                                                         <!--id-->
@@ -226,7 +239,7 @@
                                                 </div>
                                                 <div class="content">
                                                     <form name="createComplaintForm" id="createComplaintForm"
-                                                          autocomplete="off" novalidate ng-submit="createComplaintByEmail()">
+                                                          autocomplete="off" novalidate ng-submit="createComplaintByCsr()">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <md-input-container class="md-block">
