@@ -13,7 +13,7 @@ angular.module('phone-company').controller('TariffEditController', [
         $scope.editing = false;
         $scope.discountPattern = /^([0-9]|([1-9][0-9])|100)$/;
 
-        TariffService.getAllRegions().then(function (data) {
+        TariffService.getOrderStatistics().then(function (data) {
             $scope.regions = data;
             $scope.regionsToAdd = [];
             for (var i = 0; i < $scope.regions.length; i++) {

@@ -10,6 +10,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -22,8 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
 import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
@@ -250,5 +250,30 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
         } catch (SQLException e) {
             throw new CrudException("Could not extract service orders", e);
         }
+    }
+
+    @Override
+    public EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     this.getQuery("for.the.last.month.by.type"))) {
+            ps.setString(1, type.name());
+            ResultSet rs = ps.executeQuery();
+            return this.associateWeeksWithOrderNumbers(rs);
+        } catch (SQLException e) {
+            throw new CrudException("Could not extract orders numbers", e);
+        }
+    }
+
+    private EnumMap<WeekOfMonth, Integer> associateWeeksWithOrderNumbers(ResultSet rs)
+            throws SQLException {
+        EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
+        WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
+        while (rs.next()) {
+            result.put(weekOfMonth, rs.getInt(1));
+            LOG.debug("weekOfMonth.next(): {}", weekOfMonth.next());
+            weekOfMonth = weekOfMonth.next();
+        }
+        return result;
     }
 }

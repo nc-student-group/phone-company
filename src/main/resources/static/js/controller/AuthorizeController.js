@@ -33,7 +33,7 @@ angular.module('phone-company').controller('AuthorizeController', [
 
         $scope.getNewCustomer();
 
-        TariffService.getAllRegions().then(function (data) {
+        TariffService.getOrderStatistics().then(function (data) {
             $scope.regions = data;
             console.log($scope.regionsToAdd);
         });

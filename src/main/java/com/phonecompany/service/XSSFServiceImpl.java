@@ -39,13 +39,10 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
-    private OrderDao orderDao;
-    private OrderService orderService;
+    private OrderDao orderDao; //TODO: should be  replaced by service
 
     @Autowired
-    public XSSFServiceImpl(OrderService orderService,
-                           OrderDao orderDao) {
-        this.orderService = orderService;
+    public XSSFServiceImpl(OrderDao orderDao) {
         this.orderDao = orderDao;
     }
 

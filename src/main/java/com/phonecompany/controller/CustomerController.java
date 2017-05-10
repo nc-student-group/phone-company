@@ -40,7 +40,7 @@ public class CustomerController {
     private CustomerTariffService customerTariffService;
     private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
     private EmailService<User> emailService;
-
+    private MailMessageCreator<Tariff> tariffSuspensionEmailCreator;
 
     @Autowired
     public CustomerController(CustomerService customerService,
@@ -49,7 +49,9 @@ public class CustomerController {
                               UserService userService,
                               CustomerTariffService customerTariffService,
                               @Qualifier("tariffDeactivationNotificationEmailCreator")
-                                      MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
+                              MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
+                              @Qualifier("tariffSuspensionNotificationEmailCreator")
+                              MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
                               EmailService<User> emailService) {
         this.customerService = customerService;
         this.addressService = addressService;
@@ -57,6 +59,7 @@ public class CustomerController {
         this.userService = userService;
         this.customerTariffService = customerTariffService;
         this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
+        this.tariffSuspensionEmailCreator = tariffSuspensionNotificationEmailCreator;
         this.emailService = emailService;
     }
 
@@ -132,8 +135,7 @@ public class CustomerController {
 
     @RequestMapping(method = GET, value = "/api/customer/getByCorporateId/{id}")
     public List<Customer> getCustomerByCorporateId(@PathVariable("id") long corporateId) {
-        List<Customer> customers = this.customerService.getCustomersByCorporate(corporateId);
-        return customers;
+        return this.customerService.getCustomersByCorporate(corporateId);
     }
 
     @PatchMapping(value = "/api/customers/")
@@ -150,7 +152,7 @@ public class CustomerController {
             customerService.deactivateCustomerTariff(id);
         }
         customerService.updateStatus(id, status);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //TODO: extract to customer tariff controller ??
@@ -166,6 +168,12 @@ public class CustomerController {
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
         this.customerTariffService.suspendCustomerTariff(data);
+        //TODO: this is a highly questionable code
+        CustomerTariff customerTariff = this.customerTariffService.
+                getById((new Long((Integer) data.get("currentTariffId"))));
+        SimpleMailMessage notificationMessage = this.tariffSuspensionEmailCreator
+                .constructMessage(customerTariff.getTariff());
+        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

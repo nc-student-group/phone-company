@@ -37,7 +37,7 @@
             $scope.corporations = data;
         });
 
-        TariffService.getAllRegions().then(function (data) {
+        TariffService.getOrderStatistics().then(function (data) {
             $scope.regions = data;
             $scope.customer = {
                 email: "",

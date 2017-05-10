@@ -1,9 +1,6 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.CustomerServiceDto;
-import com.phonecompany.model.Order;
+import com.phonecompany.model.*;
 
 import java.util.List;
 
@@ -16,4 +13,5 @@ public interface OrderService extends CrudService<Order>{
     List<Order> getOrdersHistoryForServicesByClient(Customer customer, int page, int size);
     Integer getOrdersCountByClient(Customer customer);
     Integer getOrdersCountForServicesByClient(Customer customer);
+    OrderStatistics getOrderStatistics();
 }

@@ -1,20 +1,23 @@
 package com.phonecompany.controller;
 
 
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.TariffRegionService;
-import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/tariffs")
@@ -25,14 +28,25 @@ public class TariffController {
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private CustomerService customerService;
+    private EmailService<Customer> emailService;
+    private MailMessageCreator<Tariff> tariffNotificationMailCreator;
+    private MailMessageCreator<Tariff> tariffActivationNotificationMailCreator;
 
     @Autowired
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService,
-                            CustomerService customerService) {
+                            CustomerService customerService,
+                            EmailService<Customer> emailService,
+                            @Qualifier("tariffNotificationEmailCreator")
+                            MailMessageCreator<Tariff> tariffNotificationMailCreator,
+                            @Qualifier("tariffDeactivationNotificationEmailCreator")
+                            MailMessageCreator<Tariff> tariffActivationNotificationMailCreator){
         this.tariffRegionService = tariffRegionService;
         this.tariffService = tariffService;
         this.customerService = customerService;
+        this.emailService = emailService;
+        this.tariffNotificationMailCreator = tariffNotificationMailCreator;
+        this.tariffActivationNotificationMailCreator = tariffActivationNotificationMailCreator;
     }
 
     @GetMapping(value = "/{regionId}/{page}/{size}")
@@ -51,8 +65,22 @@ public class TariffController {
     @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
-
+        SimpleMailMessage notificationMessage = this.tariffNotificationMailCreator
+                .constructMessage(savedTariff);
+        this.notifyAgreedCustomers(notificationMessage);
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
+    }
+
+    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
+        List<Customer> agreedCustomers = this.getAgreedCustomers();
+        LOGGER.debug("Customers agreed for mailing: {}", agreedCustomers);
+        this.emailService.sendMail(mailMessage, agreedCustomers);
+    }
+
+    private List<Customer> getAgreedCustomers() {
+        return this.customerService.getAll().stream()
+                .filter(Customer::getIsMailingEnabled)
+                .collect(Collectors.toList());
     }
 
     @PutMapping
@@ -70,10 +98,10 @@ public class TariffController {
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<Void> updateTariffStatus(@PathVariable("id") long tariffId,
+    public ResponseEntity<?> updateTariffStatus(@PathVariable("id") long tariffId,
                                                    @RequestBody String productStatus) {
         this.tariffService.updateTariffStatus(tariffId, ProductStatus.valueOf(productStatus));
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/available/{page}/{size}")
@@ -97,14 +125,25 @@ public class TariffController {
 
     @GetMapping(value = "/activate/{id}")
     public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
-        tariffService.activateTariff(tariffId, customerService.getCurrentlyLoggedInUser());
+        Customer currentlyLoggedInUser = customerService.getCurrentlyLoggedInUser();
+        Tariff tariff = this.tariffService.getById(tariffId);
+        tariffService.activateTariff(tariffId, currentlyLoggedInUser);
+        SimpleMailMessage notificationMessage = this.tariffActivationNotificationMailCreator
+                .constructMessage(tariff);
+        this.emailService.sendMail(notificationMessage, currentlyLoggedInUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/activate/{tariffId}/{customerId}")
     public ResponseEntity<?> activateTariff(@PathVariable("tariffId") long tariffId,
                                             @PathVariable("customerId") long customerId) {
-        tariffService.activateTariff(tariffId, customerService.getById(customerId));
+        Customer customer = customerService.getById(customerId);
+        tariffService.activateTariff(tariffId, customer);
+        Tariff tariff = this.tariffService.getById(tariffId);
+        SimpleMailMessage notificationMessage = this.tariffActivationNotificationMailCreator
+                .constructMessage(tariff);
+        this.emailService.sendMail(notificationMessage, customer);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

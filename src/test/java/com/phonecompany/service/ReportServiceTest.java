@@ -20,14 +20,11 @@ public class ReportServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    @Autowired
-    private OrderService orderService;
-
     private XSSFServiceImpl xssfService;
 
     @Before
     public void setUp() {
-        xssfService = new XSSFServiceImpl(orderService, orderDao);
+        xssfService = new XSSFServiceImpl(orderDao);
     }
 
     @Test

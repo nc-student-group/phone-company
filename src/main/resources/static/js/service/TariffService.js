@@ -20,7 +20,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
     var GET_RESUME_TARIFF_URL = "/api/customer-tariffs/resume";
 
     var factory = {
-        getAllRegions: getAllRegions,
+        getOrderStatistics: getAllRegions,
         getTariffsByRegionId: getTariffsByRegionId,
         getNewTariff: getNewTariff,
         addTariff: addTariff,

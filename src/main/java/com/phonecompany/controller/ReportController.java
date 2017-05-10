@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import static com.phonecompany.util.FileUtil.getFilesWithExtensionFromPath;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
+@RequestMapping(value = "api/reports")
 public class ReportController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportController.class);
@@ -36,7 +38,7 @@ public class ReportController {
         this.orderService = orderService;
     }
 
-    @RequestMapping(value = "/api/reports/{regionId}/{startDate}/{endDate}",
+    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}",
             method = GET, produces = "application/vnd.ms-excel")
     public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
             @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -62,14 +64,11 @@ public class ReportController {
         return null;
     }
 
-    @GetMapping("/orders-statistics")
-    public ResponseEntity<?> getOrdersStatisticsForTheLastMonthByWeeks() {
+    @GetMapping("/order-statistics")
+    public ResponseEntity<?> getOrderStatisticsForTheLastMonthByWeeks() {
 
-        InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
+        OrderStatistics orderStatistics = this.orderService.getOrderStatistics();
 
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(xlsFileInputStream));
+        return new ResponseEntity<>(orderStatistics, HttpStatus.OK);
     }
 }

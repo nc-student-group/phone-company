@@ -119,10 +119,6 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
 
-        SimpleMailMessage notificationMessage = this.tariffSuspensionNotificationEmailCreator
-                .constructMessage(customerTariff.getTariff());
-        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
-
         return customerTariff;
     }
 

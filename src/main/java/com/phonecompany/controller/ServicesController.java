@@ -31,6 +31,8 @@ public class ServicesController {
     private EmailService<Customer> emailService;
     private CustomerService customerService;
     private MailMessageCreator<Service> serviceActivationNotificationEmailCreator;
+    private MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator;
+    private MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator;
     private CustomerServiceService customerServiceService;
     private OrderService orderService;
 
@@ -38,13 +40,17 @@ public class ServicesController {
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                                      MailMessageCreator<Service> emailCreator,
+                              MailMessageCreator<Service> emailCreator,
+                              @Qualifier("serviceDeactivationNotificationEmailCreator")
+                              MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator) {
+                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
+                              @Qualifier("serviceSuspensionNotificationEmailCreator")
+                              MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -53,6 +59,8 @@ public class ServicesController {
         this.customerServiceService = customerServiceService;
         this.orderService = orderService;
         this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
+        this.serviceDeactivationNotificationEmailCreator = serviceDeactivationNotificationEmailCreator;
+        this.serviceSuspensionNotificationEmailCreator = serviceSuspensionNotificationEmailCreator;
     }
 
     @GetMapping
@@ -192,6 +200,9 @@ public class ServicesController {
     @PatchMapping(value = "/deactivate")
     public ResponseEntity<Void> deactivateCustomerService(@RequestBody CustomerServiceDto customerService) {
         customerServiceService.deactivateCustomerService(customerService);
+        SimpleMailMessage notificationMessage = this.serviceDeactivationNotificationEmailCreator
+                .constructMessage(customerService.getService());
+        this.emailService.sendMail(notificationMessage, customerService.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -204,6 +215,12 @@ public class ServicesController {
     @PostMapping(value = "/suspend")
     public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
         customerServiceService.suspendCustomerService(data);
+        //TODO: one more questionable line
+        CustomerServiceDto customerService = this.customerServiceService.
+                getById((new Long((Integer) data.get("customerServiceId"))));
+        SimpleMailMessage notificationMessage = this.serviceSuspensionNotificationEmailCreator
+                .constructMessage(customerService.getService());
+        this.emailService.sendMail(notificationMessage, customerService.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
