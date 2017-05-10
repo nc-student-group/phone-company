@@ -6,7 +6,6 @@ import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
@@ -39,7 +38,7 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
-    private OrderDao orderDao; //TODO: should be  replaced by service
+    private OrderDao orderDao;
 
     @Autowired
     public XSSFServiceImpl(OrderDao orderDao) {

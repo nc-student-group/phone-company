@@ -98,4 +98,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return new OrderStatistics(numberOfDeactivationOrdersForTheLastMonth,
                 numberOfActivationOrdersForTheLastMonth);
     }
+
+
 }
