@@ -34,7 +34,6 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String FILE_FORMAT = ".xlsx";
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
-    public static final String SERVICES = "Services";
 
     private OrderDao orderDao;
 
@@ -46,24 +45,8 @@ public class XSSFServiceImpl implements XSSFService {
     @Override
     public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-//        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        this.getServiceReport(workbook, startDate, endDate);
+        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
         this.saveWorkBook(workbook);
-    }
-
-    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook,
-                                          LocalDate startDate,
-                                          LocalDate endDate) {
-        List<Order> allServiceOrders = this.orderDao.getAllServiceOrders();
-        List<Order> ordersFilteredByDate = this.filterOrdersByDate(allServiceOrders, startDate, endDate);
-
-        Map<String, List<Order>> serviceOrdersMap = this.getServiceOrdersMap(ordersFilteredByDate);
-        List<LocalDate> timeLine = this.generateTimeLine(ordersFilteredByDate);
-
-        XSSFSheet sheet = workbook.createSheet(SERVICES);
-        this.generateReportTables(sheet, serviceOrdersMap, timeLine);
-
-        return workbook;
     }
 
     private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
@@ -249,24 +232,6 @@ public class XSSFServiceImpl implements XSSFService {
                 .collect(Collectors.toList());
     }
 
-    private List<Order> filterOrdersByServiceName(List<Order> orders, String serviceName) {
-        return orders.stream()
-                .filter(order -> order.getCustomerService()
-                        .getService().getServiceName().equals(serviceName))
-                .collect(Collectors.toList());
-    }
-
-    private Map<String, List<Order>> getServiceOrdersMap(List<Order> serviceOrders) {
-        Map<String, List<Order>> serviceOrdersMap = new HashMap<>();
-        Function<Order, String> serviceOrderToServiceNameMapping = this.getServiceOrderToServiceNameMapping();
-        List<String> serviceNames = this.getDistinctNamesFromOrders(serviceOrders, serviceOrderToServiceNameMapping);
-        for (String serviceName : serviceNames) {
-            List<Order> ordersOfService = this.filterOrdersByServiceName(serviceOrders, serviceName);
-            this.putOrdersInMap(serviceOrdersMap, serviceName, ordersOfService);
-        }
-        return serviceOrdersMap;
-    }
-
     private Map<String, List<Order>> getTariffOrdersMap(List<Order> tariffOrders) {
         Map<String, List<Order>> tariffOrdersMap = new HashMap<>();
         Function<Order, String> tariffOrderToTariffNameMapping = this.getTariffOrderToTariffNameMapping();
@@ -322,14 +287,6 @@ public class XSSFServiceImpl implements XSSFService {
             CustomerTariff customerTariff = order.getCustomerTariff();
             Tariff tariff = customerTariff.getTariff();
             return tariff.getTariffName();
-        };
-    }
-
-    private Function<Order, String> getServiceOrderToServiceNameMapping() {
-        return order -> {
-            CustomerServiceDto customerService = order.getCustomerService();
-            Service service = customerService.getService();
-            return service.getServiceName();
         };
     }
 
