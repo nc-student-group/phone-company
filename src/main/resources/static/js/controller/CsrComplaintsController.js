@@ -135,13 +135,13 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             CustomerService.getCustomerById($scope.selectedCustomer.id).then(function (data) {
                     console.log("Customer:", data);
                     $scope.customer = data;
-                    if ($scope.customer.address != undefined) {
-                        $scope.customer.address = $scope.customer.address.region.nameRegion
-                            + ", " + $scope.customer.address.locality
-                            + ", " + $scope.customer.address.street
-                            + ", " + $scope.customer.address.houseNumber;
-                        $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
-                    }
+                    // if ($scope.customer.address != undefined) {
+                    //     $scope.customer.address = $scope.customer.address.region.nameRegion
+                    //         + ", " + $scope.customer.address.locality
+                    //         + ", " + $scope.customer.address.street
+                    //         + ", " + $scope.customer.address.houseNumber;
+                    //     $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
+                    // }
                 },
                 function (data) {
                     if (data.message != undefined) {
@@ -162,6 +162,13 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                     $scope.preloader.send = false;
                 });
             $window.scrollTo(0, 0);
+        };
+
+        $scope.complaintDetailData = function (complaint) {
+            $scope.selected = 'complaintSelected';
+            $scope.selectedComplaint = complaint;
+            console.log("Selected complaint id:", $scope.selectedComplaint.id);
+            
         };
 
         $scope.createComplaintByCsr = function () {

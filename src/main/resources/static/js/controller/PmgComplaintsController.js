@@ -92,10 +92,9 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                     $scope.preloader.send = false;
                 });
         };
-        $scope.updateData();
 
         $scope.allComplaintsClick = function () {
-            $scope.selectedTab = 0;
+            $scope.selectedTab = 1;
             $scope.selected = "";
             $scope.currentCategory = "-";
             $scope.currentStatus = "-";
@@ -147,13 +146,13 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             CustomerService.getCustomerById($scope.selectedCustomer.id).then(function (data) {
                     console.log("Customer:", data);
                     $scope.customer = data;
-                    if ($scope.customer.address != undefined) {
-                        $scope.customer.address = $scope.customer.address.region.nameRegion
-                            + ", " + $scope.customer.address.locality
-                            + ", " + $scope.customer.address.street
-                            + ", " + $scope.customer.address.houseNumber;
-                        $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
-                    }
+                    // if ($scope.customer.address != undefined) {
+                    //     $scope.customer.address = $scope.customer.address.region.nameRegion
+                    //         + ", " + $scope.customer.address.locality
+                    //         + ", " + $scope.customer.address.street
+                    //         + ", " + $scope.customer.address.houseNumber;
+                    //     $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
+                    // }
                 },
                 function (data) {
                     if (data.message != undefined) {
@@ -174,6 +173,13 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                     $scope.preloader.send = false;
                 });
             $window.scrollTo(0, 0);
+        };
+
+        $scope.complaintDetailData = function (complaint) {
+            $scope.selected = 'complaintSelected';
+            $scope.selectedComplaint = complaint;
+            console.log("Selected complaint id:", $scope.selectedComplaint.id);
+
         };
 
         $scope.nextResponsiblePage = function () {
@@ -213,7 +219,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         };
 
         $scope.updateResponsibleData = function () {
-            console.log("Updating data:", $scope.currentCategory, $scope.page, $scope.size);
+            console.log("Updating data for pmg:", $scope.currentCategory, $scope.page, $scope.size);
             $scope.page = 0;
             $scope.preloader.send = true;
             ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
@@ -225,9 +231,11 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                     $scope.preloader.send = false;
                 });
         };
+
+        $scope.updateResponsibleData();
         
         $scope.activeComplaintsClick = function () {
-            $scope.selectedTab = 1;
+            $scope.selectedTab = 0;
             $scope.selectedDetail = '';
             $scope.currentCategory = "-";
             $scope.updateResponsibleData();
@@ -240,9 +248,10 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 console.log("Handle complaint");
                 $scope.currentCategory = "-";
                 $scope.updateResponsibleData();
-                $scope.selectedTab = 1;
+                $scope.selectedTab = 0;
                 $scope.selectedDetail = '';
                 //$scope.complaint = data;
+                toastr.success('Complaint is taken into consideration successfully!');
             },
                 function (data) {
                     if (data.message != undefined) {
@@ -264,13 +273,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             CustomerService.getCustomerById($scope.selectedComplaint.user.id).then(function (data) {
                     console.log("Customer:", data);
                     $scope.customer = data;
-                    if ($scope.customer.address != undefined) {
-                        $scope.customer.address = $scope.customer.address.region.nameRegion
-                            + ", " + $scope.customer.address.locality
-                            + ", " + $scope.customer.address.street
-                            + ", " + $scope.customer.address.houseNumber;
-                        $scope.customer.address += ($scope.customer.address.apartmentNumber != undefined) ? (", " + $scope.customer.address.apartmentNumber) : "";
-                    }
+
                     $scope.preloader.send = false;
                 },
                 function (data) {
@@ -291,8 +294,9 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 .then(function (data) {
                         console.log("Complete complaint");
                         $scope.updateResponsibleData();
-                        $scope.selectedTab = 1;
+                        $scope.selectedTab = 0;
                         $scope.selectedComplaint = {};
+                        toastr.success('Complaint solved successfully!');
                     },
                     function (data) {
                         if (data.message != undefined) {
