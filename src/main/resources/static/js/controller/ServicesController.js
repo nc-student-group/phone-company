@@ -169,6 +169,7 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.preloader.send = true;
             ServicesService.performServiceEdit($scope.serviceToEdit).then(function (data) {
                 $scope.serviceToEdit = data;
+                console.log(`serviceToEdit: ${JSON.stringify($scope.serviceToEdit)}`);
                 $scope.preloader.send = false;
                 $scope.editing = false;
                 $scope.updateData();

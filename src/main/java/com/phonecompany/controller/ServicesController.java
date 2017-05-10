@@ -154,8 +154,9 @@ public class ServicesController {
     @PatchMapping
     public ResponseEntity<?> updateService(@RequestBody Service service) {
         LOG.debug("Service to be updated: ", service);
-        this.serviceService.update(service);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Service updatedService = this.serviceService.update(service);
+        LOG.debug("Updated service: {}", updatedService);
+        return new ResponseEntity<>(updatedService, HttpStatus.OK);
     }
 
     @GetMapping("/current")
