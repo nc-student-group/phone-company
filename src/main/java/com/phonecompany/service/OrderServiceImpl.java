@@ -56,7 +56,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     @Override
     public List<Order> getOrdersHistoryByClient(Customer customer, int page, int size) {
         Long clientId = customer.getId();
-        return customer.getRepresentative() ? orderDao.getOrdersByCorporateIdPaged(clientId, page, size) :
+        Long corporateId = customer.getCorporate().getId();
+        return customer.getRepresentative() ? orderDao.getOrdersByCorporateIdPaged(corporateId, page, size) :
                 orderDao.getOrdersByCustomerIdPaged(clientId, page, size);
     }
 

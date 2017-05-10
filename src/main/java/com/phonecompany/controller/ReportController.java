@@ -44,6 +44,7 @@ public class ReportController {
             @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
+        LOG.debug("Generating report");
         this.xssfService.generateReport(regionId, startDate, endDate);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();

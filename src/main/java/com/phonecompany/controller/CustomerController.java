@@ -160,22 +160,13 @@ public class CustomerController {
     @PatchMapping(value = "/api/customer/tariff/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);
-        SimpleMailMessage notificationMessage = this.tariffDeactivationEmailCreator
-                .constructMessage(customerTariff.getTariff());
-        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
         this.customerTariffService.suspendCustomerTariff(data);
-        //TODO: this is a highly questionable code
-        CustomerTariff customerTariff = this.customerTariffService.
-                getById((new Long((Integer) data.get("currentTariffId"))));
-        SimpleMailMessage notificationMessage = this.tariffSuspensionEmailCreator
-                .constructMessage(customerTariff.getTariff());
-        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
-        return new ResponseEntity<>(HttpStatus.OK);
+      return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping(value = "/api/customer/tariff/resume")

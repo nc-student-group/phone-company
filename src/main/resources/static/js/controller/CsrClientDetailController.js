@@ -142,7 +142,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 $scope.preloader.send = true;
                 TariffService.resumeCustomerTariff($scope.currentTariff).then(function (data) {
                     $scope.currentTariff = data;
-                    toastr.success("Your tariff plan " + $scope.data.currentTariff.tariff.tariffName +
+                    toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
                         " was successfully resumed", "Tariff plan resuming");
                     $scope.preloader.send = false;
                 }, function () {
