@@ -57,4 +57,14 @@ public class CustomerServiceDto extends DomainEntity {
     public void setOrderStatus(CustomerProductStatus orderStatus) {
         this.customerProductStatus = orderStatus;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerServiceDto{" +
+                "customer=" + customer +
+                ", service=" + service +
+                ", price=" + price +
+                ", customerProductStatus=" + customerProductStatus +
+                "} ";
+    }
 }

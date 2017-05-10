@@ -15,7 +15,8 @@ public class CustomerTariff extends DomainEntity {
     @NotNull(message = "Tariff must not be null")
     private Tariff tariff;
 
-    public CustomerTariff(){}
+    public CustomerTariff() {
+    }
 
     public CustomerTariff(Customer customer, Corporate corporate, double totalPrice, CustomerProductStatus customerProductStatus, Tariff tariff) {
         this.customer = customer;
@@ -63,16 +64,5 @@ public class CustomerTariff extends DomainEntity {
 
     public void setTariff(Tariff tariff) {
         this.tariff = tariff;
-    }
-
-    @Override
-    public String toString() {
-        return "CustomerTariff{" +
-                "customer=" + customer +
-                ", corporate=" + corporate +
-                ", totalPrice=" + totalPrice +
-                ", orderStatus=" + customerProductStatus +
-                ", tariff=" + tariff +
-                "} " + super.toString();
     }
 }

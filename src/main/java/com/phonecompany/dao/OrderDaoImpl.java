@@ -88,10 +88,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
         Order order = new Order();
         try {
             order.setId(rs.getLong("id"));
-            long customerServiceId = rs.getLong("customer_service_id");
-            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
-            long customerTariffId = rs.getLong("customer_tariff_id");
-            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+            order.setCustomerService(customerServiceDao.getById(rs.getLong("customer_service_id")));
+            order.setCustomerTariff(customerTariffDao.getById(rs.getLong("customer_tariff_id")));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
