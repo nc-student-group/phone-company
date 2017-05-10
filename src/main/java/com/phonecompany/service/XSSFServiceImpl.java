@@ -6,6 +6,7 @@ import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.interfaces.ServiceService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
@@ -39,6 +40,7 @@ public class XSSFServiceImpl implements XSSFService {
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
     private OrderDao orderDao;
+    private ServiceService serviceService;
 
     @Autowired
     public XSSFServiceImpl(OrderDao orderDao) {
@@ -49,7 +51,13 @@ public class XSSFServiceImpl implements XSSFService {
     public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
+        workbook = this.getServiceReport(workbook, startDate, endDate);
         this.saveWorkBook(workbook);
+    }
+
+    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook, LocalDate startDate, LocalDate endDate) {
+//        this.
+        return null;
     }
 
     private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,

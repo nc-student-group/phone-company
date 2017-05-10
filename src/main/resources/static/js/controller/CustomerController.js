@@ -34,7 +34,7 @@
             }
         );
 
-        TariffService.getOrderStatistics().then(function (data) {
+        TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
             $scope.customer = {
                 email: "",
