@@ -1,5 +1,5 @@
 'use strict';
-angular.module('phone-company').controller('CsrComplaintsController', [
+angular.module('phone-company').controller('PmgComplaintsController', [
     '$scope',
     '$rootScope',
     '$location',
@@ -9,6 +9,9 @@ angular.module('phone-company').controller('CsrComplaintsController', [
     function ($scope, $rootScope, $location,  $window, ComplaintService, CustomerService) {
         console.log('This is CsrComplaintsController');
         $scope.activePage = 'complaints';
+
+        $scope.selectedTab = 0;
+        $scope.selectedDetail = '';
         $scope.page = 0;
         $scope.customerPage = 0;
         $scope.size = 5;
@@ -23,6 +26,7 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             subject: ''
         };
         $scope.selectedCustomer = {};
+        $scope.selectedComplaint = {};
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
 
         $scope.getAllComplaints = function () {
@@ -88,7 +92,14 @@ angular.module('phone-company').controller('CsrComplaintsController', [
                     $scope.preloader.send = false;
                 });
         };
-        $scope.updateData();
+
+        $scope.allComplaintsClick = function () {
+            $scope.selectedTab = 1;
+            $scope.selected = "";
+            $scope.currentCategory = "-";
+            $scope.currentStatus = "-";
+            $scope.updateData();
+        };
 
         $scope.customerNextPage = function () {
             if ($scope.inProgress == false && ($scope.customerPage + 1) * $scope.size < $scope.customerComplaintsCount) {
@@ -168,31 +179,136 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             $scope.selected = 'complaintSelected';
             $scope.selectedComplaint = complaint;
             console.log("Selected complaint id:", $scope.selectedComplaint.id);
-            
+
         };
 
-        $scope.createComplaintByCsr = function () {
-            console.log("Complaint:", $scope.complaint);
-            ComplaintService.createComplaintByCsr($scope.complaint)
+        $scope.nextResponsiblePage = function () {
+            if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.complaintsCount) {
+                $scope.inProgress = true;
+                $scope.page = $scope.page + 1;
+                $scope.preloader.send = true;
+                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.complaints = data.complaints;
+                        $scope.complaintsCount = data.complaintsCount;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                        $window.scrollTo(0, 0);
+                    }, function () {
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
+        $scope.previousResponsiblePage = function () {
+            if ($scope.page > 0 && $scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = $scope.page - 1;
+                $scope.preloader.send = true;
+                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.complaints = data.complaints;
+                        $scope.complaintsCount = data.complaintsCount;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                        $window.scrollTo(0, 0);
+                    }, function () {
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
+        $scope.updateResponsibleData = function () {
+            console.log("Updating data for pmg:", $scope.currentCategory, $scope.page, $scope.size);
+            $scope.page = 0;
+            $scope.preloader.send = true;
+            ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
                 .then(function (data) {
-                        $scope.complaint = data;
-                        if ($scope.complaint.user.id != undefined) {
-                            toastr.success('Complaint created successfully!');
-                            console.log("Complaint added", $scope.complaint);
-                        } else {
-                            toastr.error('Error during complaint creating. User undefined!', 'Error');
-                            console.log("User undefined");
-                        }
+                    $scope.complaints = data.complaints;
+                    $scope.complaintsCount = data.complaintsCount;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                });
+        };
+
+        $scope.updateResponsibleData();
+        
+        $scope.activeComplaintsClick = function () {
+            $scope.selectedTab = 0;
+            $scope.selectedDetail = '';
+            $scope.currentCategory = "-";
+            $scope.updateResponsibleData();
+        };
+
+        $scope.handleComplaint = function (selectedComplaintId) {
+            console.log("Solving complaint with id: ", selectedComplaintId);
+
+            ComplaintService.handleComplaint(selectedComplaintId).then(function (data) {
+                console.log("Handle complaint");
+                $scope.currentCategory = "-";
+                $scope.updateResponsibleData();
+                $scope.selectedTab = 0;
+                $scope.selectedDetail = '';
+                //$scope.complaint = data;
+                toastr.success('Complaint is taken into consideration successfully!');
+            },
+                function (data) {
+                    if (data.message != undefined) {
+                        toastr.error(data.message, 'Error');
+                    } else {
+                        toastr.error('Error during complaint updating. Try again!', 'Error');
+                    }
+                    $scope.preloader.send = false;
+                }
+            );
+        };
+
+        $scope.detailInfo = function (complaint) {
+            console.log("Detail Info");
+            console.log("Selected complaint:", complaint);
+            $scope.selectedDetail = 'detailInfoSelected';
+            $scope.selectedComplaint = complaint;
+            $scope.preloader.send = true;
+            CustomerService.getCustomerById($scope.selectedComplaint.user.id).then(function (data) {
+                    console.log("Customer:", data);
+                    $scope.customer = data;
+
+                    $scope.preloader.send = false;
+                },
+                function (data) {
+                    $scope.preloader.send = false;
+                    if (data.message != undefined) {
+                        toastr.error(data.message, 'Error');
+                    } else {
+                        toastr.error('Error during customer complaints loading', 'Error');
+                    }
+                }
+            );
+
+            $window.scrollTo(0, 50);
+        };
+        $scope.completeComplaint = function () {
+            $scope.selectedDetail = '';
+            ComplaintService.completeComplaint($scope.selectedComplaint.id, $scope.selectedComplaint.comment)
+                .then(function (data) {
+                        console.log("Complete complaint");
+                        $scope.updateResponsibleData();
+                        $scope.selectedTab = 0;
+                        $scope.selectedComplaint = {};
+                        toastr.success('Complaint solved successfully!');
                     },
                     function (data) {
                         if (data.message != undefined) {
                             toastr.error(data.message, 'Error');
                         } else {
-                            toastr.error('Error during complaint creating. Try again!', 'Error');
+                            toastr.error('Error during complaint updating. Try again!', 'Error');
                         }
                         $scope.preloader.send = false;
                     }
                 );
+
+            $window.scrollTo(0, 0);
         };
 
     }]);

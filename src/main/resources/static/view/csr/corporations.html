@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div >
+                        <div>
                             <div class="card" ng-hide="editing">
                                 <div class="header">
                                     <h4 class="title">Companies</h4>
@@ -37,6 +37,9 @@
                                         </div>
                                     </div>
                                     <table id="servicesTable" class="table table-striped table-bordered table-hover">
+                                        <col width="10%">
+                                        <col width="80%">
+                                        <col width="10%">
                                         <thead>
                                         <th>Id</th>
                                         <th>Name</th>
@@ -48,8 +51,12 @@
                                             <td>{{c.id}}</td>
                                             <td>{{c.corporateName}}</td>
                                             <td>
-                                                <button class="btn btn-default btn-fill" ng-click="editClick(c)">Edit</button>
-                                                <button class="btn btn-default btn-fill" ng-click="detailsClick(c)">Details</button>
+                                                <button class="btn btn-default btn-fill" style="width: 100%"
+                                                        ng-click="editClick(c)">Edit
+                                                </button>
+                                                <button class="btn btn-default btn-fill" style="width: 100%"
+                                                        ng-click="detailsClick(c)">Details
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -67,9 +74,10 @@
                                                             aria-controls="corporationTable"
                                                             data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                     </li>
-                                                    <li class="paginate_button next pointable" id="corporationTable_next"><a
+                                                    <li class="paginate_button next pointable"
+                                                        id="corporationTable_next"><a
                                                             aria-controls="tariffTable" data-dt-idx="2"
-                                                            tabindex="0" ng-show="(page + 1)*size < corporationSelected"
+                                                            tabindex="0" ng-show="(page + 1)*size < corporationsSelected"
                                                             ng-click="nextPage()">Next</a></li>
                                                 </ul>
                                             </div>
@@ -92,8 +100,9 @@
                                           autocomplete="off" novalidate>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <md-input-container class="md-block" >
-                                                    <input type="text" placeholder="Corporation name" name="corporationName"
+                                                <md-input-container class="md-block">
+                                                    <input type="text" placeholder="Corporation name"
+                                                           name="corporationName"
                                                            ng-model="corporation.corporateName" md-maxlength="50"
                                                            required/>
                                                 </md-input-container>
@@ -118,8 +127,9 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <md-input-container class="md-block">
-                                                    <input type="text" placeholder="Corporation name" name="corporationName"
-                                                           ng-model="editCorporation.corporateName"  md-maxlength="50"
+                                                    <input type="text" placeholder="Corporation name"
+                                                           name="corporationName"
+                                                           ng-model="editCorporation.corporateName" md-maxlength="50"
                                                            required/>
                                                 </md-input-container>
                                             </div>
@@ -128,6 +138,9 @@
                                         <button class="btn btn-info btn-fill pull-left"
                                                 ng-disabled="editCorporationsForm.$invalid"
                                                 ng-click="saveCorporation()">Save corporation
+                                        </button>
+                                        <button class="btn pull-right"
+                                                ng-click="goBackClick()">Back
                                         </button>
                                         <div class="clearfix"></div>
                                     </form>

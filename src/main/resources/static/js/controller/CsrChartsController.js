@@ -11,7 +11,7 @@ angular.module('phone-company').controller('CsrChartsController', [
 
         $scope.message = 'Charts page';
 
-        TariffService.getOrderStatistics().then(function (response) {
+        TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
         });
 

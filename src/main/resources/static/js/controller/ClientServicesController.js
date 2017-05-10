@@ -4,15 +4,25 @@ angular.module('phone-company').controller('ClientServicesController', [
     '$scope',
     '$location',
     '$rootScope',
+    'CustomerInfoService',
     'ServicesService',
     '$anchorScroll',
     'filterFilter',
-    function ($scope, $location, $rootScope, ServicesService, filterFilter) {
+
+    function ($scope, $location, $rootScope,CustomerInfoService, ServicesService, filterFilter,) {
 
         $scope.shifted = false;
         $scope.page = 0;
         $scope.size = 6;
 
+        $scope.preloader.send = true;
+        CustomerInfoService.getCustomer().then(function (data) {
+            $scope.customer = data;
+            $scope.preloader.send = false;
+            console.log($scope.customer)
+        },function (err) {
+            $scope.preloader.send = false;
+        });
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
             console.log(`$scope.categories[0].categoryName ${$scope.categories[0].categoryName}`);

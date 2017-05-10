@@ -4,9 +4,35 @@
     angular.module('phone-company')
         .controller('CustomerInfoController', CustomerInfoController);
 
-    CustomerInfoController.$inject = ['$scope', '$location', '$log', 'CustomerInfoService', '$rootScope', '$mdDialog'];
+    angular.module('phone-company')
+        .directive('passwordConfirm', ['$parse', function ($parse) {
+            return {
+                restrict: 'A',
+                scope: {
+                    matchTarget: '=',
+                },
+                require: 'ngModel',
+                link: function link(scope, elem, attrs, ctrl) {
+                    var validator = function (value) {
+                        ctrl.$setValidity('match', value === scope.matchTarget);
+                        return value;
+                    };
 
-    function CustomerInfoController($scope, $location, $log, CustomerInfoService, $rootScope, $mdDialog) {
+                    ctrl.$parsers.unshift(validator);
+                    ctrl.$formatters.push(validator);
+
+                    // This is to force validator when the original password gets changed
+                    scope.$watch('matchTarget', function(newval, oldval) {
+                        validator(ctrl.$viewValue);
+                    });
+
+                }
+            };
+        }]);
+
+    CustomerInfoController.$inject = ['$scope', '$location', '$log', 'CustomerInfoService', 'CustomerService', 'TariffService', '$rootScope', '$mdDialog'];
+
+    function CustomerInfoController($scope, $location, $log, CustomerInfoService, CustomerService, TariffService, $rootScope, $mdDialog) {
         console.log('This is CustomerInfoController');
         $scope.activePage = 'profile';
         $scope.ordersFound = 0;
@@ -15,10 +41,17 @@
         $scope.loading = true;
         $scope.hasCurrentTariff = false;
         $scope.hasCurrentServices = false;
+        $scope.corporateUser = false;
         $scope.page = 0;
         $scope.servicesPage = 0;
         $scope.size = 5;
         $scope.servicesSize = 5;
+        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
+        $scope.textFieldPattern = /^[a-zA-Z]+$/;
+        $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
+        $scope.numberPattern = /^[0-9]+$/;
+        $scope.newPassword = null;
+        $scope.passwordConfirmation = null;
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
@@ -26,14 +59,19 @@
             CustomerInfoService.patchCustomer($scope.customer);
         };
 
+        $scope.preloader.send = true;
         CustomerInfoService.getCustomer()
             .then(function (data) {
                 console.log(`Retrieved customer ${JSON.stringify(data)}`);
                 $scope.customer = data;
+                $scope.corporateUser = data.isRepresentative;
                 $scope.mailingSwitchDisabled = false;
                 $scope.preloader.send = false;
             });
-
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+        });
+        $scope.preloader.send = false;
         $scope.loadCurrentServices = function () {
             $scope.preloader.send = true;
             CustomerInfoService.getCurrentServices()
@@ -68,7 +106,7 @@
                     $scope.preloader.send = false;
                 });
         };
-        // $scope.loadCurrentTariff();
+        $scope.loadCurrentTariff();
 
         $scope.myTariffPlansTabClick = function () {
             if ($scope.currentTariff == undefined) {
@@ -235,9 +273,9 @@
             };
         }
 
-        $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
+        $scope.showTariffDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({
-                controller: DeactivateDialogController,
+                controller: DeactivateTariffDialogController,
                 templateUrl: '../../view/client/deactivateCurrentTariffModal.html',
                 locals: {
                     currentTariff: currentTariff,
@@ -253,8 +291,8 @@
                 });
         };
 
-        function DeactivateDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                            loadCurrentTariff, loadTariffsHistory) {
+        function DeactivateTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+                                                  loadCurrentTariff, loadTariffsHistory) {
             $scope.currentTariff = currentTariff;
 
             $scope.hide = function () {
@@ -365,10 +403,10 @@
             };
         }
 
-        $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
-                                                     loadCurrentTariff, loadTariffsHistory) {
+        $scope.showTariffSuspensionModalWindow = function (currentTariff, daysToExecution,
+                                                           loadCurrentTariff, loadTariffsHistory) {
             $mdDialog.show({
-                controller: SuspendDialogController,
+                controller: SuspendTariffDialogController,
                 templateUrl: '../../view/client/suspendCurrentTariffModal.html',
                 locals: {
                     currentTariff: currentTariff,
@@ -385,8 +423,8 @@
                 });
         };
 
-        function SuspendDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                         loadCurrentTariff, loadTariffsHistory) {
+        function SuspendTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+                                               loadCurrentTariff, loadTariffsHistory) {
             $scope.data = {};
             $scope.data.currentTariffId = currentTariff.id;
             $scope.data.currentTariff = currentTariff;
@@ -410,9 +448,62 @@
                         loadTariffsHistory();
                     });
                 } else {
-                    toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
+                    toastr.error("Suspension period must be from 1 to 30 days!", "Wrong suspension period!")
                 }
             };
         }
+
+        function ResumeTariffDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
+                                              loadCurrentTariff, loadTariffsHistory) {
+            $scope.currentTariff = currentTariff;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function () {
+                CustomerInfoService.resumeTariff($scope.currentTariff).then(function () {
+                    toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
+                        " was successfully resumed!", "Tariff plan resuming");
+                    $mdDialog.cancel();
+                    loadCurrentTariff();
+                    loadTariffsHistory();
+                });
+            };
+        }
+
+        $scope.showTariffResumingModalWindow = function (currentTariff, loadCurrentTariff,
+                                                         loadTariffsHistory) {
+            $mdDialog.show({
+                controller: ResumeTariffDialogController,
+                templateUrl: '../../view/client/resumeCurrentTariffModal.html',
+                locals: {
+                    currentTariff: currentTariff,
+                    loadCurrentTariff: loadCurrentTariff,
+                    loadTariffsHistory: loadTariffsHistory
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        $scope.updateCustomer = function () {
+            $scope.customer.password = $scope.newPassword;
+            CustomerService.updateCustomer($scope.customer).then(
+                function (response) {
+                    toastr.success("Your profile has been updated");
+                },
+                function(error){
+                    toastr.error("Error, profile  wasn't updated");
+                }
+            );
+        };
     }
 }());

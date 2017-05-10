@@ -43,14 +43,14 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
 
     @Override
     public CustomerServiceDto deactivateCustomerService(CustomerServiceDto customerService) {
-        if (CustomerProductStatus.SUSPENDED.equals(customerService.getOrderStatus())) {
+        if (CustomerProductStatus.SUSPENDED.equals(customerService.getCustomerProductStatus())) {
             List<Order> resumingOrders = orderService.getResumingOrderByCustomerService(customerService);
             resumingOrders.forEach((Order resumingOrder) -> {
                 resumingOrder.setOrderStatus(OrderStatus.CANCELED);
                 orderService.update(resumingOrder);
             });
         }
-        customerService.setOrderStatus(CustomerProductStatus.DEACTIVATED);
+        customerService.setCustomerProductStatus(CustomerProductStatus.DEACTIVATED);
         LocalDate now = LocalDate.now();
 
         Order deactivationOrder = new Order();
@@ -74,7 +74,7 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
             orderService.update(resumingOrder);
         });
 
-        customerService.setOrderStatus(CustomerProductStatus.ACTIVE);
+        customerService.setCustomerProductStatus(CustomerProductStatus.ACTIVE);
         LocalDate now = LocalDate.now();
 
         Order activationOrder = new Order();
@@ -96,7 +96,7 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
                 getById((new Long((Integer) suspensionData.get("customerServiceId"))));
         Integer daysToExecution = (Integer) suspensionData.get("daysToExecution");
 
-        customerService.setOrderStatus(CustomerProductStatus.SUSPENDED);
+        customerService.setCustomerProductStatus(CustomerProductStatus.SUSPENDED);
 
         LocalDate now = LocalDate.now();
         LocalDate executionDate = now.plusDays(daysToExecution);

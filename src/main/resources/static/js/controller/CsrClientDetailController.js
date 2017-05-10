@@ -23,12 +23,24 @@ angular.module('phone-company').controller('CsrClientDetailController',
             $scope.servicesSize = 5;
             $scope.inProgress = false;
             $scope.inProgressHistory = false;
+            $scope.isCorporate = false;
 
             $scope.preloader.send = true;
             CustomerService.getCustomerById($routeParams['id']).then(function (data) {
                 $scope.customer = data;
+                if ($scope.customer.corporate === null) {
+                    $scope.isCorporate = false;
+                } else {
+                    $scope.isCorporate = true;
+                }
+                $scope.preloader.send = false;
+            }, function () {
                 $scope.preloader.send = false;
             });
+
+            $scope.editClick = function (id) {
+                $location.path("/csr/editCustomer/" + id);
+            };
 
             $scope.loadCurrentServices = function () {
                 if (!$scope.inProgress) {
@@ -122,7 +134,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                     $scope.showChangeTariffModalWindow($scope.currentTariff,
                         $scope.availableTariffs[$scope.selectedTariffPlan],
                         $scope.preloader,
-                        $scope.customer.id, $scope.loadCurrentTariff);
+                        $scope.customer.id, false, $scope.loadCurrentTariff);
                 }
             };
 
@@ -130,8 +142,11 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 $scope.preloader.send = true;
                 TariffService.resumeCustomerTariff($scope.currentTariff).then(function (data) {
                     $scope.currentTariff = data;
+                    toastr.success("Your tariff plan " + $scope.data.currentTariff.tariff.tariffName +
+                        " was successfully resumed", "Tariff plan resuming");
                     $scope.preloader.send = false;
                 }, function () {
+                    toastr.error("Some problems during tariff plan resuming! Try again later.");
                     $scope.preloader.send = false;
                 })
             };
@@ -141,7 +156,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 if ($scope.currentTariff == undefined) {
                     $scope.loadCurrentTariff();
                 }
-                if ($scope.availableTariffs == undefined) {
+                console.log($scope.customer);
+                if ($scope.availableTariffs == undefined && $scope.customer.corporate == undefined) {
                     $scope.getAvailableTariffs();
                 }
             };
@@ -173,9 +189,11 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.orders = data.orders;
                             $scope.ordersFound = data.ordersFound;
                             console.log($scope.orders);
+                            $scope.inProgressHistory = false;
                             $scope.preloader.send = false;
                         }, function (data) {
                             $scope.preloader.send = false;
+                            $scope.inProgressHistory = false;
                         });
                 }
             };
@@ -336,50 +354,6 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
             }
 
-            $scope.showDeactivationModalWindow = function (currentTariff, loadCurrentTariff, loadTariffsHistory, preloader) {
-                $mdDialog.show({
-                    controller: DeactivateDialogController,
-                    templateUrl: '../../view/client/deactivateCurrentTariffModal.html',
-                    locals: {
-                        currentTariff: currentTariff,
-                        loadCurrentTariff: loadCurrentTariff,
-                        loadTariffsHistory: loadTariffsHistory,
-                        preloader: preloader
-                    },
-                    parent: angular.element(document.body),
-                    clickOutsideToClose: true,
-                    escapeToClose: true
-                })
-                    .then(function (answer) {
-
-                    });
-            };
-
-            function DeactivateDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                                loadCurrentTariff, loadTariffsHistory, preloader) {
-                $scope.currentTariff = currentTariff;
-                $scope.preloader = preloader;
-                $scope.hide = function () {
-                    $mdDialog.hide();
-                };
-                $scope.cancel = function () {
-                    $mdDialog.cancel();
-                };
-
-                $scope.answer = function () {
-                    $scope.preloader.send = true;
-                    CustomerInfoService.deactivateTariff($scope.currentTariff).then(function () {
-                        toastr.success("Your tariff plan " + $scope.currentTariff.tariff.tariffName +
-                            " was successfully deactivated!", "Tariff plan deactivation");
-                        $mdDialog.cancel();
-                        loadCurrentTariff();
-                        loadTariffsHistory();
-                        $scope.preloader.send = false;
-                    }, function () {
-                        $scope.preloader.send = false;
-                    });
-                };
-            }
 
             $scope.activateCustomerService = function (customerService, loadCurrentServices, preloader) {
                 $mdDialog.show({
@@ -478,57 +452,5 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 };
             }
 
-            $scope.showSuspensionModalWindow = function (currentTariff, daysToExecution,
-                                                         loadCurrentTariff, loadTariffsHistory, preloader) {
-                $mdDialog.show({
-                    controller: SuspendDialogController,
-                    templateUrl: '../../view/client/suspendCurrentTariffModal.html',
-                    locals: {
-                        currentTariff: currentTariff,
-                        daysToExecution: daysToExecution,
-                        loadCurrentTariff: loadCurrentTariff,
-                        loadTariffsHistory: loadTariffsHistory,
-                        preloader: preloader
-                    },
-                    parent: angular.element(document.body),
-                    clickOutsideToClose: true,
-                    escapeToClose: true
-                })
-                    .then(function (answer) {
 
-                    });
-            };
-
-            function SuspendDialogController($scope, $mdDialog, currentTariff, CustomerInfoService,
-                                             loadCurrentTariff, loadTariffsHistory, preloader) {
-                $scope.data = {};
-                $scope.data.currentTariffId = currentTariff.id;
-                $scope.data.currentTariff = currentTariff;
-                $scope.data.daysToExecution = 1;
-                $scope.preloader = preloader;
-                $scope.hide = function () {
-                    $mdDialog.hide();
-                };
-                $scope.cancel = function () {
-                    $mdDialog.cancel();
-                };
-
-                $scope.answer = function () {
-                    if ($scope.data.daysToExecution !== undefined) {
-                        $scope.preloader.send = true;
-                        CustomerInfoService.suspendTariff($scope.data).then(function () {
-                            toastr.success("Your tariff plan " + $scope.data.currentTariff.tariff.tariffName +
-                                " was successfully suspended for " + $scope.data.daysToExecution +
-                                " days!", "Tariff plan suspension");
-                            $mdDialog.cancel();
-                            loadCurrentTariff();
-                            loadTariffsHistory();
-                        }, function () {
-                            $scope.preloader.send = false;
-                        });
-                    } else {
-                        toastr.error("Suspension period must be from 1 to 365 days!", "Wrong suspension period!")
-                    }
-                };
-            }
         }]);

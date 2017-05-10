@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.SecuredUser;
@@ -130,6 +131,16 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     @Override
     public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {
         return userDao.getPaging(page, size, roleId, status);
+    }
+
+    public void changePassword(String oldPass,String newPass){
+        User user = this.getCurrentlyLoggedInUser();
+        if(shaPasswordEncoder.encodePassword(oldPass,null).equals(user.getPassword())){
+            user.setPassword(shaPasswordEncoder.encodePassword(newPass,null));
+            userDao.update(user);
+        }else {
+            throw new ConflictException("Old password is wrong");
+        }
     }
 
     @Override

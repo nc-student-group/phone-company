@@ -141,8 +141,9 @@ public class CustomerController {
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
-        customerService.deactivateCustomerTariff(customer.getId());
+
         this.customerService.update(customer);
+        this.addressService.update(customer.getAddress());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -174,6 +175,12 @@ public class CustomerController {
         SimpleMailMessage notificationMessage = this.tariffSuspensionEmailCreator
                 .constructMessage(customerTariff.getTariff());
         this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/api/customer/tariff/resume")
+    public ResponseEntity<Void> resumeCustomerTariff(@RequestBody CustomerTariff customerTariff) {
+        customerTariffService.resumeCustomerTariff(customerTariff);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

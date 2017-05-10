@@ -5,205 +5,597 @@
         <ng-include src="'../../view/pmg/pmgHeader.html'"></ng-include>
         <div class="content">
             <div class="container-fluid">
-                <!--ALL COMPLAINTS-->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Complaints/Suggestions</h4>
-                                <p class="category">All complaints</p>
-                            </div>
-                            <hr />
-                            <div class="col-sm-4">
-                                <div class="dataTables_length" id="tariffTable_length">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Show entries:</label>
-                                        <md-select ng-model="size" md-on-close="updateData()">
-                                            <md-option value="5">5</md-option>
-                                            <md-option value="10">10</md-option>
-                                            <md-option value="25">25</md-option>
-                                            <md-option value="50">50</md-option>
-                                            <md-option value="100">100</md-option>
-                                        </md-select>
-                                    </md-input-container>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="dataTables_length">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Category:</label>
-                                        <md-select ng-model="currentCategory" md-on-close="updateData()" >
-                                            <md-option value="-">ALL CATEGORIES</md-option>
-                                            <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
-                                            <md-option value="SUGGESTION">SUGGESTION</md-option>
-                                            <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
-                                            <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
-                                                {{c}}
-                                            </md-option-->
-                                        </md-select>
-                                    </md-input-container>
-                                </div>
-                            </div>
-                            <div class="content table-responsive ">
-                                <table class="table table-striped table-bordered table-hover" id="complaintsTable">
-                                    <!--id-->
-                                    <col width="5%">
-                                    <!--client-->
-                                    <col width="15%">
-                                    <!--date-->
-                                    <col width="10%">
-                                    <!--type-->
-                                    <col width="10%">
-                                    <!--status-->
-                                    <col width="10%">
-                                    <!--subject-->
-                                    <col width="15%">
-                                    <!--description-->
-                                    <col width="35%">
-                                    <thead>
-                                    <th>ID</th>
-                                    <th>Client</th>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="c in complaints">
-                                        <td>{{c.id}}</td>
-                                        <td>
-                                            <a href="#/pmg/complaints" ng-click="customerData(c.user.id, c.user.email)">{{c.user.email}}</a>
-                                        </td>
-                                        <td>{{c.date}}</td>
-                                        <td>{{c.type}}</td>
-                                        <td>{{c.status}}</td>
-                                        <td>{{c.subject}}</td>
-                                        <td>
-                                            <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="col-sm-7">
-                                        <div class="dataTables_paginate paging_simple_numbers"
-                                             id="complaints_table_paginate">
-                                            <ul class="pagination">
-                                                <li class="paginate_button previous" id="complaintsTable_previous">
-                                                    <a aria-controls="complaintsTable" data-dt-idx="0"
-                                                       tabindex="0" ng-show="page > 0"
-                                                       ng-click="previousPage()">Previous</a>
-                                                </li>
-                                                <li class="paginate_button active"><a
-                                                        aria-controls="complaintsTable"
-                                                        data-dt-idx="1" tabindex="0">{{page + 1}}</a>
-                                                </li>
-                                                <li class="paginate_button next pointable" id="complaintsTable_next">
-                                                    <a  aria-controls="complaintsTable" data-dt-idx="2"
-                                                        tabindex="0" ng-show="(page + 1) * size < complaintsCount"
-                                                        ng-click="nextPage()">Next</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div>
-                                            <label><b>Complaints count: {{complaintsCount}}</b></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--CUSTOMER COMPLAINTS-->
-                <div class="row" ng-show="selected === 'customerSelected'">
-                    <a name="customer"></a>
-                    <div class="col-md-12">
-                        <div class="card">
-                            <i class="fa fa-times close-registration-form"
-                               ng-click="selected = ''">
-                            </i>
-                            <div class="header">
-                                <h4 class="title">Customer Complaints/Suggestions</h4>
-                            </div>
-                            <hr />
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom  md-selected="selectedTab">
+                            <md-tab label="Active complaints" ng-click="activeComplaintsClick()">
+                                <md-content class="md-padding">
+                                    <!--ACTIVE COMPLAINTS-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title"> Active Complaints/Suggestions</h4>
+                                                </div>
+                                                <hr />
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Show entries:</label>
+                                                            <md-select ng-model="size" md-on-close="updateResponsibleData()">
+                                                                <md-option value="5">5</md-option>
+                                                                <md-option value="10">10</md-option>
+                                                                <md-option value="25">25</md-option>
+                                                                <md-option value="50">50</md-option>
+                                                                <md-option value="100">100</md-option>
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Category:</label>
+                                                            <md-select ng-model="currentCategory" md-on-close="updateResponsibleData()" >
+                                                                <md-option value="-">ALL CATEGORIES</md-option>
+                                                                <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
+                                                                <md-option value="SUGGESTION">SUGGESTION</md-option>
+                                                                <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                                <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                                    {{c}}
+                                                                </md-option-->
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
+                                                <div class="content table-responsive ">
+                                                    <table class="table table-striped table-bordered table-hover" id="activeComplaintsTable">
+                                                        <!--id-->
+                                                        <col width="5%">
+                                                        <!--client-->
+                                                        <col width="15%">
+                                                        <!--date-->
+                                                        <col width="7%">
+                                                        <!--type-->
+                                                        <col width="10%">
+                                                        <!--status-->
+                                                        <col width="8%">
+                                                        <!--subject-->
+                                                        <col width="15%">
+                                                        <!--description-->
+                                                        <col width="35%">
+                                                        <!--action-->
+                                                        <col width="10%">
+                                                        <thead>
+                                                        <th>ID</th>
+                                                        <th>Client</th>
+                                                        <th>Date</th>
+                                                        <th>Category</th>
+                                                        <th>Status</th>
+                                                        <th>Subject</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr ng-repeat="c in complaints">
+                                                            <td>{{c.id}}</td>
+                                                            <td>
+                                                                {{c.user.email}}
+                                                            </td>
+                                                            <td>{{c.date}}</td>
+                                                            <td>{{c.type}}</td>
+                                                            <td>{{c.status}}</td>
+                                                            <td>{{c.subject}}</td>
+                                                            <td>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                            </td>
 
-                            <div class="content table-responsive ">
-                                <label>Email</label><br>
-                                <p>{{selectedCustomer.email}}</p><br>
-                                <label>Name</label><br>
-                                <p>{{customer.lastName}} {{customer.firstName}} {{customer.secondName}}</p><br>
-                                <label>Phone</label><br>
-                                <p>{{customer.phone}}</p><br>
-                                <label>Address</label><br>
-                                <p>{{customer.address}}</p><br>
-                                <table class="table table-striped table-bordered table-hover" id="customerComplaintsTable">
-                                    <!--id-->
-                                    <col width="5%">
-                                    <!--date-->
-                                    <col width="10%">
-                                    <!--type-->
-                                    <col width="10%">
-                                    <!--status-->
-                                    <col width="10%">
-                                    <!--subject-->
-                                    <col width="15%">
-                                    <!--description-->
-                                    <col width="35%">
-                                    <thead>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Subject</th>
-                                    <th>Description</th>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="c in customerComplaints">
-                                        <td>{{c.id}}</td>
-                                        <td>{{c.date}}</td>
-                                        <td>{{c.type}}</td>
-                                        <td>{{c.status}}</td>
-                                        <td>{{c.subject}}</td>
-                                        <td>
-                                            <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="col-sm-7">
-                                        <div class="dataTables_paginate paging_simple_numbers"
-                                             id="customer_complaints_table_paginate">
-                                            <ul class="pagination">
-                                                <li class="paginate_button previous" id="customerComplaintsTable_previous">
-                                                    <a aria-controls="customerComplaintsTable" data-dt-idx="0"
-                                                       tabindex="0" ng-show="customerPage > 0"
-                                                       ng-click="customerPreviousPage()">Previous</a>
-                                                </li>
-                                                <li class="paginate_button active"><a
-                                                        aria-controls="customerComplaintsTable"
-                                                        data-dt-idx="1" tabindex="0">{{customerPage + 1}}</a>
-                                                </li>
-                                                <li class="paginate_button next pointable" id="customerComplaintsTable_next">
-                                                    <a
-                                                            aria-controls="customerComplaintsTable" data-dt-idx="2"
-                                                            tabindex="0" ng-show="(customerPage + 1) * size < customerComplaintsCount"
-                                                            ng-click="customerNextPage()">Next</a></li>
-                                            </ul>
+                                                            <td>
+                                                                <button style="width: 100%" class="btn btn-success btn-fill pull-left"
+                                                                        ng-click="detailInfo(c)">Solve
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-sm-7">
+                                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                                 id="activeComplaints_table_paginate">
+                                                                <ul class="pagination">
+                                                                    <li class="paginate_button previous" id="activeComplaintsTable_previous">
+                                                                        <a aria-controls="complaintsTable" data-dt-idx="0"
+                                                                           tabindex="0" ng-show="page > 0"
+                                                                           ng-click="previousResponsiblePage()">Previous</a>
+                                                                    </li>
+                                                                    <li class="paginate_button active"><a
+                                                                            aria-controls="complaintsTable"
+                                                                            data-dt-idx="1" tabindex="0">{{page + 1}}</a>
+                                                                    </li>
+                                                                    <li class="paginate_button next pointable" id="activeComplaintsTable_next">
+                                                                        <a  aria-controls="complaintsTable" data-dt-idx="2"
+                                                                            tabindex="0" ng-show="(page + 1) * size < complaintsCount"
+                                                                            ng-click="nextResponsiblePage()">Next</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div>
+                                                                <label><b>Complaints count: {{complaintsCount}}</b></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div>
-                                            <label><b>Customer complaints count: {{customerComplaintsCount}}</b></label>
+
+                                    <!--DETAIL INFO TO SOLVE COMPLAINT-->
+                                    <div class="row" ng-show="selectedDetail === 'detailInfoSelected'">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <i class="fa fa-times close-registration-form"
+                                                   ng-click="selectedDetail = ''">
+                                                </i>
+                                                <div class="header">
+                                                    <h4 class="title">Detailed information on the complaint</h4>
+                                                </div>
+                                                <hr />
+                                                <div class="content table-responsive ">
+                                                    <!--CUSTOMER INFO-->
+                                                    <div  class="card">
+                                                        <div class="header">
+                                                            <h5 class="title">Customer Info</h5>
+                                                        </div>
+                                                        <hr />
+                                                        <div class="content table-responsive ">
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Email</div>
+                                                                <div class="col-md-8">{{customer.email}}</div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Full name</div>
+                                                                <div class="col-md-8">{{customer.firstName}}
+                                                                    {{customer.secondName}} {{customer.lastName}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Phone</div>
+                                                                <div class="col-md-8">{{customer.phone}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Mailing</div>
+                                                                <div class="col-md-8"><span
+                                                                        ng-show="customer.isMailingEnabled">Yes</span><span
+                                                                        ng-hide="customer.isMailingEnabled">No</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Region</div>
+                                                                <div class="col-md-8">{{customer.address.region.nameRegion}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row" ng-hide="customer.address == null">
+                                                                <div class="col-md-4">Address</div>
+                                                                <div class="col-md-8">{{customer.address.locality}},
+                                                                    {{customer.address.street}},
+                                                                    {{customer.address.houseNumber}},
+                                                                    {{customer.address.apartmentNumber}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Status</div>
+                                                                <div class="col-md-8">
+                                                                    {{customer.status}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row" ng-hide="customer.corporate == null">
+                                                                <div class="col-md-4">Corporate</div>
+                                                                <div class="col-md-8">{{customer.corporate.corporateName}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row customer-profile-row" ng-hide="customer.corporate == null">
+                                                                <div class="col-md-4">Representative</div>
+                                                                <div class="col-md-8"><span
+                                                                        ng-show="customer.isRepresentative">Yes</span><span
+                                                                        ng-hide="customer.isRepresentative">No</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--COMPLAINT INFO-->
+                                                    <div  class="card">
+                                                        <div class="header">
+                                                            <h5 class="title">Complaint Info</h5>
+                                                        </div>
+                                                        <hr />
+                                                        <div class="content table-responsive ">
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Id</div>
+                                                                <div class="col-md-8">{{selectedComplaint.id}}</div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Date</div>
+                                                                <div class="col-md-8">{{selectedComplaint.date}}</div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Category</div>
+                                                                <div class="col-md-8">{{selectedComplaint.type}}</div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Status</div>
+                                                                <div class="col-md-8">{{selectedComplaint.status}}</div>
+                                                            </div>
+                                                            <div class="row customer-profile-row">
+                                                                <div class="col-md-4">Subject</div>
+                                                                <div class="col-md-8">{{selectedComplaint.subject}}</div>
+                                                            </div>
+                                                            <label>Description</label><br>
+                                                            <textarea readonly rows="5" cols="50" type="text" class="form-control"
+                                                                      name="description">{{selectedComplaint.text}}
+                                                            </textarea><br>
+                                                            <form name="solveComplaintForm" id="solveComplaintForm"
+                                                                  autocomplete="off" novalidate ng-submit="completeComplaint()">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-12">
+                                                                        <md-input-container class="md-block">
+                                                                            <textarea rows="5" cols="50" type="text" class="form-control"
+                                                                                      placeholder="Comment" name="comment"
+                                                                                      ng-model="selectedComplaint.comment" md-maxlength="1000" required>
+                                                                            </textarea>
+                                                                            <div ng-messages="solveComplaintForm.comment.$error" role="alert"
+                                                                                 multiple>
+                                                                                <div ng-message="required">
+                                                                                    Comment is required.
+                                                                                </div>
+                                                                            </div>
+                                                                        </md-input-container>
+                                                                    </div>
+                                                                </div>
+                                                                <button class="btn btn-info btn-fill pull-left" type="submit"
+                                                                        ng-disabled="solveComplaintForm.$invalid">Solve
+                                                                </button>
+
+                                                            </form>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="All complaints/suggestions" ng-click = "allComplaintsClick()">
+                                <md-content class="md-padding">
+                                    <!--ALL COMPLAINTS-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Complaints/Suggestions</h4>
+                                                    <p class="category">All complaints</p>
+                                                </div>
+                                                <hr />
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length" id="tariffTable_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Show entries:</label>
+                                                            <md-select ng-model="size" md-on-close="updateData()">
+                                                                <md-option value="5">5</md-option>
+                                                                <md-option value="10">10</md-option>
+                                                                <md-option value="25">25</md-option>
+                                                                <md-option value="50">50</md-option>
+                                                                <md-option value="100">100</md-option>
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Category:</label>
+                                                            <md-select ng-model="currentCategory" md-on-close="updateData()" >
+                                                                <md-option value="-">ALL CATEGORIES</md-option>
+                                                                <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
+                                                                <md-option value="SUGGESTION">SUGGESTION</md-option>
+                                                                <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                                <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                                    {{c}}
+                                                                </md-option-->
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="dataTables_length">
+                                                        <md-input-container class="md-block" flex-gt-sm>
+                                                            <label>Status:</label>
+                                                            <md-select ng-model="currentStatus" md-on-close="updateData()" >
+                                                                <md-option value="-">ALL STATUS</md-option>
+                                                                <md-option value="ACCEPTED">ACCEPTED</md-option>
+                                                                <md-option value="INTRAPROCESS">INTRAPROCESS</md-option>
+                                                                <md-option value="ACCOMPLISHED">ACCOMPLISHED</md-option>
+                                                            </md-select>
+                                                        </md-input-container>
+                                                    </div>
+                                                </div>
+                                                <div class="content table-responsive ">
+                                                    <table class="table table-striped table-bordered table-hover" id="complaintsTable">
+                                                        <!--id-->
+                                                        <col width="5%">
+                                                        <!--client-->
+                                                        <col width="15%">
+                                                        <!--date-->
+                                                        <col width="7%">
+                                                        <!--type-->
+                                                        <col width="10%">
+                                                        <!--status-->
+                                                        <col width="8%">
+                                                        <!--subject-->
+                                                        <col width="15%">
+                                                        <!--description-->
+                                                        <col width="35%">
+                                                        <!--action-->
+                                                        <col width="10%">
+                                                        <thead>
+                                                        <th>ID</th>
+                                                        <th>Client</th>
+                                                        <th>Date</th>
+                                                        <th>Category</th>
+                                                        <th>Status</th>
+                                                        <th>Subject</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr ng-repeat="c in complaints">
+                                                            <td>{{c.id}}</td>
+                                                            <td>
+                                                                <a href="#/pmg/complaints" ng-click="customerData(c.user.id, c.user.email)">{{c.user.email}}</a>
+                                                            </td>
+                                                            <td>{{c.date}}</td>
+                                                            <td>{{c.type}}</td>
+                                                            <td>{{c.status}}</td>
+                                                            <td>{{c.subject}}</td>
+                                                            <td>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                            </td>
+
+                                                            <td>
+                                                                <button ng-show="c.status === 'ACCEPTED'" style="width: 100%" class="btn btn-success btn-sm btn-fill pull-left"
+                                                                        ng-click="handleComplaint(c.id)">Handle
+                                                                </button>
+                                                                <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
+                                                                        ng-click="complaintDetailData(c)">Detail
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-sm-7">
+                                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                                 id="complaints_table_paginate">
+                                                                <ul class="pagination">
+                                                                    <li class="paginate_button previous" id="complaintsTable_previous">
+                                                                        <a aria-controls="complaintsTable" data-dt-idx="0"
+                                                                           tabindex="0" ng-show="page > 0"
+                                                                           ng-click="previousPage()">Previous</a>
+                                                                    </li>
+                                                                    <li class="paginate_button active"><a
+                                                                            aria-controls="complaintsTable"
+                                                                            data-dt-idx="1" tabindex="0">{{page + 1}}</a>
+                                                                    </li>
+                                                                    <li class="paginate_button next pointable" id="complaintsTable_next">
+                                                                        <a  aria-controls="complaintsTable" data-dt-idx="2"
+                                                                            tabindex="0" ng-show="(page + 1) * size < complaintsCount"
+                                                                            ng-click="nextPage()">Next</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div>
+                                                                <label><b>Complaints count: {{complaintsCount}}</b></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--CUSTOMER COMPLAINTS-->
+                                    <div class="row" ng-show="selected === 'customerSelected'">
+                                        <a name = "customer"></a>
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <i class="fa fa-times close-registration-form"
+                                                   ng-click="selected = ''">
+                                                </i>
+                                                <div class="header">
+                                                    <h4 class="title">Customer profile</h4>
+                                                </div>
+                                                <hr />
+                                                <div class="content">
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Email</div>
+                                                        <div class="col-md-8">{{customer.email}}</div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Full name</div>
+                                                        <div class="col-md-8">{{customer.firstName}}
+                                                            {{customer.secondName}} {{customer.lastName}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Phone</div>
+                                                        <div class="col-md-8">{{customer.phone}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Mailing</div>
+                                                        <div class="col-md-8"><span
+                                                                ng-show="customer.isMailingEnabled">Yes</span><span
+                                                                ng-hide="customer.isMailingEnabled">No</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Region</div>
+                                                        <div class="col-md-8">{{customer.address.region.nameRegion}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row" ng-hide="customer.address == null">
+                                                        <div class="col-md-4">Address</div>
+                                                        <div class="col-md-8">{{customer.address.locality}},
+                                                            {{customer.address.street}},
+                                                            {{customer.address.houseNumber}},
+                                                            {{customer.address.apartmentNumber}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Status</div>
+                                                        <div class="col-md-8">
+                                                            {{customer.status}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row" ng-hide="customer.corporate == null">
+                                                        <div class="col-md-4">Corporate</div>
+                                                        <div class="col-md-8">{{customer.corporate.corporateName}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row" ng-hide="customer.corporate == null">
+                                                        <div class="col-md-4">Representative</div>
+                                                        <div class="col-md-8"><span
+                                                                ng-show="customer.isRepresentative">Yes</span><span
+                                                                ng-hide="customer.isRepresentative">No</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row customer-profile-row">
+                                                        <div class="col-md-4">Customer complaints/suggestion</div>
+                                                    </div>
+                                                    <table class="table table-striped table-bordered table-hover" id="customerComplaintsTable">
+                                                        <!--id-->
+                                                        <col width="5%">
+                                                        <!--date-->
+                                                        <col width="10%">
+                                                        <!--type-->
+                                                        <col width="10%">
+                                                        <!--status-->
+                                                        <col width="10%">
+                                                        <!--subject-->
+                                                        <col width="15%">
+                                                        <!--description-->
+                                                        <col width="35%">
+                                                        <thead>
+                                                        <th>ID</th>
+                                                        <th>Date</th>
+                                                        <th>Category</th>
+                                                        <th>Status</th>
+                                                        <th>Subject</th>
+                                                        <th>Description</th>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr ng-repeat="c in customerComplaints">
+                                                            <td>{{c.id}}</td>
+                                                            <td>{{c.date}}</td>
+                                                            <td>{{c.type}}</td>
+                                                            <td>{{c.status}}</td>
+                                                            <td>{{c.subject}}</td>
+                                                            <td>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-sm-7">
+                                                            <div class="dataTables_paginate paging_simple_numbers"
+                                                                 id="customer_complaints_table_paginate">
+                                                                <ul class="pagination">
+                                                                    <li class="paginate_button previous" id="customerComplaintsTable_previous">
+                                                                        <a aria-controls="customerComplaintsTable" data-dt-idx="0"
+                                                                           tabindex="0" ng-show="customerPage > 0"
+                                                                           ng-click="customerPreviousPage()">Previous</a>
+                                                                    </li>
+                                                                    <li class="paginate_button active"><a
+                                                                            aria-controls="customerComplaintsTable"
+                                                                            data-dt-idx="1" tabindex="0">{{customerPage + 1}}</a>
+                                                                    </li>
+                                                                    <li class="paginate_button next pointable" id="customerComplaintsTable_next">
+                                                                        <a
+                                                                                aria-controls="customerComplaintsTable" data-dt-idx="2"
+                                                                                tabindex="0" ng-show="(customerPage + 1) * size < customerComplaintsCount"
+                                                                                ng-click="customerNextPage()">Next</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div>
+                                                                <label><b>Customer complaints count: {{customerComplaintsCount}}</b></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--COMPLAINT DETAIL INFO-->
+                                    <div class="row" ng-show="selected === 'complaintSelected'">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <i class="fa fa-times close-registration-form"
+                                                   ng-click="selected = ''">
+                                                </i>
+                                                <div class="header">
+                                                    <h4 class="title">Complaint Info</h4>
+                                                </div>
+                                                <hr />
+                                                <div class="content">
+                                                    <label>Id</label><br>
+                                                    <p>{{selectedComplaint.id}}</p><br>
+                                                    <label>Date</label><br>
+                                                    <p>{{selectedComplaint.date}}</p><br>
+                                                    <label>Category</label><br>
+                                                    <p>{{selectedComplaint.type}}</p><br>
+                                                    <label>Status</label><br>
+                                                    <p>{{selectedComplaint.status}}</p><br>
+                                                    <label>Subject</label><br>
+                                                    <p>{{selectedComplaint.subject}}</p><br>
+                                                    <label>Description</label><br>
+                                                    <textarea readonly rows="5" cols="50" type="text" class="form-control"
+                                                              name="description">{{selectedComplaint.text}}
+                                                    </textarea><br>
+                                                    <div ng-hide="selectedComplaint.responsiblePmg == null">
+                                                        <label>Responsible PMG</label><br>
+                                                        <p>{{selectedComplaint.responsiblePmg.email}}</p><br>
+                                                    </div>
+                                                    <div ng-hide="selectedComplaint.comment == null">
+                                                        <label>Comment</label><br>
+                                                        <textarea readonly rows="5" cols="50" type="text" class="form-control"
+                                                                  name="comment">{{selectedComplaint.comment}}
+                                                        </textarea><br>
+                                                    </div>
+                                                    <div>
+                                                        <button ng-show="selectedComplaint.status === 'ACCEPTED'"
+                                                                class="btn btn-info btn-fill pull-left"
+                                                                ng-click="handleComplaint(selectedComplaint.id)">Handle
+                                                        </button><br>
+                                                        <br>
+                                                    </div><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
                 </div>
             </div>
         </div>

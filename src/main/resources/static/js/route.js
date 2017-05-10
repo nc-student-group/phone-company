@@ -143,7 +143,7 @@
         $routeProvider.when('/csr/corporation/:id',
             {
                 templateUrl: 'view/csr/corporation.html',
-                controller: 'CorporationController'
+                controller: 'CsrCorporationController'
             });
         $routeProvider.when('/csr/clients',
             {
@@ -158,7 +158,17 @@
         $routeProvider.when('/pmg/complaints',
             {
                 templateUrl: 'view/pmg/complaints.html',
-                controller: 'CsrComplaintsController'
+                controller: 'PmgComplaintsController'
+            });
+        $routeProvider.when('/csr/editCustomer/:id',
+            {
+                templateUrl: 'view/csr/editCustomer.html',
+                controller: 'CsrClientEditController'
+            });
+        $routeProvider.when('/client/companyClients',
+            {
+                templateUrl: 'view/client/representativesClients.html',
+                controller: 'RepresentativeCustomerController'
             });
         $routeProvider.otherwise({redirectTo: '/login'});
     });
