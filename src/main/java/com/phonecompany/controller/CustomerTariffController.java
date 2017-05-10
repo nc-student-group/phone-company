@@ -55,6 +55,12 @@ public class CustomerTariffController {
         return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/corporate/{id}")
+    public ResponseEntity<?> getCorporateTariff(@PathVariable("id") long corporateId) {
+        CustomerTariff customerTariff = customerTariffService.getCurrentActiveOrSuspendedCorporateTariff(corporateId);
+        return new ResponseEntity<Object>(customerTariff, HttpStatus.OK);
+    }
+
     @PatchMapping(value = "/resume")
     public ResponseEntity<?> resumeTariff(@RequestBody CustomerTariff customerTariff){
         CustomerTariff updatedCustomerTariff = customerTariffService.resumeCustomerTariff(customerTariff);

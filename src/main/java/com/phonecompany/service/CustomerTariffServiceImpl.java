@@ -79,6 +79,11 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     }
 
     @Override
+    public CustomerTariff getCurrentActiveOrSuspendedCorporateTariff(long corporateId) {
+        return customerTariffDao.getCurrentActiveOrSuspendedCorporateTariff(corporateId);
+    }
+
+    @Override
     public CustomerTariff deactivateCustomerTariff(CustomerTariff customerTariff) {
         if (CustomerProductStatus.SUSPENDED.equals(customerTariff.getCustomerProductStatus())) {
             Order resumingOrder = orderService.getResumingOrderByCustomerTariff(customerTariff);

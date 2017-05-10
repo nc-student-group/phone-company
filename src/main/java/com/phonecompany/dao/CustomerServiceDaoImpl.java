@@ -45,7 +45,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
             preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -57,7 +57,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
             preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getCustomer()));
             preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
             preparedStatement.setDouble(3, entity.getPrice());
-            preparedStatement.setString(4, entity.getOrderStatus().name());
+            preparedStatement.setString(4, entity.getCustomerProductStatus().name());
             preparedStatement.setLong(5, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -72,7 +72,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
             customerService.setCustomer(customerDao.getById(rs.getLong("customer_id")));
             customerService.setService(serviceDao.getById(rs.getLong("service_id")));
             customerService.setPrice(rs.getDouble("price"));
-            customerService.setOrderStatus(CustomerProductStatus.valueOf(rs.getString("service_status")));
+            customerService.setCustomerProductStatus(CustomerProductStatus.valueOf(rs.getString("service_status")));
 
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

@@ -24,7 +24,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     private OrderDao orderDao;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao){
+    public OrderServiceImpl(OrderDao orderDao) {
         super(orderDao);
         this.orderDao = orderDao;
     }
@@ -60,10 +60,20 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
+    public List<Order> getOrdersHistoryByCorporateId(long corporateId, int page, int size) {
+        return orderDao.getOrdersByCorporateIdPaged(corporateId, page, size);
+    }
+
+    @Override
     public Integer getOrdersCountByClient(Customer customer) {
         Long clientId = customer.getId();
-        return customer.getRepresentative() ? orderDao.getCountByCorporateId(clientId) :
+        return customer.getRepresentative() ? this.getOrdersCountByCorporateId(customer.getCorporate().getId()) :
                 orderDao.getCountByCustomerId(clientId);
+    }
+
+    @Override
+    public Integer getOrdersCountByCorporateId(long corporateId) {
+        return orderDao.getCountByCorporateId(corporateId);
     }
 
     @Override

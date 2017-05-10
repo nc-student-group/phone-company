@@ -18,7 +18,7 @@
                                                     <h4 class="title">Edit Profile</h4>
                                                 </div>
                                                 <div class="content">
-                                                    <form>
+                                                    <form name="customerForm" ng-submit="updateCustomer()">
                                                         <md-switch ng-disabled="mailingSwitchDisabled"
                                                                    ng-change="setMailingAgreement()"
                                                                    ng-model="customer.isMailingEnabled"
@@ -26,41 +26,205 @@
                                                             Mailing enabled: {{ customer.isMailingEnabled }}
                                                         </md-switch>
                                                         <div class="row">
-                                                            <div class="form-group col-md-4">
-                                                                <label>Email Address</label>
-                                                                <input type="text" class="form-control" disabled
-                                                                       value="{{customer.email}}"/>
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block">
+                                                                <label>Email</label>
+                                                                <input name="email" type="text" id="email"
+                                                                       value="{{customer.email}}"
+                                                                       disabled />
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block">
+                                                                    <label>Phone number</label>
+                                                                    <input name="phone" type="text" id="phone"
+                                                                           value="{{customer.phone}}"
+                                                                           disabled >
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>First name</label>
+                                                                    <input name="firstName" type="text" id="firstName"
+                                                                           ng-model="customer.firstName"
+                                                                           ng-pattern="textFieldPattern">
+
+                                                                    <div ng-messages="customerForm.firstName.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Second name</label>
+                                                                    <input name="secondName" type="text" id="secondName"
+                                                                           ng-model="customer.secondName"
+                                                                           ng-pattern="textFieldPattern">
+
+                                                                    <div ng-messages="customerForm.secondName.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Last name</label>
+                                                                    <input name="lastName" type="text" id="lastName"
+                                                                           ng-model="customer.lastName"
+                                                                           ng-pattern="textFieldPattern">
+
+                                                                    <div ng-messages="customerForm.lastName.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" ng-hide="corporateUser || !hasCurrentTariff">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block"  flex-gt-sm>
+                                                                    <label>Region</label>
+                                                                    <md-select ng-model="customer.address.region"
+                                                                               ng-required="!corporateUser && hasCurrentTariff">
+                                                                        <md-option ng-repeat="r in regions" ng-value="{{r}}">
+                                                                            {{r.nameRegion}}
+                                                                        </md-option>
+                                                                    </md-select>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Locality</label>
+                                                                    <input name="locality" type="text" id="locality"
+                                                                           ng-model="customer.address.locality"
+                                                                           ng-pattern="textFieldPattern">
+
+                                                                    <div ng-messages="customerForm.locality.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Street</label>
+                                                                    <input name="street" type="text" id="street"
+                                                                           ng-model="customer.address.street"
+                                                                           ng-pattern="textFieldPattern">
+
+                                                                    <div ng-messages="customerForm.street.$error" role="alert" multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
                                                             </div>
                                                         </div>
 
                                                         <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>First Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.firstName}}"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>Second Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.secondName}}"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>Last Name</label>
-                                                                    <input type="text" class="form-control"
-                                                                           value="{{customer.lastName}}"/>
-                                                                </div>
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>House number</label>
+                                                                    <input name="houseNumber" type="text" id="houseNumber"
+                                                                           ng-model="customer.address.houseNumber"
+                                                                           ng-pattern="textFieldPatternWithNumbers">
+
+                                                                    <div ng-messages="customerForm.houseNumber.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain letters and numbers
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
                                                             </div>
                                                         </div>
 
-                                                        <button type="submit" class="btn btn-info btn-fill pull-right">
-                                                            Update Profile
-                                                        </button>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Apartment number</label>
+                                                                    <input name="apartmentNumber" type="number" id="apartmentNumber"
+                                                                           ng-model="customer.address.apartmentNumber"
+                                                                           ng-pattern="numberPattern">
 
+                                                                    <div ng-messages="customerForm.apartmentNumber.$error" role="alert"
+                                                                         multiple>
+                                                                        <div ng-message="pattern">
+                                                                            This field can only contain positive numbers
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>New Password</label>
+                                                                    <input type="password" id="password" name="password"
+                                                                            ng-model="newPassword"
+                                                                            md-minlength="8"
+                                                                            ng-pattern="passwordPattern" />
+
+                                                                    <div ng-messages="customerForm.password.$error" role="alert" multiple>
+
+                                                                        <div ng-message-exp="['minlength', 'pattern']">
+                                                                            Password should be at least 8 latin characters long with one
+                                                                            special character.
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-11">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Confirm Password</label>
+                                                                    <input type="password" id="passwordConfirmation" name="passwordConfirmation"
+                                                                           ng-model="passwordConfirmation" password-confirm match-target="newPassword" />
+
+                                                                    <div ng-messages="customerForm.passwordConfirmation.$error" role="alert">
+                                                                        <div ng-message="match">
+                                                                            Passwords do not match!
+                                                                        </div>
+                                                                    </div>
+                                                                </md-input-container>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <button ng-class="{unsubmitable : customerForm.$invalid,
+                        submitable: !customerForm.$invalid}"
+                                                                ng-disabled="customerForm.$invalid"
+                                                                style="width: 300px;"
+                                                                type="submit" class="center-block register-button">
+                                                            Save profile
+                                                        </button>
                                                         <div class="clearfix"></div>
                                                     </form>
                                                 </div>

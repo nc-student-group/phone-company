@@ -14,4 +14,5 @@ public interface UserService extends CrudService<User>, AbstractUserService<User
 
     User getCurrentlyLoggedInUser();
 
+    void changePassword(String oldPass,String newPass);
 }

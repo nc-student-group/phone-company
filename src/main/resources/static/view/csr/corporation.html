@@ -2,14 +2,13 @@
     <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
     <div class="main-panel">
         <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
-
-
         <div class="content">
             <div class="container-fluid">
                 <div ng-cloak>
                     <md-content>
                         <md-tabs md-dynamic-height md-border-bottom>
-                            <md-tab label="Customers in {{corporation.corporateName}}">
+                            <!--<md-tab label="Customers in {{corporation.corporateName}}">-->
+                            <md-tab label="Customers">
                                 <md-content class="md-padding">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -45,7 +44,8 @@
                                     </div>
                                 </md-content>
                             </md-tab>
-                            <md-tab label="Add customer to company">
+                            <!--<md-tab label="Add customer to company">-->
+                            <md-tab label="Add customers" ng-click="addCustomersTabClick()">
                                 <md-content class="md-padding">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -87,87 +87,268 @@
                                     </div>
                                 </md-content>
                             </md-tab>
+                            <md-tab label="Tariff plan" ng-click="myTariffPlansTabClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div>
+                                                    <div class="header">
+                                                        <h4 class="title">Customer tariff plan</h4>
+                                                    </div>
+                                                    <!--<hr/>-->
+                                                    <div class="content">
+                                                        <div ng-show="hasCurrentTariff === false">
+                                                            <div class="row">
+                                                                <h3 style="text-align: center">No current tariff plans
+                                                                    available!</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div ng-show="hasCurrentTariff === true">
+                                                            <div class="row">
+                                                                <h3 style="text-align: center">
+                                                                    {{currentTariff.tariff.tariffName}}</h3>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <button style="width: 100%"
+                                                                        class="btn btn-danger btn-fill pull-left"
+                                                                        ng-click="showDeactivationModalWindow(currentTariff, loadTariff, loadTariffsHistory, preloader)">
+                                                                    Deactivate
+                                                                </button>
+                                                                <button style="width: 100%"
+                                                                        class="btn btn-toggle btn-fill pull-left"
+                                                                        ng-show="currentTariff.customerProductStatus === 'ACTIVE'"
+                                                                        ng-click="showSuspensionModalWindow(currentTariff, daysToExecution, loadTariff, loadTariffsHistory, preloader)">
+                                                                    Suspend
+                                                                </button>
+                                                                <button style="width: 100%"
+                                                                        class="btn btn-success btn-fill pull-left"
+                                                                        ng-show="currentTariff.customerProductStatus === 'SUSPENDED'"
+                                                                        ng-click="resumeTariffClick()">
+                                                                    Resume
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Current status</span></div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.customerProductStatus}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>Roaming</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.roaming}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Calls in network</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.tariff.callsInNetwork}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>Calls on other numbers</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value">
+                                                                        <span><b>{{currentTariff.tariff.callsOnOtherNumbers}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition"><span>Roaming</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.roaming}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Internet</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.internet}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition"><span>SMS</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.sms}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-two">
+                                                                    <div class="col-md-8 condition"><span>MMS</span>
+                                                                    </div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.tariff.mms}}</b></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row row-one">
+                                                                    <div class="col-md-8 condition">
+                                                                        <span>Monthly payment</span></div>
+                                                                    <div class="col-md-4 conditions-value"><span><b>{{currentTariff.totalPrice}} uah</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div ng-show="availableTariffs.length > 0">
+                                                    <div class="header">
+                                                        <h4 class="title">Activate tariff plan</h4>
+                                                    </div>
+                                                    <div class="content">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <md-input-container class="md-block" flex-gt-sm>
+                                                                    <label>Tariff plan:</label>
+                                                                    <md-select ng-model="selectedTariffPlan">
+                                                                        <md-option ng-repeat="t in availableTariffs"
+                                                                                   value="{{$index}}">{{t.tariffName}}
+                                                                        </md-option>
+                                                                    </md-select>
+                                                                </md-input-container>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <md-input-container class="md-block">
+                                                                    <input type="text" class="form-control"
+                                                                           placeholder="Price"
+                                                                           readonly
+                                                                           ng-value="availableTariffs[selectedTariffPlan].price *
+                                                                                (1 - availableTariffs[selectedTariffPlan].discount/100)"/>
+
+                                                                </md-input-container>
+                                                            </div>
+                                                            <div class="col-md-4" style="padding-top: 10px;">
+                                                                <button class="btn btn-success btn-fill"
+                                                                        ng-click="activateClick()">
+                                                                    Activate
+                                                                </button>
+                                                                <button class="btn btn-default btn-fill"
+                                                                        ng-click="tariffDetailClick(availableTariffs[selectedTariffPlan].id)">
+                                                                    More
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </div>
+                                                <div ng-show="availableTariffs == 0 && customer.corporate != null && customer.isRepresentative">
+                                                    <div class="header">
+                                                        <h4 class="title">There are no available tariff plans</h4>
+                                                    </div>
+                                                </div>
+                                                <div ng-show="availableTariffs == 0 && customer.corporate != null && !customer.isRepresentative">
+                                                    <div class="header">
+                                                        <h4 class="title">Client is not representative!</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Tariff plans History" ng-click="tariffsHistoryClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div>
+                                                    <div class="header">
+                                                        <h4 class="title">Tariff plans history</h4>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="content table-responsive">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div class="dataTables_length">
+                                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                                        <label>Show entries:</label>
+                                                                        <md-select ng-model="size"
+                                                                                   md-on-close="loadTariffsHistory()">
+                                                                            <md-option value="5">5</md-option>
+                                                                            <md-option value="10">10</md-option>
+                                                                            <md-option value="25">25</md-option>
+                                                                            <md-option value="50">50</md-option>
+                                                                            <md-option value="100">100</md-option>
+                                                                        </md-select>
+                                                                    </md-input-container>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <table class="table table-striped table-bordered table-hover">
+                                                            <thead>
+                                                            <th>Tariff Plan</th>
+                                                            <th>Order Type</th>
+                                                            <th>Order Status</th>
+                                                            <th>Creation date</th>
+                                                            <th>Execution Date</th>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr ng-repeat="o in orders" class="tariff-td">
+                                                                <td>{{o.customerTariff.tariff.tariffName}}</td>
+                                                                <td ng-class="{red: o.type == 'DEACTIVATION',
+                                                                                green: o.type =='ACTIVATION' ||
+                                                                                o.type == 'RESUMING',
+                                                                                yellow: o.type == 'SUSPENSION'}">
+                                                                    {{o.type}}
+                                                                </td>
+                                                                <td ng-class="{red: o.orderStatus == 'CANCELED',
+                                                                                green: o.orderStatus =='DONE' ||
+                                                                                o.orderStatus == 'CREATED',
+                                                                                yellow: o.orderStatus == 'PENDING'}">
+                                                                    {{o.orderStatus}}
+                                                                </td>
+                                                                <td>{{o.creationDate | date:'dd.MM.yyyy'}}</td>
+                                                                <td>{{o.executionDate | date:'dd.MM.yyyy'}}</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="row">
+                                                            <div class="col-sm-7">
+                                                                <div class="dataTables_paginate paging_simple_numbers">
+                                                                    <ul class="pagination">
+                                                                        <li class="paginate_button previous">
+                                                                            <a aria-controls="tariffTable"
+                                                                               data-dt-idx="0"
+                                                                               tabindex="0" ng-show="page > 0"
+                                                                               ng-click="previousPage()">Previous</a>
+                                                                        </li>
+                                                                        <li class="paginate_button active"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="1"
+                                                                                tabindex="0">{{page+1}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button next pointable"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="2"
+                                                                                tabindex="0"
+                                                                                ng-show="(page + 1)*size < ordersFound"
+                                                                                ng-click="nextPage()">Next</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div>
+                                                                    <label><b>Orders found: {{ordersFound}}</b></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
                         </md-tabs>
                     </md-content>
                 </div>
             </div>
         </div>
-
-
-
-        <!--<div class="content">-->
-            <!--<div class="container-fluid">-->
-                <!--<div class="row">-->
-                    <!--<div class="col-md-12">-->
-                        <!--<div >-->
-                            <!--<div class="card" ng-hide="editing">-->
-                                <!--<div class="header">-->
-                                    <!--<h4 class="title">Company details</h4>-->
-                                <!--</div>-->
-                                <!--<hr/>-->
-                                <!--<div class="content table-responsive">-->
-
-                                    <!--<table id="customersTable" class="table table-striped table-bordered table-hover">-->
-                                        <!--<thead>-->
-                                        <!--<th>Email</th>-->
-                                        <!--<th>Name</th>-->
-                                        <!--<th>Second name</th>-->
-                                        <!--<th>Last name</th>-->
-                                        <!--<th></th>-->
-                                        <!--</thead>-->
-                                        <!--<tbody>-->
-                                        <!--<tr ng-repeat="c in customers">-->
-                                            <!--<td>{{c.email}}</td>-->
-                                            <!--<td>{{c.firstName}}</td>-->
-                                            <!--<td>{{c.secondName}}</td>-->
-                                            <!--<td>{{c.lastName}}</td>-->
-                                            <!--<td>-->
-                                                <!--<button class="btn btn-default btn-fill" ng-click="deleteCustomerFromCompany(c)">Remove</button>-->
-                                            <!--</td>-->
-                                        <!--</tr>-->
-                                        <!--</tbody>-->
-                                    <!--</table>-->
-                                <!--</div>-->
-                                <!--<div class="header">-->
-                                    <!--<h4 class="title">Add customers to company:</h4>-->
-                                <!--</div>-->
-                                <!--<hr/>-->
-                                <!--<div class="content table-responsive" style="height: 400px; overflow-y: scroll">-->
-                                    <!--<table id="customersTableWithoutCorporation" class="table table-striped table-bordered table-hover">-->
-                                        <!--<thead>-->
-                                        <!--<th>Email</th>-->
-                                        <!--<th>Name</th>-->
-                                        <!--<th>Second name</th>-->
-                                        <!--<th>Last name</th>-->
-                                        <!--<th></th>-->
-                                        <!--</thead>-->
-                                        <!--<tbody>-->
-                                        <!--<tr ng-repeat="c in customersWithoutCorporation">-->
-                                            <!--<td>{{c.email}}</td>-->
-                                            <!--<td>{{c.firstName}}</td>-->
-                                            <!--<td>{{c.secondName}}</td>-->
-                                            <!--<td>{{c.lastName}}</td>-->
-                                            <!--<td>-->
-                                                <!--<button class="btn btn-default btn-fill" ng-click="addCustomerToCompany(c)">Add</button>-->
-                                            <!--</td>-->
-                                        <!--</tr>-->
-                                        <!--</tbody>-->
-                                    <!--</table>-->
-                                <!--</div>-->
-                                <!--<pagination-->
-                                        <!--ng-model="currentPage"-->
-                                        <!--total-items="customersWithoutCorporation.length"-->
-                                        <!--max-size="maxSize"-->
-                                        <!--boundary-links="true">-->
-                                <!--</pagination>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
     </div>
-
     <footer class="footer">
         <div class="container-fluid">
             <p class="copyright">

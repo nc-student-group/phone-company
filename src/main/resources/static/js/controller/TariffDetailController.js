@@ -30,7 +30,7 @@ angular.module('phone-company').controller('TariffDetailController', [
                 if ($scope.currentTariff.tariff != undefined && $scope.currentTariff.tariff.id == $scope.tariff.id) {
                     toastr.error("This tariff plan is already activated for you!", 'Error');
                 } else {
-                    $scope.showChangeTariffModalWindow($scope.currentTariff, $scope.tariff, $scope.preloader, 0, undefined);
+                    $scope.showChangeTariffModalWindow($scope.currentTariff, $scope.tariff, $scope.preloader, 0, false, undefined);
                 }
                 $scope.preloader.send = false;
             }, function (data) {
@@ -40,7 +40,6 @@ angular.module('phone-company').controller('TariffDetailController', [
                 }
             })
         };
-
 
 
     }]);

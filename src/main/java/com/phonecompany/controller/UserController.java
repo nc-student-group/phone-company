@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
@@ -83,6 +84,13 @@ public class UserController {
         User persistedUser = this.userService.save(user);
         return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
     }
+
+    @RequestMapping(method = POST, value = "/api/user/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody HashMap<String,String> pass) {
+        userService.changePassword(pass.get("oldPass"),pass.get("newPass"));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @RequestMapping(method = POST, value = "api/user/reset")
     public ResponseEntity<?> resetPassword(@RequestBody String email) {
