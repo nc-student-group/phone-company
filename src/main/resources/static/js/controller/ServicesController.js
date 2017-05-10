@@ -173,10 +173,10 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.preloader.send = false;
                 $scope.editing = false;
                 $scope.updateData();
-                toastr.success(`Service ${$scope.serviceToEdit.serviceName} has been successfully edited`);
+                toastr.success(`Service has been successfully edited`);
             }, function () {
                 $scope.preloader.send = false;
-                toastr.error(`Service ${$scope.serviceToEdit.serviceName} has not been edited. Error has occurred`);
+                toastr.error(`Service has not been edited. Error has occurred`);
             });
         };
 

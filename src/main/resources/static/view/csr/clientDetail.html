@@ -193,7 +193,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card" ng-show="customer.corporate === undefined">
+                                            <div class="card" ng-show="customer.corporate == undefined">
                                                 <div ng-show="availableTariffs.length > 0">
                                                     <div class="header">
                                                         <h4 class="title">Activate tariff plan</h4>
@@ -289,23 +289,23 @@
                                                                     </p>
                                                                 </td>
                                                                 <td ng-class="{red: s.orderStatus == 'DEACTIVATED',
-                                                                                green: s.orderStatus =='ACTIVE',
-                                                                                yellow: s.orderStatus == 'SUSPENDED'}">
-                                                                    {{s.orderStatus}}
+                                                                                green: s.customerProductStatus =='ACTIVE',
+                                                                                yellow: s.customerProductStatus == 'SUSPENDED'}">
+                                                                    {{s.customerProductStatus}}
                                                                 <td>
                                                                     <button class="btn btn-toggle btn-fill"
-                                                                            ng-show="s.orderStatus === 'ACTIVE'"
+                                                                            ng-show="s.customerProductStatus === 'ACTIVE'"
                                                                             ng-click="suspendCustomerService(s, daysToExecution,
                                                                              loadCurrentServices, preloader)">
                                                                         Suspend
                                                                     </button>
                                                                     <button class="btn btn-success btn-fill"
-                                                                            ng-show="s.orderStatus === 'SUSPENDED'"
+                                                                            ng-show="s.customerProductStatus === 'SUSPENDED'"
                                                                             ng-click="activateCustomerService(s, loadCurrentServices, preloader)">
                                                                         Resume
                                                                     </button>
                                                                     <button class="btn btn-danger btn-fill"
-                                                                            ng-show="s.orderStatus === 'SUSPENDED' || s.orderStatus === 'ACTIVE'"
+                                                                            ng-show="s.customerProductStatus === 'SUSPENDED' || s.customerProductStatus === 'ACTIVE'"
                                                                             ng-click="deactivateCustomerService(s, loadCurrentServices,
                                                                              preloader)">
                                                                         Deactivate

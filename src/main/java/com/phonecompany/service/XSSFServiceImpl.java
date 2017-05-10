@@ -1,12 +1,9 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.OrderDao;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Order;
-import com.phonecompany.model.Tariff;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.ServiceService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
@@ -19,7 +16,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
-@Service
+@org.springframework.stereotype.Service
 public class XSSFServiceImpl implements XSSFService {
 
     private static final Logger LOG = LoggerFactory.getLogger(XSSFServiceImpl.class);
@@ -38,9 +34,9 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String FILE_FORMAT = ".xlsx";
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
+    public static final String SERVICES = "Services";
 
     private OrderDao orderDao;
-    private ServiceService serviceService;
 
     @Autowired
     public XSSFServiceImpl(OrderDao orderDao) {
@@ -50,14 +46,24 @@ public class XSSFServiceImpl implements XSSFService {
     @Override
     public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        workbook = this.getServiceReport(workbook, startDate, endDate);
+//        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
+        this.getServiceReport(workbook, startDate, endDate);
         this.saveWorkBook(workbook);
     }
 
-    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook, LocalDate startDate, LocalDate endDate) {
-//        this.
-        return null;
+    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook,
+                                          LocalDate startDate,
+                                          LocalDate endDate) {
+        List<Order> allServiceOrders = this.orderDao.getAllServiceOrders();
+        List<Order> ordersFilteredByDate = this.filterOrdersByDate(allServiceOrders, startDate, endDate);
+
+        Map<String, List<Order>> serviceOrdersMap = this.getServiceOrdersMap(ordersFilteredByDate);
+        List<LocalDate> timeLine = this.generateTimeLine(ordersFilteredByDate);
+
+        XSSFSheet sheet = workbook.createSheet(SERVICES);
+        this.generateReportTables(sheet, serviceOrdersMap, timeLine);
+
+        return workbook;
     }
 
     private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
@@ -243,9 +249,28 @@ public class XSSFServiceImpl implements XSSFService {
                 .collect(Collectors.toList());
     }
 
+    private List<Order> filterOrdersByServiceName(List<Order> orders, String serviceName) {
+        return orders.stream()
+                .filter(order -> order.getCustomerService()
+                        .getService().getServiceName().equals(serviceName))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, List<Order>> getServiceOrdersMap(List<Order> serviceOrders) {
+        Map<String, List<Order>> serviceOrdersMap = new HashMap<>();
+        Function<Order, String> serviceOrderToServiceNameMapping = this.getServiceOrderToServiceNameMapping();
+        List<String> serviceNames = this.getDistinctNamesFromOrders(serviceOrders, serviceOrderToServiceNameMapping);
+        for (String serviceName : serviceNames) {
+            List<Order> ordersOfService = this.filterOrdersByServiceName(serviceOrders, serviceName);
+            this.putOrdersInMap(serviceOrdersMap, serviceName, ordersOfService);
+        }
+        return serviceOrdersMap;
+    }
+
     private Map<String, List<Order>> getTariffOrdersMap(List<Order> tariffOrders) {
         Map<String, List<Order>> tariffOrdersMap = new HashMap<>();
-        List<String> tariffNames = this.getDistinctTariffNamesFromOrders(tariffOrders);
+        Function<Order, String> tariffOrderToTariffNameMapping = this.getTariffOrderToTariffNameMapping();
+        List<String> tariffNames = this.getDistinctNamesFromOrders(tariffOrders, tariffOrderToTariffNameMapping);
         for (String tariffName : tariffNames) {
             List<Order> ordersOfTariff = this.filterOrdersByTariffName(tariffOrders, tariffName);
             this.putOrdersInMap(tariffOrdersMap, tariffName, ordersOfTariff);
@@ -253,20 +278,21 @@ public class XSSFServiceImpl implements XSSFService {
         return tariffOrdersMap;
     }
 
-    private void putOrdersInMap(Map<String, List<Order>> tariffOrdersMap,
-                                String tariffName, List<Order> ordersOfTariff) {
-        if (tariffOrdersMap.get(tariffName) == null) {
+    private void putOrdersInMap(Map<String, List<Order>> map,
+                                String key, List<Order> ordersOfProduct) {
+        if (map.get(key) == null) {
             List<Order> orders = new ArrayList<>();
-            orders.addAll(ordersOfTariff);
-            tariffOrdersMap.put(tariffName, orders);
+            orders.addAll(ordersOfProduct);
+            map.put(key, orders);
         } else {
-            tariffOrdersMap.get(tariffName).addAll(ordersOfTariff);
+            map.get(key).addAll(ordersOfProduct);
         }
     }
 
-    private List<String> getDistinctTariffNamesFromOrders(List<Order> tariffOrders) {
+    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
+                                                    Function<Order, String> nameMapper) {
         return tariffOrders
-                .stream().map(this.getTariffOrderToTariffNameMapping())
+                .stream().map(nameMapper)
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -296,6 +322,14 @@ public class XSSFServiceImpl implements XSSFService {
             CustomerTariff customerTariff = order.getCustomerTariff();
             Tariff tariff = customerTariff.getTariff();
             return tariff.getTariffName();
+        };
+    }
+
+    private Function<Order, String> getServiceOrderToServiceNameMapping() {
+        return order -> {
+            CustomerServiceDto customerService = order.getCustomerService();
+            Service service = customerService.getService();
+            return service.getServiceName();
         };
     }
 

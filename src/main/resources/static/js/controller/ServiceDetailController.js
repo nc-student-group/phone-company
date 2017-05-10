@@ -6,7 +6,8 @@ angular.module('phone-company').controller('ServiceDetailController', [
     '$location',
     '$routeParams',
     'ServicesService',
-    function ($scope, $rootScope, $location, $routeParams, ServicesService) {
+    'CustomerInfoService',
+    function ($scope, $rootScope, $location, $routeParams, ServicesService,CustomerInfoService) {
 
         var currentServiceId = $routeParams['id'];
 
@@ -18,6 +19,16 @@ angular.module('phone-company').controller('ServiceDetailController', [
             }, function () {
                 $scope.preloader.send = false;
             });
+
+        console.info("This is ServiceDetailController");
+        $scope.preloader.send = true;
+        CustomerInfoService.getCustomer().then(function (data) {
+            $scope.customer = data;
+            $scope.preloader.send = false;
+            console.log($scope.customer)
+        },function (err) {
+            $scope.preloader.send = false;
+        });
 
         $scope.backToServices = function () {
             $location.path = '/client/tariffs';
