@@ -86,8 +86,8 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/user/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody HashMap<String,String> pass) {
-        userService.changePassword(pass.get("oldPass"),pass.get("newPass"));
+    public ResponseEntity<?> changePassword(@RequestBody HashMap<String, String> pass) {
+        userService.changePassword(pass.get("oldPass"), pass.get("newPass"));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -101,6 +101,7 @@ public class UserController {
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
+            return new ResponseEntity<Object>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(persistedUser, HttpStatus.OK);
     }
