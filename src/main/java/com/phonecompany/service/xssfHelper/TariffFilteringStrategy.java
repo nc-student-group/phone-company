@@ -1,8 +1,9 @@
-package com.phonecompany.service;
+package com.phonecompany.service.xssfHelper;
 
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
+import com.phonecompany.service.xssfHelper.FilteringStrategy;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

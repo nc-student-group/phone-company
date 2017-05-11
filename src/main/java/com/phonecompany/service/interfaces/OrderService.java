@@ -1,14 +1,19 @@
 package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.*;
-import com.phonecompany.service.FilteringStrategy;
+import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.xssfHelper.ExcelRow;
+import com.phonecompany.service.xssfHelper.ExcelSheet;
+import com.phonecompany.service.xssfHelper.ExcelTable;
+import com.phonecompany.service.xssfHelper.FilteringStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
+import static java.util.Arrays.asList;
+
+@SuppressWarnings("SameParameterValue")
 public interface OrderService extends CrudService<Order> {
 
     Order getResumingOrderByCustomerTariff(CustomerTariff customerTariff);
@@ -33,6 +38,15 @@ public interface OrderService extends CrudService<Order> {
 
     List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 
-    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
-                                                        FilteringStrategy filteringStrategy);
+    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, FilteringStrategy filteringStrategy);
+
+    List<LocalDate> generateTimeLine(List<Order> orders);
+
+    List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type);
+
+    long getOrderNumberByDate(List<Order> orderList, LocalDate date);
+
+    ExcelSheet prepareExcelSheetDataset(String sheetName,
+                                        Map<String, List<Order>> productNamesToOrdersMap,
+                                        List<LocalDate> timeLine);
 }

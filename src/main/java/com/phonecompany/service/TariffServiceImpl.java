@@ -8,6 +8,8 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.xssfHelper.ExcelSheet;
+import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
 @Service
-public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements TariffService {
+public class TariffServiceImpl extends CrudServiceImpl<Tariff>
+        implements TariffService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -332,7 +334,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     }
 
     @Override
-    public void generateTariffReport(long regionId, LocalDate startDate, LocalDate endDate) {
+    public ExcelSheet generateTariffReport(long regionId, LocalDate startDate, LocalDate endDate) {
 
         List<Order> tariffOrders = this.orderService
                 .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
@@ -342,16 +344,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         Map<String, List<Order>> productNamesToOrdersMap = this.orderService
                 .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);
 
-        List<LocalDate> timeLine = this.generateTimeLine(tariffOrders);
+        List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
 
-        this.xssfService.generateReportTables(productNamesToOrdersMap, timeLine);
-    }
-
-    private List<LocalDate> generateTimeLine(List<Order> orders) {
-        return orders.stream()
-                .map(Order::getCreationDate)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+        return this.orderService
+                .prepareExcelSheetDataset("Tariffs", productNamesToOrdersMap, timeLine);
     }
 }

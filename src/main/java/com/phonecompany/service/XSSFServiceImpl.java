@@ -4,8 +4,12 @@ import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.TariffService;
 import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.ExcelRow;
+import com.phonecompany.service.xssfHelper.ExcelSheet;
+import com.phonecompany.service.xssfHelper.ExcelTable;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -36,9 +40,16 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
+    private OrderService orderService;
+
+    @Autowired
+    public XSSFServiceImpl(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @Override
-    public void generateReportTables(Map<String, List<Order>> ordersMap,
-                                     List<LocalDate> timeLine) {
+    public void generateReport(Map<String, List<Order>> ordersMap,
+                               List<LocalDate> timeLine) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet(TARIFFS);
         int rowPosition = 0;

@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.service.xssfHelper.ExcelSheet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class ReportServiceTest {
         LocalDate endDate = LocalDate.of(2017, Month.MAY, 5);
 
         //then
-        tariffService.generateTariffReport(regionId, startDate, endDate);
+        ExcelSheet excelSheet = tariffService.generateTariffReport(regionId, startDate, endDate);
+        System.out.println(excelSheet);
     }
 }
