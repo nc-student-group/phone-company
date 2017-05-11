@@ -20,6 +20,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         $scope.currentStatus = "-";
         $scope.complaintsCount = 0;
         $scope.complaint = {
+            id: '',
             user: {},
             text: '',
             type: '',
@@ -245,13 +246,19 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             console.log("Solving complaint with id: ", selectedComplaintId);
 
             ComplaintService.handleComplaint(selectedComplaintId).then(function (data) {
+                $scope.complaint = data;
                 console.log("Handle complaint");
-                $scope.currentCategory = "-";
-                $scope.updateResponsibleData();
-                $scope.selectedTab = 0;
-                $scope.selectedDetail = '';
-                //$scope.complaint = data;
-                toastr.success('Complaint is taken into consideration successfully!');
+                if ($scope.complaint.id != undefined) {
+                    $scope.currentCategory = "-";
+                    $scope.updateResponsibleData();
+                    $scope.selectedTab = 0;
+                    $scope.selectedDetail = '';
+                    toastr.success('Complaint status updated successfully!');
+                    console.log("Complaint updated", $scope.complaint);
+                } else {
+                    toastr.error('Error during complaint status updating!', 'Error');
+                    console.log("Complaint wasn't updated");
+                }
             },
                 function (data) {
                     if (data.message != undefined) {
@@ -292,11 +299,18 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             $scope.selectedDetail = '';
             ComplaintService.completeComplaint($scope.selectedComplaint.id, $scope.selectedComplaint.comment)
                 .then(function (data) {
-                        console.log("Complete complaint");
+                    $scope.complaint = data;
+                    console.log("Complete complaint");
+                    if ($scope.complaint.id != undefined) {
                         $scope.updateResponsibleData();
                         $scope.selectedTab = 0;
                         $scope.selectedComplaint = {};
                         toastr.success('Complaint solved successfully!');
+                        console.log("Complaint updated", $scope.complaint);
+                    } else {
+                        toastr.error('Error during complaint status updating!', 'Error');
+                        console.log("Complaint wasn't updated");
+                    }
                     },
                     function (data) {
                         if (data.message != undefined) {

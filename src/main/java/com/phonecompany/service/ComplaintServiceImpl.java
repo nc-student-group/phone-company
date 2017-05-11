@@ -5,14 +5,10 @@ import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.service.interfaces.ComplaintService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,20 +22,13 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintServiceImpl.class);
 
     private ComplaintDao complaintDao;
-    private MailMessageCreator<Complaint> complaintChangeStatusCreator;
-    private EmailService<User> emailService;
     private UserService userService;
 
     @Autowired
     public ComplaintServiceImpl(ComplaintDao complaintDao,
-                                @Qualifier("complaintAcceptedEmailCreator")
-                                        MailMessageCreator<Complaint> complaintChangeStatusCreator,
-                                EmailService<User> emailService,
                                 UserService userService){
         super(complaintDao);
         this.complaintDao = complaintDao;
-        this.complaintChangeStatusCreator = complaintChangeStatusCreator;
-        this.emailService = emailService;
         this.userService = userService;
     }
 
@@ -64,6 +53,7 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
             LOG.debug("Complaint added {}", complaint);
         } else {
             LOG.info("User with email " + complaint.getUser().getEmail() + " not found!");
+            complaint.setUser(null);
         }
 
         return complaint;
@@ -107,22 +97,31 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements 
 
     @Override
     public Complaint setStatusIntraprocess(Complaint complaint){
-        complaint.setStatus(ComplaintStatus.INTRAPROCESS);
-        return complaintDao.update(complaint);
+        if (complaint.getStatus() == ComplaintStatus.ACCEPTED) {
+            complaint.setStatus(ComplaintStatus.INTRAPROCESS);
+            complaintDao.update(complaint);
+            LOG.debug("Complaint status {}", complaint.getStatus());
+        }
+        else {
+            complaint = null;
+            LOG.debug("Complaint status wasn't changed.");
+        }
+        return complaint;
     }
 
     @Override
     public Complaint setStatusAccomplished(Complaint complaint, String comment){
-        complaint.setStatus(ComplaintStatus.ACCOMPLISHED);
-        complaint.setComment(comment);
-        return complaintDao.update(complaint);
+        if (complaint.getStatus() == ComplaintStatus.INTRAPROCESS) {
+            complaint.setStatus(ComplaintStatus.ACCOMPLISHED);
+            complaint.setComment(comment);
+            complaintDao.update(complaint);
+            LOG.debug("Complaint status {}", complaint.getStatus());
+        }
+        else {
+            complaint = null;
+            LOG.debug("Complaint status wasn't changed.");
+        }
+        return complaint;
     }
 
-    @Override
-    public void sendComplaintChangeStatusMessage(Complaint complaint) {
-        SimpleMailMessage complaintAcceptedMessage =
-                this.complaintChangeStatusCreator.constructMessage(complaint);
-        LOG.info("Sending email complaint accepted to: {}", complaint.getUser().getEmail());
-        emailService.sendMail(complaintAcceptedMessage, complaint.getUser());
-    }
 }
