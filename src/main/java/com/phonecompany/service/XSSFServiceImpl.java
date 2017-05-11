@@ -1,9 +1,10 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.OrderDao;
-import com.phonecompany.model.*;
+import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.interfaces.TariffService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
@@ -16,17 +17,17 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
-@org.springframework.stereotype.Service
+@Service
 public class XSSFServiceImpl implements XSSFService {
 
     private static final Logger LOG = LoggerFactory.getLogger(XSSFServiceImpl.class);
@@ -35,44 +36,18 @@ public class XSSFServiceImpl implements XSSFService {
     private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
 
-    private OrderDao orderDao;
-
-    @Autowired
-    public XSSFServiceImpl(OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
-
     @Override
-    public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
+    public void generateReportTables(Map<String, List<Order>> ordersMap,
+                                     List<LocalDate> timeLine) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        this.saveWorkBook(workbook);
-    }
-
-    private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
-                                         LocalDate startDate, LocalDate endDate) {
-        List<Order> tariffOrdersByRegionId = this.orderDao.getTariffOrdersByRegionId(regionId);
-        List<Order> tariffOrdersFilteredByDate = this.filterOrdersByDate(
-                tariffOrdersByRegionId, startDate, endDate);
-
-        Map<String, List<Order>> tariffOrdersMap = this.getTariffOrdersMap(tariffOrdersFilteredByDate);
-        List<LocalDate> timeLine = this.generateTimeLine(tariffOrdersFilteredByDate);
-
         XSSFSheet sheet = workbook.createSheet(TARIFFS);
-        this.generateReportTables(sheet, tariffOrdersMap, timeLine);
-
-        return workbook;
-    }
-
-    private void generateReportTables(XSSFSheet sheet,
-                                      Map<String, List<Order>> ordersMap,
-                                      List<LocalDate> timeLine) {
         int rowPosition = 0;
         List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
         for (OrderType orderType : orderTypes) {
             this.createTableByType(sheet, rowPosition, orderType, ordersMap, timeLine);
             rowPosition += DISTANCE_BETWEEN_TABLES;
         }
+        this.saveWorkBook(workbook);
     }
 
     private void createTableByType(XSSFSheet sheet, int rowPosition,
@@ -224,52 +199,6 @@ public class XSSFServiceImpl implements XSSFService {
                 .collect(Collectors.toList());
     }
 
-
-    private List<Order> filterOrdersByTariffName(List<Order> orders, String tariffName) {
-        return orders.stream()
-                .filter(order -> order.getCustomerTariff()
-                        .getTariff().getTariffName().equals(tariffName))
-                .collect(Collectors.toList());
-    }
-
-    private Map<String, List<Order>> getTariffOrdersMap(List<Order> tariffOrders) {
-        Map<String, List<Order>> tariffOrdersMap = new HashMap<>();
-        Function<Order, String> tariffOrderToTariffNameMapping = this.getTariffOrderToTariffNameMapping();
-        List<String> tariffNames = this.getDistinctNamesFromOrders(tariffOrders, tariffOrderToTariffNameMapping);
-        for (String tariffName : tariffNames) {
-            List<Order> ordersOfTariff = this.filterOrdersByTariffName(tariffOrders, tariffName);
-            this.putOrdersInMap(tariffOrdersMap, tariffName, ordersOfTariff);
-        }
-        return tariffOrdersMap;
-    }
-
-    private void putOrdersInMap(Map<String, List<Order>> map,
-                                String key, List<Order> ordersOfProduct) {
-        if (map.get(key) == null) {
-            List<Order> orders = new ArrayList<>();
-            orders.addAll(ordersOfProduct);
-            map.put(key, orders);
-        } else {
-            map.get(key).addAll(ordersOfProduct);
-        }
-    }
-
-    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
-                                                    Function<Order, String> nameMapper) {
-        return tariffOrders
-                .stream().map(nameMapper)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    private List<LocalDate> generateTimeLine(List<Order> orders) {
-        return orders.stream()
-                .map(Order::getCreationDate)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
     private void saveWorkBook(XSSFWorkbook workbook) {
         try {
             FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);
@@ -280,23 +209,5 @@ public class XSSFServiceImpl implements XSSFService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Function<Order, String> getTariffOrderToTariffNameMapping() {
-        return order -> {
-            CustomerTariff customerTariff = order.getCustomerTariff();
-            Tariff tariff = customerTariff.getTariff();
-            return tariff.getTariffName();
-        };
-    }
-
-    private List<Order> filterOrdersByDate(List<Order> orderList,
-                                           LocalDate startDate, LocalDate endDate) {
-        return orderList.stream()
-                .filter(t -> t.getCreationDate().isAfter(startDate) ||
-                        t.getCreationDate().isEqual(startDate))
-                .filter(t -> t.getCreationDate().isBefore(endDate) ||
-                        t.getCreationDate().isEqual(endDate))
-                .collect(Collectors.toList());
     }
 }

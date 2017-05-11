@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.service.interfaces.OrderService;
+import com.phonecompany.service.interfaces.TariffService;
 import com.phonecompany.service.interfaces.XSSFService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,24 +29,23 @@ public class ReportController {
     private static final String EXCEL_EXTENSION = "xlsx";
     private static final String CURRENT_DIRECTORY = "./";
 
-    private XSSFService xssfService;
+    private TariffService tariffService;
     private OrderService orderService;
 
     @Autowired
-    public ReportController(XSSFService xssfService,
+    public ReportController(TariffService tariffService,
                             OrderService orderService) {
-        this.xssfService = xssfService;
+        this.tariffService = tariffService;
         this.orderService = orderService;
     }
 
-    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}",
-            method = GET, produces = "application/vnd.ms-excel")
+    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
     public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
             @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         LOG.debug("Generating report");
-        this.xssfService.generateReport(regionId, startDate, endDate);
+        this.tariffService.generateTariffReport(regionId, startDate, endDate);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
 

@@ -1,7 +1,6 @@
 package com.phonecompany.util;
 
-import com.phonecompany.model.DomainEntity;
-import com.phonecompany.model.Service;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.UserRole;
 import org.springframework.util.Assert;
 
@@ -11,6 +10,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class TypeMapper {
 

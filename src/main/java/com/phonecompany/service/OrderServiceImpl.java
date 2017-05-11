@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import java.time.LocalDate;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("Duplicates")
 @Service
 public class OrderServiceImpl extends CrudServiceImpl<Order>
         implements OrderService {
@@ -89,15 +91,70 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Override
     public OrderStatistics getOrderStatistics() {
+
         EnumMap<WeekOfMonth, Integer> numberOfActivationOrdersForTheLastMonth =
                 this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.ACTIVATION);
-        LOG.debug("numberOfActivationOrdersForTheLastMonth: {}", numberOfActivationOrdersForTheLastMonth);
         EnumMap<WeekOfMonth, Integer> numberOfDeactivationOrdersForTheLastMonth =
                 this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.DEACTIVATION);
-        LOG.debug("numberOfDeactivationOrdersForTheLastMonth: {}", numberOfDeactivationOrdersForTheLastMonth);
+
         return new OrderStatistics(numberOfDeactivationOrdersForTheLastMonth,
                 numberOfActivationOrdersForTheLastMonth);
     }
 
+    @Override
+    public List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId,
+                                                              LocalDate startDate,
+                                                              LocalDate endDate) {
+        return this.filterOrdersByDate(
+                this.orderDao.getTariffOrdersByRegionId(regionId), startDate, endDate);
+    }
 
+    @Override
+    public Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
+                                                               FilteringStrategy filteringStrategy) {
+        Map<String, List<Order>> productNamesToOrdersMap = new HashMap<>();
+        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getOrderToProductNameMapper();
+        List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
+        for (String productName : productNames) {
+            Predicate<Order> productNameFilter = filteringStrategy.getProductNameFilter(productName);
+            List<Order> ordersOfTariff = this.filterOrders(orders, productNameFilter);
+            this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfTariff);
+        }
+        return productNamesToOrdersMap;
+    }
+
+    private List<Order> filterOrders(List<Order> orders,
+                                     Predicate<Order> filterExpression) {
+        return orders.stream()
+                .filter(filterExpression)
+                .collect(Collectors.toList());
+    }
+
+    private void putOrdersInMap(Map<String, List<Order>> map,
+                                String key, List<Order> ordersOfProduct) {
+        if (map.get(key) == null) {
+            List<Order> orders = new ArrayList<>();
+            orders.addAll(ordersOfProduct);
+            map.put(key, orders);
+        } else {
+            map.get(key).addAll(ordersOfProduct);
+        }
+    }
+    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
+                                                    Function<Order, String> nameMapper) {
+        return tariffOrders
+                .stream().map(nameMapper)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<Order> filterOrdersByDate(List<Order> orderList,
+                                           LocalDate startDate, LocalDate endDate) {
+        return orderList.stream()
+                .filter(t -> t.getCreationDate().isAfter(startDate) ||
+                        t.getCreationDate().isEqual(startDate))
+                .filter(t -> t.getCreationDate().isBefore(endDate) ||
+                        t.getCreationDate().isEqual(endDate))
+                .collect(Collectors.toList());
+    }
 }

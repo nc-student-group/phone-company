@@ -1,7 +1,12 @@
 package com.phonecompany.service.interfaces;
 
+import com.phonecompany.model.Order;
+
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 public interface XSSFService {
-    void generateReport(long regionId, LocalDate startDate, LocalDate endDate);
+    void generateReportTables(Map<String, List<Order>> ordersMap,
+                              List<LocalDate> timeLine);
 }

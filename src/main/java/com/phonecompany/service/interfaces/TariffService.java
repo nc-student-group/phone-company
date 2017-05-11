@@ -4,11 +4,12 @@ import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public interface TariffService extends CrudService<Tariff> {
-    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
+    List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
 
     public Integer getCountByRegionId(long regionId);
 
@@ -58,4 +59,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
+    void generateTariffReport(long regionId,
+                              LocalDate startDate,
+                              LocalDate endDate);
 }
