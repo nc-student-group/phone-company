@@ -12,5 +12,4 @@ public interface ComplaintService extends CrudService<Complaint> {
     public Map<String, Object> getComplaintsByResponsible(long responsibleId, String category, int page, int size);
     public Complaint setStatusIntraprocess(Complaint complaint);
     public Complaint setStatusAccomplished(Complaint complaint, String comment);
-    public void sendComplaintChangeStatusMessage(Complaint complaint);
 }

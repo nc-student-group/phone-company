@@ -113,7 +113,15 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Customer notUpdatedCustomer = this.getById(user.getId());
         LOG.info(notUpdatedCustomer.toString());
         LOG.info(user.toString());
-        if((notUpdatedCustomer.getCorporate().getId()!=user.getCorporate().getId()) || (notUpdatedCustomer.getAddress().getRegion().getId()!=user.getAddress().getRegion().getId())){
+        if (notUpdatedCustomer.getCorporate()!=null && user.getCorporate()!=null){
+            if((!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) || (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))){
+                this.deactivateCustomerTariff(user.getId());
+            }
+        }else if(notUpdatedCustomer.getCorporate()!=null && user.getCorporate()==null){
+            this.deactivateCustomerTariff(user.getId());
+        }else if(notUpdatedCustomer.getCorporate()==null && user.getCorporate()!=null){
+            this.deactivateCustomerTariff(user.getId());
+        }else if((!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))){
             this.deactivateCustomerTariff(user.getId());
         }
         return super.update(user);

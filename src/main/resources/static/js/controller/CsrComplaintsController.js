@@ -176,7 +176,7 @@ angular.module('phone-company').controller('CsrComplaintsController', [
             ComplaintService.createComplaintByCsr($scope.complaint)
                 .then(function (data) {
                         $scope.complaint = data;
-                        if ($scope.complaint.user.id != undefined) {
+                        if ($scope.complaint.user != undefined) {
                             toastr.success('Complaint created successfully!');
                             console.log("Complaint added", $scope.complaint);
                         } else {
