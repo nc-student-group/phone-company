@@ -6,7 +6,9 @@ import com.phonecompany.model.DomainEntity;
 import com.phonecompany.util.DbManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +28,8 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     private static final Logger LOG = LoggerFactory.getLogger(CrudDaoImpl.class);
 
-    DbManager dbManager = DbManager.getInstance();
+    @Autowired
+    DataSource dbManager;
 
     private boolean autoCommit = true;
 
