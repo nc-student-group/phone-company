@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,9 +30,9 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
                                      @Qualifier("tariffSuspensionNotificationEmailCreator")
-                                                MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
+                                             MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
                                      @Qualifier("tariffResumingNotificationEmailCreator")
-                                                 MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator,
+                                             MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator,
                                      EmailService<User> emailService) {
         super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;

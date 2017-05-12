@@ -6,6 +6,7 @@
             'ngMessages',
             'ngResource',
             'ImageCropper',
+            "vcRecaptcha",
             'chart.js']);
 
     app.config(function ($routeProvider, $locationProvider) {

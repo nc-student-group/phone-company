@@ -19,6 +19,7 @@
         <intercept-url pattern="/api/customers" access="permitAll()"/>
         <intercept-url pattern="/api/user/reset" access="permitAll()"/>
         <intercept-url pattern="/api/confirmRegistration" access="permitAll()"/>
+        <intercept-url pattern="/api/captcha" access="permitAll()"/>
         <intercept-url pattern="/api/roles" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/api/services/empty-service" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
         <intercept-url pattern="/api/services/categories" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
