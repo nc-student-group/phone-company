@@ -2,10 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
-import com.phonecompany.service.interfaces.ComplaintService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
-import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

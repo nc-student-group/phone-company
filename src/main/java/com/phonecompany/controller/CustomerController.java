@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
@@ -96,7 +95,7 @@ public class CustomerController {
         return response;
     }
 
-    @GetMapping("/api/confirmRegistration")
+    @GetMapping("/api/sendConfirmationEmail")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
         LOG.debug("Token retrieved from the request parameter: {}", token);
