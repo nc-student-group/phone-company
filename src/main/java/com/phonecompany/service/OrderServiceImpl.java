@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
-@SuppressWarnings("Duplicates")
 @Service
 public class OrderServiceImpl extends CrudServiceImpl<Order>
         implements OrderService {

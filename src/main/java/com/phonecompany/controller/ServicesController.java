@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
@@ -40,17 +41,17 @@ public class ServicesController {
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                              MailMessageCreator<Service> emailCreator,
+                                      MailMessageCreator<Service> emailCreator,
                               @Qualifier("serviceDeactivationNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
+                                      MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
+                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
                               @Qualifier("serviceSuspensionNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
+                                      MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -71,12 +72,13 @@ public class ServicesController {
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
-    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
-                                                       @PathVariable("page") int page,
-                                                       @PathVariable("size") int size) {
+    public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
+                                                     @PathVariable("page") int page,
+                                                     @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
-        return serviceService
+        PagingResult<Service> servicePagingResult = serviceService
                 .getServicesByProductCategoryId(productCategoryId, page, size);
+        return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 
     @PostMapping

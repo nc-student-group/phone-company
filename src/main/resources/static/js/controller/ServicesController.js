@@ -28,9 +28,9 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.preloader.send = true;
         ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
             .then(function (data) {
-                $scope.services = data.services;
+                $scope.services = data.pagingResult;
                 console.log(JSON.stringify($scope.services));
-                $scope.servicesCount = data.servicesCount;
+                $scope.servicesCount = data.entityCount;
                 $scope.preloader.send = false;
             }, function () {
                 $scope.preloader.send = false;
@@ -41,8 +41,8 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.preloader.send = true;
             ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
                 .then(function (data) {
-                    $scope.services = data.services;
-                    $scope.servicesCount = data.servicesCount;
+                    $scope.services = data.pagingResult;
+                    $scope.servicesCount = data.entityCount;
                     $scope.preloader.send = false;
                 }, function () {
                     $scope.preloader.send = false;
@@ -56,8 +56,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.preloader.send = true;
                 ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
                     .then(function (data) {
-                        $scope.services = data.services;
-                        $scope.servicesCount = data.servicesCount;
+                        $scope.services = data.pagingResult;
+                        $scope.servicesCount = data.entityCount;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }, function () {
@@ -73,8 +73,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.preloader.send = true;
                 ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
                     .then(function (data) {
-                        $scope.services = data.services;
-                        $scope.servicesCount = data.servicesCount;
+                        $scope.services = data.pagingResult;
+                        $scope.servicesCount = data.entityCount;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }, function () {
