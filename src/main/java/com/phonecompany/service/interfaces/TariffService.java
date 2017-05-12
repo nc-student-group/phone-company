@@ -2,9 +2,7 @@ package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.service.xssfHelper.ExcelSheet;
-import com.phonecompany.service.xssfHelper.ExcelTable;
-import org.springframework.http.ResponseEntity;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -61,7 +59,7 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
-    ExcelSheet generateTariffReport(long regionId,
-                                    LocalDate startDate,
-                                    LocalDate endDate);
+    SheetDataSet prepareTariffReportDataSet(long regionId,
+                                            LocalDate startDate,
+                                            LocalDate endDate);
 }

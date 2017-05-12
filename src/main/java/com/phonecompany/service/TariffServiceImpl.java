@@ -8,7 +8,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
-import com.phonecompany.service.xssfHelper.ExcelSheet;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -334,7 +334,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
-    public ExcelSheet generateTariffReport(long regionId, LocalDate startDate, LocalDate endDate) {
+    public SheetDataSet prepareTariffReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
 
         List<Order> tariffOrders = this.orderService
                 .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
@@ -347,6 +347,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
 
         return this.orderService
-                .prepareExcelSheetDataset("Tariffs", productNamesToOrdersMap, timeLine);
+                .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
     }
 }

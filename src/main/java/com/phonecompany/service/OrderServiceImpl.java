@@ -6,9 +6,9 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.OrderService;
-import com.phonecompany.service.xssfHelper.ExcelRow;
-import com.phonecompany.service.xssfHelper.ExcelSheet;
-import com.phonecompany.service.xssfHelper.ExcelTable;
+import com.phonecompany.service.xssfHelper.RowDataSet;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.service.xssfHelper.FilteringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +115,16 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 this.orderDao.getTariffOrdersByRegionId(regionId), startDate, endDate);
     }
 
+    private List<Order> filterOrdersByDate(List<Order> orderList,
+                                           LocalDate startDate, LocalDate endDate) {
+        return orderList.stream()
+                .filter(t -> t.getCreationDate().isAfter(startDate) ||
+                        t.getCreationDate().isEqual(startDate))
+                .filter(t -> t.getCreationDate().isBefore(endDate) ||
+                        t.getCreationDate().isEqual(endDate))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public long getOrderNumberByDate(List<Order> orderList,
                                      LocalDate date) {
@@ -124,10 +134,10 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
-    public ExcelSheet prepareExcelSheetDataset(String sheetName,
-                                               Map<String, List<Order>> productNamesToOrdersMap,
-                                               List<LocalDate> timeLine) {
-        ExcelSheet sheet = new ExcelSheet(sheetName);
+    public SheetDataSet prepareExcelSheetDataSet(String sheetName,
+                                                 Map<String, List<Order>> productNamesToOrdersMap,
+                                                 List<LocalDate> timeLine) {
+        SheetDataSet sheet = new SheetDataSet(sheetName);
         List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
         for (OrderType orderType : orderTypes) {
             this.prepareExcelTableDataSet(sheet, orderType, productNamesToOrdersMap, timeLine);
@@ -135,21 +145,21 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return sheet;
     }
 
-    private void prepareExcelTableDataSet(ExcelSheet sheet, OrderType orderType,
+    private void prepareExcelTableDataSet(SheetDataSet sheet, OrderType orderType,
                                           Map<String, List<Order>> productNamesToOrdersMap,
                                           List<LocalDate> timeLine) {
-        ExcelTable table = sheet.createTable(orderType.toString());
+        TableDataSet table = sheet.createTable(orderType.toString());
         for (String productName : productNamesToOrdersMap.keySet()) {
             this.prepareExcelRowDataSet(table, productName, orderType,
                     productNamesToOrdersMap, timeLine);
         }
     }
 
-    private void prepareExcelRowDataSet(ExcelTable table, String productName,
+    private void prepareExcelRowDataSet(TableDataSet table, String productName,
                                         OrderType orderType,
                                         Map<String, List<Order>> productNamesToOrdersMap,
                                         List<LocalDate> timeLine) {
-        ExcelRow row = table.createRow(productName);
+        RowDataSet row = table.createRow(productName);
         List<Order> orders = productNamesToOrdersMap.get(productName);
         List<Order> ordersByType = this.filterCompletedOrdersByType(orders, orderType);
         for (LocalDate date : timeLine) {
@@ -189,6 +199,13 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return productNamesToOrdersMap;
     }
 
+    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
+                                                    Function<Order, String> nameMapper) {
+        return tariffOrders
+                .stream().map(nameMapper)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
     private List<Order> filterOrders(List<Order> orders,
                                      Predicate<Order> filterExpression) {
@@ -206,23 +223,5 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         } else {
             map.get(key).addAll(ordersOfProduct);
         }
-    }
-
-    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
-                                                    Function<Order, String> nameMapper) {
-        return tariffOrders
-                .stream().map(nameMapper)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    private List<Order> filterOrdersByDate(List<Order> orderList,
-                                           LocalDate startDate, LocalDate endDate) {
-        return orderList.stream()
-                .filter(t -> t.getCreationDate().isAfter(startDate) ||
-                        t.getCreationDate().isEqual(startDate))
-                .filter(t -> t.getCreationDate().isBefore(endDate) ||
-                        t.getCreationDate().isEqual(endDate))
-                .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,8 @@
 package com.phonecompany.service;
 
 import com.phonecompany.service.interfaces.TariffService;
-import com.phonecompany.service.xssfHelper.ExcelSheet;
+import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class ReportServiceTest {
     @Autowired
     private TariffService tariffService;
 
+    @Autowired
+    private XSSFService xssfService;
+
     @Test
     public void shouldCreateXls() {
         //given
@@ -26,7 +30,7 @@ public class ReportServiceTest {
         LocalDate endDate = LocalDate.of(2017, Month.MAY, 5);
 
         //then
-        ExcelSheet excelSheet = tariffService.generateTariffReport(regionId, startDate, endDate);
-        System.out.println(excelSheet);
+        SheetDataSet excelSheet = tariffService.prepareTariffReportDataSet(regionId, startDate, endDate);
+        xssfService.generateReport(excelSheet);
     }
 }

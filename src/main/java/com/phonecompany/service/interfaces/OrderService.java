@@ -2,16 +2,12 @@ package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.xssfHelper.ExcelRow;
-import com.phonecompany.service.xssfHelper.ExcelSheet;
-import com.phonecompany.service.xssfHelper.ExcelTable;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.FilteringStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
 
 @SuppressWarnings("SameParameterValue")
 public interface OrderService extends CrudService<Order> {
@@ -46,7 +42,7 @@ public interface OrderService extends CrudService<Order> {
 
     long getOrderNumberByDate(List<Order> orderList, LocalDate date);
 
-    ExcelSheet prepareExcelSheetDataset(String sheetName,
-                                        Map<String, List<Order>> productNamesToOrdersMap,
-                                        List<LocalDate> timeLine);
+    SheetDataSet prepareExcelSheetDataSet(String sheetName,
+                                          Map<String, List<Order>> productNamesToOrdersMap,
+                                          List<LocalDate> timeLine);
 }

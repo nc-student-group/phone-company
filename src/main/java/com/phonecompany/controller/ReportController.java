@@ -4,11 +4,10 @@ import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.TariffService;
 import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.Month;
 
 import static com.phonecompany.util.FileUtil.getFilesWithExtensionFromPath;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -31,12 +29,15 @@ public class ReportController {
 
     private TariffService tariffService;
     private OrderService orderService;
+    private XSSFService xssfService;
 
     @Autowired
     public ReportController(TariffService tariffService,
-                            OrderService orderService) {
+                            OrderService orderService,
+                            XSSFService xssfService) {
         this.tariffService = tariffService;
         this.orderService = orderService;
+        this.xssfService = xssfService;
     }
 
     @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
@@ -45,7 +46,10 @@ public class ReportController {
             @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         LOG.debug("Generating report");
-        this.tariffService.generateTariffReport(regionId, startDate, endDate);
+        SheetDataSet sheetDataSet = this.tariffService
+                .prepareTariffReportDataSet(regionId, startDate, endDate);
+
+        xssfService.generateReport(sheetDataSet);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
 
