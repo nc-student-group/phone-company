@@ -181,7 +181,7 @@ public class ServicesController {
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
         Customer customer = customerService.getCurrentlyLoggedInUser();
-        LOG.debug("Get all service orders by customer id = " + customer);
+        LOG.debug("Get all service orders by customer id: {}", customer.getId());
         Map<String, Object> map = new HashMap<>();
         map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
         map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));

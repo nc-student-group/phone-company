@@ -26,6 +26,15 @@ public class CustomerServiceDto extends DomainEntity {
         this.customerProductStatus = customerProductStatus;
     }
 
+    public CustomerServiceDto(Long id, Customer customer, Service service,
+                              double price, CustomerProductStatus customerProductStatus) {
+        super(id);
+        this.customer = customer;
+        this.service = service;
+        this.price = price;
+        this.customerProductStatus = customerProductStatus;
+    }
+
     public Customer getCustomer() {
         return customer;
     }

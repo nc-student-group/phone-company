@@ -18,7 +18,20 @@ public class CustomerTariff extends DomainEntity {
     public CustomerTariff() {
     }
 
-    public CustomerTariff(Customer customer, Corporate corporate, double totalPrice, CustomerProductStatus customerProductStatus, Tariff tariff) {
+    public CustomerTariff(Customer customer, Corporate corporate,
+                          double totalPrice, CustomerProductStatus customerProductStatus,
+                          Tariff tariff) {
+        this.customer = customer;
+        this.corporate = corporate;
+        this.totalPrice = totalPrice;
+        this.customerProductStatus = customerProductStatus;
+        this.tariff = tariff;
+    }
+
+    public CustomerTariff(Long id, Customer customer, Corporate corporate,
+                          double totalPrice, CustomerProductStatus customerProductStatus,
+                          Tariff tariff) {
+        super(id);
         this.customer = customer;
         this.corporate = corporate;
         this.totalPrice = totalPrice;
@@ -64,5 +77,16 @@ public class CustomerTariff extends DomainEntity {
 
     public void setTariff(Tariff tariff) {
         this.tariff = tariff;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomerTariff{" +
+                "customer=" + customer +
+                ", corporate=" + corporate +
+                ", totalPrice=" + totalPrice +
+                ", customerProductStatus=" + customerProductStatus +
+                ", tariff=" + tariff +
+                "} " + super.toString();
     }
 }

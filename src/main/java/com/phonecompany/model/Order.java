@@ -102,10 +102,12 @@ public class Order extends DomainEntity {
     @Override
     public String toString() {
         return "Order{" +
+                "customerService=" + customerService +
+                ", customerTariff=" + customerTariff +
                 ", type=" + type +
                 ", orderStatus=" + orderStatus +
                 ", creationDate=" + creationDate +
                 ", executionDate=" + executionDate +
-                '}';
+                "} " + super.toString();
     }
 }
