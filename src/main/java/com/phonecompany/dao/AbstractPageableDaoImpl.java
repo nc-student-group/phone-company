@@ -25,10 +25,10 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(pagingQuery)) {
-            LOG.debug("Opening connection for paging");
+            LOG.debug("Opening connection for isPaging");
             this.transferParamsToPreparedStatement(ps);
 
-            LOG.debug("Executing paging query: {}", pagingQuery);
+            LOG.debug("Executing isPaging query: {}", pagingQuery);
             ResultSet rs = ps.executeQuery();
 
             List<T> result = new ArrayList<>();

@@ -1,9 +1,13 @@
 package com.phonecompany.cache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.*;
 
-public class SimpleCacheImpl<K,V> {
+public class SimpleCacheImpl<K, V> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleCacheImpl.class);
     private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<>();
 
     public SimpleCacheImpl(long expirationTime) {
@@ -11,29 +15,32 @@ public class SimpleCacheImpl<K,V> {
                 expirationTime, expirationTime, TimeUnit.SECONDS);
     }
 
-    private Future<V> createIfAbsent(final K key, final Callable<V> callable) {
+    public void put(K key, V value) {
+        createIfAbsent(key, () -> value);
+    }
+
+    private void createIfAbsent(final K key, final Callable<V> callable) {
         Future<V> future = cache.get(key);
         if (future == null) {
             final FutureTask<V> futureTask = new FutureTask<>(callable);
             future = cache.putIfAbsent(key, futureTask);
             if (future == null) {
-                future = futureTask;
-
+                LOG.debug("Computing value");
                 // Compute the value
                 futureTask.run();
             }
         }
-        return future;
     }
 
-    public V getValue(final K key, final Callable<V> callable)
+    public V getValue(final K key)
             throws InterruptedException, ExecutionException {
+        Future<V> future = cache.getOrDefault(key, null);
         try {
-            return createIfAbsent(key, callable).get();
-        } catch (InterruptedException | ExecutionException | RuntimeException e) {
-            cache.remove(key);
-            throw e;
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -42,5 +49,17 @@ public class SimpleCacheImpl<K,V> {
     public void clear() {
         // Clear the cache
         cache.clear();
+    }
+
+    public int getSize() {
+        return cache.size();
+    }
+
+    public boolean contains(K key) {
+        return cache.containsKey(key);
+    }
+
+    public void remove(K key) {
+        cache.remove(key);
     }
 }

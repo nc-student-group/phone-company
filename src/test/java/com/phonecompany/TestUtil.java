@@ -1,14 +1,11 @@
 package com.phonecompany;
 
-import com.google.common.reflect.TypeToken;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.enums.UserRole;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
