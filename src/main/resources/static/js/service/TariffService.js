@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('phone-company').factory('TariffService', ['$q', '$http', function ($q, $http) {
+angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filter', function ($q, $http, $filter) {
 
     var GET_ALL_REGION_URL = "api/regions";
     var GET_TARIFFS_BY_REGION_ID_URL = "api/tariffs/";
@@ -23,7 +23,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
 
     var factory = {
         getAllRegions: getAllRegions,
-        getTariffsByRegionId: getTariffsByRegionId,
+        getTariffs: getTariffs,
         getNewTariff: getNewTariff,
         addTariff: addTariff,
         getTariffToEditById: getTariffToEditById,
@@ -57,9 +57,12 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', functio
         return deferred.promise;
     }
 
-    function getTariffsByRegionId(regionId, page, size) {
+    function getTariffs(page, size, name, status, type, from, to, orderBy, orderByType) {
         var deferred = $q.defer();
-        $http.get(GET_TARIFFS_BY_REGION_ID_URL + regionId + "/" + page + "/" + size).then(
+        var convertedStartDate = $filter('date')(from, "yyyy-MM-dd");
+        var convertedEndDate = $filter('date')(to, "yyyy-MM-dd");
+        $http.get(GET_TARIFFS_BY_REGION_ID_URL + page + "/" + size + "?n=" + name + "&s=" + status + "&t=" + type
+            + "&f=" + convertedStartDate + "&to=" + convertedEndDate + "&ob=" + orderBy + "&ot=" + orderByType).then(
             function (response) {
                 deferred.resolve(response.data);
             },

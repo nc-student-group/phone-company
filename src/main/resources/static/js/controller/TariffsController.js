@@ -12,13 +12,21 @@ angular.module('phone-company').controller('TariffsController', [
         console.log('This is TariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
-        $scope.size = 3;
+        $scope.size = 5;
         $scope.inProgress = false;
         $scope.tariffsSelected = 0;
         $scope.currentRegion = 0;
         $scope.regionsToSave = [];
         $scope.editing = false;
         $scope.discountPattern = /^([0-9]|([1-9][0-9])|100)$/;
+        //FILTERS
+        $scope.selectedName = "";
+        $scope.selectedStatus = 0;
+        $scope.selectedType = 0;
+        $scope.dateFrom = null;
+        $scope.dateTo = null;
+        $scope.orderBy = 0;
+        $scope.orderByType = 0;
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
@@ -35,7 +43,8 @@ angular.module('phone-company').controller('TariffsController', [
         });
 
         $scope.preloader.send = true;
-        TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+        TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
+            $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
             .then(function (data) {
                 $scope.tariffs = data.tariffs;
                 console.log($scope.tariffs);
@@ -50,7 +59,8 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+                TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -69,7 +79,8 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.inProgress = true;
                 $scope.page = page;
                 $scope.preloader.send = true;
-                TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+                TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -96,7 +107,8 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+                TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -110,9 +122,11 @@ angular.module('phone-company').controller('TariffsController', [
         };
 
         $scope.updateData = function () {
+            console.log($scope.dateTo);
             $scope.page = 0;
             $scope.preloader.send = true;
-            TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+            TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
+                $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
                 .then(function (data) {
                     $scope.tariffs = data.tariffs;
                     $scope.tariffsSelected = data.tariffsSelected;
