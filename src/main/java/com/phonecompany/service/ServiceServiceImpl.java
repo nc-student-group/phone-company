@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -50,15 +50,15 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public PagingResult<Service> getServicesByProductCategoryId(int productCategoryId,
-                                                                int page, int size) {
+    @Cacheable
+    public PagingResult<Service> getServicesByProductCategoryId(int page, int size,
+                                                                int firstFilter) {
 
-        List<Service> pagedServices = this.serviceDao.getPaging(page, size, productCategoryId);
+        List<Service> pagedServices = this.serviceDao.getPaging(page, size, firstFilter);
         List<Service> servicesWithDiscount = this.applyDiscount(pagedServices);
-
         LOG.debug("Services to be put in response: {}", servicesWithDiscount);
 
-        int serviceEntityCount = this.serviceDao.getEntityCount(productCategoryId);
+        int serviceEntityCount = this.serviceDao.getEntityCount(firstFilter);
 
         return new PagingResult<>(servicesWithDiscount, serviceEntityCount);
     }

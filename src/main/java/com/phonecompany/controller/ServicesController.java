@@ -77,7 +77,7 @@ public class ServicesController {
                                                      @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
         PagingResult<Service> servicePagingResult = serviceService
-                .getServicesByProductCategoryId(productCategoryId, page, size);
+                .getServicesByProductCategoryId(page, size, productCategoryId);
         return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 

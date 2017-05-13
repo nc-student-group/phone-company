@@ -3,7 +3,6 @@ package com.phonecompany.service;
 import com.phonecompany.TestUtil;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.paging.PagingResult;

@@ -3,8 +3,6 @@ package com.phonecompany.model.proxy;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.function.Function;
@@ -18,8 +16,6 @@ import java.util.function.Function;
  * @param <T> proxy type
  */
 public class DynamicProxy<T> implements MethodInterceptor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DynamicProxy.class);
 
     private T source = null; // real object should be lazily loaded
     private Long sourceId;
