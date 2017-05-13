@@ -2,12 +2,12 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.service.interfaces.OrderService;
+import com.phonecompany.service.interfaces.TariffService;
 import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.Month;
 
 import static com.phonecompany.util.FileUtil.getFilesWithExtensionFromPath;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -28,23 +27,29 @@ public class ReportController {
     private static final String EXCEL_EXTENSION = "xlsx";
     private static final String CURRENT_DIRECTORY = "./";
 
-    private XSSFService xssfService;
+    private TariffService tariffService;
     private OrderService orderService;
+    private XSSFService xssfService;
 
     @Autowired
-    public ReportController(XSSFService xssfService,
-                            OrderService orderService) {
-        this.xssfService = xssfService;
+    public ReportController(TariffService tariffService,
+                            OrderService orderService,
+                            XSSFService xssfService) {
+        this.tariffService = tariffService;
         this.orderService = orderService;
+        this.xssfService = xssfService;
     }
 
-    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}",
-            method = GET, produces = "application/vnd.ms-excel")
+    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
     public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
             @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
-        this.xssfService.generateReport(regionId, startDate, endDate);
+        LOG.debug("Generating report");
+        SheetDataSet sheetDataSet = this.tariffService
+                .prepareTariffReportDataSet(regionId, startDate, endDate);
+
+        xssfService.generateReport(sheetDataSet);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
 

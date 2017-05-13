@@ -3,32 +3,26 @@ package com.phonecompany.service;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.KeyAlreadyPresentException;
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.SecuredUser;
-import com.phonecompany.model.VerificationToken;
-import com.phonecompany.model.events.OnUserCreationEvent;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.events.OnUserCreationEvent;
+import com.phonecompany.service.email.PasswordAssignmentEmailCreator;
+import com.phonecompany.service.email.ResetPasswordEmailCreator;
 import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.UserService;
-import com.phonecompany.service.interfaces.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -42,33 +36,25 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
     private EmailService<User> emailService;
-    private MailMessageCreator<User> resetPassMessageCreator;
-    private MailMessageCreator<VerificationToken> confirmMessageCreator;
-    private MailMessageCreator<User> passwordAssignmentCreator;
-    private VerificationTokenService verificationTokenService;
+    private ResetPasswordEmailCreator resetPassMessageCreator;
+    private PasswordAssignmentEmailCreator passwordAssignmentCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
                            ShaPasswordEncoder shaPasswordEncoder,
-                           @Qualifier("resetPassMessageCreator")
-                                   MailMessageCreator<User> resetPassMessageCreator,
-                           @Qualifier("confirmationEmailCreator")
-                                   MailMessageCreator<VerificationToken> confirmMessageCreator,
-                           @Qualifier("passwordAssignmentMessageCreator")
-                                   MailMessageCreator<User> passwordAssigmentCreator,
-                           EmailService<User> emailService,
-                           VerificationTokenService verificationTokenService) {
+                           ResetPasswordEmailCreator resetPassMessageCreator,
+                           PasswordAssignmentEmailCreator passwordAssignmentCreator,
+                           EmailService<User> emailService) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
-        this.confirmMessageCreator = confirmMessageCreator;
-        this.passwordAssignmentCreator = passwordAssigmentCreator;
-        this.verificationTokenService = verificationTokenService;
+        this.passwordAssignmentCreator = passwordAssignmentCreator;
     }
 
+    @Override
     @EventListener
-    public void confirmRegistration(OnUserCreationEvent onUserCreationEvent) {
+    public void sendConfirmationEmail(OnUserCreationEvent onUserCreationEvent) {
         User persistedUser = onUserCreationEvent.getPersistedUser();
         SimpleMailMessage confirmationMessage =
                 this.passwordAssignmentCreator.constructMessage(persistedUser);
@@ -91,7 +77,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public void validate(User user) {
         String email = user.getEmail();
         int countByEmail = this.userDao.getCountByEmail(email);
-        if(countByEmail != 0) {
+        if (countByEmail != 0) {
             throw new KeyAlreadyPresentException(email);
         }
     }
@@ -103,6 +89,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return super.update(user);
     }
 
+    //TODO: extract email dispatch to controller
     @Override
     public User resetPassword(User user) {
         user.setPassword(generatePassword());
@@ -133,23 +120,28 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return userDao.getPaging(page, size, roleId, status);
     }
 
-    public void changePassword(String oldPass,String newPass){
+    //TODO: we should not know currently logged in user at the service layer
+    @Override
+    public void changePassword(String oldPass, String newPass) {
         User user = this.getCurrentlyLoggedInUser();
-        if(shaPasswordEncoder.encodePassword(oldPass,null).equals(user.getPassword())){
-            user.setPassword(shaPasswordEncoder.encodePassword(newPass,null));
+        if (shaPasswordEncoder.encodePassword(oldPass, null).equals(user.getPassword())) {
+            user.setPassword(shaPasswordEncoder.encodePassword(newPass, null));
             userDao.update(user);
-        }else {
+        } else {
             throw new ConflictException("Old password is wrong");
         }
     }
 
+    //TODO: method is called "getCountUsers" but accepts status as a parameter
+    //TODO: rename to getUserCountByStatus ?
     @Override
     public int getCountUsers(int roleId, String status) {
         return userDao.getEntityCount(roleId, status);
     }
 
+    //TODO: untestable method. does not return anything
     @Override
-    public void updateStatus(long id, Status status){
+    public void updateStatus(long id, Status status) {
         userDao.updateStatus(id, status);
     }
 }

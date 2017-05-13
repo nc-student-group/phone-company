@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ComplaintServiceImpl extends CrudServiceImpl<Complaint> implements ComplaintService{
+public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
+        implements ComplaintService{
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintServiceImpl.class);
 

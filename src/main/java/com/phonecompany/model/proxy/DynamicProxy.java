@@ -81,6 +81,8 @@ public class DynamicProxy<T> implements MethodInterceptor {
     public Object intercept(Object obj, Method method, Object[] args,
                             MethodProxy methodProxy) throws Throwable {
         T source = this.getSource(); // loads real object
+        if(source == null) return null;
+
         return method.invoke(source, args);
     }
 }

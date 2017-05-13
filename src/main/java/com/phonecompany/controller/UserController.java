@@ -1,6 +1,5 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
@@ -9,10 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
@@ -86,8 +83,8 @@ public class UserController {
     }
 
     @RequestMapping(method = POST, value = "/api/user/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody HashMap<String,String> pass) {
-        userService.changePassword(pass.get("oldPass"),pass.get("newPass"));
+    public ResponseEntity<?> changePassword(@RequestBody HashMap<String, String> pass) {
+        userService.changePassword(pass.get("oldPass"), pass.get("newPass"));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -101,6 +98,7 @@ public class UserController {
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
+            return new ResponseEntity<Object>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(persistedUser, HttpStatus.OK);
     }
@@ -122,6 +120,6 @@ public class UserController {
     @RequestMapping(value = "/api/user/update/{id}/{status}", method = RequestMethod.GET)
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

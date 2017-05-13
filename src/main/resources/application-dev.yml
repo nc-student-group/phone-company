@@ -1,0 +1,7 @@
+##
+# Local postgres Database Configuration
+##
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/phone-company?user=postgres&password=1111
+    driver-class-name: org.h2.Driver

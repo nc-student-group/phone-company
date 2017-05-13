@@ -1,23 +1,21 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -52,19 +50,17 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public Map<String, Object> getServicesByProductCategoryId(long productCategoryId,
-                                                              int page, int size) {
-        Map<String, Object> response = new HashMap<>();
-        List<Service> pagedServices = this.serviceDao.getPaging(page, size, productCategoryId);
+    @Cacheable
+    public PagingResult<Service> getServicesByProductCategoryId(int page, int size,
+                                                                int firstFilter) {
 
+        List<Service> pagedServices = this.serviceDao.getPaging(page, size, firstFilter);
         List<Service> servicesWithDiscount = this.applyDiscount(pagedServices);
-
         LOG.debug("Services to be put in response: {}", servicesWithDiscount);
 
-        response.put("services", servicesWithDiscount);
-        response.put("servicesCount", this.serviceDao.getEntityCount(productCategoryId));
+        int serviceEntityCount = this.serviceDao.getEntityCount(firstFilter);
 
-        return response;
+        return new PagingResult<>(servicesWithDiscount, serviceEntityCount);
     }
 
     private List<Service> applyDiscount(List<Service> services) {
@@ -124,6 +120,10 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return super.save(service);
     }
 
+    private boolean isExist(Service service) {
+        return this.serviceDao.isExist(service);
+    }
+
     private String getPictureUrlForService(Service service) {
         String pictureBase64 = service.getPictureUrl();
         LOG.debug("Service base64 picture URL: {}", pictureBase64);
@@ -131,10 +131,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
                 "service/" + service.hashCode());
         LOG.debug("Picture URL after parsing base64 image representation: {}", pictureUrl);
         return pictureUrl;
-    }
-
-    private boolean isExist(Service service) {
-        return this.serviceDao.isExist(service);
     }
 
     @Override

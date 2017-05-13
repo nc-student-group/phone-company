@@ -1,7 +1,7 @@
 package com.phonecompany.service.interfaces;
 
-import java.time.LocalDate;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 public interface XSSFService {
-    void generateReport(long regionId, LocalDate startDate, LocalDate endDate);
+    void generateReport(SheetDataSet excelSheet);
 }

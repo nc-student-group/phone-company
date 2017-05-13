@@ -30,7 +30,6 @@ angular.module('phone-company')
             let deferred = $q.defer();
             $http.post(GET_LOGIN_URL + "?" + data).then(
                 function (response) {
-                    console.log(response.data);
                     deferred.resolve(response.data);
                 },
                 function (errResponse) {

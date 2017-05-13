@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
@@ -40,17 +41,17 @@ public class ServicesController {
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
                               @Qualifier("serviceNotificationEmailCreator")
-                              MailMessageCreator<Service> emailCreator,
+                                      MailMessageCreator<Service> emailCreator,
                               @Qualifier("serviceDeactivationNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
+                                      MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
                               EmailService<Customer> emailService,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
                               OrderService orderService,
                               @Qualifier("serviceActivationNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
+                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
                               @Qualifier("serviceSuspensionNotificationEmailCreator")
-                              MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
+                                      MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
         this.serviceNotificationEmailCreator = emailCreator;
@@ -71,12 +72,13 @@ public class ServicesController {
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
-    public Map<String, Object> getServicesByCategoryId(@PathVariable("id") long productCategoryId,
-                                                       @PathVariable("page") int page,
-                                                       @PathVariable("size") int size) {
+    public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
+                                                     @PathVariable("page") int page,
+                                                     @PathVariable("size") int size) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
-        return serviceService
-                .getServicesByProductCategoryId(productCategoryId, page, size);
+        PagingResult<Service> servicePagingResult = serviceService
+                .getServicesByProductCategoryId(page, size, productCategoryId);
+        return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 
     @PostMapping
@@ -154,8 +156,9 @@ public class ServicesController {
     @PatchMapping
     public ResponseEntity<?> updateService(@RequestBody Service service) {
         LOG.debug("Service to be updated: ", service);
-        this.serviceService.update(service);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Service updatedService = this.serviceService.update(service);
+        LOG.debug("Updated service: {}", updatedService);
+        return new ResponseEntity<>(updatedService, HttpStatus.OK);
     }
 
     @GetMapping("/current")
@@ -178,7 +181,7 @@ public class ServicesController {
     public Map<String, Object> getOrdersHistoryPaged(@PathVariable("page") int page,
                                                      @PathVariable("size") int size) {
         Customer customer = customerService.getCurrentlyLoggedInUser();
-        LOG.debug("Get all service orders by customer id = " + customer);
+        LOG.debug("Get all service orders by customer id: {}", customer.getId());
         Map<String, Object> map = new HashMap<>();
         map.put("ordersFound", orderService.getOrdersCountForServicesByClient(customer));
         map.put("orders", orderService.getOrdersHistoryForServicesByClient(customer, page, size));

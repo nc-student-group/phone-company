@@ -1,7 +1,5 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.dao.interfaces.CustomerServiceDao;
-import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
@@ -23,7 +21,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
 import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
@@ -36,16 +36,10 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
 
     private QueryLoader queryLoader;
-    private CustomerServiceDao customerServiceDao;
-    private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader,
-                        CustomerServiceDao customerServiceDao,
-                        CustomerTariffDao customerTariffDao) {
+    public OrderDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
-        this.customerServiceDao = customerServiceDao;
-        this.customerTariffDao = customerTariffDao;
     }
 
     @Override
@@ -88,13 +82,14 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
         Order order = new Order();
         try {
             order.setId(rs.getLong("id"));
-            order.setCustomerService(customerServiceDao.getById(rs.getLong("customer_service_id")));
-            order.setCustomerTariff(customerTariffDao.getById(rs.getLong("customer_tariff_id")));
+            long customerServiceId = rs.getLong("customer_service_id");
+            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            long customerTariffId = rs.getLong("customer_tariff_id");
+            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
             order.setExecutionDate(toLocalDate(rs.getDate("execution_date")));
-
         } catch (SQLException e) {
             throw new EntityInitializationException(e);
         }

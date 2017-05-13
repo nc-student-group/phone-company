@@ -3,12 +3,11 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
-
-import java.util.Map;
+import com.phonecompany.model.paging.PagingResult;
 
 public interface ServiceService extends CrudService<Service> {
-    Map<String, Object> getServicesByProductCategoryId(long productCategoryId,
-                                                       int page, int size);
+    PagingResult<Service> getServicesByProductCategoryId(int page, int size,
+                                                         int productCategoryId);
     Service save(Service service);
 
     void updateServiceStatus(long serviceId, ProductStatus productStatus);
