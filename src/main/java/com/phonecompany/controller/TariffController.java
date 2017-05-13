@@ -65,9 +65,10 @@ public class TariffController {
                                           @RequestParam("s") int status,
                                           @RequestParam("t") int type,
                                           @RequestParam("f") String from,
-                                          @RequestParam("to") String to) {
-        LOGGER.debug("Date between {} and {}", from, to);
-        return tariffService.getTariffsTable(page, size, name, status, type, from, to);
+                                          @RequestParam("to") String to,
+                                          @RequestParam("ob") int orderBy,
+                                          @RequestParam("ot") int orderByType) {
+        return tariffService.getTariffsTable(page, size, name, status, type, from, to, orderBy, orderByType);
 
     }
 

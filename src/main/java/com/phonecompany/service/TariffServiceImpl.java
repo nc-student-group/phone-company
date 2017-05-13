@@ -321,7 +321,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     @Override
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
-                                               int type, String fromStr, String toStr) {
+                                               int type, String fromStr, String toStr, int orderBy, int orderByType) {
         java.sql.Date from = null, to = null;
         if (!fromStr.equals("null")) {
             from = java.sql.Date.valueOf(fromStr);
@@ -333,7 +333,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             throw new ConflictException("Date from must be less then to");
         }
         Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.tariffDao.getPaging(page, size, name, status, type, from, to);
+        List<Tariff> tariffs = this.tariffDao.getPaging(page, size, name, status, type, from, to, orderBy, orderByType);
         List<Object> rows = new ArrayList<>();
         tariffs.forEach((Tariff tariff) -> {
             Map<String, Object> row = new HashMap<>();
@@ -341,7 +341,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             rows.add(row);
         });
         response.put("tariffs", rows);
-        response.put("tariffsSelected", this.tariffDao.getEntityCount(name, status, type, from, to));
+        response.put("tariffsSelected", this.tariffDao.getEntityCount(name, status, type, from, to, -1, -1));
         return response;
     }
 

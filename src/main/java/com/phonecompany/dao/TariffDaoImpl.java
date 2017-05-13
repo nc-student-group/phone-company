@@ -151,6 +151,8 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
         int type = (int) args[2];
         Date from = (Date) args[3];
         Date to = (Date) args[4];
+        int orderBy = (int) args[5];
+        int orderByType = (int) args[6];
         Boolean needAnd = false;
         if (name.length() > 0) {
             where += " t.tariff_name LIKE CONCAT('%',?,'%') ";
@@ -168,10 +170,11 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             where += prepareTypeClause(type);
         }
         where += prepareDateWhereClause(from, to, needAnd);
+        String orderByStr = prepareOrderBy(orderBy, orderByType);
         if (where.length() > 7)
-            return where;
+            return where + orderByStr;
         else
-            return "";
+            return orderByStr;
     }
 
     private String prepareStatusClause(int status) {
@@ -213,6 +216,40 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             this.preparedStatementParams.add(to);
         }
         return where;
+    }
+
+    private String prepareOrderBy(int orderBy, int orderByType) {
+        String orderByStr = "";
+        switch (orderBy) {
+            case 0://by date
+                orderByStr = "t.creation_date";
+                break;
+            case 1://by name
+                orderByStr = "t.tariff_name";
+                break;
+            case 2://by status
+                orderByStr = "t.product_status";
+                break;
+            case 3://by type
+                orderByStr = "t.is_corporate";
+                break;
+            default:
+                break;
+        }
+        if (orderByStr.length() > 0) {
+            switch (orderByType) {
+                case 0:
+                    orderByStr += " ASC ";
+                    break;
+                case 1:
+                    orderByStr += " DESC ";
+                    break;
+                default:
+                    break;
+            }
+            return " ORDER BY " + orderByStr;
+        }
+        return "";
     }
 
     private String needAnd(boolean needEnd) {

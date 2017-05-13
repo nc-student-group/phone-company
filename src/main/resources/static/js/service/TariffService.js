@@ -57,11 +57,12 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
         return deferred.promise;
     }
 
-    function getTariffs(page, size, name, status, type, from, to) {
+    function getTariffs(page, size, name, status, type, from, to, orderBy, orderByType) {
         var deferred = $q.defer();
         var convertedStartDate = $filter('date')(from, "yyyy-MM-dd");
         var convertedEndDate = $filter('date')(to, "yyyy-MM-dd");
-        $http.get(GET_TARIFFS_BY_REGION_ID_URL + page + "/" + size + "?n=" + name + "&s=" + status + "&t=" + type + "&f=" + convertedStartDate + "&to=" + convertedEndDate).then(
+        $http.get(GET_TARIFFS_BY_REGION_ID_URL + page + "/" + size + "?n=" + name + "&s=" + status + "&t=" + type
+            + "&f=" + convertedStartDate + "&to=" + convertedEndDate + "&ob=" + orderBy + "&ot=" + orderByType).then(
             function (response) {
                 deferred.resolve(response.data);
             },
