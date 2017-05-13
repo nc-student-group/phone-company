@@ -12,7 +12,7 @@ angular.module('phone-company').controller('TariffsController', [
         console.log('This is TariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
-        $scope.size = 5;
+        $scope.size = 3;
         $scope.inProgress = false;
         $scope.tariffsSelected = 0;
         $scope.currentRegion = 0;
@@ -62,6 +62,33 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.preloader.send = false;
                     });
             }
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                TariffService.getTariffsByRegionId($scope.currentRegion, $scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.tariffs = data.tariffs;
+                        $scope.tariffsSelected = data.tariffsSelected;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                        // $scope.gotoAnchor("tariffTable");
+                        $window.scrollTo(0, 0);
+                    }, function () {
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.tariffsSelected / $scope.size);
+            if (max == $scope.tariffsSelected) {
+                return max;
+            }
+            return max + 1;
         };
 
         $scope.previousPage = function () {
@@ -204,7 +231,7 @@ angular.module('phone-company').controller('TariffsController', [
         };
 
         $scope.editClick = function (id) {
-            $location.path("/csr/tariff/edit/"+id);
+            $location.path("/csr/tariff/edit/" + id);
             // $scope.preloader.send = true;
             // TariffService.getTariffToEditById(id).then(function (data) {
             //     $scope.tariffToEdit = data.tariff;
@@ -416,8 +443,8 @@ angular.module('phone-company').controller('TariffsController', [
             delete $scope.resultBlob;
         };
 
-        $scope.detailClick = function(id){
-            $location.path("/csr/tariff/"+id);
+        $scope.detailClick = function (id) {
+            $location.path("/csr/tariff/" + id);
         }
 
     }]);

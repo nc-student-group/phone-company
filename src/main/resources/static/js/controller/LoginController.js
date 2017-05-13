@@ -59,7 +59,7 @@ angular.module('phone-company').controller('LoginController', [
             }, function (data) {
                 $scope.preloader.send = false;
                 $scope.recapthca.responseReset = 0;
-                vcRecaptchaService.reload($scope.widgetId);
+                vcRecaptchaService.reload($scope.resetWidgetId);
             });
 
         };
@@ -76,22 +76,21 @@ angular.module('phone-company').controller('LoginController', [
                         'Error during restoring password!');
                     $scope.preloader.send = false;
                     $scope.recapthca.responseReset = 0;
-                    vcRecaptchaService.reload($scope.widgetId);
+                    vcRecaptchaService.reload($scope.resetWidgetId);
                 });
         };
 
         $scope.loginClick = function () {
             $scope.preloader.send = true;
-            console.log($scope.recapthca);
-            CaptchaService.verifyCaptchaResponse($scope.recapthca.response).then(function (data) {
-                console.log("success captcha verify");
-                $scope.login();
-            }, function (data) {
-                $scope.preloader.send = false;
-                $scope.recapthca.response = 0;
-                vcRecaptchaService.reload($scope.widgetId);
-            });
-
+            // console.log($scope.recapthca);
+            // CaptchaService.verifyCaptchaResponse($scope.recapthca.response).then(function (data) {
+            //     console.log("success captcha verify");
+            $scope.login();
+            // }, function (data) {
+            //     $scope.preloader.send = false;
+            //     $scope.recapthca.response = 0;
+            //     vcRecaptchaService.reload($scope.widgetId);
+            // });
         };
 
         $scope.login = function () {
@@ -109,13 +108,16 @@ angular.module('phone-company').controller('LoginController', [
                 function (data) {
                     toastr.error('Bad credentials', 'Error');
                     $scope.preloader.send = false;
-                    $scope.recapthca.response = 0;
-                    vcRecaptchaService.reload($scope.widgetId);
+                    // $scope.recapthca.response = 0;
+                    // vcRecaptchaService.reload($scope.widgetId);
                 });
         };
 
-        $scope.onWidgetCreate = function (_widgetId) {
-            $scope.widgetId = _widgetId;
+        // $scope.onWidgetCreate = function (_widgetId) {
+        //     $scope.widgetId = _widgetId;
+        // };
+        $scope.onResetWidgetCreate = function (_widgetId) {
+            $scope.resetWidgetId = _widgetId;
         };
 
     }]);

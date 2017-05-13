@@ -30,12 +30,12 @@
                 <input name="password" type="password" id="password"
                        ng-model="user.password" placeholder="Password">
             </md-input-container>
-            <div vc-recaptcha
-                 on-create="onWidgetCreate(widgetId)"
-                 ng-model="recapthca.response"
-                 key="'6Lci1CAUAAAAAGrqvWTLbcatN_UbTPCxKe7e2Jgx'"
-                 lang="en"
-            ></div>
+            <!--<div vc-recaptcha-->
+                 <!--on-create="onWidgetCreate(widgetId)"-->
+                 <!--ng-model="recapthca.response"-->
+                 <!--key="'6Lci1CAUAAAAAGrqvWTLbcatN_UbTPCxKe7e2Jgx'"-->
+                 <!--lang="en"-->
+            <!--&gt;</div>-->
             <p class="login-message">Not registered? <a ng-href="#/index">Create an account</a></p>
             <button ng-class="{unsubmitable : loginForm.$invalid, submitable: !loginForm.$invalid}"
                     ng-disabled="loginForm.$invalid"
@@ -60,7 +60,7 @@
                 </div>
             </md-input-container>
             <div vc-recaptcha
-                 on-create="onWidgetCreate(widgetId)"
+                 on-create="onResetWidgetCreate(resetWidgetId)"
                  ng-model="recapthca.responseReset"
                  key="'6Lci1CAUAAAAAGrqvWTLbcatN_UbTPCxKe7e2Jgx'"
                  lang="en"
