@@ -1,7 +1,6 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerDao;
-import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
@@ -24,13 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         implements CustomerService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserActions.class);
 
     @Value("${application-url}")
     private String applicationUrl;
@@ -68,12 +66,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Assert.notNull(customer);
         String phone = customer.getPhone();
         int countByPhone = this.customerDao.getCountByPhone(phone);
-        if(countByPhone != 0) {
+        if (countByPhone != 0) {
             throw new KeyAlreadyPresentException(phone);
         }
         String email = customer.getEmail();
         int countByEmail = this.customerDao.getCountByEmail(email);
-        if(countByEmail != 0) {
+        if (countByEmail != 0) {
             throw new KeyAlreadyPresentException(email);
         }
     }
@@ -113,15 +111,15 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Customer notUpdatedCustomer = this.getById(user.getId());
         LOG.info(notUpdatedCustomer.toString());
         LOG.info(user.toString());
-        if (notUpdatedCustomer.getCorporate()!=null && user.getCorporate()!=null){
-            if((!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) || (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))){
+        if (notUpdatedCustomer.getCorporate() != null && user.getCorporate() != null) {
+            if ((!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) || (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))) {
                 this.deactivateCustomerTariff(user.getId());
             }
-        }else if(notUpdatedCustomer.getCorporate()!=null && user.getCorporate()==null){
+        } else if (notUpdatedCustomer.getCorporate() != null && user.getCorporate() == null) {
             this.deactivateCustomerTariff(user.getId());
-        }else if(notUpdatedCustomer.getCorporate()==null && user.getCorporate()!=null){
+        } else if (notUpdatedCustomer.getCorporate() == null && user.getCorporate() != null) {
             this.deactivateCustomerTariff(user.getId());
-        }else if((!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))){
+        } else if ((!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))) {
             this.deactivateCustomerTariff(user.getId());
         }
         return super.update(user);

@@ -152,7 +152,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     public String prepareWhereClause(Object... args) {
 
         String where = "";
-        long productCategoryId = (long) args[0];
+        int productCategoryId = (int) args[0];
 
         if (productCategoryId != 0) {
             where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +

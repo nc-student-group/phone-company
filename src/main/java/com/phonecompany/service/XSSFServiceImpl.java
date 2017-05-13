@@ -1,13 +1,9 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.OrderDao;
-import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.Order;
-import com.phonecompany.model.Tariff;
-import com.phonecompany.model.enums.OrderStatus;
-import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.ServiceService;
 import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.RowDataSet;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.TableDataSet;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -15,92 +11,50 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
+import org.javatuples.Pair;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class XSSFServiceImpl implements XSSFService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XSSFServiceImpl.class);
     private static final String FILE_NAME = "report-";
     private static final String FILE_FORMAT = ".xlsx";
-    private static final String TARIFFS = "Tariffs";
     private static final int DISTANCE_BETWEEN_TABLES = 25;
-
-    private OrderDao orderDao;
-    private ServiceService serviceService;
-
-    @Autowired
-    public XSSFServiceImpl(OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
+    private static final int FIRST_ROW_INDEX = 0;
 
     @Override
-    public void generateReport(long regionId, LocalDate startDate, LocalDate endDate) {
+    public void generateReport(SheetDataSet excelSheet) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        workbook = this.getTariffReport(workbook, regionId, startDate, endDate);
-        workbook = this.getServiceReport(workbook, startDate, endDate);
+        String sheetName = excelSheet.getSheetName();
+        XSSFSheet sheet = workbook.createSheet(sheetName);
+
+        int rowPosition = 0;
+        for (TableDataSet excelTable : excelSheet.getExcelTables()) {
+            this.createTable(sheet, rowPosition, excelTable);
+            rowPosition += DISTANCE_BETWEEN_TABLES;
+        }
         this.saveWorkBook(workbook);
     }
 
-    private XSSFWorkbook getServiceReport(XSSFWorkbook workbook, LocalDate startDate, LocalDate endDate) {
-//        this.
-        return null;
-    }
-
-    private XSSFWorkbook getTariffReport(XSSFWorkbook workbook, long regionId,
-                                         LocalDate startDate, LocalDate endDate) {
-        List<Order> tariffOrdersByRegionId = this.orderDao.getTariffOrdersByRegionId(regionId);
-        List<Order> tariffOrdersFilteredByDate = this.filterOrdersByDate(
-                tariffOrdersByRegionId, startDate, endDate);
-
-        Map<String, List<Order>> tariffOrdersMap = this.getTariffOrdersMap(tariffOrdersFilteredByDate);
-        List<LocalDate> timeLine = this.generateTimeLine(tariffOrdersFilteredByDate);
-
-        XSSFSheet sheet = workbook.createSheet(TARIFFS);
-        this.generateReportTables(sheet, tariffOrdersMap, timeLine);
-
-        return workbook;
-    }
-
-    private void generateReportTables(XSSFSheet sheet,
-                                      Map<String, List<Order>> ordersMap,
-                                      List<LocalDate> timeLine) {
-        int rowPosition = 0;
-        List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
-        for (OrderType orderType : orderTypes) {
-            this.createTableByType(sheet, rowPosition, orderType, ordersMap, timeLine);
-            rowPosition += DISTANCE_BETWEEN_TABLES;
-        }
-    }
-
-    private void createTableByType(XSSFSheet sheet, int rowPosition,
-                                   OrderType orderType,
-                                   Map<String, List<Order>> ordersMap,
-                                   List<LocalDate> timeLine) {
-        this.createTableHeading(sheet, rowPosition++, orderType.toString());
+    private void createTable(XSSFSheet sheet, int rowPosition,
+                             TableDataSet excelTable) {
+        this.createTableHeading(sheet, rowPosition++, excelTable.getTableName());
         int initialRowPosition = rowPosition;
-        for (String productName : ordersMap.keySet()) {
+        for (RowDataSet excelRow : excelTable.getRowList()) {
             int colPosition = 1;
-            List<Order> orders = this
-                    .filterCompletedOrdersByType(ordersMap.get(productName), orderType);
-            XSSFRow row = this.generateRowHeading(sheet, rowPosition++, productName);
-            this.fillRow(row, colPosition, orders, timeLine);
+            XSSFRow row = this.generateRowHeading(sheet, rowPosition++, excelRow.getRowName());
+            this.fillRow(row, colPosition, excelRow.getRowValues());
         }
-        this.generateColHeadings(sheet.createRow(rowPosition), timeLine);
-        this.drawChart(sheet, initialRowPosition, rowPosition, timeLine.size());
+        RowDataSet firstTableRow = excelTable.getRowList().get(FIRST_ROW_INDEX);
+        this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
+        int rowValuesNumber = firstTableRow.getRowValues().size();
+        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber);
     }
 
     private void createTableHeading(XSSFSheet sheet, int rowPosition, String tableHeading) {
@@ -119,24 +73,23 @@ public class XSSFServiceImpl implements XSSFService {
         return row;
     }
 
-    private void fillRow(XSSFRow row, int colPosition, List<Order> orders, List<LocalDate> timeLine) {
-        for (LocalDate timePoint : timeLine) {
-            long orderNumberByDate = this.getOrderNumberByDate(orders, timePoint);
-            this.createCell(row, colPosition++, orderNumberByDate);
+    private void fillRow(XSSFRow row, int colPosition, List<Pair<Object, Object>> values) {
+        for (Pair<Object, Object> pair : values) {
+            this.createCell(row, colPosition++, pair.getValue0());
         }
     }
 
-    private void createCell(XSSFRow row, int cellPosition, long cellValue) {
+    private void createCell(XSSFRow row, int cellPosition, Object cellValue) {
         XSSFCell cell = row.createCell(cellPosition);
-        cell.setCellType(CellType.NUMERIC);
-        cell.setCellValue(cellValue);
+        cell.setCellValue((Long) cellValue); //TODO: get rid of the cast
     }
 
-    private void generateColHeadings(XSSFRow row, List<LocalDate> timeLine) {
+    private void generateColHeadings(XSSFRow row, List<Pair<Object, Object>> rowValues) {
         int cellPosition = 1;
-        for (LocalDate timePoint : timeLine) {
+        for (Pair<Object, Object> pair : rowValues) {
             XSSFCell cell = row.createCell(cellPosition++);
-            cell.setCellValue(timePoint.toString());
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(pair.getValue1().toString()); //TODO: get rid of the cast
         }
     }
 
@@ -158,10 +111,10 @@ public class XSSFServiceImpl implements XSSFService {
 
         // Plot the chart with the inputs from data and chart axis
         chart.plot(data, bottomAxis, leftAxis);
-        this.makeChartNotToUserSmoothedLines(chart);
+        this.noSmoothedLinesForChart(chart);
     }
 
-    private void makeChartNotToUserSmoothedLines(XSSFChart chart) {
+    private void noSmoothedLinesForChart(XSSFChart chart) {
         CTPlotArea plotArea = chart.getCTChart().getPlotArea();
         for (CTLineChart ch : plotArea.getLineChartList()) {
             for (CTLineSer ser : ch.getSerList()) {
@@ -181,24 +134,24 @@ public class XSSFServiceImpl implements XSSFService {
     private void addChartSeries(XSSFSheet sheet, LineChartData data,
                                 int initialRowPosition, int rowIndex,
                                 int lastColIndex) {
-        ChartDataSource<String> x = this.getDatePointsDataSource(sheet, rowIndex, lastColIndex);
+        ChartDataSource<String> x = this.getDateRangeDataSource(sheet, rowIndex, lastColIndex);
         while (initialRowPosition < rowIndex) {
-            ChartDataSource<Number> y = this.getOrderNumberDatasource(sheet, initialRowPosition++, lastColIndex);
+            ChartDataSource<Number> y = this.getValuesDatasource(sheet, initialRowPosition++, lastColIndex);
             LineChartSeries lineChartSeries = data.addSeries(x, y);
             lineChartSeries.setTitle(new CellReference(initialRowPosition - 1, 0));
         }
     }
 
-    private ChartDataSource<String> getDatePointsDataSource(XSSFSheet sheet,
-                                                            int rowIndex,
-                                                            int lastCellPosition) {
+    private ChartDataSource<String> getDateRangeDataSource(XSSFSheet sheet,
+                                                           int rowIndex,
+                                                           int lastCellPosition) {
         return DataSources.fromStringCellRange(sheet,
                 new CellRangeAddress(rowIndex, rowIndex, 1, lastCellPosition));
     }
 
-    private ChartDataSource<Number> getOrderNumberDatasource(XSSFSheet sheet,
-                                                             int rowIndex,
-                                                             int collCount) {
+    private ChartDataSource<Number> getValuesDatasource(XSSFSheet sheet,
+                                                        int rowIndex,
+                                                        int collCount) {
         return DataSources.fromNumericCellRange(sheet,
                 new CellRangeAddress(rowIndex, rowIndex, 1, collCount));
     }
@@ -221,64 +174,6 @@ public class XSSFServiceImpl implements XSSFService {
         return chart;
     }
 
-    private long getOrderNumberByDate(List<Order> orderList,
-                                      LocalDate date) {
-        return orderList.stream()
-                .filter(o -> o.getCreationDate().equals(date))
-                .count();
-    }
-
-    private List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type) {
-        return orders.stream()
-                .filter(o -> o.getType().equals(type))
-                .filter(o -> o.getOrderStatus().equals(OrderStatus.DONE))
-                .collect(Collectors.toList());
-    }
-
-
-    private List<Order> filterOrdersByTariffName(List<Order> orders, String tariffName) {
-        return orders.stream()
-                .filter(order -> order.getCustomerTariff()
-                        .getTariff().getTariffName().equals(tariffName))
-                .collect(Collectors.toList());
-    }
-
-    private Map<String, List<Order>> getTariffOrdersMap(List<Order> tariffOrders) {
-        Map<String, List<Order>> tariffOrdersMap = new HashMap<>();
-        List<String> tariffNames = this.getDistinctTariffNamesFromOrders(tariffOrders);
-        for (String tariffName : tariffNames) {
-            List<Order> ordersOfTariff = this.filterOrdersByTariffName(tariffOrders, tariffName);
-            this.putOrdersInMap(tariffOrdersMap, tariffName, ordersOfTariff);
-        }
-        return tariffOrdersMap;
-    }
-
-    private void putOrdersInMap(Map<String, List<Order>> tariffOrdersMap,
-                                String tariffName, List<Order> ordersOfTariff) {
-        if (tariffOrdersMap.get(tariffName) == null) {
-            List<Order> orders = new ArrayList<>();
-            orders.addAll(ordersOfTariff);
-            tariffOrdersMap.put(tariffName, orders);
-        } else {
-            tariffOrdersMap.get(tariffName).addAll(ordersOfTariff);
-        }
-    }
-
-    private List<String> getDistinctTariffNamesFromOrders(List<Order> tariffOrders) {
-        return tariffOrders
-                .stream().map(this.getTariffOrderToTariffNameMapping())
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    private List<LocalDate> generateTimeLine(List<Order> orders) {
-        return orders.stream()
-                .map(Order::getCreationDate)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
     private void saveWorkBook(XSSFWorkbook workbook) {
         try {
             FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);
@@ -289,23 +184,5 @@ public class XSSFServiceImpl implements XSSFService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Function<Order, String> getTariffOrderToTariffNameMapping() {
-        return order -> {
-            CustomerTariff customerTariff = order.getCustomerTariff();
-            Tariff tariff = customerTariff.getTariff();
-            return tariff.getTariffName();
-        };
-    }
-
-    private List<Order> filterOrdersByDate(List<Order> orderList,
-                                           LocalDate startDate, LocalDate endDate) {
-        return orderList.stream()
-                .filter(t -> t.getCreationDate().isAfter(startDate) ||
-                        t.getCreationDate().isEqual(startDate))
-                .filter(t -> t.getCreationDate().isBefore(endDate) ||
-                        t.getCreationDate().isEqual(endDate))
-                .collect(Collectors.toList());
     }
 }

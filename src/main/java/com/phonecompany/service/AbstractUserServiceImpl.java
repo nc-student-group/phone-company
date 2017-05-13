@@ -4,6 +4,7 @@ import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.ResetPasswordEvent;
+import com.phonecompany.service.email.ResetPasswordEmailCreator;
 import com.phonecompany.service.interfaces.AbstractUserService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
@@ -32,8 +33,7 @@ public abstract class AbstractUserServiceImpl<T extends User>
     @Autowired
     private EmailService<User> emailService;
     @Autowired
-    @Qualifier("resetPassMessageCreator")
-    private MailMessageCreator<User> resetPassMessageCreator;
+    private ResetPasswordEmailCreator resetPassMessageCreator;
 
     public AbstractUserServiceImpl() {
     }

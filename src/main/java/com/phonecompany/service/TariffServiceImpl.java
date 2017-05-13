@@ -8,20 +8,20 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
+@SuppressWarnings("Duplicates")
 @Service
-public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements TariffService {
+public class TariffServiceImpl extends CrudServiceImpl<Tariff>
+        implements TariffService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -30,19 +30,22 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
+    private XSSFService xssfService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
                              FileService fileService,
                              OrderService orderService,
-                             CustomerTariffService customerTariffService) {
+                             CustomerTariffService customerTariffService,
+                             XSSFService xssfService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
+        this.xssfService = xssfService;
     }
 
     @Override
@@ -330,4 +333,20 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff> implements Tariff
         return response;
     }
 
+    @Override
+    public SheetDataSet prepareTariffReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
+
+        List<Order> tariffOrders = this.orderService
+                .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
+
+        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
+
+        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
+                .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);
+
+        List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
+
+        return this.orderService
+                .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+    }
 }
