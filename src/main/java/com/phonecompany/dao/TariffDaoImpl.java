@@ -9,10 +9,7 @@ import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,22 +145,90 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public String prepareWhereClause(Object... args) {
+        String where = " where ";
+        String name = (String) args[0];
+        int status = (int) args[1];
+        int type = (int) args[2];
+        Date from = (Date) args[3];
+        Date to = (Date) args[4];
+        Boolean needAnd = false;
+        if (name.length() > 0) {
+            where += " t.tariff_name LIKE CONCAT('%',?,'%') ";
+            this.preparedStatementParams.add(name);
+            needAnd = true;
+        }
+        if (status == 1 || status == 2) {
+            where += needAnd(needAnd);
+            needAnd = true;
+            where += prepareStatusClause(status);
+        }
+        if (type == 1 || type == 2) {
+            where += needAnd(needAnd);
+            needAnd = true;
+            where += prepareTypeClause(type);
+        }
+        where += prepareDateWhereClause(from, to, needAnd);
+        if (where.length() > 7)
+            return where;
+        else
+            return "";
+    }
+
+    private String prepareStatusClause(int status) {
         String where = "";
-        long regionId = (long) args[0];
-        if (regionId != 0) {
-            where += " inner join tariff_region as tr on t.id = tr.tariff_id where region_id = ? ";
-            this.preparedStatementParams.add(regionId);
+        where += " t.product_status = ? ";
+        if (status == 1)
+            this.preparedStatementParams.add("ACTIVATED");
+        else
+            this.preparedStatementParams.add("DEACTIVATED");
+        return where;
+    }
+
+    private String prepareTypeClause(int type) {
+        String where = "";
+        where += " t.is_corporate = ? ";
+        if (type == 1)
+            this.preparedStatementParams.add(true);
+        else
+            this.preparedStatementParams.add(false);
+        return where;
+    }
+
+    private String prepareDateWhereClause(Date from, Date to, boolean needAnd) {
+        String where = "";
+        if (from != null && to != null) {
+            where += needAnd(needAnd);
+            where += " t.creation_date BETWEEN ? AND ? ";
+            this.preparedStatementParams.add(from);
+            this.preparedStatementParams.add(to);
+        }
+        if (from != null) {
+            where += needAnd(needAnd);
+            where += " t.creation_date >= ?";
+            this.preparedStatementParams.add(from);
+        }
+        if (to != null) {
+            where += needAnd(needAnd);
+            where += " t.creation_date <= ?";
+            this.preparedStatementParams.add(to);
         }
         return where;
     }
 
+    private String needAnd(boolean needEnd) {
+        if (needEnd) {
+            return "and ";
+        }
+        return "";
+    }
+
     @Override
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId,int page, int size){
+    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"))) {
-            ps.setObject(1,regionId);
-            ps.setObject(2,size);
-            ps.setObject(3,page*size);
+            ps.setObject(1, regionId);
+            ps.setObject(2, size);
+            ps.setObject(3, page * size);
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
             while (rs.next()) {
@@ -199,7 +264,6 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
             ps.setObject(1, regionId);
             ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
@@ -209,11 +273,11 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
+    public List<Tariff> getTariffsAvailableForCorporate(int page, int size) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"))) {
-            ps.setObject(1,size);
-            ps.setObject(2,page*size);
+            ps.setObject(1, size);
+            ps.setObject(2, page * size);
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
             while (rs.next()) {
@@ -243,7 +307,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public Integer getCountTariffsAvailableForCorporate(){
+    public Integer getCountTariffsAvailableForCorporate() {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"))) {
             ResultSet rs = ps.executeQuery();
@@ -256,13 +320,13 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     }
 
     @Override
-    public Tariff getByIdForSingleCustomer(long id, long regionId){
+    public Tariff getByIdForSingleCustomer(long id, long regionId) {
         try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
             ps.setObject(1, id);
             ps.setObject(2, regionId);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return this.init(rs);
             }
         } catch (SQLException e) {

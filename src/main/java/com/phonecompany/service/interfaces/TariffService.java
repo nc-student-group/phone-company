@@ -4,6 +4,7 @@ import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,8 @@ public interface TariffService extends CrudService<Tariff> {
 
     public Tariff getTariffForCustomer(long tariffId, Customer customer);
 
-    public Map<String, Object> getTariffsTable(long regionId, int page, int size);
+    public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
+                                               int type, String from, String to);
 
     public void activateTariffForSingleCustomer(long tariffId, Customer customer);
 
