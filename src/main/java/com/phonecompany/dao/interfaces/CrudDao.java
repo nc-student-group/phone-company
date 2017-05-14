@@ -42,13 +42,6 @@ public interface CrudDao<T extends DomainEntity> {
      */
     List<T> getAll();
 
-    void beginTransaction();
-
-    void commit();
-
-    void rollback();
-
-    void setAutoCommit(boolean autoCommit);
 
     int getCountByKey(String key, String countQuery);
 }

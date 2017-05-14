@@ -1,5 +1,6 @@
 package com.phonecompany.dao;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.phonecompany.dao.interfaces.CrudDao;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
@@ -7,12 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.support.JdbcUtils;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,30 +28,17 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     private static final Logger LOG = LoggerFactory.getLogger(CrudDaoImpl.class);
 
     @Autowired
-    DataSource dbManager;
-
-    private boolean autoCommit = true;
-
-    private final String BEGIN_TRANSACTION = "BEGIN;";
-    private final String COMMIT_TRANSACTION = "COMMIT;";
-    private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
-
-    public boolean isAutoCommit() {
-        return autoCommit;
-    }
-
-    public void setAutoCommit(boolean autoCommit) {
-        this.autoCommit = autoCommit;
-    }
+    private ComboPooledDataSource dataSource;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public T save(T entity) {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("save"))) {
-            conn.setAutoCommit(this.autoCommit);
+        Connection conn = DataSourceUtils.getConnection(this.dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("save"));
             LOG.debug("Saving entity: {}", entity);
             this.populateSaveStatement(ps, entity);
             ResultSet rs = ps.executeQuery();
@@ -61,7 +47,12 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             entity.setId(generatedId);
             return entity;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
             throw new EntityPersistenceException(entity, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
     }
 
@@ -71,13 +62,19 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     @Override
     public T update(T entity) {
         LOG.debug("Getting query: {}", this.getQuery("update"));
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("update"))) {
-            conn.setAutoCommit(this.autoCommit);
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("update"));
             this.populateUpdateStatement(ps, entity);
             ps.executeUpdate();
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
             throw new EntityModificationException(entity, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
         return entity;
     }
@@ -87,15 +84,22 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public T getById(Long id) {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getById"))) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getById"));
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
             throw new EntityNotFoundException(id, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
         return null;
     }
@@ -105,8 +109,10 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
      */
     @Override
     public List<T> getAll() {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAll"))) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAll"));
             ResultSet rs = ps.executeQuery();
             List<T> result = new ArrayList<>();
             while (rs.next()) {
@@ -114,44 +120,20 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
-    }
 
-    @Override
-    public void beginTransaction() {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(BEGIN_TRANSACTION)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new TransactionBeginException(e);
-        }
-    }
-
-    @Override
-    public void commit() {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(COMMIT_TRANSACTION)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new TransactionCommitException(e);
-        }
-    }
-
-    @Override
-    public void rollback() {
-        try (Connection conn = DataSourceUtils.getConnection(dbManager);
-             PreparedStatement ps = conn.prepareStatement(ROLLBACK_TRANSACTION)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new TransactionCommitException(e);
-        }
     }
 
     @Override
     public int getCountByKey(String key, String countQuery) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = this.dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(countQuery)) {
             ps.setString(1, key);
             ResultSet rs = ps.executeQuery();
@@ -171,4 +153,12 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
     public abstract void populateUpdateStatement(PreparedStatement preparedStatement, T entity);
 
     public abstract T init(ResultSet resultSet);
+
+    public ComboPooledDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(ComboPooledDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

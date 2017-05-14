@@ -9,16 +9,15 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
+import com.phonecompany.service.xssfHelper.TariffMappingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.Date;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -296,6 +295,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             throw new ConflictException("Tariff with name \"" +
@@ -303,11 +303,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
-                "tariff/" + tariff.hashCode()));
+//        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
+//                "tariff/" + tariff.hashCode()));
         Tariff savedTariff = this.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
-        return savedTariff;
+        throw new ConflictException("test conflict");
+//        return savedTariff;
     }
 
     @Override
@@ -345,13 +346,26 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         return response;
     }
 
+    /**
+     * Responsible for creating a dataset containing statistical information regarding
+     * the tariff orders
+     *
+     * @param regionId id of the region statistics should be generated for
+     * @param startDate start of the period statistics should be generated for
+     * @param endDate end of the period statistics should be generated for
+     *
+     * @return fully constructed {@code SheetDataSet} object containing statistical
+     *         information regarding tariff orders made in the requested region in
+     *         some predefined period of time
+     */
     @Override
-    public SheetDataSet prepareTariffReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
+    public SheetDataSet prepareTariffStatisticsReportDataSet(long regionId, LocalDate startDate,
+                                                             LocalDate endDate) {
 
         List<Order> tariffOrders = this.orderService
                 .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
 
-        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
+        TariffMappingStrategy tariffFilteringStrategy = new TariffMappingStrategy();
 
         Map<String, List<Order>> productNamesToOrdersMap = this.orderService
                 .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);
@@ -360,5 +374,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
         return this.orderService
                 .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+    }
+
+    @Override
+    @Transactional
+    public void test() {
+        this.getCountTariffsAvailableForCustomer(10l);
+        throw new ConflictException("ex");
     }
 }

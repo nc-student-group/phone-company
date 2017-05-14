@@ -9,7 +9,7 @@ import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TableDataSet;
-import com.phonecompany.service.xssfHelper.FilteringStrategy;
+import com.phonecompany.service.xssfHelper.MappingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,12 +187,12 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Override
     public Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
-                                                               FilteringStrategy filteringStrategy) {
+                                                               MappingStrategy filteringStrategy) {
         Map<String, List<Order>> productNamesToOrdersMap = new HashMap<>();
-        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getOrderToProductNameMapper();
+        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getOrderToProductIdentifierMapper();
         List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
         for (String productName : productNames) {
-            Predicate<Order> productNameFilter = filteringStrategy.getProductNameFilter(productName);
+            Predicate<Order> productNameFilter = filteringStrategy.getObjectFilter(productName);
             List<Order> ordersOfTariff = this.filterOrders(orders, productNameFilter);
             this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfTariff);
         }

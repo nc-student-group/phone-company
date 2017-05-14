@@ -3,7 +3,7 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.FilteringStrategy;
+import com.phonecompany.service.xssfHelper.MappingStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +34,7 @@ public interface OrderService extends CrudService<Order> {
 
     List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 
-    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, FilteringStrategy filteringStrategy);
+    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, MappingStrategy filteringStrategy);
 
     List<LocalDate> generateTimeLine(List<Order> orders);
 

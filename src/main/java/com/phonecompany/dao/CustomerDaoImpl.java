@@ -13,6 +13,8 @@ import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -111,15 +113,22 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     public Customer getByVerificationToken(String token) {
         String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
         LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(customerByVerificationTokenQuery)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(customerByVerificationTokenQuery);
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return this.init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(token, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
@@ -136,8 +145,10 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     private List<Customer> getByCorporate(long corporateId) {
         String customersByCorporate = this.getByCorporateIdQuery();
         LOG.debug("customerByCompany : {}", customersByCorporate);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(customersByCorporate);
             ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
             List<Customer> customers = new ArrayList<>();
@@ -146,15 +157,22 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             }
             return customers;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(corporateId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     private List<Customer> getCustomersWithoutCorporate(long corporateId) {
         String customersByCorporate = this.getWithoutCorporateQuery();
         LOG.debug("customerWithoutCorporate : {}", customersByCorporate);
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(customersByCorporate);
             ResultSet rs = ps.executeQuery();
             List<Customer> customers = new ArrayList<>();
             while (rs.next()) {
@@ -162,7 +180,12 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             }
             return customers;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(corporateId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 

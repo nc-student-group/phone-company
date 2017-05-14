@@ -3,14 +3,19 @@ package com.phonecompany.service.xssfHelper;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.Tariff;
-import com.phonecompany.service.xssfHelper.FilteringStrategy;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class TariffFilteringStrategy extends FilteringStrategy {
+/**
+ * {@inheritDoc}
+ */
+public class TariffMappingStrategy extends MappingStrategy {
 
-    public Function<Order, String> getOrderToProductNameMapper() {
+    /**
+     * {@inheritDoc}
+     */
+    public Function<Order, String> getOrderToProductIdentifierMapper() {
         return order -> {
             CustomerTariff customerTariff = order.getCustomerTariff();
             Tariff tariff = customerTariff.getTariff();
@@ -18,6 +23,9 @@ public class TariffFilteringStrategy extends FilteringStrategy {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Predicate<Order> getProductNameFilter(String tariffName) {
         return order -> order.getCustomerTariff()
                 .getTariff().getTariffName().equals(tariffName);

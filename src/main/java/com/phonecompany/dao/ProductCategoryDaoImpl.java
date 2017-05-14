@@ -7,6 +7,8 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.util.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -65,15 +67,22 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
     @Override
     public ProductCategory getByName(String productCategoryName) {
         String getCategoryByNameQuery = this.getQuery("getByName");
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(getCategoryByNameQuery)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(getCategoryByNameQuery);
             ps.setString(1, productCategoryName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return this.init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(productCategoryName, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }

@@ -11,6 +11,8 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -38,7 +40,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
 
     @Override
     public String getQuery(String type) {
-        return queryLoader.getQuery("query.customer_service."+type);
+        return queryLoader.getQuery("query.customer_service." + type);
     }
 
     @Override
@@ -85,15 +87,22 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
     @Override
     public List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId) {
         List<CustomerServiceDto> services = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getByCustomerId"));
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 services.add(init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return services;
     }
@@ -101,7 +110,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
     @Override
     public boolean isCustomerServiceAlreadyPresent(long serviceId, long customerId) {
         String getByServiceAndCustomerIdQuery = this.getQuery("getByServiceAndCustomerId");
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = this.getDataSource().getConnection();
              PreparedStatement ps = conn.prepareStatement(getByServiceAndCustomerIdQuery)) {
             ps.setLong(1, serviceId);
             ps.setLong(2, customerId);
@@ -118,15 +127,22 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
     @Override
     public List<CustomerServiceDto> getCurrentCustomerServices(long customerId) {
         List<CustomerServiceDto> services = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getActiveOrSuspendedByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getActiveOrSuspendedByCustomerId"));
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 services.add(init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return services;
     }
