@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,9 @@ public class TariffController {
                             TariffService tariffService,
                             EmailService<Customer> emailService,
                             @Qualifier("tariffNotificationEmailCreator")
-                            MailMessageCreator<Tariff> tariffNotificationMailCreator,
+                                    MailMessageCreator<Tariff> tariffNotificationMailCreator,
                             @Qualifier("tariffDeactivationNotificationEmailCreator")
-                            MailMessageCreator<Tariff> tariffActivationNotificationMailCreator,
+                                    MailMessageCreator<Tariff> tariffActivationNotificationMailCreator,
                             CustomerService customerService,
                             CorporateService corporateService) {
         this.tariffRegionService = tariffRegionService;
@@ -56,12 +57,19 @@ public class TariffController {
         this.corporateService = corporateService;
     }
 
-    @GetMapping(value = "/{regionId}/{page}/{size}")
-    public Map<String, Object> getTariffsByRegionId(@PathVariable("regionId") Long regionId,
-                                                    @PathVariable("page") int page,
-                                                    @PathVariable("size") int size) {
-        LOGGER.debug("Get all tariffs by region id = " + regionId);
-        return tariffService.getTariffsTable(regionId, page, size);
+
+    @GetMapping(value = "/{page}/{size}")
+    public Map<String, Object> getTariffs(@PathVariable("page") int page,
+                                          @PathVariable("size") int size,
+                                          @RequestParam("n") String name,
+                                          @RequestParam("s") int status,
+                                          @RequestParam("t") int type,
+                                          @RequestParam("f") String from,
+                                          @RequestParam("to") String to,
+                                          @RequestParam("ob") int orderBy,
+                                          @RequestParam("ot") int orderByType) {
+        return tariffService.getTariffsTable(page, size, name, status, type, from, to, orderBy, orderByType);
+
     }
 
     @GetMapping(value = "/empty")
@@ -106,7 +114,7 @@ public class TariffController {
 
     @PatchMapping(value = "/{id}")
     public ResponseEntity<?> updateTariffStatus(@PathVariable("id") long tariffId,
-                                                   @RequestBody String productStatus) {
+                                                @RequestBody String productStatus) {
         this.tariffService.updateTariffStatus(tariffId, ProductStatus.valueOf(productStatus));
         return new ResponseEntity<>(HttpStatus.OK);
     }

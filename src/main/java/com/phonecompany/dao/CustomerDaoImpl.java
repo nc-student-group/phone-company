@@ -111,7 +111,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     public Customer getByVerificationToken(String token) {
         String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
         LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery);
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(customerByVerificationTokenQuery)) {
             ps.setString(1, token);
             ResultSet rs = ps.executeQuery();
@@ -136,7 +136,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     private List<Customer> getByCorporate(long corporateId) {
         String customersByCorporate = this.getByCorporateIdQuery();
         LOG.debug("customerByCompany : {}", customersByCorporate);
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
             ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
@@ -153,7 +153,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     private List<Customer> getCustomersWithoutCorporate(long corporateId) {
         String customersByCorporate = this.getWithoutCorporateQuery();
         LOG.debug("customerWithoutCorporate : {}", customersByCorporate);
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(customersByCorporate)) {
             ResultSet rs = ps.executeQuery();
             List<Customer> customers = new ArrayList<>();

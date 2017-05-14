@@ -100,7 +100,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
             ps.setString(1, productStatus.name());
             ps.setLong(2, serviceId);
@@ -112,7 +112,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public boolean isExist(Service service) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();
@@ -132,7 +132,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     /*public List<Order> getServiceOrdersFromTimePeriod(LocalDate startDate, LocalDate endDate) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();

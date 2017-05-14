@@ -30,7 +30,7 @@ public abstract class AbstractUserDaoImpl<T extends User>
      */
     @Override
     public T findByEmail(String email) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByEmail"))) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
@@ -45,7 +45,7 @@ public abstract class AbstractUserDaoImpl<T extends User>
 
     @Override
     public void updateStatus(long id, Status status) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateUserStatus"))) {
             ps.setString(1, status.name());
             ps.setLong(2, id);
@@ -57,7 +57,7 @@ public abstract class AbstractUserDaoImpl<T extends User>
 
     @Override
     public int getCountByKey(String key, String countQuery) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(countQuery)) {
             ps.setString(1, key);
             ResultSet rs = ps.executeQuery();

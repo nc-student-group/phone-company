@@ -65,7 +65,7 @@ public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
     @Override
     public ProductCategory getByName(String productCategoryName) {
         String getCategoryByNameQuery = this.getQuery("getByName");
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(getCategoryByNameQuery)) {
             ps.setString(1, productCategoryName);
             ResultSet rs = ps.executeQuery();

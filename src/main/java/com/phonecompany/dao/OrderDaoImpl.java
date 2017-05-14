@@ -98,7 +98,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public Order getResumingOrderByCustomerTariffId(Long customerTariffId) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getResumingByCustomerId"))) {
             ps.setLong(1, customerTariffId);
             ResultSet rs = ps.executeQuery();
@@ -114,7 +114,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     @Override
     public List<Order> getResumingOrderByCustomerServiceId(Long customerId) {
         List<Order> orders = new ArrayList<>();
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getResumingServicesByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
@@ -152,7 +152,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     }
 
     private List<Order> getOrdersByClientIdPaged(String query, Long clientId, int page, int size) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setObject(1, clientId);
             ps.setObject(2, size);
@@ -170,7 +170,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     }
 
     private Integer getCountByClientId(String query, Long clientId) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setLong(1, clientId);
             ResultSet rs = ps.executeQuery();
@@ -183,7 +183,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public List<Order> getOrdersForCustomerServicesByCustomerIdPaged(Long customerId, int page, int size) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getPagedForCustomerServicesByCustomerId"))) {
             ps.setObject(1, customerId);
             ps.setObject(2, size);
@@ -202,7 +202,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public Integer getCountOfServicesByCustomerId(Long customerId) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountOfServicesByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
@@ -215,7 +215,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public List<Order> getTariffOrdersByRegionId(long regionId) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"))) {
             ps.setLong(1, regionId);
             ResultSet rs = ps.executeQuery();
@@ -231,7 +231,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public List<Order> getAllServiceOrders() {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("services"))) {
             ResultSet rs = ps.executeQuery();
             List<Order> serviceOrders = new ArrayList<>();
@@ -246,7 +246,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(
                      this.getQuery("for.the.last.month.by.type"))) {
             ps.setString(1, type.name());

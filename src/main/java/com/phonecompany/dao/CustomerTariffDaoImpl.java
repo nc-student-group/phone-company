@@ -100,7 +100,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     private List<CustomerTariff> getCustomerTariffsByClientIdQuery(Long id, String query) {
         List<CustomerTariff> tariffs = new ArrayList<>();
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
@@ -115,7 +115,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public CustomerTariff getCurrentCustomerTariff(long customerId) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
@@ -130,7 +130,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     @Override
     public CustomerTariff getCurrentCorporateTariff(long corporateId){
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCorporateId"))) {
             ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
@@ -156,7 +156,7 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     }
 
     private CustomerTariff getCustomerTariffByClientIdQuery(Long id, String query) {
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();

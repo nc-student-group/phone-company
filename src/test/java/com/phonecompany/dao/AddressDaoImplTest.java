@@ -11,6 +11,11 @@ public class AddressDaoImplTest extends AbstractTest {
     @Autowired
     private AddressDaoImpl addressDao;
 
+    @Before
+    public void setUp() {
+        addressDao.setAutoCommit(false);
+    }
+
     @Test
     public void save() throws Exception {
     }
