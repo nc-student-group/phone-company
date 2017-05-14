@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.KeyAlreadyPresentException;
@@ -24,7 +25,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
 
-@Service
+@ServiceStereotype
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
         implements UserService {
 

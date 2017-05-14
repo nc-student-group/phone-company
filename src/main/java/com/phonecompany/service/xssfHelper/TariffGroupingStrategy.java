@@ -10,12 +10,12 @@ import java.util.function.Predicate;
 /**
  * {@inheritDoc}
  */
-public class TariffMappingStrategy extends MappingStrategy<Order, String> {
+public class TariffGroupingStrategy extends GroupingStrategy<Order, String> {
 
     /**
      * {@inheritDoc}
      */
-    public Function<Order, String> getObjectToItsIdentifierMapper() {
+    public Function<Order, String> getValueToKeyMapper() {
         return order -> {
             CustomerTariff customerTariff = order.getCustomerTariff();
             Tariff tariff = customerTariff.getTariff();
@@ -26,7 +26,7 @@ public class TariffMappingStrategy extends MappingStrategy<Order, String> {
     /**
      * {@inheritDoc}
      */
-    public Predicate<Order> getObjectFilter(String tariffName) {
+    public Predicate<Order> getFilteringCondition(String tariffName) {
         return order -> order.getCustomerTariff()
                 .getTariff().getTariffName().equals(tariffName);
     }

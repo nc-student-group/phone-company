@@ -9,7 +9,7 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffMappingStrategy;
+import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,7 +365,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         List<Order> tariffOrders = this.orderService
                 .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
 
-        TariffMappingStrategy tariffFilteringStrategy = new TariffMappingStrategy();
+        TariffGroupingStrategy tariffFilteringStrategy = new TariffGroupingStrategy();
 
         Map<String, List<Order>> productNamesToOrdersMap = this.orderService
                 .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);

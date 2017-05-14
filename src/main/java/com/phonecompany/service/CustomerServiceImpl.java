@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.KeyAlreadyPresentException;
@@ -26,7 +27,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-@Service
+@ServiceStereotype
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         implements CustomerService {
 
