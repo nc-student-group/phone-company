@@ -1,10 +1,14 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.CacheClear;
 import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerServiceDto;
+import com.phonecompany.model.ProductCategory;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
@@ -97,6 +101,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @CacheClear
     public Service update(Service service) {
         Assert.notNull(service, "Service cannot be null");
         LOG.debug("Input service picture url: {}", service.getPictureUrl());
@@ -107,6 +112,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @CacheClear
     public Service save(Service service) {
         Assert.notNull(service, "Service cannot be null");
         if (this.isExist(service)) {
@@ -134,6 +140,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @CacheClear
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         this.serviceDao.updateServiceStatus(serviceId, productStatus);
     }

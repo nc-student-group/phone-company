@@ -1,6 +1,6 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.util.DbManager;
+import com.phonecompany.util.DataSourceImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractTest {
 
-    protected DbManager dbManager = DbManager.getInstance();
+    protected DataSourceImpl dbManager;
     private final String BEGIN_TRANSACTION = "BEGIN;";
     private final String ROLLBACK_TRANSACTION = "ROLLBACK;";
     @Before

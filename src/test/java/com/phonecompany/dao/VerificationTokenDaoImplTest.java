@@ -19,11 +19,6 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
     @Autowired
     private UserDaoImpl userDao;
 
-    @Before
-    public void setUp(){
-        vtDao.setAutoCommit(false);
-    }
-
     @Test
     public void save() throws Exception{
     }

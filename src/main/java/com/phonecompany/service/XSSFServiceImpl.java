@@ -35,26 +35,26 @@ public class XSSFServiceImpl implements XSSFService {
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
         int rowPosition = 0;
-        for (TableDataSet excelTable : excelSheet.getExcelTables()) {
-            this.createTable(sheet, rowPosition, excelTable);
+        for (TableDataSet tableDataSet : excelSheet.getTableDataSets()) {
+            this.createTable(sheet, rowPosition, tableDataSet);
             rowPosition += DISTANCE_BETWEEN_TABLES;
         }
         this.saveWorkBook(workbook);
     }
 
     private void createTable(XSSFSheet sheet, int rowPosition,
-                             TableDataSet excelTable) {
-        this.createTableHeading(sheet, rowPosition++, excelTable.getTableName());
+                             TableDataSet tableDataSet) {
+        this.createTableHeading(sheet, rowPosition++, tableDataSet.getTableDataSetName());
         int initialRowPosition = rowPosition;
-        for (RowDataSet excelRow : excelTable.getRowList()) {
+        for (RowDataSet rowDataSet : tableDataSet.getRowDataSets()) {
             int colPosition = 1;
-            XSSFRow row = this.generateRowHeading(sheet, rowPosition++, excelRow.getRowName());
-            this.fillRow(row, colPosition, excelRow.getRowValues());
+            XSSFRow row = this.generateRowHeading(sheet, rowPosition++, rowDataSet.getRowName());
+            this.fillRow(row, colPosition, rowDataSet.getRowValues());
         }
-        RowDataSet firstTableRow = excelTable.getRowList().get(FIRST_ROW_INDEX);
+        RowDataSet firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
         this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
         int rowValuesNumber = firstTableRow.getRowValues().size();
-        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber);
+        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber); //TODO: is side effect
     }
 
     private void createTableHeading(XSSFSheet sheet, int rowPosition, String tableHeading) {

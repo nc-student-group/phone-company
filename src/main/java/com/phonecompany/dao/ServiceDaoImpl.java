@@ -6,7 +6,6 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityModificationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Order;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
@@ -20,8 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
 
 @Repository
 public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
@@ -103,7 +100,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
             ps.setString(1, productStatus.name());
             ps.setLong(2, serviceId);
@@ -115,7 +112,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public boolean isExist(Service service) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();
@@ -135,7 +132,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
     }
 
     /*public List<Order> getServiceOrdersFromTimePeriod(LocalDate startDate, LocalDate endDate) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();

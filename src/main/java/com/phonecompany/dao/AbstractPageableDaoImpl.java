@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
         extends CrudDaoImpl<T> implements AbstractPageableDao<T> {
@@ -23,7 +22,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
         String pagingQuery = this.getPagingQuery(page, size, args);
 
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(pagingQuery)) {
             LOG.debug("Opening connection for isPaging");
             this.transferParamsToPreparedStatement(ps);
@@ -72,7 +71,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
 
         String countQuery = this.getCountQuery(args);
 
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(countQuery)) {
             LOG.debug("Opening connection for count");
 

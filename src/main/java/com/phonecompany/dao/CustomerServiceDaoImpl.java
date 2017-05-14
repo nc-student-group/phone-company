@@ -83,7 +83,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
     @Override
     public List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId) {
         List<CustomerServiceDto> services = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
@@ -99,7 +99,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
     @Override
     public List<CustomerServiceDto> getCurrentCustomerServices(long customerId) {
         List<CustomerServiceDto> services = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getActiveOrSuspendedByCustomerId"))) {
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();

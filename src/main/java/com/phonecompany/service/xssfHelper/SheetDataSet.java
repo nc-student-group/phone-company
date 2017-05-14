@@ -6,7 +6,7 @@ import java.util.List;
 public final class SheetDataSet {
 
     private final String sheetName;
-    private final List<TableDataSet> excelTables = new ArrayList<>();
+    private final List<TableDataSet> tableDataSets = new ArrayList<>();
 
     public SheetDataSet(String sheetName) {
         this.sheetName = sheetName;
@@ -16,13 +16,13 @@ public final class SheetDataSet {
         return sheetName;
     }
 
-    public List<TableDataSet> getExcelTables() {
-        return excelTables;
+    public List<TableDataSet> getTableDataSets() {
+        return tableDataSets;
     }
 
     public TableDataSet createTable(String tableName) {
         TableDataSet excelTable = new TableDataSet(tableName);
-        excelTables.add(excelTable);
+        tableDataSets.add(excelTable);
         return excelTable;
     }
 
@@ -30,7 +30,7 @@ public final class SheetDataSet {
     public String toString() {
         return "SheetDataSet{" +
                 "sheetName='" + sheetName + '\'' +
-                ", excelTables=" + excelTables +
+                ", tableDataSets=" + tableDataSets +
                 '}';
     }
 }

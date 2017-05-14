@@ -5,7 +5,6 @@ import com.phonecompany.exception.*;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
-import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -106,7 +105,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     public List<Tariff> getByRegionId(Long regionId) {
         List<Tariff> tariffs = new ArrayList<>();
         String query = this.getQuery("getAllAvailable");
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setLong(1, regionId);
             ResultSet rs = ps.executeQuery();
@@ -121,7 +120,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
             ps.setString(1, productStatus.name());
             ps.setLong(2, tariffId);
@@ -133,7 +132,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public Tariff findByTariffName(String tariffName) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("findByTariffName"))) {
             ps.setString(1, tariffName);
             ResultSet rs = ps.executeQuery();
@@ -159,7 +158,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId,int page, int size){
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"))) {
             ps.setObject(1,regionId);
             ps.setObject(2,size);
@@ -178,7 +177,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"))) {
             ps.setObject(1, regionId);
             ResultSet rs = ps.executeQuery();
@@ -195,7 +194,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public Integer getCountTariffsAvailableForCustomer(long regionId) {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
             ps.setObject(1, regionId);
             ResultSet rs = ps.executeQuery();
@@ -210,7 +209,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size){
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"))) {
             ps.setObject(1,size);
             ps.setObject(2,page*size);
@@ -228,7 +227,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate() {
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"))) {
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
@@ -244,7 +243,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public Integer getCountTariffsAvailableForCorporate(){
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"))) {
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -257,7 +256,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public Tariff getByIdForSingleCustomer(long id, long regionId){
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
             ps.setObject(1, id);
             ps.setObject(2, regionId);
