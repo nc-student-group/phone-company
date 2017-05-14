@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implements CustomerTariffDao {
+public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff>
+        implements CustomerTariffDao {
 
     private QueryLoader queryLoader;
     private CustomerDao customerDao;

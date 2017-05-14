@@ -20,8 +20,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("Duplicates")
 @Repository
-public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> implements CustomerServiceDao {
+public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
+        implements CustomerServiceDao {
 
     private QueryLoader queryLoader;
     private CustomerDao customerDao;
@@ -94,6 +96,23 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto> impl
             throw new EntityNotFoundException(customerId, e);
         }
         return services;
+    }
+
+    @Override
+    public boolean isCustomerServiceAlreadyPresent(long serviceId, long customerId) {
+        String getByServiceAndCustomerIdQuery = this.getQuery("getByServiceAndCustomerId");
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(getByServiceAndCustomerIdQuery)) {
+            ps.setLong(1, serviceId);
+            ps.setLong(2, customerId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) != 0;
+            }
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(serviceId, e);
+        }
+        return false;
     }
 
     @Override

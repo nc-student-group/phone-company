@@ -52,10 +52,11 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getResumingOrderByCustomerServiceId(customerService.getId());
     }
 
-    public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
+    @Override
+    public Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType) {
         LocalDate currentDate = LocalDate.now();
         Order order =
-                new Order(customerService, OrderType.ACTIVATION,
+                new Order(customerService, orderType,
                         OrderStatus.CREATED, currentDate, currentDate);
         return super.save(order);
     }

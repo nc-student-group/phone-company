@@ -50,4 +50,5 @@ public interface CrudDao<T extends DomainEntity> {
 
     void setAutoCommit(boolean autoCommit);
 
+    int getCountByKey(String key, String countQuery);
 }

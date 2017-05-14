@@ -16,8 +16,6 @@ public interface OrderService extends CrudService<Order> {
 
     List<Order> getResumingOrderByCustomerService(CustomerServiceDto customerService);
 
-    Order saveCustomerServiceActivationOrder(CustomerServiceDto customerServiceDto);
-
     List<Order> getOrdersHistoryByClient(Customer customer, int page, int size);
 
     List<Order> getOrdersHistoryByCorporateId(long corporateId, int page, int size);
@@ -29,6 +27,8 @@ public interface OrderService extends CrudService<Order> {
     Integer getOrdersCountForServicesByClient(Customer customer);
 
     Integer getOrdersCountByCorporateId(long corporateId);
+
+    Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType);
 
     OrderStatistics getOrderStatistics();
 

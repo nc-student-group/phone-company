@@ -12,4 +12,5 @@ public interface CustomerServiceService extends CrudService<CustomerServiceDto> 
     CustomerServiceDto deactivateCustomerService(CustomerServiceDto customerService);
     CustomerServiceDto resumeCustomerService(CustomerServiceDto customerService);
     CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData);
+    CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer);
 }

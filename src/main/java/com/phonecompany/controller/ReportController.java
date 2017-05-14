@@ -41,11 +41,13 @@ public class ReportController {
     }
 
     @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
-    public ResponseEntity<?> getReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
-            @PathVariable("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @PathVariable("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+    public ResponseEntity<?> getTariffReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
+                                                                  @PathVariable("startDate") LocalDate startDate,
+                                                                  @PathVariable("endDate") LocalDate endDate) {
 
         LOG.debug("Generating report");
+        LOG.debug("Start date: {}", startDate);
+        LOG.debug("End date: {}", endDate);
         SheetDataSet sheetDataSet = this.tariffService
                 .prepareTariffReportDataSet(regionId, startDate, endDate);
 

@@ -1,6 +1,8 @@
 package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerServiceDto;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 
 import java.util.List;
@@ -16,7 +18,8 @@ public interface CustomerService extends CrudService<Customer>,
     int getCountCustomers(long rId, String status);
 
     void deactivateCustomer(long id);
-    public void deactivateCustomerTariff(long id);
+
+    void deactivateCustomerTariff(long id);
 
     List<Customer> getCustomersByCorporate(long corporateId);
 }

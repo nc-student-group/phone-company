@@ -37,29 +37,18 @@ public class CustomerController {
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
     private CustomerTariffService customerTariffService;
-    private MailMessageCreator<Tariff> tariffDeactivationEmailCreator;
-    private EmailService<User> emailService;
-    private MailMessageCreator<Tariff> tariffSuspensionEmailCreator;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
                               UserService userService,
-                              CustomerTariffService customerTariffService,
-                              @Qualifier("tariffDeactivationNotificationEmailCreator")
-                              MailMessageCreator<Tariff> tariffDeactivationEmailCreator,
-                              @Qualifier("tariffSuspensionNotificationEmailCreator")
-                              MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
-                              EmailService<User> emailService) {
+                              CustomerTariffService customerTariffService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
         this.customerTariffService = customerTariffService;
-        this.tariffDeactivationEmailCreator = tariffDeactivationEmailCreator;
-        this.tariffSuspensionEmailCreator = tariffSuspensionNotificationEmailCreator;
-        this.emailService = emailService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")

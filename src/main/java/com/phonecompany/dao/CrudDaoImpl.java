@@ -149,6 +149,21 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
         }
     }
 
+    @Override
+    public int getCountByKey(String key, String countQuery) {
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(countQuery)) {
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new EntityNotFoundException(key, e);
+        }
+    }
+
     public abstract String getQuery(String type);
 
     public abstract void populateSaveStatement(PreparedStatement preparedStatement, T entity);
