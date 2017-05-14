@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * A factory for connections to the physical data source that this
  * {@code DataSource} object represents.
  */
-@Component
+//@Component
 public class DataSourceImpl implements DataSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceImpl.class);

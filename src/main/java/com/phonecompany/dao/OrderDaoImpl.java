@@ -15,6 +15,8 @@ import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -98,15 +100,22 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
 
     @Override
     public Order getResumingOrderByCustomerTariffId(Long customerTariffId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getResumingByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getResumingByCustomerId"));
             ps.setLong(1, customerTariffId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerTariffId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
@@ -114,15 +123,22 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     @Override
     public List<Order> getResumingOrderByCustomerServiceId(Long customerId) {
         List<Order> orders = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getResumingServicesByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getResumingServicesByCustomerId"));
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 orders.add(init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return orders;
     }
@@ -152,8 +168,10 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     }
 
     private List<Order> getOrdersByClientIdPaged(String query, Long clientId, int page, int size) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
             ps.setObject(1, clientId);
             ps.setObject(2, size);
             ps.setObject(3, page * size);
@@ -164,27 +182,41 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     private Integer getCountByClientId(String query, Long clientId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
             ps.setLong(1, clientId);
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(clientId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Order> getOrdersForCustomerServicesByCustomerIdPaged(Long customerId, int page, int size) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getPagedForCustomerServicesByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getPagedForCustomerServicesByCustomerId"));
             ps.setObject(1, customerId);
             ps.setObject(2, size);
             ps.setObject(3, page * size);
@@ -195,28 +227,42 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public Integer getCountOfServicesByCustomerId(Long customerId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountOfServicesByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getCountOfServicesByCustomerId"));
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Order> getTariffOrdersByRegionId(long regionId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"));
             ps.setLong(1, regionId);
             ResultSet rs = ps.executeQuery();
             List<Order> tariffOrders = new ArrayList<>();
@@ -225,14 +271,21 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             }
             return tariffOrders;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(regionId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Order> getAllServiceOrders() {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("services"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("services"));
             ResultSet rs = ps.executeQuery();
             List<Order> serviceOrders = new ArrayList<>();
             while (rs.next()) {
@@ -240,20 +293,32 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
             }
             return serviceOrders;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Could not extract service orders", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     this.getQuery("for.the.last.month.by.type"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(
+                    this.getQuery("for.the.last.month.by.type"));
             ps.setString(1, type.name());
             ResultSet rs = ps.executeQuery();
             return this.associateWeeksWithOrderNumbers(rs);
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Could not extract orders numbers", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 

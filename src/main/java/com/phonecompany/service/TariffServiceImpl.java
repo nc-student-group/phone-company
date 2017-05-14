@@ -13,7 +13,9 @@ import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -296,6 +298,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             throw new ConflictException("Tariff with name \"" +
@@ -303,11 +306,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
-        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
-                "tariff/" + tariff.hashCode()));
+//        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
+//                "tariff/" + tariff.hashCode()));
         Tariff savedTariff = this.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
-        return savedTariff;
+        throw new ConflictException("test conflict");
+//        return savedTariff;
     }
 
     @Override
@@ -360,5 +364,12 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
         return this.orderService
                 .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+    }
+
+    @Override
+    @Transactional
+    public void test() {
+        this.getCountTariffsAvailableForCustomer(10l);
+        throw new ConflictException("ex");
     }
 }

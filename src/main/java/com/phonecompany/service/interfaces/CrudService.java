@@ -41,10 +41,5 @@ public interface CrudService<T> {
      * @return all entities
      */
     List<T> getAll();
-
-    void beginTransaction();
-    void commit();
-    void rollback();
-    void setAutoCommit(boolean autoCommit);
 }
 
