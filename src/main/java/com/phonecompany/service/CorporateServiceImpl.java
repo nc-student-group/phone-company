@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.model.Corporate;
 import com.phonecompany.service.interfaces.CorporateService;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@ServiceStereotype
 public class CorporateServiceImpl extends CrudServiceImpl<Corporate> implements CorporateService {
 
     private CorporateDao corporateDao;

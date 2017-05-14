@@ -1,11 +1,14 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.VerificationToken;
+import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -26,9 +29,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static java.sql.JDBCType.NULL;
-
-@Service
+@ServiceStereotype
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         implements CustomerService {
 
@@ -37,6 +38,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Value("${application-url}")
     private String applicationUrl;
 
+    private ServiceDao serviceDao;
     private CustomerDao customerDao;
     private VerificationTokenService verificationTokenService;
     private MailMessageCreator<VerificationToken> confirmMessageCreator;
@@ -45,13 +47,15 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private CustomerTariffService customerTariffService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerDao customerDao,
+    public CustomerServiceImpl(ServiceDao serviceDao,
+                               CustomerDao customerDao,
                                VerificationTokenService verificationTokenService,
                                @Qualifier("confirmationEmailCreator")
                                        MailMessageCreator<VerificationToken> confirmMessageCreator,
                                EmailService<Customer> emailService,
                                TariffService tariffService,
                                CustomerTariffService customerTariffService) {
+        this.serviceDao = serviceDao;
         this.customerDao = customerDao;
         this.verificationTokenService = verificationTokenService;
         this.confirmMessageCreator = confirmMessageCreator;

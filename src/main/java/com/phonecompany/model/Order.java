@@ -19,12 +19,8 @@ public class Order extends DomainEntity {
     @NotNull(message = "Order status must not be null")
     private OrderStatus orderStatus;
     @NotNull(message = "Creation date must not be null")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate creationDate;
     @NotNull(message = "Execution date must not be null")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate executionDate;
 
     public Order() {

@@ -2,6 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.annotations.CacheClear;
 import com.phonecompany.annotations.Cacheable;
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
@@ -17,12 +18,13 @@ import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@org.springframework.stereotype.Service
+@ServiceStereotype
 public class ServiceServiceImpl extends CrudServiceImpl<Service>
         implements ServiceService {
 
@@ -32,25 +34,18 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private ServiceDao serviceDao;
     private ProductCategoryDao productCategoryDao;
     private FileService fileService;
-    private OrderService orderService;
     private CustomerService customerService;
-    private CustomerServiceService customerServiceService;
-
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
                               FileService fileService,
-                              OrderService orderService,
-                              CustomerService customerService,
-                              CustomerServiceService customerServiceService) {
+                              CustomerService customerService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
-        this.orderService = orderService;
         this.customerService = customerService;
-        this.customerServiceService = customerServiceService;
     }
 
     @Override
@@ -143,14 +138,5 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @CacheClear
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         this.serviceDao.updateServiceStatus(serviceId, productStatus);
-    }
-
-    @Override
-    public void activateServiceForCustomer(Service service, Customer customer) {
-        CustomerServiceDto customerService =
-                new CustomerServiceDto(customer, service,
-                        service.getPrice(), CustomerProductStatus.ACTIVE);
-        this.orderService.saveCustomerServiceActivationOrder(customerService);
-        this.customerServiceService.save(customerService);
     }
 }

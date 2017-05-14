@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@ServiceStereotype
 public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
         implements TariffRegionService{
 

@@ -9,7 +9,7 @@ import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TableDataSet;
-import com.phonecompany.service.xssfHelper.FilteringStrategy;
+import com.phonecompany.service.xssfHelper.GroupingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +52,11 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getResumingOrderByCustomerServiceId(customerService.getId());
     }
 
-    public Order saveCustomerServiceActivationOrder(CustomerServiceDto customerService) {
+    @Override
+    public Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType) {
         LocalDate currentDate = LocalDate.now();
         Order order =
-                new Order(customerService, OrderType.ACTIVATION,
+                new Order(customerService, orderType,
                         OrderStatus.CREATED, currentDate, currentDate);
         return super.save(order);
     }
@@ -124,8 +125,15 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets the number of orders made at the specified date.
+     *
+     * @param orderList order list that number will be calculated from
+     * @param date
+     * @return
+     */
     @Override
-    public long getOrderNumberByDate(List<Order> orderList,
+    public Long getOrderNumberByDate(List<Order> orderList,
                                      LocalDate date) {
         return orderList.stream()
                 .filter(o -> o.getCreationDate().equals(date))
@@ -136,7 +144,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     public SheetDataSet prepareExcelSheetDataSet(String sheetName,
                                                  Map<String, List<Order>> productNamesToOrdersMap,
                                                  List<LocalDate> timeLine) {
-        SheetDataSet sheet = new SheetDataSet(sheetName);
+        SheetDataSet<Long, LocalDate> sheet = new SheetDataSet<>(sheetName);
         List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
         for (OrderType orderType : orderTypes) {
             this.prepareExcelTableDataSet(sheet, orderType, productNamesToOrdersMap, timeLine);
@@ -144,21 +152,22 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return sheet;
     }
 
-    private void prepareExcelTableDataSet(SheetDataSet sheet, OrderType orderType,
+    private void prepareExcelTableDataSet(SheetDataSet<Long, LocalDate> sheet, OrderType orderType,
                                           Map<String, List<Order>> productNamesToOrdersMap,
                                           List<LocalDate> timeLine) {
-        TableDataSet table = sheet.createTable(orderType.toString());
+        TableDataSet<Long, LocalDate> table = sheet.createTable(orderType.toString());
         for (String productName : productNamesToOrdersMap.keySet()) {
             this.prepareExcelRowDataSet(table, productName, orderType,
                     productNamesToOrdersMap, timeLine);
         }
     }
 
-    private void prepareExcelRowDataSet(TableDataSet table, String productName,
+    private void prepareExcelRowDataSet(TableDataSet<Long, LocalDate> table,
+                                        String productName,
                                         OrderType orderType,
                                         Map<String, List<Order>> productNamesToOrdersMap,
                                         List<LocalDate> timeLine) {
-        RowDataSet row = table.createRow(productName);
+        RowDataSet<Long, LocalDate> row = table.createRow(productName);
         List<Order> orders = productNamesToOrdersMap.get(productName);
         List<Order> ordersByType = this.filterCompletedOrdersByType(orders, orderType);
         for (LocalDate date : timeLine) {
@@ -167,6 +176,11 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         }
     }
 
+    /**
+     * @param orders
+     * @param type
+     * @return
+     */
     @Override
     public List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type) {
         return orders.stream()
@@ -175,6 +189,16 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a set of unique creation dates of the orders passed as a parameter.
+     * The returned list will be sorted in ascending order.
+     * <p>
+     * <p>Resulting list is made ordered because this method is generally used to
+     * produce range of definition for the values contained within an xls report.</p>
+     *
+     * @param orders objects used to retrieve creation dates from
+     * @return set of unique dates corresponding to the elements in the incoming list
+     */
     @Override
     public List<LocalDate> generateTimeLine(List<Order> orders) {
         return orders.stream()
@@ -186,41 +210,68 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Override
     public Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
-                                                               FilteringStrategy filteringStrategy) {
+                                                               GroupingStrategy<Order, String> filteringStrategy) {
         Map<String, List<Order>> productNamesToOrdersMap = new HashMap<>();
-        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getOrderToProductNameMapper();
+        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getValueToKeyMapper();
         List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
         for (String productName : productNames) {
-            Predicate<Order> productNameFilter = filteringStrategy.getProductNameFilter(productName);
+            Predicate<Order> productNameFilter = filteringStrategy.getFilteringCondition(productName);
             List<Order> ordersOfTariff = this.filterOrders(orders, productNameFilter);
             this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfTariff);
         }
         return productNamesToOrdersMap;
     }
 
-    private List<String> getDistinctNamesFromOrders(List<Order> tariffOrders,
+    /**
+     * Returns a set of unique strings that somehow relate to each {@code Order} object
+     * from the incoming list. Example: order -> tariff name this order was made for.
+     *
+     * @param orders     {@code Order} objects to be mapped to the {@code String} keys
+     * @param nameMapper mapper that is used to map {@code Order} object to the
+     *                   corresponding {@code String} key
+     * @return set of unique {@code String}s
+     */
+    private List<String> getDistinctNamesFromOrders(List<Order> orders,
                                                     Function<Order, String> nameMapper) {
-        return tariffOrders
+        return orders
                 .stream().map(nameMapper)
                 .distinct()
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Filters list of orders depending on the filtering condition.
+     *
+     * @param orders             list of orders to be filtered
+     * @param filteringCondition predicate used to filter orders
+     * @return filtered list
+     */
     private List<Order> filterOrders(List<Order> orders,
-                                     Predicate<Order> filterExpression) {
+                                     Predicate<Order> filteringCondition) {
         return orders.stream()
-                .filter(filterExpression)
+                .filter(filteringCondition)
                 .collect(Collectors.toList());
     }
 
-    private void putOrdersInMap(Map<String, List<Order>> map,
+    /**
+     * Places a list of {@code Order}s into the destination map against a
+     * {@code String} key corresponding to this list.
+     * <p>
+     * <p>If the given key was already put into the map then the incoming list
+     * and the existent list will be merged.</p>
+     *
+     * @param destinationMap  map that list would be placed into
+     * @param key             key that corresponds to the incoming list
+     * @param ordersOfProduct list to be placed into the map
+     */
+    private void putOrdersInMap(Map<String, List<Order>> destinationMap,
                                 String key, List<Order> ordersOfProduct) {
-        if (map.get(key) == null) {
+        if (destinationMap.get(key) == null) {
             List<Order> orders = new ArrayList<>();
             orders.addAll(ordersOfProduct);
-            map.put(key, orders);
+            destinationMap.put(key, orders);
         } else {
-            map.get(key).addAll(ordersOfProduct);
+            destinationMap.get(key).addAll(ordersOfProduct);
         }
     }
 }
