@@ -21,7 +21,7 @@ public class VerificationTokenDaoImplTest extends AbstractTest {
 
     @Before
     public void setUp(){
-        vtDao.setAutoCommit(false);
+//        vtDao.setAutoCommit(false);
     }
 
     @Test

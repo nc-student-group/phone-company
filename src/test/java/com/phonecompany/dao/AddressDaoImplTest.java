@@ -13,7 +13,7 @@ public class AddressDaoImplTest extends AbstractTest {
 
     @Before
     public void setUp() {
-        addressDao.setAutoCommit(false);
+//        addressDao.setAutoCommit(false);
     }
 
     @Test

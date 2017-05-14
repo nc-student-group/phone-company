@@ -12,6 +12,8 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -100,45 +102,66 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
 
     private List<CustomerTariff> getCustomerTariffsByClientIdQuery(Long id, String query) {
         List<CustomerTariff> tariffs = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 tariffs.add(init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(id, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return tariffs;
     }
 
     @Override
     public CustomerTariff getCurrentCustomerTariff(long customerId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCustomerId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getByCustomerId"));
             ps.setLong(1, customerId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return (init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(customerId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
 
     @Override
-    public CustomerTariff getCurrentCorporateTariff(long corporateId){
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByCorporateId"))) {
+    public CustomerTariff getCurrentCorporateTariff(long corporateId) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getByCorporateId"));
             ps.setLong(1, corporateId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return (init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(corporateId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
@@ -156,15 +179,22 @@ public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff> implement
     }
 
     private CustomerTariff getCustomerTariffByClientIdQuery(Long id, String query) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(id, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }

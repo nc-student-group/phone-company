@@ -40,22 +40,4 @@ public abstract class CrudServiceImpl<T extends DomainEntity>
         return dao.getAll();
     }
 
-    @Override
-    public void beginTransaction(){
-        dao.beginTransaction();
-    }
-
-    @Override
-    public void commit(){
-        dao.commit();
-    }
-
-    @Override
-    public void rollback(){
-     dao.rollback();
-    }
-
-    public void setAutoCommit(boolean autoCommit) {
-        dao.setAutoCommit(autoCommit);
-    }
 }
