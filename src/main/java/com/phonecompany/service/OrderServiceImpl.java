@@ -189,7 +189,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     public Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
                                                                MappingStrategy filteringStrategy) {
         Map<String, List<Order>> productNamesToOrdersMap = new HashMap<>();
-        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getOrderToProductIdentifierMapper();
+        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getObjectToItsIdentifierMapper();
         List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
         for (String productName : productNames) {
             Predicate<Order> productNameFilter = filteringStrategy.getObjectFilter(productName);

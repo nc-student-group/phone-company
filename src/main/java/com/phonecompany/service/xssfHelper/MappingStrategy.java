@@ -19,7 +19,7 @@ public abstract class MappingStrategy<V, K> {
      * @return mapping function
      * @see TariffMappingStrategy
      */
-    public abstract Function<V, K> getOrderToProductIdentifierMapper();
+    public abstract Function<V, K> getObjectToItsIdentifierMapper();
 
     /**
      * Provides with a condition that will be used to filter out objects
