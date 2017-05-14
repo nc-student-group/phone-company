@@ -10,18 +10,32 @@ import java.util.List;
 public class Query {
 
 
+
     private final String query;
     private final List<Object> preparedStatementParams;
 
+    private Query(Builder builder) {
+        query = builder.query.toString();
+        preparedStatementParams = builder.preparedStatementParams;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public List<Object> getPreparedStatementParams() {
+        return preparedStatementParams;
+    }
+
     public static class Builder {
         private StringBuilder query;
-        private String selectClause = "SELECT * FROM ? ";
+        private String selectClause = "SELECT * FROM ";
         private List<Object> preparedStatementParams = new ArrayList<>();
 
         public Builder(String category) {
             query = new StringBuilder();
             query.append(selectClause);
-            preparedStatementParams.add(category);
+            query.append(category);
         }
 
         public Builder and() {
@@ -39,19 +53,25 @@ public class Query {
             return this;
         }
 
-        public Builder addCondtiion(String condition,List<Object> params) {
+        public Builder addCondition(String condition,Object param) {
             query.append(" ");
             query.append(condition);
             query.append(" ");
-            preparedStatementParams.add(params);
+            preparedStatementParams.add(param);
             return this;
         }
 
-        public Builder addLikeCondtiion(String field,String part) {
+        public Builder addIsNullCondition(String field) {
             query.append(" ");
-            query.append("? LIKE CONCAT('%',?,'%')");
+            query.append(field);
+            query.append(" IS NULL ");
+            return this;
+        }
+
+        public Builder addLikeCondition(String field,String part) {
+            query.append(" ");query.append(field);
+            query.append(" LIKE CONCAT('%',?,'%')");
             query.append(" ");
-            preparedStatementParams.add(field);
             preparedStatementParams.add(part);
             return this;
         }
@@ -61,9 +81,5 @@ public class Query {
         }
     }
 
-    private Query(Builder builder) {
-        query = builder.query.toString();
-        preparedStatementParams = builder.preparedStatementParams;
-    }
 
 }

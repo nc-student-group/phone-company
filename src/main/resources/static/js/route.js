@@ -111,6 +111,11 @@
                 templateUrl: 'view/admin/search.html',
                 controller: 'SearchController'
             });
+        $routeProvider.when('/pmg/search',
+            {
+                templateUrl: 'view/pmg/search.html',
+                controller: 'SearchController'
+            });
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',

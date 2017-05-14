@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.CustomerDao;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.KeyAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
@@ -12,6 +13,7 @@ import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.VerificationTokenService;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static java.sql.JDBCType.NULL;
 
 @Service
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
@@ -143,6 +147,31 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public List<Customer> getCustomersByCorporate(long corporateId) {
         return customerDao.getByCorporateId(corporateId);
+    }
+
+    @Override
+    public List<Customer> getAllCustomersSearch(String email, String phone, String surname, int corporate, int region, String status) {
+        Query.Builder query = new Query.Builder("dbuser");
+        query.where();
+        query.addLikeCondition("email",email);
+        query.and().addLikeCondition("phone",phone);
+        query.and().addLikeCondition("lastname",surname);
+
+        if(!status.equals("ALL") &&(status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
+            query.and().addCondition("status=?",status);
+        }else if (!status.equals("ALL")){
+            throw new ConflictException("Search parameters error: status.");
+        }
+
+        if(corporate==-1){
+            query.and().addIsNullCondition("corporate_id");
+        }else if(corporate>0){
+            query.and().addCondition("corporate_id=?",corporate);
+        }else if(corporate<-1) {
+            throw new ConflictException("Search parameters error: corporate.");
+        }
+
+        return customerDao.getAllCustomersSearch(query.build());
     }
 
     @Override

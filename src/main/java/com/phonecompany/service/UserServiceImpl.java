@@ -10,6 +10,7 @@ import com.phonecompany.service.email.PasswordAssignmentEmailCreator;
 import com.phonecompany.service.email.ResetPasswordEmailCreator;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,29 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     @Override
     public List<User> getAllUsersSearch(String email, int userRole, String status) {
-        return userDao.getAllUsersSearch(email,userRole,status);
+        Query query;
+        if(userRole==0) {
+            if(status.equals("ALL")){
+                query = new Query.Builder("dbuser").where().addLikeCondition("email", email).build();
+            }else if(status.equals("ACTIVATED") ||status.equals("DEACTIVATED")){
+                query = new Query.Builder("dbuser").where().addLikeCondition("email", email)
+                        .and().addCondition("status=?", status).build();
+            }else{
+                throw new ConflictException("Incorrect search parameter: status.");
+            }
+        }else if (userRole>0 && userRole<5) {
+            if(status.equals("ALL")){
+                query = new Query.Builder("dbuser").where().addLikeCondition("email",email)
+                        .and().addCondition("role_id=?",userRole).build();
+            }else if(status.equals("ACTIVATED") ||status.equals("DEACTIVATED")){
+                query = new Query.Builder("dbuser").where().addLikeCondition("email",email)
+                        .and().addCondition("role_id=?",userRole).and().addCondition("status=?",status).build();
+            }else{
+                throw new ConflictException("Incorrect search parameter: status.");
+            }
+        }else{
+            throw new ConflictException("Incorrect search parameter: user role.");
+        }
+        return userDao.getAllUsersSearch(query);
     }
 }
