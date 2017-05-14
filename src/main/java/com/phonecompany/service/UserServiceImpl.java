@@ -144,4 +144,9 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     public void updateStatus(long id, Status status) {
         userDao.updateStatus(id, status);
     }
+
+    @Override
+    public List<User> getAllUsersSearch(String email, int userRole, String status) {
+        return userDao.getAllUsersSearch(email,userRole,status);
+    }
 }

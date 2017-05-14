@@ -1,0 +1,81 @@
+<div class="wrapper">
+    <ng-include src="'../../view/admin/adminSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/admin/adminHeader.html'"></ng-include>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Search</h4>
+                            </div>
+                            <hr/>
+                            <div class="row" style="padding: 15px">
+                                <div class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Category:</label>
+                                        <md-select ng-model="selectedCategory">
+                                            <md-option value="USERS">Users</md-option>
+                                            <md-option value="CUSTOMERS">Customers</md-option>
+                                            <md-option value="TARIFFS">Tariffs</md-option>
+                                            <md-option value="SERVICES">Services</md-option>
+                                            <md-option value="COMPLAINTS">Complaints</md-option>
+                                            <md-option value="COMPANIES">Companies</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div ng-show="selectedCategory=='USERS' || selectedCategory=='CUSTOMERS'"
+                                     class="col-sm-3">
+                                    <md-input-container>
+                                        <label>Email:</label>
+                                        <input ng-model="partOfEmail">
+                                    </md-input-container>
+                                </div>
+                                <div ng-show="selectedCategory=='USERS'" class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Role:</label>
+                                        <md-select ng-model="selectedRole">
+                                            <md-option value="0">All roles</md-option>
+                                            <md-option value="2">CSR</md-option>
+                                            <md-option value="3">PMG</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div ng-show="selectedCategory=='USERS' || selectedCategory=='CUSTOMERS'"
+                                     class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Status:</label>
+                                        <md-select ng-model="selectedUserStatus">
+                                            <md-option value="ALL">ALL</md-option>
+                                            <md-option value="ACTIVATED">ACTIVATED</md-option>
+                                            <md-option value="DEACTIVATED">DEACTIVATED</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                            </div>
+                            <div class="row" style="padding: 15px">
+                                <div class="col-sm-2">
+                                    <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
+                                            ng-click="searchClick()">Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <p class="copyright">
+                        &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                    </p>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+</div>

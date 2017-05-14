@@ -106,6 +106,11 @@
                 templateUrl: 'view/admin/customers.html',
                 controller: 'CustomerController'
             });
+        $routeProvider.when('/admin/search',
+            {
+                templateUrl: 'view/admin/search.html',
+                controller: 'SearchController'
+            });
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',

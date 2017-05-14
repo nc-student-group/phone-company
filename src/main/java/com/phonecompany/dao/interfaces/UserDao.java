@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface UserDao extends CrudDao<User>, AbstractUserDao<User>,
         AbstractPageableDao<User> {
+    List<User> getAllUsersSearch(String email, int userRole, String status)
 }

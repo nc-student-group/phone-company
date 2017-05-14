@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class UserDaoImpl extends AbstractUserDaoImpl<User>
@@ -91,5 +92,10 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
             this.preparedStatementParams.add(status);
         }
         return where;
+    }
+
+    @Override
+    public List<User> getAllUsersSearch(String email, int userRole, String status) {
+        return null;
     }
 }
