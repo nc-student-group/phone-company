@@ -32,4 +32,11 @@ public class CachingAspect {
             return methodResult;
         }
     }
+
+    @Around("@annotation(com.phonecompany.annotations.CacheClear)")
+    public Object clearCache(ProceedingJoinPoint joinPoint)
+            throws Throwable {
+        cache.clear();
+        return joinPoint.proceed();
+    }
 }

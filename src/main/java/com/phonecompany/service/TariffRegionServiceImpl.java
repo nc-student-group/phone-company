@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion> implements TariffRegionService{
+public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
+        implements TariffRegionService{
 
     private TariffRegionDao tariffRegionDao;
 

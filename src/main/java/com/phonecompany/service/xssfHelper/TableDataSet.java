@@ -6,31 +6,31 @@ import java.util.List;
 public final class TableDataSet {
 
     private final String tableName;
-    private final List<RowDataSet> rowList = new ArrayList<>();
+    private final List<RowDataSet> rowDataSets = new ArrayList<>();
 
     TableDataSet(String tableName) {
         this.tableName = tableName;
     }
 
-    public String getTableName() {
+    public String getTableDataSetName() {
         return tableName;
     }
 
-    public List<RowDataSet> getRowList() {
-        return rowList;
+    public List<RowDataSet> getRowDataSets() {
+        return rowDataSets;
     }
 
     public RowDataSet createRow(String rowName) {
-        RowDataSet excelRow = new RowDataSet(rowName);
-        rowList.add(excelRow);
-        return excelRow;
+        RowDataSet rowDataSet = new RowDataSet(rowName);
+        rowDataSets.add(rowDataSet);
+        return rowDataSet;
     }
 
     @Override
     public String toString() {
         return "TableDataSet{" +
                 "tableName='" + tableName + '\'' +
-                ", rowList=" + rowList +
+                ", rowDataSets=" + rowDataSets +
                 '}';
     }
 }

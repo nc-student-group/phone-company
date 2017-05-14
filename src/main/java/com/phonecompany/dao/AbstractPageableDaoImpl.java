@@ -5,11 +5,12 @@ import com.phonecompany.exception.CrudException;
 import com.phonecompany.model.DomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
         extends CrudDaoImpl<T> implements AbstractPageableDao<T> {
@@ -22,9 +23,10 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     public List<T> getPaging(int page, int size, Object... args) {
 
         String pagingQuery = this.getPagingQuery(page, size, args);
-
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(pagingQuery)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(pagingQuery);
             LOG.debug("Opening connection for isPaging");
             this.transferParamsToPreparedStatement(ps);
 
@@ -35,19 +37,23 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
             while (rs.next()) {
                 result.add(init(rs));
             }
-
             return result;
 
         } catch (SQLException e) {
             this.preparedStatementParams.clear();
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, getDataSource());
         }
     }
 
     private void transferParamsToPreparedStatement(PreparedStatement ps) throws SQLException {
         LOG.debug("Prepared statement parameters: {}", preparedStatementParams);
-        for(int i = 0; i < preparedStatementParams.size(); i++) {
+        for (int i = 0; i < preparedStatementParams.size(); i++) {
             ps.setObject(i + 1, preparedStatementParams.get(i));
         }
         this.preparedStatementParams.clear();
@@ -71,9 +77,10 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     public int getEntityCount(Object... args) {
 
         String countQuery = this.getCountQuery(args);
-
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(countQuery)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(countQuery);
             LOG.debug("Opening connection for count");
 
             this.transferParamsToPreparedStatement(ps);
@@ -84,12 +91,16 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
             if (rs.next()) {
                 return rs.getInt(1);
             }
-
             return 0;
         } catch (SQLException e) {
             this.preparedStatementParams.clear();
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 

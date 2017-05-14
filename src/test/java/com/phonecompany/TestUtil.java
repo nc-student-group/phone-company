@@ -41,7 +41,7 @@ public class TestUtil {
 
     public static Service getSampleService() {
         ProductCategory productCategory = new ProductCategory(1L, "Sample category", "Sample units");
-        return new Service(1L, "Service1", 115,
+        return new Service(200L, "Service under test", 115,
                 ProductStatus.ACTIVATED, 0, productCategory, null, null, null, 0, 0);
     }
 

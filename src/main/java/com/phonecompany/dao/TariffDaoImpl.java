@@ -7,6 +7,9 @@ import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -30,6 +33,7 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     public String getQuery(String type) {
         return queryLoader.getQuery("query.tariff." + type);
     }
+
 
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, Tariff tariff) {
@@ -103,42 +107,63 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
     public List<Tariff> getByRegionId(Long regionId) {
         List<Tariff> tariffs = new ArrayList<>();
         String query = this.getQuery("getAllAvailable");
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
             ps.setLong(1, regionId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 tariffs.add(init(rs));
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(regionId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return tariffs;
     }
 
     @Override
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("updateStatus"));
             ps.setString(1, productStatus.name());
             ps.setLong(2, tariffId);
             ps.executeUpdate();
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityModificationException(tariffId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public Tariff findByTariffName(String tariffName) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("findByTariffName"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("findByTariffName"));
             ps.setString(1, tariffName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(tariffName, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
@@ -261,8 +286,10 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"));
             ps.setObject(1, regionId);
             ps.setObject(2, size);
             ps.setObject(3, page * size);
@@ -273,15 +300,22 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"));
             ps.setObject(1, regionId);
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
@@ -290,29 +324,43 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public Integer getCountTariffsAvailableForCustomer(long regionId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"));
             ps.setObject(1, regionId);
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"));
             ps.setObject(1, size);
             ps.setObject(2, page * size);
             ResultSet rs = ps.executeQuery();
@@ -322,15 +370,22 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate() {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"));
             ResultSet rs = ps.executeQuery();
             List<Tariff> result = new ArrayList<>();
             while (rs.next()) {
@@ -338,28 +393,42 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             }
             return result;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public Integer getCountTariffsAvailableForCorporate() {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"));
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public Tariff getByIdForSingleCustomer(long id, long regionId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"));
             ps.setObject(1, id);
             ps.setObject(2, regionId);
             ResultSet rs = ps.executeQuery();
@@ -367,8 +436,13 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
                 return this.init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new CrudException("Failed to load all the entities. " +
                     "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }

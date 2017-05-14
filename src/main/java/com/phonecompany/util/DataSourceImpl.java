@@ -5,20 +5,22 @@ import com.phonecompany.exception.ConnectionPoolAcquirementException;
 import com.phonecompany.model.config.DataSourceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
+import javax.annotation.PostConstruct;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * A factory for connections to the physical data source that this
- * {@code DbManager} object represents.
+ * {@code DataSource} object represents.
  */
-public class DbManager {
+//@Component
+public class DataSourceImpl implements DataSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DbManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataSourceImpl.class);
     private static final int MAX_POOL_SIZE = 20;
     private static final int MAX_IDLE_TIME = 1; // one idle second and connection returns to the pool
     private static final int CHECKOUT_TIMEOUT = 0;
@@ -28,8 +30,6 @@ public class DbManager {
     private static final int ACQUIRE_RETRY_ATTEMPTS = 10;
     private static final int MAX_CONNECTION_AGE = 1800;
 
-    private static DbManager dbManager;
-
     private DataSourceInfo dataSourceInfo;
     private ComboPooledDataSource dataSource;
 
@@ -37,8 +37,8 @@ public class DbManager {
      * Sets up the configuration for its further usage during
      * the connection acquirement process
      */
-    private DbManager() {
-        LOG.debug("Initializing dbmanager");
+    @PostConstruct
+    public void init() {
         ConfigManager configManager = ConfigManager.getInstance();
         this.dataSourceInfo = configManager.getDataSourceInfo();
         this.dataSource = this.acquirePooledDataSource();
@@ -73,11 +73,6 @@ public class DbManager {
             dataSource.setMaxConnectionAge(MAX_CONNECTION_AGE);
             dataSource.setTestConnectionOnCheckin(false);
 
-            Properties p = new Properties(System.getProperties());
-            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF"); // c3p0 logging is redundant
-            System.setProperties(p);
-
             return dataSource;
         } catch (PropertyVetoException e) {
             throw new ConnectionPoolAcquirementException(dataSourceInfo, e);
@@ -86,25 +81,13 @@ public class DbManager {
 
     /**
      * Attempts to establish a connection with the data source that
-     * this {@code DbManager} object represents.
+     * this {@code DataSource} object represents.
      *
      * @return a connection to the datasource
      * @throws SQLException if connection acquirement fails
      */
+    @Override
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
-    }
-
-    /**
-     * Provides a single instance of the data source this
-     * {@code DbManager} object represents.
-     *
-     * @return fully constructed data source provider object
-     */
-    public static DbManager getInstance() {
-        if(dbManager == null) {
-            dbManager = new DbManager();
-        }
-        return dbManager;
     }
 }

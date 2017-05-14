@@ -8,12 +8,12 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Region;
-import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
-import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -82,8 +82,10 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
     @Override
     public List<TariffRegion> getAllByTariffId(Long tariffId) {
         List<TariffRegion> tariffRegions = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAllByTariffId"));
             ps.setLong(1, tariffId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -95,15 +97,22 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
                 tariffRegions.add(tariffRegion);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(tariffId, e);
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return tariffRegions;
     }
 
     @Override
     public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"));
             ps.setLong(1, tariffId);
             ps.setLong(2, regionId);
             ResultSet rs = ps.executeQuery();
@@ -111,19 +120,31 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
                 return init(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(tariffId, e);
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
     }
 
     @Override
     public void deleteByTariffId(long tariffId) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(getQuery("deleteByTariffId"))) {
-            preparedStatement.setLong(1, tariffId);
-            preparedStatement.executeUpdate();
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(getQuery("deleteByTariffId"));
+            ps.setLong(1, tariffId);
+            ps.executeUpdate();
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityDeletionException(tariffId, e);
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 }

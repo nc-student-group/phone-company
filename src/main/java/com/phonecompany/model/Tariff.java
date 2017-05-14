@@ -43,6 +43,22 @@ public class Tariff extends DomainEntity {
     public Tariff() {
     }
 
+    public Tariff(String tariffName, ProductStatus productStatus, String internet, String callsInNetwork, String callsOnOtherNumbers, String sms, String mms, String roaming, boolean isCorporate, LocalDate creationDate, double discount, String pictureUrl, double price) {
+        this.tariffName = tariffName;
+        this.productStatus = productStatus;
+        this.internet = internet;
+        this.callsInNetwork = callsInNetwork;
+        this.callsOnOtherNumbers = callsOnOtherNumbers;
+        this.sms = sms;
+        this.mms = mms;
+        this.roaming = roaming;
+        this.isCorporate = isCorporate;
+        this.creationDate = creationDate;
+        this.discount = discount;
+        this.pictureUrl = pictureUrl;
+        this.price = price;
+    }
+
     public Tariff(Long id, String tariffName, ProductStatus productStatus,
                   String internet, String callsInNetwork, String callsOnOtherNumbers,
                   String sms, String mms, String roaming, boolean isCorporate,

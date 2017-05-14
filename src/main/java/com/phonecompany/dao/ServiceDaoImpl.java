@@ -6,7 +6,6 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityModificationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.Order;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.QueryLoader;
@@ -14,14 +13,14 @@ import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
 
 @Repository
 public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
@@ -103,27 +102,40 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("updateStatus"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("updateStatus"));
             ps.setString(1, productStatus.name());
             ps.setLong(2, serviceId);
             ps.executeUpdate();
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityModificationException(serviceId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
     @Override
     public boolean isExist(Service service) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try { ps = conn.prepareStatement(this.getQuery("checkIfExists"));
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return this.isResultSetNotEmpty(rs);
             }
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(service.getServiceName(), e);
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return false;
     }
@@ -134,19 +146,6 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
         return rowCount != 0;
     }
 
-    /*public List<Order> getServiceOrdersFromTimePeriod(LocalDate startDate, LocalDate endDate) {
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(this.getQuery("checkIfExists"))) {
-            ps.setString(1, service.getServiceName());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return this.isResultSetNotEmpty(rs);
-            }
-        } catch (SQLException e) {
-            throw new EntityNotFoundException(service.getServiceName(), e);
-        }
-        return false;
-    }*/
 
     @Override
     public String prepareWhereClause(Object... args) {
