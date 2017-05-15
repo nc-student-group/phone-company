@@ -133,8 +133,10 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     @Override
     public int getCountByKey(String key, String countQuery) {
-        try (Connection conn = this.dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(countQuery)) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(countQuery);
             ps.setString(1, key);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -142,7 +144,105 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
             }
             return 0;
         } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
             throw new EntityNotFoundException(key, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
+    }
+
+    @Override
+    public List<T> executeForList(String query, Object[] params) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = ps.executeQuery();
+            List<T> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
+    }
+
+    @Override
+    public T executeForObject(String query, Object[] params) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return init(rs);
+            }
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
+        return null;
+    }
+
+    @Override
+    public void executeUpdate(String query, Object[] params) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new EntityModificationException(e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
+
+    @Override
+    public int executeForInt(String query, Object[] params) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new EntityModificationException(e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
