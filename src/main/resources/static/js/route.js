@@ -176,6 +176,16 @@
                 templateUrl: 'view/pmg/complaints.html',
                 controller: 'PmgComplaintsController'
             });
+        $routeProvider.when('/pmg/charts',
+            {
+                templateUrl: 'view/pmg/pmgCharts.html',
+                controller: 'PmgChartsController'
+            });
+        $routeProvider.when('/pmg/clients',
+            {
+                templateUrl: 'view/pmg/clients.html',
+                //controller: 'PmgChartsController'
+            });
         $routeProvider.when('/csr/editCustomer/:id',
             {
                 templateUrl: 'view/csr/editCustomer.html',
