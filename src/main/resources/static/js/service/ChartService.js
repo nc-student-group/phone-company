@@ -6,6 +6,7 @@ angular.module('phone-company').factory('ChartService', ['$q', '$http', function
 
     return {
         getOrderStatistics: getOrderStatistics,
+        getComplaintStatistics: getComplaintStatistics
     };
 
     function getOrderStatistics() {
@@ -20,5 +21,19 @@ angular.module('phone-company').factory('ChartService', ['$q', '$http', function
             });
         return deferred.promise;
     }
+
+    function getComplaintStatistics() {
+        let deferred = $q.defer();
+        $http.get(`${REPORTS}/complaints-statistics`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
 
 }]);

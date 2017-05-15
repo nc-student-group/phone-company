@@ -25,8 +25,9 @@ public class XSSFServiceImpl implements XSSFService {
 
     private static final String FILE_NAME = "report-";
     private static final String FILE_FORMAT = ".xlsx";
-    private static final int DISTANCE_BETWEEN_TABLES = 25;
+    private static final int CHART_HEIGHT = 15;
     private static final int FIRST_ROW_INDEX = 0;
+    private int distanceBetweenTables = 25;
 
     @Override
     public void generateReport(SheetDataSet excelSheet) {
@@ -37,7 +38,7 @@ public class XSSFServiceImpl implements XSSFService {
         int rowPosition = 0;
         for (TableDataSet tableDataSet : excelSheet.getTableDataSets()) {
             this.createTable(sheet, rowPosition, tableDataSet);
-            rowPosition += DISTANCE_BETWEEN_TABLES;
+            rowPosition += distanceBetweenTables;
         }
         this.saveWorkBook(workbook);
     }
@@ -54,6 +55,7 @@ public class XSSFServiceImpl implements XSSFService {
         RowDataSet firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
         this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
         int rowValuesNumber = firstTableRow.getRowValues().size();
+        distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
         this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber); //TODO: is side effect
     }
 
@@ -93,9 +95,9 @@ public class XSSFServiceImpl implements XSSFService {
         }
     }
 
-    private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int lastColIndex) {
+    private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int rowValuesNumber) {
 
-        XSSFChart chart = this.createChart(sheet, initialRowPosition);
+        XSSFChart chart = this.createChart(sheet, rowIndex);//initialRowPosition + rowValuesNumber);
         this.useGapsOnBlankCells(chart);
 
         // Create data for the chart
@@ -107,7 +109,7 @@ public class XSSFServiceImpl implements XSSFService {
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
         // add chart series for each
-        this.addChartSeries(sheet, data, initialRowPosition, rowIndex, lastColIndex);
+        this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
         // Plot the chart with the inputs from data and chart axis
         chart.plot(data, bottomAxis, leftAxis);
@@ -162,8 +164,8 @@ public class XSSFServiceImpl implements XSSFService {
 
         // Define anchor points in the worksheet to position the chart
         XSSFClientAnchor anchor = drawing.createAnchor(
-                0, 0, 0, 0, 7, rowIndex - 1,
-                17, rowIndex + 20);
+                0, 0, 0, 0, 0, rowIndex + 2,
+                17, rowIndex + CHART_HEIGHT + 2);
 
         // Create the chart object based on the anchor point
         XSSFChart chart = drawing.createChart(anchor);
