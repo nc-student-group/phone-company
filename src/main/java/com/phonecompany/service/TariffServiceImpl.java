@@ -10,6 +10,7 @@ import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -376,10 +377,47 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                 .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
     }
 
+
+
     @Override
-    @Transactional
-    public void test() {
-        this.getCountTariffsAvailableForCustomer(10l);
-        throw new ConflictException("ex");
+    public List<Tariff> getAllTariffsSearch(int page,int size,String name, String status, String category) {
+
+        Query.Builder query = new Query.Builder("tariff");
+        query.where().addLikeCondition("tariff_name",name);
+        if(!status.equals("-") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
+            query.and().addCondition("product_status=?",status);
+        }else if(!status.equals("-")){
+            throw new ConflictException("Incorrect parameter: tariff status.");
+        }
+
+        if (category.equals("COMPANY")){
+            query.and().addCondition("is_corporate=",true);
+        }else if (category.equals("PRIVATE")){
+            query.and().addCondition("is_corporate=",false);
+        }else if(!category.equals("-")){
+            throw new ConflictException("Incorrect parameter: is corporate tariff");
+        }
+        query.addPaging(page,size);
+        return tariffDao.getAllTariffsSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String name, String status, String category) {
+        Query.Builder query = new Query.Builder("tariff");
+        query.where().addLikeCondition("tariff_name",name);
+        if(!status.equals("-") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
+            query.and().addCondition("product_status=?",status);
+        }else if(!status.equals("-")){
+            throw new ConflictException("Incorrect parameter: tariff status.");
+        }
+
+        if (category.equals("COMPANY")){
+            query.and().addCondition("is_corporate=",true);
+        }else if (category.equals("PRIVATE")){
+            query.and().addCondition("is_corporate=",false);
+        }else if(!category.equals("-")){
+            throw new ConflictException("Incorrect parameter: is corporate tariff");
+        }
+        return tariffDao.getAllTariffsSearch(query.build()).size();
     }
 }

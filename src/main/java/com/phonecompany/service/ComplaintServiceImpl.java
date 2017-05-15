@@ -128,7 +128,7 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     }
 
     @Override
-    public List<Complaint> getAllComplaintsSearch(String email, String status, String category) {
+    public List<Complaint> getAllComplaintsSearch(int page, int size,String email, String status, String category) {
         Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
         query.where();
         query.addLikeCondition("email",email);
@@ -138,7 +138,22 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         if(!category.equals("-")){
             query.and().addLikeCondition("type=?",category);
         }
+        query.addPaging(page,size);
         return complaintDao.getAllComplaintsSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String email, String status, String category) {
+        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
+        query.where();
+        query.addLikeCondition("email",email);
+        if(!status.equals("-")){
+            query.and().addCondition("status=?",status);
+        }
+        if(!category.equals("-")){
+            query.and().addLikeCondition("type=?",category);
+        }
+        return complaintDao.getAllComplaintsSearch(query.build()).size();
     }
 
 }

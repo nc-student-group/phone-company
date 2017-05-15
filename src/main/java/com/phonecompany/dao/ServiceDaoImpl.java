@@ -2,12 +2,10 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityModificationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.*;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.util.Query;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -21,6 +19,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
@@ -113,6 +113,35 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityModificationException(serviceId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
+
+    @Override
+    public List<Service> getAllServicesSearch(Query query) {
+        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
+        PreparedStatement ps = null;
+
+        try {
+            LOG.info("Execute query: " + query.getQuery());
+            ps = conn.prepareStatement(query.getQuery());
+
+            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
+                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Service> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
         } finally {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());

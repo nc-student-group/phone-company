@@ -65,5 +65,6 @@ public interface TariffService extends CrudService<Tariff> {
                                                       LocalDate startDate,
                                                       LocalDate endDate);
 
-    public void test();
+    List<Tariff> getAllTariffsSearch(int page,int size,String name, String status, String category);
+    int getCountSearch(int page,int size,String name, String status, String category);
 }

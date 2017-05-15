@@ -154,7 +154,33 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
-    public List<Customer> getAllCustomersSearch(String email, String phone, String surname, int corporate, int region, String status) {
+    public List<Customer> getAllCustomersSearch(int page,int size, String email, String phone, String surname, int corporate, int region, String status) {
+        Query.Builder query = new Query.Builder("dbuser");
+        query.where();
+        query.addLikeCondition("email",email);
+        query.and().addLikeCondition("phone",phone);
+        query.and().addLikeCondition("lastname",surname);
+
+        if(!status.equals("ALL") &&(status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
+            query.and().addCondition("status=?",status);
+        }else if (!status.equals("ALL")){
+            throw new ConflictException("Search parameters error: status.");
+        }
+
+        if(corporate==-1){
+            query.and().addIsNullCondition("corporate_id");
+        }else if(corporate>0){
+            query.and().addCondition("corporate_id=?",corporate);
+        }else if(corporate<-1) {
+            throw new ConflictException("Search parameters error: corporate.");
+        }
+        query.addPaging(page,size);
+
+        return customerDao.getAllCustomersSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
         Query.Builder query = new Query.Builder("dbuser");
         query.where();
         query.addLikeCondition("email",email);
@@ -175,7 +201,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
             throw new ConflictException("Search parameters error: corporate.");
         }
 
-        return customerDao.getAllCustomersSearch(query.build());
+        return customerDao.getAllCustomersSearch(query.build()).size();
     }
 
     @Override
