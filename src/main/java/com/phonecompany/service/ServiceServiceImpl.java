@@ -5,6 +5,7 @@ import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Order;
@@ -19,6 +20,8 @@ import com.phonecompany.service.interfaces.ServiceService;
 import com.phonecompany.service.xssfHelper.GroupingStrategy;
 import com.phonecompany.service.xssfHelper.ServiceGroupingStrategy;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.interfaces.*;
+import com.phonecompany.util.Query;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +98,8 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return serviceWithDiscount;
     }
 
+
+
     private Service applyDiscount(Service service) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
@@ -147,6 +152,37 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @CacheClear
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         this.serviceDao.updateServiceStatus(serviceId, productStatus);
+    }
+
+    @Override
+    public List<Service> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
+        Query.Builder query = new Query.Builder("service");
+        query.where();
+        query.addLikeCondition("service_name",name);
+        query.and().addCondition("price > ?",lowerPrice);
+        query.and().addCondition("price < ?",upperPrice);
+        if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
+            query.and().addCondition("product_status = ?",status);
+        }else if(!status.equals("-")){
+            throw new ConflictException("Incorrect parameter: service status");
+        }
+        query.addPaging(page,size);
+        return serviceDao.getAllServicesSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice) {
+        Query.Builder query = new Query.Builder("service");
+        query.where();
+        query.addLikeCondition("service_name",name);
+        query.and().addCondition("price > ?",lowerPrice);
+        query.and().addCondition("price < ?",upperPrice);
+        if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
+            query.and().addCondition("product_status = ?",status);
+        }else if(!status.equals("-")){
+            throw new ConflictException("Incorrect parameter: service status");
+        }
+        return serviceDao.getAllServicesSearch(query.build()).size();
     }
 
     @Override

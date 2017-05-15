@@ -11,6 +11,7 @@ import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.GroupingStrategy;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -323,7 +324,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     @Override
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
-                                               int type, String fromStr, String toStr, int orderBy, int orderByType) {
+                                               int type, String fromStr, String toStr, int orderBy, String orderByType) {
         java.sql.Date from = null, to = null;
         if (!fromStr.equals("null")) {
             from = java.sql.Date.valueOf(fromStr);
@@ -334,8 +335,14 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         if (from != null && to != null && from.getTime() > to.getTime()) {
             throw new ConflictException("Date from must be less then to");
         }
+        Query query = this.buildQueryForTariffTable(page, size, name, status,
+                type, from, to, orderBy, orderByType);
+        LOGGER.debug("Query: {}", query.getQuery());
+        LOGGER.debug("Query params paging : {}", query.getPreparedStatementParams());
+        LOGGER.debug("Query params: {}", query.getCountParams());
         Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.tariffDao.getPaging(page, size, name, status, type, from, to, orderBy, orderByType);
+        List<Tariff> tariffs = this.tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+//        getPaging(page, size, name, status, type, from, to, orderBy, orderByType);
         List<Object> rows = new ArrayList<>();
         tariffs.forEach((Tariff tariff) -> {
             Map<String, Object> row = new HashMap<>();
@@ -343,8 +350,45 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             rows.add(row);
         });
         response.put("tariffs", rows);
-        response.put("tariffsSelected", this.tariffDao.getEntityCount(name, status, type, from, to, -1, -1));
+//        response.put("tariffsSelected", this.tariffDao.getEntityCount(name, status, type, from, to, -1, -1));
+        response.put("tariffsSelected", this.tariffDao.executeForInt(query.getCountQuery(),
+                query.getCountParams().toArray()));
         return response;
+    }
+
+    private Query buildQueryForTariffTable(int page, int size, String name, int status,
+                                           int type, Date from, Date to, int orderBy, String orderByType) {
+        Query.Builder builder = new Query.Builder("tariff");
+        builder.where().addLikeCondition("tariff_name", name);
+        if (status == 1) builder.and().addCondition("product_status = ? ", "DEACTIVATED");
+        if (status == 2) builder.and().addCondition("product_status = ? ", "ACTIVATED");
+        if (type == 1) builder.and().addCondition("is_corporate = ? ", true);
+        if (type == 2) builder.and().addCondition("is_corporate = ? ", false);
+        if (from != null && to != null) builder.and().addBetweenCondition("creation_date", from, to);
+        if (from != null) builder.and().addCondition("creation_date >= ?", from);
+        if (to != null) builder.and().addCondition("creation_date <= ?", to);
+        String orderByField = buildOrderBy(orderBy);
+        if (orderByField.length() > 0) {
+            builder.orderBy(orderByField);
+            builder.orderByType(orderByType);
+        }
+        builder.addPaging(page, size);
+        return builder.build();
+    }
+
+    private String buildOrderBy(int orderBy) {
+        switch (orderBy) {
+            case 0://by date
+                return "creation_date";
+            case 1://by name
+                return "tariff_name";
+            case 2://by status
+                return "product_status";
+            case 3://by type
+                return "tariff_name";
+            default:
+                return "";
+        }
     }
 
     /**
@@ -374,10 +418,46 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                 .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
     }
 
+
     @Override
-    @Transactional
-    public void test() {
-        this.getCountTariffsAvailableForCustomer(10l);
-        throw new ConflictException("ex");
+    public List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category) {
+
+        Query.Builder query = new Query.Builder("tariff");
+        query.where().addLikeCondition("tariff_name", name);
+        if (!status.equals("-") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
+            query.and().addCondition("product_status=?", status);
+        } else if (!status.equals("-")) {
+            throw new ConflictException("Incorrect parameter: tariff status.");
+        }
+
+        if (category.equals("COMPANY")) {
+            query.and().addCondition("is_corporate=", true);
+        } else if (category.equals("PRIVATE")) {
+            query.and().addCondition("is_corporate=", false);
+        } else if (!category.equals("-")) {
+            throw new ConflictException("Incorrect parameter: is corporate tariff");
+        }
+        query.addPaging(page, size);
+        return tariffDao.getAllTariffsSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String name, String status, String category) {
+        Query.Builder query = new Query.Builder("tariff");
+        query.where().addLikeCondition("tariff_name", name);
+        if (!status.equals("-") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
+            query.and().addCondition("product_status=?", status);
+        } else if (!status.equals("-")) {
+            throw new ConflictException("Incorrect parameter: tariff status.");
+        }
+
+        if (category.equals("COMPANY")) {
+            query.and().addCondition("is_corporate=", true);
+        } else if (category.equals("PRIVATE")) {
+            query.and().addCondition("is_corporate=", false);
+        } else if (!category.equals("-")) {
+            throw new ConflictException("Incorrect parameter: is corporate tariff");
+        }
+        return tariffDao.getAllTariffsSearch(query.build()).size();
     }
 }

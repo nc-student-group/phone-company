@@ -2,10 +2,14 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.*;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.util.Query;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -23,6 +27,7 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements TariffDao {
 
     private QueryLoader queryLoader;
+    private static final Logger LOG = LoggerFactory.getLogger(TariffDaoImpl.class);
 
     @Autowired
     public TariffDaoImpl(QueryLoader queryLoader) {
@@ -105,67 +110,69 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getByRegionId(Long regionId) {
-        List<Tariff> tariffs = new ArrayList<>();
-        String query = this.getQuery("getAllAvailable");
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setLong(1, regionId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                tariffs.add(init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(regionId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return tariffs;
+//        List<Tariff> tariffs = new ArrayList<>();
+        return this.executeForList(this.getQuery("getAllAvailable"), new Object[]{regionId});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(query);
+//            ps.setLong(1, regionId);
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                tariffs.add(init(rs));
+//            }
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new EntityNotFoundException(regionId, e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
+//        return tariffs;
     }
 
     @Override
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("updateStatus"));
-            ps.setString(1, productStatus.name());
-            ps.setLong(2, tariffId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityModificationException(tariffId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        this.executeUpdate(this.getQuery("updateStatus"), new Object[]{productStatus.name(), tariffId});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("updateStatus"));
+//            ps.setString(1, productStatus.name());
+//            ps.setLong(2, tariffId);
+//            ps.executeUpdate();
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new EntityModificationException(tariffId, e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public Tariff findByTariffName(String tariffName) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("findByTariffName"));
-            ps.setString(1, tariffName);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(tariffName, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("findByTariffName"), new Object[]{tariffName});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("findByTariffName"));
+//            ps.setString(1, tariffName);
+//            ResultSet rs = ps.executeQuery();
+//            if (rs.next()) {
+//                return init(rs);
+//            }
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new EntityNotFoundException(tariffName, e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
+//        return null;
     }
 
     @Override
@@ -286,164 +293,202 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"));
-            ps.setObject(1, regionId);
-            ps.setObject(2, size);
-            ps.setObject(3, page * size);
-            ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("getAllWithRegionPrice"), new Object[]{
+                regionId, size, size * page});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getAllWithRegionPrice"));
+//            ps.setObject(1, regionId);
+//            ps.setObject(2, size);
+//            ps.setObject(3, page * size);
+//            ResultSet rs = ps.executeQuery();
+//            List<Tariff> result = new ArrayList<>();
+//            while (rs.next()) {
+//                result.add(init(rs));
+//            }
+//            return result;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCustomer(long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"));
-            ps.setObject(1, regionId);
-            ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("getAllActivatedWithRegionPrice"), new Object[]{regionId});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getAllActivatedWithRegionPrice"));
+//            ps.setObject(1, regionId);
+//            ResultSet rs = ps.executeQuery();
+//            List<Tariff> result = new ArrayList<>();
+//            while (rs.next()) {
+//                result.add(init(rs));
+//            }
+//            return result;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public Integer getCountTariffsAvailableForCustomer(long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"));
-            ps.setObject(1, regionId);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForInt(this.getQuery("getCountWithRegionPrice"), new Object[]{regionId});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getCountWithRegionPrice"));
+//            ps.setObject(1, regionId);
+//            ResultSet rs = ps.executeQuery();
+//            rs.next();
+//            return rs.getInt(1);
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"));
-            ps.setObject(1, size);
-            ps.setObject(2, page * size);
-            ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("getTariffsAvailableForCorporate"), new Object[]{size, size * page});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getTariffsAvailableForCorporate"));
+//            ps.setObject(1, size);
+//            ps.setObject(2, page * size);
+//            ResultSet rs = ps.executeQuery();
+//            List<Tariff> result = new ArrayList<>();
+//            while (rs.next()) {
+//                result.add(init(rs));
+//            }
+//            return result;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public List<Tariff> getTariffsAvailableForCorporate() {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"));
-            ResultSet rs = ps.executeQuery();
-            List<Tariff> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("getAllTariffsAvailableForCorporate"), new Object[]{});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getAllTariffsAvailableForCorporate"));
+//            ResultSet rs = ps.executeQuery();
+//            List<Tariff> result = new ArrayList<>();
+//            while (rs.next()) {
+//                result.add(init(rs));
+//            }
+//            return result;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public Integer getCountTariffsAvailableForCorporate() {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"));
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForInt(this.getQuery("getCountAvailableForCorporate"), new Object[]{});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getCountAvailableForCorporate"));
+//            ResultSet rs = ps.executeQuery();
+//            rs.next();
+//            return rs.getInt(1);
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     @Override
     public Tariff getByIdForSingleCustomer(long id, long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"));
-            ps.setObject(1, id);
-            ps.setObject(2, regionId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return this.init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("getByIdForSingleCustomer"), new Object[]{id, regionId});
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("getByIdForSingleCustomer"));
+//            ps.setObject(1, id);
+//            ps.setObject(2, regionId);
+//            ResultSet rs = ps.executeQuery();
+//            if (rs.next()) {
+//                return this.init(rs);
+//            }
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
+//        return null;
+    }
+
+    @Override
+    public List<Tariff> getAllTariffsSearch(Query query) {
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+//        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
+//        PreparedStatement ps = null;
+//
+//        try {
+//            LOG.info("Execute query: " + query.getQuery());
+//            ps = conn.prepareStatement(query.getQuery());
+//
+//            for (int i = 0; i < query.getPreparedStatementParams().size(); i++) {
+//                ps.setObject(i + 1, query.getPreparedStatementParams().get(i));
+//            }
+//            ResultSet rs = ps.executeQuery();
+//            List<Tariff> result = new ArrayList<>();
+//            while (rs.next()) {
+//                result.add(init(rs));
+//            }
+//            return result;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Failed to load all the entities. " +
+//                    "Check your database connection or whether sql query is right", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 }

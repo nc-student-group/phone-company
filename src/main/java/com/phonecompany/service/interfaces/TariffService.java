@@ -57,11 +57,12 @@ public interface TariffService extends CrudService<Tariff>,
     public Tariff getTariffForCustomer(long tariffId, Customer customer);
 
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
-                                               int type, String from, String to, int orderBy, int orderByType);
+                                               int type, String from, String to, int orderBy, String orderByType);
 
     public void activateTariffForSingleCustomer(long tariffId, Customer customer);
 
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
-    public void test();
+    List<Tariff> getAllTariffsSearch(int page,int size,String name, String status, String category);
+    int getCountSearch(int page,int size,String name, String status, String category);
 }
