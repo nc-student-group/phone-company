@@ -43,4 +43,5 @@ public interface CrudDao<T extends DomainEntity> {
     List<T> getAll();
 
 
+    int getCountByKey(String key, String countQuery);
 }

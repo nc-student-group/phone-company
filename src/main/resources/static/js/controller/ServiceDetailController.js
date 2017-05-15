@@ -39,8 +39,10 @@ angular.module('phone-company').controller('ServiceDetailController', [
             ServicesService.activateService(currentServiceId).then(function (data) {
                 $scope.preloader.send = false;
                 toastr.success(`Your service has been successfully activated`);
-            }, function () {
-                $scope.loading = false;
+            }, function (error) {
+                console.log(`Error ${JSON.stringify(error)}`);
+                toastr.error(error.data.message);
+                $scope.preloader.send = false;
             });
         }
     }]);

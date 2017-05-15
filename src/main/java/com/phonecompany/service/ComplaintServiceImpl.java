@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.ComplaintStatistics;
@@ -10,6 +11,7 @@ import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.UserService;
 import com.phonecompany.service.xssfHelper.*;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
-@Service
+@ServiceStereotype
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         implements ComplaintService{
 
@@ -128,6 +130,20 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
             LOG.debug("Complaint status wasn't changed.");
         }
         return complaint;
+    }
+
+    @Override
+    public List<Complaint> getAllComplaintsSearch(String email, String status, String category) {
+        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
+        query.where();
+        query.addLikeCondition("email",email);
+        if(!status.equals("-")){
+            query.and().addCondition("status=?",status);
+        }
+        if(!category.equals("-")){
+            query.and().addLikeCondition("type=?",category);
+        }
+        return complaintDao.getAllComplaintsSearch(query.build());
     }
 
     @Override

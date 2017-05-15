@@ -7,8 +7,10 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
+import com.phonecompany.util.Query;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -23,6 +25,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -133,6 +137,33 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
         return where;
     }
 
+    @Override
+    public List<Complaint> getAllComplaintsSearch(Query query) {
+        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
+        PreparedStatement ps = null;
+        LOG.info("Execute query: " + query.getQuery());
+        try {
+            ps = conn.prepareStatement(query.getQuery());
+
+            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
+                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Complaint> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
     @Override
     public EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());

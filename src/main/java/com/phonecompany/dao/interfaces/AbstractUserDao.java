@@ -9,7 +9,5 @@ public interface AbstractUserDao<T extends DomainEntity>
 
     void updateStatus(long id, Status status);
 
-    int getCountByKey(String key, String countQuery);
-
     int getCountByEmail(String email);
 }

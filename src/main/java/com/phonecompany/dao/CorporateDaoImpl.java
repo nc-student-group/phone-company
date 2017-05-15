@@ -35,7 +35,6 @@ public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> impleme
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
-
     }
 
     @Override

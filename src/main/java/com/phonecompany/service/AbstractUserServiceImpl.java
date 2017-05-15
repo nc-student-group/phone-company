@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.model.SecuredUser;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
@@ -22,7 +23,7 @@ import org.springframework.util.Assert;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-@Service
+@ServiceStereotype
 public abstract class AbstractUserServiceImpl<T extends User>
         extends CrudServiceImpl<T> implements AbstractUserService<T> {
 

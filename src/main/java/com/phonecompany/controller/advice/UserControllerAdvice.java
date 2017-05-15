@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-class UserControllerAdvice {
+public class UserControllerAdvice {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserControllerAdvice.class);
 

@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
 
-@Service
+@ServiceStereotype
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);

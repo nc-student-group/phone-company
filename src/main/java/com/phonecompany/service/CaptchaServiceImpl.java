@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.service.interfaces.CaptchaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 
-@Service
+@ServiceStereotype
 public class CaptchaServiceImpl implements CaptchaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CaptchaServiceImpl.class);
