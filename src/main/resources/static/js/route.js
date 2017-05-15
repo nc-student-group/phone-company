@@ -184,7 +184,12 @@
         $routeProvider.when('/pmg/clients',
             {
                 templateUrl: 'view/pmg/clients.html',
-                //controller: 'PmgChartsController'
+                controller: 'PmgCustomerController'
+            });
+        $routeProvider.when('/pmg/clients/:id',
+            {
+                templateUrl: 'view/pmg/clientDetail.html',
+                controller: 'PmgClientDetailController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
             {
