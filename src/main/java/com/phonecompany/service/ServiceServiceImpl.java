@@ -7,21 +7,27 @@ import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerServiceDto;
+import com.phonecompany.model.Order;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
-import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.service.interfaces.FileService;
+import com.phonecompany.service.interfaces.OrderService;
+import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.service.xssfHelper.GroupingStrategy;
+import com.phonecompany.service.xssfHelper.ServiceGroupingStrategy;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ServiceStereotype
@@ -35,17 +41,20 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private ProductCategoryDao productCategoryDao;
     private FileService fileService;
     private CustomerService customerService;
+    private OrderService orderService;
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
                               FileService fileService,
-                              CustomerService customerService) {
+                              CustomerService customerService,
+                              OrderService orderService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
         this.customerService = customerService;
+        this.orderService = orderService;
     }
 
     @Override
@@ -138,5 +147,19 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @CacheClear
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         this.serviceDao.updateServiceStatus(serviceId, productStatus);
+    }
+
+    @Override
+    public SheetDataSet<LocalDate, Long> prepareStatisticsReportDataSet(LocalDate startDate,
+                                                                        LocalDate endDate) {
+        List<Order> serviceOrders = this.orderService.getServiceOrdersByTimePeriod(startDate, endDate);
+
+        GroupingStrategy<Order, String> servicesGroupingStrategy = new ServiceGroupingStrategy();
+
+        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
+                .getProductNamesToOrdersMap(serviceOrders, servicesGroupingStrategy);
+
+
+        return null;
     }
 }

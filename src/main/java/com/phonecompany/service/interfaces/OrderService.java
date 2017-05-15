@@ -34,7 +34,9 @@ public interface OrderService extends CrudService<Order> {
 
     List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 
-    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> filteringStrategy);
+    List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate);
+
+    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> groupingStrategy);
 
     List<LocalDate> generateTimeLine(List<Order> orders);
 
@@ -42,7 +44,7 @@ public interface OrderService extends CrudService<Order> {
 
     Long getOrderNumberByDate(List<Order> orderList, LocalDate date);
 
-    SheetDataSet prepareExcelSheetDataSet(String sheetName,
-                                          Map<String, List<Order>> productNamesToOrdersMap,
-                                          List<LocalDate> timeLine);
+    SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
+                                                           Map<String, List<Order>> productNamesToOrdersMap,
+                                                           List<LocalDate> timeLine);
 }

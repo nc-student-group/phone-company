@@ -166,8 +166,6 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
         List<Complaint> complaints = this.getComplaintsByRegionIdAndTimePeriod(regionId, startDate, endDate);
 
-        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
-
         Map<ComplaintStatus, List<Complaint>> statusToComplaintsMap = this
                 .getStatusToComplaintsMap(complaints);
 
@@ -225,7 +223,8 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         List<Complaint> complaintsByCategory = this.filterComplaintsByCategory(complaints, complaintCategory);
         for (LocalDate date : timeLine) {
             long complaintNumberByDate = this.getComplaintsNumberByDate(complaintsByCategory, date);
-            row.addKeyValuePair(complaintNumberByDate, date);
+            //TODO: remove unchecked compile warning
+            row.addKeyValuePair(date, complaintNumberByDate);
         }
     }
 

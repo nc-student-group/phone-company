@@ -22,10 +22,10 @@ import java.util.List;
  *  K - key that depicts correspondence between cell values column
  *      headers
  */
-public final class RowDataSet<V, K> {
+public final class RowDataSet<K, V> {
 
     private final String rowName;
-    private final List<Pair<V, K>> rowValues = new ArrayList<>();
+    private final List<Pair<K, V>> rowValues = new ArrayList<>();
 
     RowDataSet(String rowName) {
         this.rowName = rowName;
@@ -35,11 +35,11 @@ public final class RowDataSet<V, K> {
         return rowName;
     }
 
-    public List<Pair<V, K>> getRowValues() {
+    public List<Pair<K, V>> getRowValues() {
         return rowValues;
     }
 
-    public RowDataSet addKeyValuePair(V value, K key) {
+    public RowDataSet addKeyValuePair(K value, V key) {
         rowValues.add(Pair.with(value, key));
         return this;
     }

@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -33,7 +34,8 @@ import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
-public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
+public class OrderDaoImpl extends CrudDaoImpl<Order>
+        implements OrderDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
 
@@ -281,11 +283,13 @@ public class OrderDaoImpl extends CrudDaoImpl<Order> implements OrderDao {
     }
 
     @Override
-    public List<Order> getAllServiceOrders() {
+    public List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
         try {
-            ps = conn.prepareStatement(this.getQuery("services"));
+            ps = conn.prepareStatement(this.getQuery("services.by.time.period"));
+            ps.setDate(1, toSqlDate(startDate));
+            ps.setDate(2, toSqlDate(endDate));
             ResultSet rs = ps.executeQuery();
             List<Order> serviceOrders = new ArrayList<>();
             while (rs.next()) {

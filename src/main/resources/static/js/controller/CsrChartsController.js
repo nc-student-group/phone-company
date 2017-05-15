@@ -67,7 +67,10 @@ angular.module('phone-company').controller('CsrChartsController', [
                 });
                 let currentDate = new Date();
                 let uniqueIdentifier = currentDate >>> 3;
-                saveAs(blob, `report-${currentDate.getDay()}-${currentDate.getMonth()}-${currentDate.getYear()}-${uniqueIdentifier}.xlsx`);
+                console.log(`{currentDate.getYear() ${currentDate.getYear()}`);
+                console.log(`{currentDate.getMonth() ${currentDate.getMonth()}`);
+                console.log(`{currentDate.getDay() ${currentDate.getDay()}`);
+                saveAs(blob, `report-${currentDate.getYear()}-${currentDate.getMonth()}-${currentDate.getDay()}-${uniqueIdentifier}.xlsx`);
             }).error(function () {
                 $scope.preloader.send = false;
             });

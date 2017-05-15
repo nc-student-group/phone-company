@@ -115,6 +115,11 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 this.orderDao.getTariffOrdersByRegionId(regionId), startDate, endDate);
     }
 
+    @Override
+    public List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate) {
+        return this.orderDao.getServiceOrdersByTimePeriod(startDate, endDate);
+    }
+
     private List<Order> filterOrdersByDate(List<Order> orderList,
                                            LocalDate startDate, LocalDate endDate) {
         return orderList.stream()
@@ -153,10 +158,10 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * @return constructed sheet dataset
      */
     @Override
-    public SheetDataSet prepareExcelSheetDataSet(String sheetName,
-                                                 Map<String, List<Order>> productNamesToOrdersMap,
-                                                 List<LocalDate> timeLine) {
-        SheetDataSet<Long, LocalDate> sheet = new SheetDataSet<>(sheetName);
+    public SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
+                                                                  Map<String, List<Order>> productNamesToOrdersMap,
+                                                                  List<LocalDate> timeLine) {
+        SheetDataSet<LocalDate, Long> sheet = new SheetDataSet<>(sheetName);
         List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
         for (OrderType orderType : orderTypes) {
             this.populateExcelTableDataSet(sheet, orderType, productNamesToOrdersMap, timeLine);
@@ -173,15 +178,15 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      *                                orders of the product with such name
      * @param timeLine                a set of unique dates at which orders were made
      */
-    private void populateExcelTableDataSet(SheetDataSet<Long, LocalDate> sheet,
+    private void populateExcelTableDataSet(SheetDataSet<LocalDate, Long> sheet,
                                            OrderType orderType,
                                            Map<String, List<Order>> productNamesToOrdersMap,
                                            List<LocalDate> timeLine) {
 
-        TableDataSet<Long, LocalDate> table = sheet.createTable(orderType.toString());
+        TableDataSet<LocalDate, Long> table = sheet.createTable(orderType.toString());
         for (String productName : productNamesToOrdersMap.keySet()) {
 
-            RowDataSet<Long, LocalDate> row = table.createRow(productName);
+            RowDataSet<LocalDate, Long> row = table.createRow(productName);
             List<Order> orders = productNamesToOrdersMap.get(productName);
             List<Order> ordersByType = this.filterCompletedOrdersByType(orders, orderType);
 
@@ -197,12 +202,12 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * @param timeLine a set of unique dates at which orders were made
      * @see RowDataSet
      */
-    private void populateExcelRowDataSet(RowDataSet<Long, LocalDate> row,
+    private void populateExcelRowDataSet(RowDataSet<LocalDate, Long> row,
                                          List<Order> orders,
                                          List<LocalDate> timeLine) {
         for (LocalDate date : timeLine) {
             long orderNumberByDate = this.getOrderNumberByDate(orders, date);
-            row.addKeyValuePair(orderNumberByDate, date);
+            row.addKeyValuePair(date, orderNumberByDate);
         }
     }
 
@@ -255,8 +260,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
         for (String productName : productNames) {
             Predicate<Order> productNameFilter = groupingStrategy.getFilteringCondition(productName);
-            List<Order> ordersOfTariff = this.filterOrders(orders, productNameFilter);
-            this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfTariff);
+            List<Order> ordersOfProduct = this.filterOrders(orders, productNameFilter);
+            this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfProduct);
         }
         return productNamesToOrdersMap;
     }

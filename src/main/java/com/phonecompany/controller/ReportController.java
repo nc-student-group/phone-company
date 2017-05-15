@@ -40,13 +40,13 @@ public class ReportController {
     private TariffService tariffService;
     private OrderService orderService;
     private ComplaintService complaintService;
-    private XSSFService xssfService;
+    private XSSFService<LocalDate, Long> xssfService;
 
     @Autowired
     public ReportController(TariffService tariffService,
                             OrderService orderService,
                             ComplaintService complaintService,
-                            XSSFService xssfService) {
+                            XSSFService<LocalDate, Long> xssfService) {
         this.tariffService = tariffService;
         this.orderService = orderService;
         this.complaintService = complaintService;
@@ -62,8 +62,8 @@ public class ReportController {
                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                           LocalDate endDate) {
 
-        SheetDataSet sheetDataSet = this.tariffService
-                .prepareTariffStatisticsReportDataSet(regionId, startDate, endDate);
+        SheetDataSet<LocalDate, Long> sheetDataSet = this.tariffService
+                .prepareStatisticsDataSet(regionId, startDate, endDate);
 
         xssfService.generateReport(sheetDataSet);
 
@@ -98,7 +98,7 @@ public class ReportController {
     private InputStream getXlsStreamFromRootDirectory() {
         try {
             File[] files = getFilesWithExtensionFromPath(EXCEL_EXTENSION, CURRENT_DIRECTORY);
-            return new FileInputStream(files[files.length - 1 ]);
+            return new FileInputStream(files[files.length - 1]);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
