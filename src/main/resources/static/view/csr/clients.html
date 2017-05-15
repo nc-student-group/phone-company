@@ -62,7 +62,7 @@
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="c in customers">
-                                            <td>{{c.email}}</td>
+                                            <td ng-click="moreClick(c.id)">{{c.email}}</td>
                                             <td>
                                                 {{c.firstName}}<br>
                                                 {{c.secondName}}<br>

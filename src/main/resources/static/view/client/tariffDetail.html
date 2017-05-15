@@ -20,11 +20,13 @@
                                 <div class="col-md-4">
                                     <div class="tariff-picture">
                                         <img ng-src="{{tariff.pictureUrl}}" width="90%"/>
-                                        <div class="sale-picture" ng-show="tariff.discount > 0 && tariff.discount <= 100">
+                                        <div class="sale-picture"
+                                             ng-show="tariff.discount > 0 && tariff.discount <= 100">
                                             <b>-{{tariff.discount}}%</b></div>
                                     </div>
                                     <div class="row" style="padding-top: 20px;">
-                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2" ng-click="activateClick()">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="activateClick()">
                                             ACTIVATE
                                         </button>
                                     </div>
@@ -69,12 +71,12 @@
                                         <div class="col-md-4"
                                              style="text-align: center; font-size: 16px; color: #161121"
                                              ng-hide="tariff.discount > 0 && tariff.discount <=100"><span>
-                                            <b>{{tariff.price}} uah</b></span>
+                                            <b>{{tariff.price | number:2}} uah</b></span>
                                         </div>
                                         <div class="col-md-4 conditions-value"
                                              ng-show="tariff.discount > 0 && tariff.discount <= 100">
-                                            <span><b>{{tariff.price * (1 - tariff.discount/100)}} uah</b><br>
-                                                <s style="font-size: 14px; color: red">{{tariff.price}} uah</s></span>
+                                            <span><b>{{tariff.price * (1 - tariff.discount/100) | number: 2}} uah</b><br>
+                                                <s style="font-size: 14px; color: red">{{tariff.price | number: 2}} uah</s></span>
                                         </div>
                                         <!--<div class="col-md-4">{{tariff.price * (1 - tariff.discount)}}</div>-->
                                     </div>

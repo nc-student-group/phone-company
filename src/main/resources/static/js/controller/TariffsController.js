@@ -26,7 +26,7 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.dateFrom = null;
         $scope.dateTo = null;
         $scope.orderBy = 0;
-        $scope.orderByType = 0;
+        $scope.orderByType = "ASC";
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;

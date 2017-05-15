@@ -34,6 +34,11 @@ public class UserController {
         this.eventPublisher = eventPublisher;
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ResponseEntity<?> login() {
+        return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+    }
+
     @RequestMapping(method = GET, value = "/api/users")
     public Collection<User> getAllUsers() {
         LOG.info("Retrieving all the users contained in the database");
