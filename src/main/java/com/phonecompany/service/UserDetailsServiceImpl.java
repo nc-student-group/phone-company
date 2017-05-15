@@ -1,6 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         LOG.debug("User found by email: {}", user);
         if (user == null) {
             throw new UsernameNotFoundException(login + " not found");
+        }
+        if(user.getStatus().equals(Status.DEACTIVATED)){
+            throw new UsernameNotFoundException(login + " deactivated");
+        }
+        if (user.getStatus().equals(Status.INACTIVE)) {
+            throw new UsernameNotFoundException(login + " inactive");
         }
 
         Set<GrantedAuthority> roles = new HashSet<>();

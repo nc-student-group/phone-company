@@ -165,9 +165,6 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     public SheetDataSet prepareComplaintReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
 
         List<Complaint> complaints = this.getComplaintsByRegionIdAndTimePeriod(regionId, startDate, endDate);
-
-        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
-
         Map<ComplaintStatus, List<Complaint>> statusToComplaintsMap = this
                 .getStatusToComplaintsMap(complaints);
 
