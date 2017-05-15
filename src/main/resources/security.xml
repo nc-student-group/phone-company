@@ -56,8 +56,7 @@
         <intercept-url pattern="/api/tariffs/**" method="PATCH" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/reports/**" method="GET" access="hasAnyRole('CSR', 'PMG')"/>
 
-        <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
-        <intercept-url pattern="api/corporations/" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="api/corporations/**" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/complaints/" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/complaints/customer" access="hasAnyRole('CLIENT', 'ADMIN')"/>
         <intercept-url pattern="/api/complaints/pmg/**" access="hasAnyRole('PMG','ADMIN')"/>
