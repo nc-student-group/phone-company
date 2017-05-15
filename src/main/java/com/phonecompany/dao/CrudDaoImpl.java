@@ -234,8 +234,10 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
                 ps.setObject(i + 1, params[i]);
             }
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());

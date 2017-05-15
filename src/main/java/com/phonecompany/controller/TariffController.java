@@ -67,7 +67,7 @@ public class TariffController {
                                           @RequestParam("f") String from,
                                           @RequestParam("to") String to,
                                           @RequestParam("ob") int orderBy,
-                                          @RequestParam("ot") int orderByType) {
+                                          @RequestParam("ot") String orderByType) {
         return tariffService.getTariffsTable(page, size, name, status, type, from, to, orderBy, orderByType);
 
     }
