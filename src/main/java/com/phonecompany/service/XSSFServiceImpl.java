@@ -14,7 +14,6 @@ import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
 import org.javatuples.Pair;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
-import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

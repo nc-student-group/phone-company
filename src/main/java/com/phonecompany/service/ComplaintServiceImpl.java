@@ -10,12 +10,13 @@ import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.UserService;
-import com.phonecompany.service.xssfHelper.*;
+import com.phonecompany.service.xssfHelper.RowDataSet;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -165,8 +166,6 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     public SheetDataSet prepareComplaintReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
 
         List<Complaint> complaints = this.getComplaintsByRegionIdAndTimePeriod(regionId, startDate, endDate);
-
-        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
 
         Map<ComplaintStatus, List<Complaint>> statusToComplaintsMap = this
                 .getStatusToComplaintsMap(complaints);
