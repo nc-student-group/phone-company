@@ -2,10 +2,14 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.*;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.util.Query;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -23,7 +27,7 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements TariffDao {
 
     private QueryLoader queryLoader;
-
+    private static final Logger LOG = LoggerFactory.getLogger(TariffDaoImpl.class);
     @Autowired
     public TariffDaoImpl(QueryLoader queryLoader) {
         this.queryLoader = queryLoader;
@@ -445,5 +449,34 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
         return null;
+    }
+
+    @Override
+    public List<Tariff> getAllTariffsSearch(Query query) {
+        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
+        PreparedStatement ps = null;
+
+        try {
+            LOG.info("Execute query: " + query.getQuery());
+            ps = conn.prepareStatement(query.getQuery());
+
+            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
+                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Tariff> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
     }
 }

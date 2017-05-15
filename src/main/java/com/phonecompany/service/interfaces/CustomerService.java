@@ -23,5 +23,8 @@ public interface CustomerService extends CrudService<Customer>,
 
     List<Customer> getCustomersByCorporate(long corporateId);
 
-    List<Customer> getAllCustomersSearch(String email,String phone, String surname,int corporate, int region,String status);
+    List<Customer> getAllCustomersSearch(int page,int size,String email,String phone, String surname,int corporate, int region,String status);
+
+    int getCountSearch(int page,int size,String email,String phone, String surname,int corporate, int region,String status);
+
 }

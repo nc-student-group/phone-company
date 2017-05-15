@@ -76,6 +76,15 @@ public class Query {
             return this;
         }
 
+        public Builder addPaging(int page, int size){
+            query.append(" ");
+            query.append(" LIMIT ? ");
+            query.append(" OFFSET ? ");
+            preparedStatementParams.add(size);
+            preparedStatementParams.add(size*page);
+            return this;
+        }
+
         public Query build() {
             return new Query(this);
         }
