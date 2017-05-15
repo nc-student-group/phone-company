@@ -129,8 +129,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * Gets the number of orders made at the specified date.
      *
      * @param orderList order list that number will be calculated from
-     * @param date
-     * @return
+     * @param date      date at which order number should be calculated
+     * @return order number
      */
     @Override
     public Long getOrderNumberByDate(List<Order> orderList,
@@ -140,6 +140,18 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .count();
     }
 
+    /**
+     * Prepares dataset containing information regarding orders of each separate product
+     * <p>
+     * <p>The resulting dataset is meant to be used in {@link XSSFServiceImpl} in order
+     * to create an xls document that depicts an information of the dataset</p>
+     *
+     * @param sheetName               expected sheet name
+     * @param productNamesToOrdersMap map that contains product names against all the
+     *                                orders of the product with such name
+     * @param timeLine                a set of unique dates at which orders were made
+     * @return constructed sheet dataset
+     */
     @Override
     public SheetDataSet prepareExcelSheetDataSet(String sheetName,
                                                  Map<String, List<Order>> productNamesToOrdersMap,
@@ -147,39 +159,60 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         SheetDataSet<Long, LocalDate> sheet = new SheetDataSet<>(sheetName);
         List<OrderType> orderTypes = asList(OrderType.ACTIVATION, OrderType.DEACTIVATION);
         for (OrderType orderType : orderTypes) {
-            this.prepareExcelTableDataSet(sheet, orderType, productNamesToOrdersMap, timeLine);
+            this.populateExcelTableDataSet(sheet, orderType, productNamesToOrdersMap, timeLine);
         }
         return sheet;
     }
 
-    private void prepareExcelTableDataSet(SheetDataSet<Long, LocalDate> sheet, OrderType orderType,
-                                          Map<String, List<Order>> productNamesToOrdersMap,
-                                          List<LocalDate> timeLine) {
+    /**
+     * Populates {@link SheetDataSet} object with its components (e.g. {@link TableDataSet})
+     *
+     * @param sheet                   sheet a corresponding table representation will be created on
+     * @param orderType               order type that is used to filter out {@code Order} objects
+     * @param productNamesToOrdersMap map that contains product names against all the
+     *                                orders of the product with such name
+     * @param timeLine                a set of unique dates at which orders were made
+     */
+    private void populateExcelTableDataSet(SheetDataSet<Long, LocalDate> sheet,
+                                           OrderType orderType,
+                                           Map<String, List<Order>> productNamesToOrdersMap,
+                                           List<LocalDate> timeLine) {
+
         TableDataSet<Long, LocalDate> table = sheet.createTable(orderType.toString());
         for (String productName : productNamesToOrdersMap.keySet()) {
-            this.prepareExcelRowDataSet(table, productName, orderType,
-                    productNamesToOrdersMap, timeLine);
+
+            RowDataSet<Long, LocalDate> row = table.createRow(productName);
+            List<Order> orders = productNamesToOrdersMap.get(productName);
+            List<Order> ordersByType = this.filterCompletedOrdersByType(orders, orderType);
+
+            this.populateExcelRowDataSet(row, ordersByType, timeLine);
         }
     }
 
-    private void prepareExcelRowDataSet(TableDataSet<Long, LocalDate> table,
-                                        String productName,
-                                        OrderType orderType,
-                                        Map<String, List<Order>> productNamesToOrdersMap,
-                                        List<LocalDate> timeLine) {
-        RowDataSet<Long, LocalDate> row = table.createRow(productName);
-        List<Order> orders = productNamesToOrdersMap.get(productName);
-        List<Order> ordersByType = this.filterCompletedOrdersByType(orders, orderType);
+    /**
+     * Populates {@code RowDataSet} object with the cell representations
+     *
+     * @param row      object to be populated with statistical data
+     * @param orders   orders statistical data is calculated from
+     * @param timeLine a set of unique dates at which orders were made
+     * @see RowDataSet
+     */
+    private void populateExcelRowDataSet(RowDataSet<Long, LocalDate> row,
+                                         List<Order> orders,
+                                         List<LocalDate> timeLine) {
         for (LocalDate date : timeLine) {
-            long orderNumberByDate = this.getOrderNumberByDate(ordersByType, date);
+            long orderNumberByDate = this.getOrderNumberByDate(orders, date);
             row.addKeyValuePair(orderNumberByDate, date);
         }
     }
 
     /**
-     * @param orders
-     * @param type
-     * @return
+     * Retains {@code Order} objects that correspond only to a specific {@link OrderType}
+     * and {@link OrderStatus#DONE}. Other orders would be filtered out.
+     *
+     * @param orders orders to be filtered
+     * @param type   type that is used to filter {@code Order}s by
+     * @return filtered list of orders
      */
     @Override
     public List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type) {
@@ -190,11 +223,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     /**
-     * Returns a set of unique creation dates of the orders passed as a parameter.
-     * The returned list will be sorted in ascending order.
-     * <p>
-     * <p>Resulting list is made ordered because this method is generally used to
-     * produce range of definition for the values contained within an xls report.</p>
+     * Returns an ordered list of unique creation dates of the orders passed as
+     * a parameter.
      *
      * @param orders objects used to retrieve creation dates from
      * @return set of unique dates corresponding to the elements in the incoming list
@@ -208,14 +238,23 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets map that contains a lists of {@code Order}s against a {@code String} keys
+     * corresponding to these lists
+     *
+     * @param orders           orders to be put into the map against keys
+     * @param groupingStrategy a strategy to be used to associate lists with the
+     *                         corresponding keys
+     * @return map of order lists against {@code String} keys
+     */
     @Override
     public Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders,
-                                                               GroupingStrategy<Order, String> filteringStrategy) {
+                                                               GroupingStrategy<Order, String> groupingStrategy) {
         Map<String, List<Order>> productNamesToOrdersMap = new HashMap<>();
-        Function<Order, String> tariffOrderToTariffNameMapping = filteringStrategy.getValueToKeyMapper();
+        Function<Order, String> tariffOrderToTariffNameMapping = groupingStrategy.getValueToKeyMapper();
         List<String> productNames = this.getDistinctNamesFromOrders(orders, tariffOrderToTariffNameMapping);
         for (String productName : productNames) {
-            Predicate<Order> productNameFilter = filteringStrategy.getFilteringCondition(productName);
+            Predicate<Order> productNameFilter = groupingStrategy.getFilteringCondition(productName);
             List<Order> ordersOfTariff = this.filterOrders(orders, productNameFilter);
             this.putOrdersInMap(productNamesToOrdersMap, productName, ordersOfTariff);
         }
@@ -229,7 +268,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * @param orders     {@code Order} objects to be mapped to the {@code String} keys
      * @param nameMapper mapper that is used to map {@code Order} object to the
      *                   corresponding {@code String} key
-     * @return set of unique {@code String}s
+     * @return set of unique {@code String} objects
      */
     private List<String> getDistinctNamesFromOrders(List<Order> orders,
                                                     Function<Order, String> nameMapper) {
@@ -256,9 +295,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     /**
      * Places a list of {@code Order}s into the destination map against a
      * {@code String} key corresponding to this list.
-     * <p>
-     * <p>If the given key was already put into the map then the incoming list
-     * and the existent list will be merged.</p>
      *
      * @param destinationMap  map that list would be placed into
      * @param key             key that corresponds to the incoming list
