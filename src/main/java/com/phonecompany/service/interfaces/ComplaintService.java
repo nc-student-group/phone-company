@@ -18,7 +18,6 @@ public interface ComplaintService extends CrudService<Complaint> {
     public Complaint setStatusAccomplished(Complaint complaint, String comment);
     public List<Complaint> getAllComplaintsSearch(int page, int size, String email,String status,String category);
     public int getCountSearch(int page, int size,String email,String status,String category);
-    public List<Complaint> getAllComplaintsSearch(String email,String status,String category);
     public ComplaintStatistics getComplaintStatistics();
     public SheetDataSet prepareComplaintReportDataSet(long regionId, LocalDate startDate, LocalDate endDate);
 }
