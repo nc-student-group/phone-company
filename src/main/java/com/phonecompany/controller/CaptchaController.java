@@ -31,10 +31,4 @@ public class CaptchaController {
         else return new ResponseEntity<Void>(HttpStatus.CONFLICT);
     }
 
-    @GetMapping(value = "/test")
-    public ResponseEntity<?> testTransaction() {
-        Tariff t = new Tariff("qwweqweqw", ProductStatus.ACTIVATED, "111", "111", "111", "111","111","111", false, LocalDate.now(), 0.0, "", 0.0);
-        tariffService.addNewTariff(t);
-        return new ResponseEntity<Object>(HttpStatus.OK);
-    }
 }

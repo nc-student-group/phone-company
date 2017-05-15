@@ -2,6 +2,7 @@ package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.util.Query;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface TariffDao extends AbstractPageableDao<Tariff> {
     public Integer getCountTariffsAvailableForCorporate();
 
     public Tariff getByIdForSingleCustomer(long id, long regionId);
+
+    public List<Tariff> getAllTariffsSearch(Query query);
 }

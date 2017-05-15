@@ -148,30 +148,36 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     }
 
     @Override
-    public List<User> getAllUsersSearch(String email, int userRole, String status) {
-        Query query;
-        if(userRole==0) {
-            if(status.equals("ALL")){
-                query = new Query.Builder("dbuser").where().addLikeCondition("email", email).build();
-            }else if(status.equals("ACTIVATED") ||status.equals("DEACTIVATED")){
-                query = new Query.Builder("dbuser").where().addLikeCondition("email", email)
-                        .and().addCondition("status=?", status).build();
-            }else{
-                throw new ConflictException("Incorrect search parameter: status.");
-            }
-        }else if (userRole>0 && userRole<5) {
-            if(status.equals("ALL")){
-                query = new Query.Builder("dbuser").where().addLikeCondition("email",email)
-                        .and().addCondition("role_id=?",userRole).build();
-            }else if(status.equals("ACTIVATED") ||status.equals("DEACTIVATED")){
-                query = new Query.Builder("dbuser").where().addLikeCondition("email",email)
-                        .and().addCondition("role_id=?",userRole).and().addCondition("status=?",status).build();
-            }else{
-                throw new ConflictException("Incorrect search parameter: status.");
-            }
-        }else{
+    public List<User> getAllUsersSearch(int page,int size,String email, int userRole, String status) {
+        Query.Builder query = new Query.Builder("dbuser");
+        query.where().addLikeCondition("email",email);
+
+        if (userRole>0) {
+            query.and().addCondition("role_id = ?",userRole);
+        }else if(userRole!=0){
             throw new ConflictException("Incorrect search parameter: user role.");
         }
-        return userDao.getAllUsersSearch(query);
+
+        if(!status.equals("ALL")){
+            query.and().addCondition("status = ?",status);
+        }
+        query.addPaging(page,size);
+        return userDao.getAllUsersSearch(query.build());
+    }
+
+    @Override
+    public int getCountSearch(int page, int size, String email, int userRole, String status) {
+        Query.Builder query = new Query.Builder("dbuser");
+        query.where().addLikeCondition("email",email);
+
+        if (userRole>0) {
+            query.and().addCondition("role_id = ?",userRole);
+        }else if(userRole!=0){
+            throw new ConflictException("Incorrect search parameter: user role.");
+        }
+        if(!status.equals("ALL")){
+            query.and().addCondition("status = ?",status);
+        }
+        return userDao.getAllUsersSearch(query.build()).size();
     }
 }
