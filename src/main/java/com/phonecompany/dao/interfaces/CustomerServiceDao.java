@@ -8,5 +8,5 @@ public interface CustomerServiceDao extends CrudDao<CustomerServiceDto> {
 
     List<CustomerServiceDto> getCurrentCustomerServices(long customerId);
     List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId);
-
+    boolean isCustomerServiceAlreadyPresent(long serviceId, long customerId);
 }

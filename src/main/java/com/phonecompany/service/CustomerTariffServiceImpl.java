@@ -1,5 +1,6 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@ServiceStereotype
 public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         implements CustomerTariffService {
 

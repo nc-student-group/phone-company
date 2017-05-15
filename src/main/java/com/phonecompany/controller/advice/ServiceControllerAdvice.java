@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-class ServiceControllerAdvice {
+public class ServiceControllerAdvice {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceControllerAdvice.class);
 

@@ -15,6 +15,7 @@
         var GET_CUSTOMER_BY_ID = "/api/customers/";
         var GET_CUSTOMER_BY_COMPANY = "/api/customer/getByCorporateId/";
         var GET_CURRENT_TARIFF_BY_COMPANY_ID = "/api/customer-tariffs/corporate/";
+
         CustomerService.saveCustomerByAdmin = function (customer) {
             console.log('customer: ' + JSON.stringify(customer));
             var deferred = $q.defer();

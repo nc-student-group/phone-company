@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ConflictControllerAdvice {
+
     private static final Logger LOG = LoggerFactory.getLogger(ConflictControllerAdvice.class);
 
     @ExceptionHandler(ConflictException.class)

@@ -1,8 +1,13 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
+import com.phonecompany.service.email.ServiceActivationNotificationEmailCreator;
+import com.phonecompany.service.email.ServiceDeactivationNotificationEmailCreator;
+import com.phonecompany.service.email.ServiceNotificationEmailCreator;
+import com.phonecompany.service.email.ServiceSuspensionNotificationEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
@@ -11,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,40 +34,36 @@ public class ServicesController {
 
     private ServiceService serviceService;
     private ProductCategoryService productCategoryService;
-    private MailMessageCreator<Service> serviceNotificationEmailCreator;
-    private EmailService<Customer> emailService;
     private CustomerService customerService;
-    private MailMessageCreator<Service> serviceActivationNotificationEmailCreator;
-    private MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator;
-    private MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator;
+    private EmailService<Customer> emailService;
+    private ServiceNotificationEmailCreator serviceNotificationEmailCreator;
+    private ServiceActivationNotificationEmailCreator serviceActivationNotificationEmailCreator;
+    private ServiceDeactivationNotificationEmailCreator serviceDeactivationNotificationEmailCreator;
+    private ServiceSuspensionNotificationEmailCreator serviceSuspensionNotificationEmailCreator;
     private CustomerServiceService customerServiceService;
     private OrderService orderService;
 
     @Autowired
     public ServicesController(ServiceService serviceService,
                               ProductCategoryService productCategoryService,
-                              @Qualifier("serviceNotificationEmailCreator")
-                                      MailMessageCreator<Service> emailCreator,
-                              @Qualifier("serviceDeactivationNotificationEmailCreator")
-                                      MailMessageCreator<Service> serviceDeactivationNotificationEmailCreator,
                               EmailService<Customer> emailService,
+                              ServiceNotificationEmailCreator serviceNotificationEmailCreator,
+                              ServiceActivationNotificationEmailCreator serviceActivationNotificationEmailCreator,
+                              ServiceDeactivationNotificationEmailCreator serviceDeactivationNotificationEmailCreator,
+                              ServiceSuspensionNotificationEmailCreator serviceSuspensionNotificationEmailCreator,
                               CustomerService customerService,
                               CustomerServiceService customerServiceService,
-                              OrderService orderService,
-                              @Qualifier("serviceActivationNotificationEmailCreator")
-                                      MailMessageCreator<Service> serviceActivationNotificationEmailCreator,
-                              @Qualifier("serviceSuspensionNotificationEmailCreator")
-                                      MailMessageCreator<Service> serviceSuspensionNotificationEmailCreator) {
+                              OrderService orderService) {
         this.serviceService = serviceService;
         this.productCategoryService = productCategoryService;
-        this.serviceNotificationEmailCreator = emailCreator;
         this.emailService = emailService;
-        this.customerService = customerService;
-        this.customerServiceService = customerServiceService;
-        this.orderService = orderService;
+        this.serviceNotificationEmailCreator = serviceNotificationEmailCreator;
         this.serviceActivationNotificationEmailCreator = serviceActivationNotificationEmailCreator;
         this.serviceDeactivationNotificationEmailCreator = serviceDeactivationNotificationEmailCreator;
         this.serviceSuspensionNotificationEmailCreator = serviceSuspensionNotificationEmailCreator;
+        this.customerService = customerService;
+        this.customerServiceService = customerServiceService;
+        this.orderService = orderService;
     }
 
     @GetMapping
@@ -106,10 +108,12 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
-        Service currentService = this.serviceService.getById(serviceId);
-        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        CustomerServiceDto activatedCustomerService = this.customerServiceService
+                .activateServiceForCustomer(serviceId, loggedInCustomer);
+        this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
-                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+                .serviceActivationNotificationEmailCreator
+                .constructMessage(activatedCustomerService.getService());
         this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -119,7 +123,10 @@ public class ServicesController {
                                                     @PathVariable("customerId") long customerId) {
         Customer loggedInCustomer = this.customerService.getById(customerId);
         Service currentService = this.serviceService.getById(serviceId);
-        this.serviceService.activateServiceForCustomer(currentService, loggedInCustomer);
+        CustomerServiceDto activatedCustomerService = this
+                .customerServiceService
+                .activateServiceForCustomer(serviceId, loggedInCustomer);
+        this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
                 .serviceActivationNotificationEmailCreator.constructMessage(currentService);
         this.emailService.sendMail(notificationMessage, loggedInCustomer);

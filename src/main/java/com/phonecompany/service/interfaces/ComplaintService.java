@@ -1,7 +1,11 @@
 package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.ComplaintStatistics;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 
+import java.util.List;
+import java.time.LocalDate;
 import java.util.Map;
 
 public interface ComplaintService extends CrudService<Complaint> {
@@ -12,4 +16,7 @@ public interface ComplaintService extends CrudService<Complaint> {
     public Map<String, Object> getComplaintsByResponsible(long responsibleId, String category, int page, int size);
     public Complaint setStatusIntraprocess(Complaint complaint);
     public Complaint setStatusAccomplished(Complaint complaint, String comment);
+    public List<Complaint> getAllComplaintsSearch(String email,String status,String category);
+    public ComplaintStatistics getComplaintStatistics();
+    public SheetDataSet prepareComplaintReportDataSet(long regionId, LocalDate startDate, LocalDate endDate);
 }

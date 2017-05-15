@@ -2,22 +2,39 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.dao.interfaces.UserDao;
+import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
+import com.phonecompany.util.Query;
+import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 @Repository
 public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> implements ComplaintDao {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ComplaintDaoImpl.class);
 
     private QueryLoader queryLoader;
     private UserDao userDao;
@@ -118,6 +135,88 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             //moreThenOne = true;
         }
         return where;
+    }
+
+    @Override
+    public List<Complaint> getAllComplaintsSearch(Query query) {
+        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
+        PreparedStatement ps = null;
+        LOG.info("Execute query: " + query.getQuery());
+        try {
+            ps = conn.prepareStatement(query.getQuery());
+
+            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
+                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Complaint> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(init(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Failed to load all the entities. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
+    @Override
+    public EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(
+                    this.getQuery("for.the.last.month.by.type"));
+            ps.setString(1, type.name());
+            ResultSet rs = ps.executeQuery();
+            return this.associateWeeksWithComplaintNumbers(rs);
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Could not extract complaints numbers", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
+
+    private EnumMap<WeekOfMonth, Integer> associateWeeksWithComplaintNumbers(ResultSet rs)
+            throws SQLException {
+        EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
+        WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
+        while (rs.next()) {
+            result.put(weekOfMonth, rs.getInt(1));
+            LOG.debug("weekOfMonth.next(): {}", weekOfMonth.next());
+            weekOfMonth = weekOfMonth.next();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Complaint> getComplaintsByRegionId(Long regionId){
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("by.region.id"));
+            ps.setLong(1, regionId);
+            ResultSet rs = ps.executeQuery();
+            List<Complaint> complaints = new ArrayList<>();
+            while (rs.next()) {
+                complaints.add(this.init(rs));
+            }
+            return complaints;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new EntityNotFoundException(regionId, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
     }
 
 }

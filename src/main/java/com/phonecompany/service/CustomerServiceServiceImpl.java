@@ -1,34 +1,41 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerServiceDao;
+import com.phonecompany.exception.ConflictException;
+import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.Order;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.CustomerServiceService;
 import com.phonecompany.service.interfaces.OrderService;
+import com.phonecompany.service.interfaces.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
+@ServiceStereotype
 public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto>
         implements CustomerServiceService {
 
     private CustomerServiceDao customerServiceDao;
     private OrderService orderService;
+    private ServiceService serviceService;
 
     @Autowired
-    public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao, OrderService orderService) {
+    public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao,
+                                      OrderService orderService,
+                                      ServiceService serviceService) {
         super(customerServiceDao);
         this.customerServiceDao = customerServiceDao;
         this.orderService = orderService;
+        this.serviceService = serviceService;
     }
 
     @Override
@@ -110,6 +117,25 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
         orderService.save(resumingOrder);
 
         return customerService;
+    }
+
+    @Override
+    public CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer) {
+        boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer);
+        if(isActivated) {
+            throw new ConflictException("This service was already activated for you");
+        }
+        Service service = serviceService.getById(serviceId);
+        CustomerServiceDto customerService =
+                new CustomerServiceDto(customer, service,
+                        service.getPrice(), CustomerProductStatus.ACTIVE);
+        this.save(customerService);
+
+        return customerService;
+    }
+
+    private boolean checkIfServiceWasAlreadyActivated(long serviceId, Customer customer) {
+        return customerServiceDao.isCustomerServiceAlreadyPresent(serviceId, customer.getId());
     }
 }
 

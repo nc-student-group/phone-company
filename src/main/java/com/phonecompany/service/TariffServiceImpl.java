@@ -9,18 +9,15 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffFilteringStrategy;
+import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.Date;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -349,13 +346,26 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         return response;
     }
 
+    /**
+     * Responsible for creating a dataset containing statistical information regarding
+     * the tariff orders
+     *
+     * @param regionId id of the region statistics should be generated for
+     * @param startDate start of the period statistics should be generated for
+     * @param endDate end of the period statistics should be generated for
+     *
+     * @return fully constructed {@code SheetDataSet} object containing statistical
+     *         information regarding tariff orders made in the requested region in
+     *         some predefined period of time
+     */
     @Override
-    public SheetDataSet prepareTariffReportDataSet(long regionId, LocalDate startDate, LocalDate endDate) {
+    public SheetDataSet prepareTariffStatisticsReportDataSet(long regionId, LocalDate startDate,
+                                                             LocalDate endDate) {
 
         List<Order> tariffOrders = this.orderService
                 .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
 
-        TariffFilteringStrategy tariffFilteringStrategy = new TariffFilteringStrategy();
+        TariffGroupingStrategy tariffFilteringStrategy = new TariffGroupingStrategy();
 
         Map<String, List<Order>> productNamesToOrdersMap = this.orderService
                 .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);

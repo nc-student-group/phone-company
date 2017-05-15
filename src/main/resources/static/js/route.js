@@ -106,6 +106,16 @@
                 templateUrl: 'view/admin/customers.html',
                 controller: 'CustomerController'
             });
+        $routeProvider.when('/admin/search',
+            {
+                templateUrl: 'view/admin/search.html',
+                controller: 'SearchController'
+            });
+        $routeProvider.when('/pmg/search',
+            {
+                templateUrl: 'view/pmg/search.html',
+                controller: 'SearchController'
+            });
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
@@ -160,6 +170,16 @@
             {
                 templateUrl: 'view/pmg/complaints.html',
                 controller: 'PmgComplaintsController'
+            });
+        $routeProvider.when('/pmg/charts',
+            {
+                templateUrl: 'view/pmg/pmgCharts.html',
+                controller: 'PmgChartsController'
+            });
+        $routeProvider.when('/pmg/clients',
+            {
+                templateUrl: 'view/pmg/clients.html',
+                //controller: 'PmgChartsController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
             {

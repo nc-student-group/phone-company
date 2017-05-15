@@ -61,9 +61,9 @@ public interface TariffService extends CrudService<Tariff> {
 
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
-    SheetDataSet prepareTariffReportDataSet(long regionId,
-                                            LocalDate startDate,
-                                            LocalDate endDate);
+    SheetDataSet prepareTariffStatisticsReportDataSet(long regionId,
+                                                      LocalDate startDate,
+                                                      LocalDate endDate);
 
     public void test();
 }

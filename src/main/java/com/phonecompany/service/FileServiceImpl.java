@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.service.interfaces.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-@Service
+@ServiceStereotype
 @PropertySource("classpath:s3.properties")
 public class FileServiceImpl implements FileService {
 

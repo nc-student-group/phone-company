@@ -1,0 +1,82 @@
+<div class="wrapper">
+    <ng-include src="'../../view/pmg/pmgSidebar.html'"></ng-include>
+    <div class="main-panel">
+        <ng-include src="'../../view/pmg/pmgHeader.html'"></ng-include>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="content center-block"
+                                 style="width: 800px; height: 700px">
+                                <h4 class="text-center">
+                                    Amount of complaints for the last month
+                                </h4>
+                                <canvas id="bar"
+                                        class="chart chart-bar"
+                                        chart-colors="colors"
+                                        chart-data="data"
+                                        chart-labels="labels"
+                                        chart-series="series">
+                                </canvas>
+                                <md-button class="md-primary md-raised"
+                                           ng-click="showGenerateReportDialog($event)">
+                                    detailed report
+                                </md-button>
+                            </div>
+
+                            <hr/>
+                            <div class="content">
+
+                                <div style="display: none">
+                                    <div class="md-dialog-container" id="generateReport">
+                                        <md-dialog layout-padding>
+                                            <md-content layout-padding>
+                                                <h3>Generate report</h3>
+
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Region:</label>
+                                                    <md-select required ng-model="currentRegion">
+                                                        <md-option ng-repeat="r in regions" value="{{r.id}}">
+                                                            {{r.nameRegion}}
+                                                        </md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                                <div layout-gt-xs="row">
+                                                    <div flex-gt-xs>
+                                                        <h4>Pick start date</h4>
+                                                        <md-datepicker required
+                                                                       ng-model="startDate"
+                                                                       md-placeholder="Start date"></md-datepicker>
+                                                    </div>
+                                                    <div flex-gt-xs>
+                                                        <h4>Pick end date</h4>
+                                                        <md-datepicker required
+                                                                       ng-model="endDate"
+                                                                       md-placeholder="End date"></md-datepicker>
+                                                    </div>
+                                                </div>
+                                            </md-content>
+                                            <md-button class="md-raised md-primary"
+                                                       ng-click="generateReport()">
+                                                Generate report
+                                            </md-button>
+                                        </md-dialog>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <p class="copyright">
+                        &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
