@@ -4,6 +4,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -16,7 +18,7 @@ public class CachingAspect {
     public static final int CACHE_CLEANUP_COUNTDOWN = 200;
     private SimpleCacheImpl<Pair<String, List<Object>>, Object> cache = new SimpleCacheImpl<>(CACHE_CLEANUP_COUNTDOWN);
 
-    @Around("@annotation(com.phonecompany.annotations.Cacheable)")
+    @Around("@annotation(com.phonecompany.annotations.Cacheable)+")
     public Object cacheResult(ProceedingJoinPoint joinPoint)
             throws Throwable {
         String methodName = joinPoint.getSignature().getName();

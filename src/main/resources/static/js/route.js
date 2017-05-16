@@ -21,6 +21,11 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
+        $routeProvider.when('/',
+            {
+                templateUrl: 'view/login.html',
+                controller: 'LoginController'
+            });
         $routeProvider.when('/frontPage',
             {
                 templateUrl: 'view/frontPage.html'
@@ -126,6 +131,11 @@
                 templateUrl: 'view/403.html',
                 // controller: ''
             });
+        $routeProvider.when('/404',
+            {
+                templateUrl: 'view/404.html',
+                // controller: ''
+            });
         $routeProvider.when('/client',
             {
                 templateUrl: 'view/client/clientProfile.html',
@@ -184,7 +194,12 @@
         $routeProvider.when('/pmg/clients',
             {
                 templateUrl: 'view/pmg/clients.html',
-                //controller: 'PmgChartsController'
+                controller: 'PmgCustomerController'
+            });
+        $routeProvider.when('/pmg/clients/:id',
+            {
+                templateUrl: 'view/pmg/clientDetail.html',
+                controller: 'PmgClientDetailController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
             {
@@ -196,7 +211,7 @@
                 templateUrl: 'view/client/representativesClients.html',
                 controller: 'RepresentativeCustomerController'
             });
-        $routeProvider.otherwise({redirectTo: '/login'});
+        $routeProvider.otherwise({redirectTo: '/404'});
     });
 
     app.config(['$httpProvider', function ($httpProvider) {
@@ -213,7 +228,7 @@
                     case 401: {
                         console.log('Unauthorized');
                         console.log($location.$$path);
-                        $location.path('/');
+                        $location.path('/login');
                         break;
                     }
                     case 500:

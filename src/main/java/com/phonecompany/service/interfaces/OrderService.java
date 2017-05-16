@@ -30,19 +30,24 @@ public interface OrderService extends CrudService<Order> {
 
     Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType);
 
-    OrderStatistics getOrderStatistics();
+    WeeklyOrderStatistics getOrderStatistics();
 
     List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 
-    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> filteringStrategy);
+    List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate);
 
-    List<LocalDate> generateTimeLine(List<Order> orders);
+    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> groupingStrategy);
+
+    List<LocalDate> generateTimeLine(List<OrderStatistics> orders);
 
     List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type);
 
-    Long getOrderNumberByDate(List<Order> orderList, LocalDate date);
+    Long getOrderNumber(List<OrderStatistics> orderList);
 
-    SheetDataSet prepareExcelSheetDataSet(String sheetName,
-                                          Map<String, List<Order>> productNamesToOrdersMap,
-                                          List<LocalDate> timeLine);
+    SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
+                                                           List<OrderStatistics> statisticsList);
+
+    List<OrderStatistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                  LocalDate startDate,
+                                                                  LocalDate endDate);
 }

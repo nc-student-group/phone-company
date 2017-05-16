@@ -10,12 +10,13 @@ import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.UserService;
-import com.phonecompany.service.xssfHelper.*;
+import com.phonecompany.service.xssfHelper.RowDataSet;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -238,7 +239,8 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         List<Complaint> complaintsByCategory = this.filterComplaintsByCategory(complaints, complaintCategory);
         for (LocalDate date : timeLine) {
             long complaintNumberByDate = this.getComplaintsNumberByDate(complaintsByCategory, date);
-            row.addKeyValuePair(complaintNumberByDate, date);
+            //TODO: remove unchecked compile warning
+            row.addKeyValuePair(date, complaintNumberByDate);
         }
     }
 

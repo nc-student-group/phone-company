@@ -14,7 +14,8 @@ import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
 import org.javatuples.Pair;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     private static final int FIRST_ROW_INDEX = 0;
     private int distanceBetweenTables = 25;
 
+
     @Override
     public void generateReport(SheetDataSet<K, V> excelSheet) {
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -44,6 +46,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         this.saveWorkBook(workbook);
     }
 
+
     private void createTable(XSSFSheet sheet, int rowPosition,
                              TableDataSet<K, V> tableDataSet) {
         this.createTableHeading(sheet, rowPosition++, tableDataSet.getTableDataSetName());
@@ -57,45 +60,90 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
         int rowValuesNumber = firstTableRow.getRowValues().size();
         distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
-        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber); //TODO: is side effect
+        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber); //TODO: remove this side effect
     }
 
-    private void createTableHeading(XSSFSheet sheet, int rowPosition, String tableHeading) {
-        sheet.addMergedRegion(new CellRangeAddress(rowPosition, rowPosition, 2, 4));
-        XSSFRow tableNameRow = sheet.createRow(rowPosition);
+    /**
+     * Generates a heading for the given table.
+     *
+     * @param sheet        sheet that the given table corresponds to
+     * @param rowIndex     index of the row where heading would be placed into
+     * @param tableHeading table heading
+     */
+    private void createTableHeading(XSSFSheet sheet, int rowIndex, String tableHeading) {
+        sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 4));
+        XSSFRow tableNameRow = sheet.createRow(rowIndex);
         XSSFCell tableNameCell = tableNameRow.createCell(2);
         tableNameCell.setCellType(CellType.STRING);
         tableNameCell.setCellValue(tableHeading);
     }
 
-    private XSSFRow generateRowHeading(XSSFSheet sheet, int rowPosition, String headingName) {
-        XSSFRow row = sheet.createRow(rowPosition);
+    /**
+     * Generates a heading for the given row.
+     *
+     * @param sheet       sheet that the given row corresponds to
+     * @param rowIndex    index of the row where heading would be placed into
+     * @param headingName row heading
+     * @return affected row
+     */
+    private XSSFRow generateRowHeading(XSSFSheet sheet, int rowIndex, String headingName) {
+        XSSFRow row = sheet.createRow(rowIndex);
         XSSFCell cell = row.createCell(0);
         cell.setCellType(CellType.STRING);
         cell.setCellValue(headingName);
         return row;
     }
 
-    private void fillRow(XSSFRow row, int colPosition, List<Pair<K, V>> values) {
+    /**
+     * Fills the provided {@link XSSFRow} with the values corresponding to it.
+     *
+     * @param row      row to be populated with a set of values
+     * @param colIndex index of the first column of the row
+     * @param values   a list of {@code Pair<K, V>}s which represent row headings
+     *                 and row values
+     */
+    private void fillRow(XSSFRow row, int colIndex, List<Pair<K, V>> values) {
         for (Pair<K, V> pair : values) {
-            this.createCell(row, colPosition++, pair.getValue0());
+            this.createCell(row, colIndex++, pair.getValue1());
         }
     }
 
-    private void createCell(XSSFRow row, int cellPosition, K cellValue) {
-        XSSFCell cell = row.createCell(cellPosition);
+    /**
+     * Creates an {@link XSSFCell} with the specified value.
+     *
+     * @param row         row where the target cell is situated
+     * @param colPosition column of the target cell in the row
+     * @param cellValue   value to be put in the cell
+     */
+    private void createCell(XSSFRow row, int colPosition, V cellValue) {
+        XSSFCell cell = row.createCell(colPosition);
         cell.setCellValue((Long) cellValue); //TODO: get rid of the cast
     }
 
+    /**
+     * Generates headings for all the columns of the incoming {@link XSSFRow}.
+     *
+     * @param row       row to generate headings for
+     * @param rowValues a list of {@code Pair<K, V>}s where K is a column heading
+     * @see RowDataSet
+     */
     private void generateColHeadings(XSSFRow row, List<Pair<K, V>> rowValues) {
         int cellPosition = 1;
         for (Pair<K, V> pair : rowValues) {
             XSSFCell cell = row.createCell(cellPosition++);
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(pair.getValue1().toString()); //TODO: get rid of the cast
+            cell.setCellValue(pair.getValue0().toString());
         }
     }
 
+    /**
+     * Creates an {@link XSSFChart} line chart for a single table from the sheet.
+     *
+     * @param sheet              sheet containing data for the chart
+     * @param initialRowPosition first row index of the table the chart will be generated for
+     * @param rowIndex           last row index of the table the chart will be generated for
+     * @param rowValuesNumber    number of values in the row
+     */
     private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int rowValuesNumber) {
 
         XSSFChart chart = this.createChart(sheet, rowIndex);//initialRowPosition + rowValuesNumber);
@@ -117,6 +165,11 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         this.noSmoothedLinesForChart(chart);
     }
 
+    /**
+     * Makes chart not to use smoothed lines.
+     *
+     * @param chart chart to be modified
+     */
     private void noSmoothedLinesForChart(XSSFChart chart) {
         CTPlotArea plotArea = chart.getCTChart().getPlotArea();
         for (CTLineChart ch : plotArea.getLineChartList()) {
@@ -128,37 +181,74 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         }
     }
 
+    /**
+     * Makes chart not to complement empty cell values with approximations.
+     *
+     * @param chart chart to be modified
+     */
     private void useGapsOnBlankCells(XSSFChart chart) {
         CTDispBlanksAs disp = CTDispBlanksAs.Factory.newInstance();
         disp.setVal(STDispBlanksAs.GAP);
         chart.getCTChart().setDispBlanksAs(disp);
     }
 
+    /**
+     * /**
+     * Adds chart series for each item containing in the table.
+     *
+     * @param sheet           sheet containing data
+     * @param data            object to write the series data into
+     * @param initialRowIndex index of the first table row
+     * @param lastRowIndex    index of the last table row
+     * @param lastColIndex    index of the last column in the row
+     */
     private void addChartSeries(XSSFSheet sheet, LineChartData data,
-                                int initialRowPosition, int rowIndex,
+                                int initialRowIndex, int lastRowIndex,
                                 int lastColIndex) {
-        ChartDataSource<String> x = this.getDateRangeDataSource(sheet, rowIndex, lastColIndex);
-        while (initialRowPosition < rowIndex) {
-            ChartDataSource<Number> y = this.getValuesDatasource(sheet, initialRowPosition++, lastColIndex);
+        ChartDataSource<String> x = this.getRangeOfDefinition(sheet, lastRowIndex, lastColIndex);
+        while (initialRowIndex < lastRowIndex) {
+            ChartDataSource<Number> y = this.getRangeOfValues(sheet, initialRowIndex++, lastColIndex);
             LineChartSeries lineChartSeries = data.addSeries(x, y);
-            lineChartSeries.setTitle(new CellReference(initialRowPosition - 1, 0));
+            lineChartSeries.setTitle(new CellReference(initialRowIndex - 1, 0));
         }
     }
 
-    private ChartDataSource<String> getDateRangeDataSource(XSSFSheet sheet,
-                                                           int rowIndex,
-                                                           int lastCellPosition) {
+    /**
+     * Creates a data range for the ordinate-axis of the subsequent graph.
+     *
+     * @param sheet        sheet containing data
+     * @param rowIndex     index of the row to start fetching data from
+     * @param lastColIndex index of the last column in the row
+     * @return range of definition for the graph
+     */
+    private ChartDataSource<String> getRangeOfDefinition(XSSFSheet sheet,
+                                                         int rowIndex,
+                                                         int lastColIndex) {
         return DataSources.fromStringCellRange(sheet,
-                new CellRangeAddress(rowIndex, rowIndex, 1, lastCellPosition));
+                new CellRangeAddress(rowIndex, rowIndex, 1, lastColIndex));
     }
 
-    private ChartDataSource<Number> getValuesDatasource(XSSFSheet sheet,
-                                                        int rowIndex,
-                                                        int collCount) {
+    /**
+     * Creates a data range for the abscissa-axis of the subsequent graph.
+     *
+     * @param sheet        sheet containing data
+     * @param rowIndex     index of the row to start fetching data from
+     * @param lastColIndex index of the last column in the row
+     * @return range of values for the graph
+     */
+    private ChartDataSource<Number> getRangeOfValues(XSSFSheet sheet,
+                                                     int rowIndex,
+                                                     int lastColIndex) {
         return DataSources.fromNumericCellRange(sheet,
-                new CellRangeAddress(rowIndex, rowIndex, 1, collCount));
+                new CellRangeAddress(rowIndex, rowIndex, 1, lastColIndex));
     }
 
+    /**
+     * Draws a line chart.
+     *
+     * @param sheet     sheet containing data.
+     * @param rowIndex  row index that helps to calculate chart position
+     */
     private XSSFChart createChart(XSSFSheet sheet, int rowIndex) {
         // Create a drawing canvas on the worksheet
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -166,7 +256,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         // Define anchor points in the worksheet to position the chart
         XSSFClientAnchor anchor = drawing.createAnchor(
                 0, 0, 0, 0, 0, rowIndex + 2,
-                17, rowIndex + CHART_HEIGHT + 2);
+                9, rowIndex + CHART_HEIGHT + 2);
 
         // Create the chart object based on the anchor point
         XSSFChart chart = drawing.createChart(anchor);
@@ -177,6 +267,11 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         return chart;
     }
 
+    /**
+     * Persist provided {@link XSSFWorkbook} workbook into the root of the project.
+     *
+     * @param workbook workbook to save.
+     */
     private void saveWorkBook(XSSFWorkbook workbook) {
         try {
             FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);

@@ -44,4 +44,12 @@ public interface CrudDao<T extends DomainEntity> {
 
 
     int getCountByKey(String key, String countQuery);
+
+    public List<T> executeForList(String query, Object[] params);
+
+    public T executeForObject(String query, Object[] params);
+
+    public void executeUpdate(String query, Object[] params);
+
+    public int executeForInt(String query, Object[] params);
 }

@@ -30,7 +30,7 @@ public class ReportServiceTest {
         LocalDate endDate = LocalDate.of(2017, Month.MAY, 5);
 
         //then
-        SheetDataSet excelSheet = tariffService.prepareTariffStatisticsReportDataSet(regionId, startDate, endDate);
+        SheetDataSet excelSheet = tariffService.prepareStatisticsDataSet(regionId, startDate, endDate);
         xssfService.generateReport(excelSheet);
     }
 }
