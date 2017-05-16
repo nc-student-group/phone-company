@@ -44,10 +44,10 @@ public interface OrderService extends CrudService<Order> {
 
     Long getOrderNumber(List<OrderStatistics> orderList);
 
-    SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
-                                                           List<OrderStatistics> statisticsList);
-
     List<OrderStatistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
                                                                   LocalDate startDate,
                                                                   LocalDate endDate);
+
+    SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
+                                                           List<OrderStatistics> statisticsList);
 }

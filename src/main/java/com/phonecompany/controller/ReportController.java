@@ -65,7 +65,6 @@ public class ReportController {
         SheetDataSet<LocalDate, Long> sheetDataSet = this.tariffService
                 .prepareStatisticsDataSet(regionId, startDate, endDate);
 
-        LOG.debug("SheetDataSet: {}", sheetDataSet);
         xssfService.generateReport(sheetDataSet);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
