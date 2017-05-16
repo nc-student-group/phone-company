@@ -10,48 +10,82 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="header">
-                                <h4 class="title">Tariff plans</h4>
-                                <p class="category">Available tariff plans</p>
-                            </div>
-                            <hr/>
-                            <div class="row" style="margin: 0;">
-                                <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs"
-                                     ng-click="tariffClick(t.id)">
-                                    <div class="tariff-picture">
-                                        <img ng-src="{{t.pictureUrl}}" width="90%"/>
-                                        <div class="sale-picture" ng-show="t.discount > 0 && t.discount <= 100"><b>-{{t.discount}}%</b>
+                            <div ng-show="marketingTariffsSize > 0">
+                                <div class="header">
+                                    <h4 class="title">Tariff plans</h4>
+                                    <p class="category">Marketing campaign tariff plans</p>
+                                </div>
+                                <hr/>
+                                <div class="row" style="margin: 0;">
+                                    <div class="col-md-4" style="padding: 10px;" ng-repeat="mt in marketingTariffs"
+                                         ng-click="tariffClick(mt.id)">
+                                        <div class="tariff-picture">
+                                            <img ng-src="{{mt.tariffRegion.tariff.pictureUrl}}" width="90%"/>
+                                            <div class="specials-picture"><b>Specials</b></div>
+                                        </div>
+                                        <div style="text-align: center; color: #212121; font-size: 18px;"><b>{{mt.tariffRegion.tariff.tariffName}}</b>
+                                        </div>
+                                        <div class="row" style="text-align: center; font-size: 16px; color: #161121"
+                                             ng-hide="mt.tariffRegion.tariff.discount > 0 && mt.tariffRegion.tariff.discount <= 100">
+                                            <b>{{mt.tariffRegion.price}} auh / 30 days</b>
+                                        </div>
+                                        <div class="row" ng-show="mt.tariffRegion.tariff.discount > 0 && mt.tariffRegion.tariff.discount <= 100"
+                                             style="text-align: center; font-size: 16px; color: #161121">
+                                            <b>{{mt.tariffRegion.price * (1 - mt.tariffRegion.tariff.discount/100)}} auh / 30 days</b>
+                                            <s style="font-size: 14px; color: red">{{mt.tariffRegion.price}} auh / 30 days</s>
+                                        </div>
+                                        <div class="row">
+                                            <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                    ng-click="tariffClick(mt.id); $event.stopPropagation();">
+                                                More
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="tariff-picture"
-                                         style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>
-                                    </div>
-                                    <div class="row" style="text-align: center; font-size: 16px; color: #161121"
-                                         ng-hide="t.discount > 0 && t.discount <= 100">
-                                        <b>{{t.price}} auh / 30 days</b>
-                                    </div>
-                                    <div class="row" ng-show="t.discount > 0 && t.discount <= 100"
-                                         style="text-align: center; font-size: 16px; color: #161121">
-                                        <b>{{t.price * (1 - t.discount/100)}} auh / 30 days</b>
-                                        <s style="font-size: 14px; color: red">{{t.price}} auh / 30 days</s>
-                                    </div>
-                                    <div class="row">
-                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
-                                                ng-click="tariffClick(t.id); $event.stopPropagation();">
-                                            More
-                                        </button>
-                                    </div>
                                 </div>
-                                <div class="col-md-4" style="padding: 10px;"
-                                     ng-click="nextPage()" ng-show="tariffsCount > tariffs.length">
-                                    <div class="tariff-picture"><img src="../../css/img/show-more.png" width="90%"/>
+                                <hr/>
+                            </div>
+                                <div class="header">
+                                    <p class="category">Usual tariff plans</p>
+                                </div>
+                                <hr/>
+                                <div class="row" style="margin: 0;">
+                                    <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs"
+                                         ng-click="tariffClick(t.id)">
+                                        <div class="tariff-picture">
+                                            <img ng-src="{{t.pictureUrl}}" width="90%"/>
+                                            <div class="sale-picture" ng-show="t.discount > 0 && t.discount <= 100"><b>-{{t.discount}}%</b>
+                                            </div>
+                                        </div>
+                                        <div class="tariff-picture"
+                                             style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>
+                                        </div>
+                                        <div class="row" style="text-align: center; font-size: 16px; color: #161121"
+                                             ng-hide="t.discount > 0 && t.discount <= 100">
+                                            <b>{{t.price}} auh / 30 days</b>
+                                        </div>
+                                        <div class="row" ng-show="t.discount > 0 && t.discount <= 100"
+                                             style="text-align: center; font-size: 16px; color: #161121">
+                                            <b>{{t.price * (1 - t.discount/100)}} auh / 30 days</b>
+                                            <s style="font-size: 14px; color: red">{{t.price}} auh / 30 days</s>
+                                        </div>
+                                        <div class="row">
+                                            <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                    ng-click="tariffClick(t.id); $event.stopPropagation();">
+                                                More
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="row" style="height: 47px;"></div>
-                                    <div class="row">
-                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
-                                                ng-click="nextPage(); $event.stopPropagation();">
-                                            Show More
-                                        </button>
+                                    <div class="col-md-4" style="padding: 10px;"
+                                         ng-click="nextPage()" ng-show="tariffsCount > tariffs.length">
+                                        <div class="tariff-picture"><img src="../../css/img/show-more.png" width="90%"/>
+                                        </div>
+                                        <div class="row" style="height: 47px;"></div>
+                                        <div class="row">
+                                            <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                    ng-click="nextPage(); $event.stopPropagation();">
+                                                Show More
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

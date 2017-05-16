@@ -9,11 +9,14 @@ import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
+@Repository
 public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampaignServices>
         implements MarketingCampaignServicesDao {
 
@@ -69,5 +72,11 @@ public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampa
             throw new EntityInitializationException(e);
         }
         return marketingCampaignServices;
+    }
+
+    @Override
+    public List<MarketingCampaignServices> getServicesByMarketingCampaignId(Long mcId) {
+        return this.executeForList(this.getQuery("getByMarketingCampaignId"),
+                new Object[]{mcId});
     }
 }

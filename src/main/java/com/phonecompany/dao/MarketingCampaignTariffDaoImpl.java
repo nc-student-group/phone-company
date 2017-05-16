@@ -9,11 +9,14 @@ import com.phonecompany.model.MarketingCampaignTariff;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
+@Repository
 public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaignTariff> implements MarketingCampaignTariffDao{
 
     private QueryLoader queryLoader;
@@ -65,5 +68,10 @@ public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaig
             throw new EntityInitializationException(e);
         }
         return marketingCampaignTariff;
+    }
+
+    @Override
+    public List<MarketingCampaignTariff> getMarketingCampaignTariffsAvailableForCustomer(Long regionId) {
+        return this.executeForList(this.getQuery("getAllAvailableForCustomer"), new Object[]{regionId});
     }
 }
