@@ -39,8 +39,8 @@ public final class RowDataSet<K, V> {
         return rowValues;
     }
 
-    public RowDataSet addKeyValuePair(K value, V key) {
-        rowValues.add(Pair.with(value, key));
+    public RowDataSet addKeyValuePair(K key, V value) {
+        rowValues.add(Pair.with(key, value));
         return this;
     }
 

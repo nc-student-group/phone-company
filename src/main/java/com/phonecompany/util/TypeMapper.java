@@ -1,6 +1,7 @@
 package com.phonecompany.util;
 
 import com.phonecompany.model.*;
+import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.UserRole;
 import org.springframework.util.Assert;
 
@@ -78,5 +79,13 @@ public class TypeMapper {
             service.setPrice(price);
             return service;
         };
+    }
+
+    public static Predicate<Statistics> getStatisticsByTargetNamePredicate(String targetName) {
+        return statistics -> statistics.getTargetName().equals(targetName);
+    }
+
+    public static Predicate<Statistics> getStatisticsByOrderTypePredicate(OrderType orderType) {
+        return statistics -> statistics.getOrderType().equals(orderType);
     }
 }

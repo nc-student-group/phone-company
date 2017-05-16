@@ -6,6 +6,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
+import com.phonecompany.model.Statistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
@@ -304,6 +305,40 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
+    }
+
+    @Override
+    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                    LocalDate startDate,
+                                                                    LocalDate endDate) {
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("tariff.statistics.by.region.and.time.period"));
+            ps.setLong(1, regionId);
+            ps.setDate(2, toSqlDate(startDate));
+            ps.setDate(3, toSqlDate(endDate));
+            ResultSet rs = ps.executeQuery();
+            List<Statistics> statisticsList = new ArrayList<>();
+            while (rs.next()) {
+                statisticsList.add(this.createStatisticsObject(rs));
+            }
+            return statisticsList;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Could not extract service orders", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
+    }
+
+    private Statistics createStatisticsObject(ResultSet rs) throws SQLException {
+        return new Statistics(rs.getLong("order_count"),
+                rs.getString("tariff_name"),
+                TypeMapper.toLocalDate(rs.getDate("creation_date")),
+                OrderType.valueOf(rs.getString("type")));
     }
 
     @Override

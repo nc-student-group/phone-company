@@ -6,5 +6,4 @@ public interface ExtendedStatisticsGenerating<K, V> {
     SheetDataSet<K, V> prepareStatisticsDataSet(long identifier,
                                                 K startDate,
                                                 K endDate);
-
 }

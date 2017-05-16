@@ -38,13 +38,16 @@ public interface OrderService extends CrudService<Order> {
 
     Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> groupingStrategy);
 
-    List<LocalDate> generateTimeLine(List<Order> orders);
+    List<LocalDate> generateTimeLine(List<Statistics> orders);
 
     List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type);
 
-    Long getOrderNumberByDate(List<Order> orderList, LocalDate date);
+    Long getOrderNumberByDate(List<Statistics> orderList, LocalDate date);
 
     SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
-                                                           Map<String, List<Order>> productNamesToOrdersMap,
-                                                           List<LocalDate> timeLine);
+                                                           List<Statistics> statisticsList);
+
+    List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                             LocalDate startDate,
+                                                             LocalDate endDate);
 }

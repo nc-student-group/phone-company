@@ -1,6 +1,7 @@
 package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.Order;
+import com.phonecompany.model.Statistics;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 
@@ -22,4 +23,6 @@ public interface OrderDao extends CrudDao<Order> {
     EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type);
     List<Order> getTariffOrdersByRegionId(long regionId);
     List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate);
+
+    List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 }

@@ -404,18 +404,10 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     public SheetDataSet<LocalDate, Long> prepareStatisticsDataSet(long regionId, LocalDate startDate,
                                                                   LocalDate endDate) {
 
-        List<Order> tariffOrders = this.orderService
-                .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
+        List<Statistics> statisticsList = this.orderService
+                .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
-        GroupingStrategy<Order, String> tariffGroupingStrategy = new TariffGroupingStrategy();
-
-        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
-                .getProductNamesToOrdersMap(tariffOrders, tariffGroupingStrategy);
-
-        List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
-
-        return this.orderService
-                .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+        return orderService.prepareExcelSheetDataSet("Tariffs", statisticsList);
     }
 
 
