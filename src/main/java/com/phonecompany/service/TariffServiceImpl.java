@@ -391,9 +391,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
 
         if (category.equals("COMPANY")){
-            query.and().addCondition("is_corporate=",true);
+            query.and().addCondition("is_corporate=?",true);
         }else if (category.equals("PRIVATE")){
-            query.and().addCondition("is_corporate=",false);
+            query.and().addCondition("is_corporate=?",false);
         }else if(!category.equals("-")){
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
@@ -412,9 +412,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
 
         if (category.equals("COMPANY")){
-            query.and().addCondition("is_corporate=",true);
+            query.and().addCondition("is_corporate=?",true);
         }else if (category.equals("PRIVATE")){
-            query.and().addCondition("is_corporate=",false);
+            query.and().addCondition("is_corporate=?",false);
         }else if(!category.equals("-")){
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
