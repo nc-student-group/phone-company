@@ -226,9 +226,9 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     private Filter<OrderType> createFilterChain(String productName, OrderType orderType,
                                      LocalDate date) {
-        Filter orderTypeFilter = new OrderTypeFilter(orderType);
-        NamingFilter namingFilter = new NamingFilter(productName);
-        DateFilter dateFilter = new DateFilter(date);
+        Filter<OrderType> orderTypeFilter = new OrderTypeFilter(orderType);
+        Filter<String> namingFilter = new NamingFilter(productName);
+        Filter<LocalDate> dateFilter = new DateFilter(date);
 
         orderTypeFilter.setSuccessor(namingFilter);
         namingFilter.setSuccessor(dateFilter);
