@@ -25,7 +25,6 @@ public class SimpleCacheImpl<K, V> {
             final FutureTask<V> futureTask = new FutureTask<>(callable);
             future = cache.putIfAbsent(key, futureTask);
             if (future == null) {
-                LOG.debug("Computing value");
                 // Compute the value
                 futureTask.run();
             }

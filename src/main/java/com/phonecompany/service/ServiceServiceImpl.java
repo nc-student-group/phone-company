@@ -90,6 +90,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @Cacheable
     public Service getById(Long serviceId) {
         Service serviceFoundById = super.getById(serviceId);
         LOG.debug("Service price without a discount: {}", serviceFoundById.getPrice());
@@ -97,8 +98,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         LOG.debug("Service price after applying discount: {}", serviceWithDiscount.getPrice());
         return serviceWithDiscount;
     }
-
-
 
     private Service applyDiscount(Service service) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();

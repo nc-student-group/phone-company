@@ -6,7 +6,7 @@
             <div ng-cloak>
                 <div class="container-fluid">
                     <md-content>
-                        <md-tabs ng-show="currentCategory" md-dynamic-height md-border-bottom>
+                        <md-tabs md-dynamic-height md-border-bottom>
                             <md-tab ng-repeat="c in categories"
                                     label="{{c.categoryName}}"
                                     md-on-select="specifyCurrentCategory(c.categoryName)">

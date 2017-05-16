@@ -10,7 +10,7 @@ import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.service.xssfHelper.GroupingStrategy;
-import com.phonecompany.util.TypeMapper;
+import com.phonecompany.service.xssfHelper.filterChain.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.phonecompany.util.TypeMapper.getStatisticsByOrderTypePredicate;
-import static com.phonecompany.util.TypeMapper.getStatisticsByTargetNamePredicate;
 
 @Service
 public class OrderServiceImpl extends CrudServiceImpl<Order>
@@ -98,14 +97,14 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
-    public OrderStatistics getOrderStatistics() {
+    public WeeklyOrderStatistics getOrderStatistics() {
 
         EnumMap<WeekOfMonth, Integer> numberOfActivationOrdersForTheLastMonth =
                 this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.ACTIVATION);
         EnumMap<WeekOfMonth, Integer> numberOfDeactivationOrdersForTheLastMonth =
                 this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.DEACTIVATION);
 
-        return new OrderStatistics(numberOfDeactivationOrdersForTheLastMonth,
+        return new WeeklyOrderStatistics(numberOfDeactivationOrdersForTheLastMonth,
                 numberOfActivationOrdersForTheLastMonth);
     }
 
@@ -136,17 +135,13 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * Gets the number of orders made at the specified date.
      *
      * @param statisticsList order list that number will be calculated from
-     * @param date           date at which order number should be calculated
      * @return order number
      */
     @Override
-    public Long getOrderNumberByDate(List<Statistics> statisticsList,
-                                     LocalDate date) {
-        Statistics statistics = statisticsList.stream()
-                .filter(s -> s.getCreationDate().equals(date))
-                .findFirst().orElse(null);
+    public Long getOrderNumber(List<OrderStatistics> statisticsList) {
+        OrderStatistics statistics = statisticsList.get(0); //TODO: does this list always contain 1 element?
         return Optional.ofNullable(statistics)
-                .map(Statistics::getCount)
+                .map(OrderStatistics::getCount)
                 .orElse(0L);
     }
 
@@ -161,27 +156,26 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      */
     @Override
     public SheetDataSet<LocalDate, Long> prepareExcelSheetDataSet(String sheetName,
-                                                                  List<Statistics> statisticsList) {
+                                                                  List<OrderStatistics> statisticsList) {
         SheetDataSet<LocalDate, Long> sheet = new SheetDataSet<>(sheetName);
         List<OrderType> orderTypes = this.getOrderTypesFromStatistics(statisticsList);
-        LOG.debug("Order types: {}", orderTypes);
         for (OrderType orderType : orderTypes) {
             this.populateExcelTableDataSet(sheet, orderType, statisticsList);
         }
         return sheet;
     }
 
-    private List<OrderType> getOrderTypesFromStatistics(List<Statistics> statisticsList) {
+    private List<OrderType> getOrderTypesFromStatistics(List<OrderStatistics> statisticsList) {
         return statisticsList.stream()
-                .map(Statistics::getOrderType)
+                .map(OrderStatistics::getOrderType)
                 .distinct()
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                                    LocalDate startDate,
-                                                                    LocalDate endDate) {
+    public List<OrderStatistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                         LocalDate startDate,
+                                                                         LocalDate endDate) {
         return this.orderDao.getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
     }
 
@@ -193,34 +187,26 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      */
     private void populateExcelTableDataSet(SheetDataSet<LocalDate, Long> sheet,
                                            OrderType orderType,
-                                           List<Statistics> statisticsList) {
+                                           List<OrderStatistics> statisticsList) {
         TableDataSet<LocalDate, Long> table = sheet.createTable(orderType.toString());
-        List<String> uniqueProductNames = this.extractUniqueValues(statisticsList, Statistics::getTargetName);
+        List<String> uniqueProductNames = this.extractUniqueValues(statisticsList, OrderStatistics::getTargetName);
         List<LocalDate> timeLine = this.generateTimeLine(statisticsList);
         for (String productName : uniqueProductNames) {
             RowDataSet<LocalDate, Long> row = table.createRow(productName);
-            //TODO: chain of responsibility pattern?
-            Predicate<Statistics> statisticsByTargetNamePredicate = getStatisticsByTargetNamePredicate(productName);
-            List<Statistics> statisticsListFilteredByName = this
-                    .filterOutStatistics(statisticsList, statisticsByTargetNamePredicate);
-            Predicate<Statistics> statisticsByOrderTypePredicate = getStatisticsByOrderTypePredicate(orderType);
-            List<Statistics> statisticsListFilteredByType = this
-                    .filterOutStatistics(statisticsListFilteredByName, statisticsByOrderTypePredicate);
-
-            this.populateExcelRowDataSet(row, statisticsListFilteredByType, timeLine);
+            this.populateRowDataSet(row, statisticsList, productName, orderType, timeLine);
         }
     }
 
-    private List<String> extractUniqueValues(List<Statistics> statisticsList,
-                                             Function<Statistics, String> mapper) {
+    private List<String> extractUniqueValues(List<OrderStatistics> statisticsList,
+                                             Function<OrderStatistics, String> mapper) {
         return statisticsList.stream()
                 .map(mapper)
                 .distinct()
                 .collect(Collectors.toList());
     }
 
-    private List<Statistics> filterOutStatistics(List<Statistics> statisticsList,
-                                                 Predicate<Statistics> filteringPredicate) {
+    private List<OrderStatistics> filterOutStatistics(List<OrderStatistics> statisticsList,
+                                                      Predicate<OrderStatistics> filteringPredicate) {
         return statisticsList
                 .stream()
                 .filter(filteringPredicate)
@@ -230,16 +216,26 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     /**
      * Populates {@code RowDataSet} object with the cell representations
      *
-     * @param row object to be populated with statistical data
-     * @param timeLine
-     * @see RowDataSet
+     * @param row            object to be populated with statistical data
      */
-    private void populateExcelRowDataSet(RowDataSet<LocalDate, Long> row,
-                                         List<Statistics> statisticsList, List<LocalDate> timeLine) {
+    private void populateRowDataSet(RowDataSet<LocalDate, Long> row,
+                                    List<OrderStatistics> statisticsList,
+                                    String productName, OrderType orderType,
+                                    List<LocalDate> timeLine) {
+
         for (LocalDate date : timeLine) {
-            long orderNumberByDate = this.getOrderNumberByDate(statisticsList, date);
+            Filter filterChain = this.createFilterChain(productName, orderType, date);
+            List<OrderStatistics> filteredStatistics = filterChain.doFilter(statisticsList);
+            long orderNumberByDate = this.getOrderNumber(filteredStatistics);
             row.addKeyValuePair(date, orderNumberByDate);
         }
+    }
+
+    private Filter createFilterChain(String productName, OrderType orderType,
+                                     LocalDate date) {
+        Predicate<OrderStatistics> statisticsByOrderTypePredicate = getStatisticsByOrderTypePredicate(orderType);
+
+        return null;
     }
 
     /**
@@ -266,9 +262,9 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
      * @return set of unique dates corresponding to the elements in the incoming list
      */
     @Override
-    public List<LocalDate> generateTimeLine(List<Statistics> orders) {
+    public List<LocalDate> generateTimeLine(List<OrderStatistics> orders) {
         return orders.stream()
-                .map(Statistics::getCreationDate)
+                .map(OrderStatistics::getCreationDate)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());

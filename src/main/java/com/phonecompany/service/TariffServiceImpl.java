@@ -8,9 +8,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
-import com.phonecompany.service.xssfHelper.GroupingStrategy;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -404,7 +402,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     public SheetDataSet<LocalDate, Long> prepareStatisticsDataSet(long regionId, LocalDate startDate,
                                                                   LocalDate endDate) {
 
-        List<Statistics> statisticsList = this.orderService
+        List<OrderStatistics> statisticsList = this.orderService
                 .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
         return orderService.prepareExcelSheetDataSet("Tariffs", statisticsList);
