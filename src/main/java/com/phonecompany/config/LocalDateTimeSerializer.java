@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @Component
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDate> {
     @Override
-    public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
+    public void serialize(LocalDate arg0, JsonGenerator arg1, SerializerProvider arg2)
             throws IOException {
-        gen.writeString(value.toString());
+        arg1.writeString(arg0.toString());
     }
 }

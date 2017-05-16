@@ -6,7 +6,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
-import com.phonecompany.model.Statistics;
+import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
@@ -308,9 +308,9 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
     }
 
     @Override
-    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                                    LocalDate startDate,
-                                                                    LocalDate endDate) {
+    public List<OrderStatistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                         LocalDate startDate,
+                                                                         LocalDate endDate) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
         try {
@@ -319,7 +319,7 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
             ps.setDate(2, toSqlDate(startDate));
             ps.setDate(3, toSqlDate(endDate));
             ResultSet rs = ps.executeQuery();
-            List<Statistics> statisticsList = new ArrayList<>();
+            List<OrderStatistics> statisticsList = new ArrayList<>();
             while (rs.next()) {
                 statisticsList.add(this.createStatisticsObject(rs));
             }
@@ -334,8 +334,8 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
         }
     }
 
-    private Statistics createStatisticsObject(ResultSet rs) throws SQLException {
-        return new Statistics(rs.getLong("order_count"),
+    private OrderStatistics createStatisticsObject(ResultSet rs) throws SQLException {
+        return new OrderStatistics(rs.getLong("order_count"),
                 rs.getString("tariff_name"),
                 TypeMapper.toLocalDate(rs.getDate("creation_date")),
                 OrderType.valueOf(rs.getString("type")));

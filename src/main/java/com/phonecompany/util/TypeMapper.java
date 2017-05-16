@@ -81,11 +81,15 @@ public class TypeMapper {
         };
     }
 
-    public static Predicate<Statistics> getStatisticsByTargetNamePredicate(String targetName) {
+    public static Predicate<OrderStatistics> getStatisticsByTargetNamePredicate(String targetName) {
         return statistics -> statistics.getTargetName().equals(targetName);
     }
 
-    public static Predicate<Statistics> getStatisticsByOrderTypePredicate(OrderType orderType) {
+    public static Predicate<OrderStatistics> getStatisticsByOrderTypePredicate(OrderType orderType) {
         return statistics -> statistics.getOrderType().equals(orderType);
+    }
+
+    public static Predicate<OrderStatistics> getStatisticsByLocalDate(LocalDate date) {
+        return statistics -> statistics.getCreationDate().equals(date);
     }
 }

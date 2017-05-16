@@ -23,6 +23,8 @@ angular.module('phone-company').controller('ClientServicesController', [
         },function (err) {
             $scope.preloader.send = false;
         });
+
+        $scope.preloader.send = true;
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
             console.log(`$scope.categories[0].categoryName ${$scope.categories[0].categoryName}`);

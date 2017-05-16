@@ -1,7 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.ComplaintStatistics;
-import com.phonecompany.model.OrderStatistics;
+import com.phonecompany.model.WeeklyOrderStatistics;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.TariffService;
@@ -65,6 +65,7 @@ public class ReportController {
         SheetDataSet<LocalDate, Long> sheetDataSet = this.tariffService
                 .prepareStatisticsDataSet(regionId, startDate, endDate);
 
+        LOG.debug("SheetDataSet: {}", sheetDataSet);
         xssfService.generateReport(sheetDataSet);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
@@ -108,7 +109,7 @@ public class ReportController {
     @GetMapping("/order-statistics")
     public ResponseEntity<?> getOrderStatisticsForTheLastMonthByWeeks() {
 
-        OrderStatistics orderStatistics = this.orderService.getOrderStatistics();
+        WeeklyOrderStatistics orderStatistics = this.orderService.getOrderStatistics();
 
         return new ResponseEntity<>(orderStatistics, HttpStatus.OK);
     }
