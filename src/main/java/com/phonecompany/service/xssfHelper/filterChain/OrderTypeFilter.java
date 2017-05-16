@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 import static com.phonecompany.util.TypeMapper.getStatisticsByOrderTypePredicate;
 
-public class OrderTypeFilter extends Filter<OrderType> {
+public class OrderTypeFilter extends Filter {
 
     public OrderTypeFilter(OrderType filteringKey) {
         super(filteringKey);
@@ -17,7 +17,7 @@ public class OrderTypeFilter extends Filter<OrderType> {
     @Override
     public List<OrderStatistics> doFilter(List<OrderStatistics> statisticsList) {
         Predicate<OrderStatistics> targetNamePredicate =
-                getStatisticsByOrderTypePredicate(filteringKey);
+                getStatisticsByOrderTypePredicate(OrderType.ACTIVATION);
         List<OrderStatistics> filteredStatistics = this
                 .filterOutStatistics(statisticsList, targetNamePredicate);
         return successor.doFilter(filteredStatistics);

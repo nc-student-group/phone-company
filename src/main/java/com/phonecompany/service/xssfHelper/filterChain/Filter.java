@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public abstract class Filter<K> {
+public abstract class Filter {
 
     protected Filter successor;
-    protected K filteringKey;
+    protected Object filteringKey;
 
-    public Filter(K filteringKey) {
+    public Filter(Object filteringKey) {
         this.filteringKey = filteringKey;
     }
 
-    public <E> void setSuccessor(Filter<E> successor) {
+    public void setSuccessor(Filter successor) {
         this.successor = successor;
     }
 
