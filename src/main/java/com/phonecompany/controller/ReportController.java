@@ -1,7 +1,7 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.model.ComplaintStatistics;
-import com.phonecompany.model.OrderStatistics;
+import com.phonecompany.model.WeeklyOrderStatistics;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.TariffService;
@@ -40,13 +40,13 @@ public class ReportController {
     private TariffService tariffService;
     private OrderService orderService;
     private ComplaintService complaintService;
-    private XSSFService xssfService;
+    private XSSFService<LocalDate, Long> xssfService;
 
     @Autowired
     public ReportController(TariffService tariffService,
                             OrderService orderService,
                             ComplaintService complaintService,
-                            XSSFService xssfService) {
+                            XSSFService<LocalDate, Long> xssfService) {
         this.tariffService = tariffService;
         this.orderService = orderService;
         this.complaintService = complaintService;
@@ -62,9 +62,10 @@ public class ReportController {
                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                           LocalDate endDate) {
 
-        SheetDataSet sheetDataSet = this.tariffService
-                .prepareTariffStatisticsReportDataSet(regionId, startDate, endDate);
+        SheetDataSet<LocalDate, Long> sheetDataSet = this.tariffService
+                .prepareStatisticsDataSet(regionId, startDate, endDate);
 
+        LOG.debug("SheetDataSet: {}", sheetDataSet);
         xssfService.generateReport(sheetDataSet);
 
         InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
@@ -98,7 +99,7 @@ public class ReportController {
     private InputStream getXlsStreamFromRootDirectory() {
         try {
             File[] files = getFilesWithExtensionFromPath(EXCEL_EXTENSION, CURRENT_DIRECTORY);
-            return new FileInputStream(files[files.length - 1 ]);
+            return new FileInputStream(files[files.length - 1]);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -108,7 +109,7 @@ public class ReportController {
     @GetMapping("/order-statistics")
     public ResponseEntity<?> getOrderStatisticsForTheLastMonthByWeeks() {
 
-        OrderStatistics orderStatistics = this.orderService.getOrderStatistics();
+        WeeklyOrderStatistics orderStatistics = this.orderService.getOrderStatistics();
 
         return new ResponseEntity<>(orderStatistics, HttpStatus.OK);
     }

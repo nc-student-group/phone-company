@@ -1,41 +1,47 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.model.enums.OrderType;
 
-import java.util.EnumMap;
+import java.time.LocalDate;
 
-public class OrderStatistics {
+public final class OrderStatistics {
 
-    private EnumMap<WeekOfMonth, Integer> deactivations;
-    private EnumMap<WeekOfMonth, Integer> activations;
+    private final long count;
+    private final String targetName;
+    private final LocalDate creationDate;
+    private final OrderType orderType;
 
-    public OrderStatistics(EnumMap<WeekOfMonth, Integer> deactivations,
-                           EnumMap<WeekOfMonth, Integer> activations) {
-        this.deactivations = deactivations;
-        this.activations = activations;
+    public OrderStatistics(long count, String targetName,
+                           LocalDate creationDate, OrderType orderType) {
+        this.count = count;
+        this.targetName = targetName;
+        this.creationDate = creationDate;
+        this.orderType = orderType;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getDeactivations() {
-        return deactivations;
+    public long getCount() {
+        return count;
     }
 
-    public void setDeactivations(EnumMap<WeekOfMonth, Integer> deactivations) {
-        this.deactivations = deactivations;
+    public String getTargetName() {
+        return targetName;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getActivations() {
-        return activations;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setActivations(EnumMap<WeekOfMonth, Integer> activations) {
-        this.activations = activations;
+    public OrderType getOrderType() {
+        return orderType;
     }
 
     @Override
     public String toString() {
         return "OrderStatistics{" +
-                "deactivations=" + deactivations +
-                ", activations=" + activations +
+                "count=" + count +
+                ", targetName='" + targetName + '\'' +
+                ", creationDate=" + creationDate +
+                ", orderType=" + orderType +
                 '}';
     }
 }

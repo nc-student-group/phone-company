@@ -9,7 +9,6 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ import java.util.*;
 @SuppressWarnings("Duplicates")
 @Service
 public class TariffServiceImpl extends CrudServiceImpl<Tariff>
-        implements TariffService {
+        implements TariffService, ExtendedStatisticsGenerating<LocalDate, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -392,31 +391,21 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     /**
      * Responsible for creating a dataset containing statistical information regarding
-     * the tariff orders
+     * the tariff orders made in the requested region in some predefined period of time
      *
      * @param regionId  id of the region statistics should be generated for
      * @param startDate start of the period statistics should be generated for
      * @param endDate   end of the period statistics should be generated for
-     * @return fully constructed {@code SheetDataSet} object containing statistical
-     * information regarding tariff orders made in the requested region in
-     * some predefined period of time
+     * @return fully constructed {@link SheetDataSet}
      */
     @Override
-    public SheetDataSet prepareTariffStatisticsReportDataSet(long regionId, LocalDate startDate,
-                                                             LocalDate endDate) {
+    public SheetDataSet<LocalDate, Long> prepareStatisticsDataSet(long regionId, LocalDate startDate,
+                                                                  LocalDate endDate) {
 
-        List<Order> tariffOrders = this.orderService
-                .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
+        List<OrderStatistics> statisticsList = this.orderService
+                .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
-        TariffGroupingStrategy tariffFilteringStrategy = new TariffGroupingStrategy();
-
-        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
-                .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);
-
-        List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
-
-        return this.orderService
-                .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+        return orderService.prepareExcelSheetDataSet("Tariffs", statisticsList);
     }
 
 

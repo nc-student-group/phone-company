@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -45,6 +46,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private EmailService<Customer> emailService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
+    private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
     public CustomerServiceImpl(ServiceDao serviceDao,
@@ -54,7 +56,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                                        MailMessageCreator<VerificationToken> confirmMessageCreator,
                                EmailService<Customer> emailService,
                                TariffService tariffService,
-                               CustomerTariffService customerTariffService) {
+                               CustomerTariffService customerTariffService,
+                               ShaPasswordEncoder shaPasswordEncoder) {
         this.serviceDao = serviceDao;
         this.customerDao = customerDao;
         this.verificationTokenService = verificationTokenService;
@@ -62,6 +65,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         this.emailService = emailService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
+        this.shaPasswordEncoder = shaPasswordEncoder;
     }
 
     @Override
@@ -119,6 +123,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Customer notUpdatedCustomer = this.getById(user.getId());
         LOG.info(notUpdatedCustomer.toString());
         LOG.info(user.toString());
+        if (user.getPassword() == null) {
+            user.setPassword(notUpdatedCustomer.getPassword());
+        } else {
+            user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
+        }
         if (notUpdatedCustomer.getCorporate() != null && user.getCorporate() != null) {
             if ((!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) || (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))) {
                 this.deactivateCustomerTariff(user.getId());

@@ -12,9 +12,9 @@ import java.time.ZonedDateTime;
 @Component
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDate> {
     @Override
-    public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        ZonedDateTime zdt = ZonedDateTime.parse(p.getValueAsString());
-        return zdt.toLocalDate();
+    public LocalDate deserialize(JsonParser arg0, DeserializationContext arg1)
+            throws IOException {
+        return LocalDate.parse(arg0.getText());
     }
 }
 

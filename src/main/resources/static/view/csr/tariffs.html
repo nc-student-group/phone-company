@@ -117,8 +117,7 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="t in tariffs" class="tariff-td">
-                                        <td><a href="#"
-                                               ng-click="detailClick(t.tariff.id)">{{t.tariff.tariffName}}</a><br>
+                                        <td><a href="/#/csr/tariff/{{t.tariff.id}}">{{t.tariff.tariffName}}</a><br>
                                             <!--<a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a>-->
                                         </td>
                                         <!--<td style="padding: 0;">-->
@@ -291,7 +290,7 @@
                         <!--ADD TARIFF-->
                         <div ng-hide="editing" class="card">
                             <div class="header">
-                                <h4 class="title">Add tariff</h4>
+                                <h4 class="title">Add tariff plan</h4>
                             </div>
                             <div class="content">
                                 <form name="addTariffForm" id="addTariffForm"
