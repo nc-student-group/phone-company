@@ -89,7 +89,7 @@ public class TypeMapper {
         return statistics -> statistics.getOrderType().equals(orderType);
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByLocalDate(LocalDate date) {
+    public static Predicate<OrderStatistics> getStatisticsByLocalDatePredicate(LocalDate date) {
         return statistics -> statistics.getCreationDate().equals(date);
     }
 }
