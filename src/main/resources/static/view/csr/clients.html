@@ -73,6 +73,7 @@
                                             <td>
                                                 <span ng-show="c.corporate==undefined">-</span>
                                                 {{c.corporate.corporateName}}
+                                                <span ng-show="c.isRepresentative">(representative)</span>
                                             </td>
                                             <td>{{c.status}}</td>
                                             <td>
@@ -138,7 +139,8 @@
                                                     <div ng-messages="customerForm.email.$error" role="alert" multiple>
                                                         <div ng-message="required" class="my-message">Email is required.
                                                         </div>
-                                                        <div ng-message="pattern" class="my-message">That doesn't look like
+                                                        <div ng-message="pattern" class="my-message">That doesn't look
+                                                            like
                                                             a valid
                                                             email.
                                                         </div>
@@ -173,7 +175,8 @@
                                                            ng-model="customer.firstName"
                                                            ng-pattern="textFieldPattern">
 
-                                                    <div ng-messages="customerForm.firstName.$error" role="alert" multiple>
+                                                    <div ng-messages="customerForm.firstName.$error" role="alert"
+                                                         multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain letters
                                                         </div>
@@ -189,7 +192,8 @@
                                                            ng-model="customer.secondName"
                                                            ng-pattern="textFieldPattern">
 
-                                                    <div ng-messages="customerForm.secondName.$error" role="alert" multiple>
+                                                    <div ng-messages="customerForm.secondName.$error" role="alert"
+                                                         multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain letters
                                                         </div>
@@ -205,7 +209,8 @@
                                                            ng-model="customer.lastName"
                                                            ng-pattern="textFieldPattern">
 
-                                                    <div ng-messages="customerForm.lastName.$error" role="alert" multiple>
+                                                    <div ng-messages="customerForm.lastName.$error" role="alert"
+                                                         multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain letters
                                                         </div>
@@ -228,7 +233,8 @@
                                             <div class="form-group col-sm-11">
                                                 <md-input-container class="md-block" flex-gt-sm>
                                                     <label>Region</label>
-                                                    <md-select ng-model="customer.address.region" ng-required="!corporateUser">
+                                                    <md-select ng-model="customer.address.region"
+                                                               ng-required="!corporateUser">
                                                         <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
                                                             {{r.nameRegion}}
                                                         </md-option>
@@ -244,7 +250,8 @@
                                                            ng-model="customer.address.locality"
                                                            ng-pattern="textFieldPattern">
 
-                                                    <div ng-messages="customerForm.locality.$error" role="alert" multiple>
+                                                    <div ng-messages="customerForm.locality.$error" role="alert"
+                                                         multiple>
                                                         <div ng-message="pattern">
                                                             This field can only contain letters
                                                         </div>
@@ -352,8 +359,9 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <md-input-container class="md-block">
-                                                    <input type="text" placeholder="Corporation name" name="corporationName"
-                                                           ng-model="editCorporation.corporateName"  md-maxlength="50"
+                                                    <input type="text" placeholder="Corporation name"
+                                                           name="corporationName"
+                                                           ng-model="editCorporation.corporateName" md-maxlength="50"
                                                            required/>
                                                 </md-input-container>
                                             </div>
