@@ -10,7 +10,10 @@ import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.service.xssfHelper.GroupingStrategy;
+import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
 import com.phonecompany.service.xssfHelper.filterChain.Filter;
+import com.phonecompany.service.xssfHelper.filterChain.NamingFilter;
+import com.phonecompany.service.xssfHelper.filterChain.OrderTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,15 +137,15 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     /**
      * Gets the number of orders made at the specified date.
      *
-     * @param statisticsList order list that number will be calculated from
+     * @param statisticsList order list that number will be fetched from
      * @return order number
      */
     @Override
     public Long getOrderNumber(List<OrderStatistics> statisticsList) {
-        OrderStatistics statistics = statisticsList.get(0); //TODO: does this list always contain 1 element?
-        return Optional.ofNullable(statistics)
-                .map(OrderStatistics::getCount)
-                .orElse(0L);
+        if(statisticsList.size() == 0) {
+            return 0L;
+        }
+        return statisticsList.get(0).getCount();
     }
 
     /**
@@ -205,18 +208,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 .collect(Collectors.toList());
     }
 
-    private List<OrderStatistics> filterOutStatistics(List<OrderStatistics> statisticsList,
-                                                      Predicate<OrderStatistics> filteringPredicate) {
-        return statisticsList
-                .stream()
-                .filter(filteringPredicate)
-                .collect(Collectors.toList());
-    }
-
     /**
      * Populates {@code RowDataSet} object with the cell representations
-     *
-     * @param row            object to be populated with statistical data
      */
     private void populateRowDataSet(RowDataSet<LocalDate, Long> row,
                                     List<OrderStatistics> statisticsList,
@@ -224,18 +217,22 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                                     List<LocalDate> timeLine) {
 
         for (LocalDate date : timeLine) {
-            Filter filterChain = this.createFilterChain(productName, orderType, date);
+            Filter<OrderType> filterChain = this.createFilterChain(productName, orderType, date);
             List<OrderStatistics> filteredStatistics = filterChain.doFilter(statisticsList);
             long orderNumberByDate = this.getOrderNumber(filteredStatistics);
             row.addKeyValuePair(date, orderNumberByDate);
         }
     }
 
-    private Filter createFilterChain(String productName, OrderType orderType,
+    private Filter<OrderType> createFilterChain(String productName, OrderType orderType,
                                      LocalDate date) {
-        Predicate<OrderStatistics> statisticsByOrderTypePredicate = getStatisticsByOrderTypePredicate(orderType);
+        Filter orderTypeFilter = new OrderTypeFilter(orderType);
+        NamingFilter namingFilter = new NamingFilter(productName);
+        DateFilter dateFilter = new DateFilter(date);
 
-        return null;
+        orderTypeFilter.setSuccessor(namingFilter);
+        namingFilter.setSuccessor(dateFilter);
+        return orderTypeFilter;
     }
 
     /**
