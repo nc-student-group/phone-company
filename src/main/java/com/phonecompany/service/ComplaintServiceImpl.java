@@ -77,6 +77,9 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         LOG.debug("Fetched complaints: {}", complaints);
         response.put("complaints", complaints);
         response.put("complaintsCount", this.complaintDao.getEntityCount(args));
+
+
+
         return response;
     }
 

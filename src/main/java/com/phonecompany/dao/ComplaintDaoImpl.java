@@ -7,11 +7,10 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
-import com.phonecompany.util.Query;
 import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.util.Query;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -25,8 +24,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -134,8 +131,10 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             this.preparedStatementParams.add(responsibleId);
             //moreThenOne = true;
         }
+
         return where;
     }
+
 
     @Override
     public List<Complaint> getAllComplaintsSearch(Query query) {
