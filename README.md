@@ -4,7 +4,7 @@
 
 ![erd](http://dl3.joxi.net/drive/2017/05/04/0023/3604/1543700/00/2ded1ce891.jpg)
 
-http://imgur.com/oEeunts - orders groups query
-http://imgur.com/PSw5EbA - results
-http://imgur.com/TVsFuwM - by weeks query
-http://imgur.com/zPi4J1N - results
+http://i.imgur.com/oEeunts.png - orders groups query
+http://i.imgur.com/PSw5EbA.png - results
+http://i.imgur.com/TVsFuwM.png - by weeks query
+http://i.imgur.com/zPi4J1N.png - results
