@@ -62,7 +62,7 @@
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="c in customers">
-                                            <td ng-click="moreClick(c.id)">{{c.email}}</td>
+                                            <td ng-click="moreClick(c.id)"><a>{{c.email}}</a></td>
                                             <td>
                                                 {{c.firstName}}<br>
                                                 {{c.secondName}}<br>
@@ -85,9 +85,9 @@
                                                         class="btn btn-danger btn-fill pull-left"
                                                         ng-click="deactivateClick($index)">Deactivate
                                                 </button>
-                                                <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                        ng-click="editClick(c.id)">Edit
-                                                </button>
+                                                <!--<button style="width: 100%" class="btn btn-toggle btn-fill pull-left"-->
+                                                        <!--ng-click="editClick(c.id)">Edit-->
+                                                <!--</button>-->
                                                 <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
                                                         ng-click="moreClick(c.id)">More
                                                 </button>
