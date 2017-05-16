@@ -1,4 +1,4 @@
-package com.phonecompany.service.xssfHelper;
+package com.phonecompany.service.xssfHelper.strategies;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

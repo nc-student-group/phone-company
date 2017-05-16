@@ -3,7 +3,7 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.GroupingStrategy;
+import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
