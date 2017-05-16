@@ -409,6 +409,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
 
+
     @Override
     public List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category) {
 
@@ -420,11 +421,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             throw new ConflictException("Incorrect parameter: tariff status.");
         }
 
-        if (category.equals("COMPANY")) {
-            query.and().addCondition("is_corporate=", true);
-        } else if (category.equals("PRIVATE")) {
-            query.and().addCondition("is_corporate=", false);
-        } else if (!category.equals("-")) {
+        if (category.equals("COMPANY")){
+            query.and().addCondition("is_corporate=?",true);
+        }else if (category.equals("PRIVATE")){
+            query.and().addCondition("is_corporate=?",false);
+        }else if(!category.equals("-")){
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
         query.addPaging(page, size);
@@ -441,11 +442,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             throw new ConflictException("Incorrect parameter: tariff status.");
         }
 
-        if (category.equals("COMPANY")) {
-            query.and().addCondition("is_corporate=", true);
-        } else if (category.equals("PRIVATE")) {
-            query.and().addCondition("is_corporate=", false);
-        } else if (!category.equals("-")) {
+        if (category.equals("COMPANY")){
+            query.and().addCondition("is_corporate=?",true);
+        }else if (category.equals("PRIVATE")){
+            query.and().addCondition("is_corporate=?",false);
+        }else if(!category.equals("-")){
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
         return tariffDao.getAllTariffsSearch(query.build()).size();

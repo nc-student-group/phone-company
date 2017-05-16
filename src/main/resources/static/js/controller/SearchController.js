@@ -26,7 +26,7 @@
         $scope.lowerPrice=0;
         $scope.upperPrice=1000;
         $scope.page = 0;
-        $scope.size = 5;
+        $scope.size = 10;
         $scope.inProgress = false;
         $scope.entitiesSelected = 0;
 
@@ -36,6 +36,7 @@
 
         $scope.searchUpdate = function () {
             if($scope.selectedCategory == "USERS"){
+                $scope.preloader.send = true;
                 SearchService.getForUserCategory($scope.page, $scope.size,$scope.partOfEmail,$scope.selectedRole,$scope.selectedUserStatus).then(
                     function (data) {
                         $scope.users=data.users;
@@ -48,6 +49,7 @@
                     }
                 );
             } else if($scope.selectedCategory == "CUSTOMERS"){
+                $scope.preloader.send = true;
                 SearchService.getForCustomerCategory($scope.page, $scope.size,$scope.partOfEmail,$scope.selectedUserStatus,$scope.selectedRegion,$scope.partOfPhone,$scope.selectedCorporate,$scope.partOfSurname).then(
                     function (data) {
                         $scope.customers=data.customers;
@@ -60,6 +62,7 @@
                     }
                 );
             }else if($scope.selectedCategory == "COMPLAINTS"){
+                $scope.preloader.send = true;
                 SearchService.getForComplaintsCategory($scope.page, $scope.size,$scope.partOfEmail,$scope.complaintStatus,$scope.complaintCategory).then(
                     function (data) {
                         $scope.complaints=data.complaints;
@@ -72,6 +75,7 @@
                     }
                 );
             }else if($scope.selectedCategory == "TARIFFS"){
+                $scope.preloader.send = true;
                 SearchService.getForTariffCategory($scope.page, $scope.size,$scope.partOfTariffName,$scope.tariffOrServiceStatus,$scope.tariffFor).then(
                     function (data) {
                         $scope.tariffs=data.tariffs;
@@ -84,6 +88,7 @@
                     }
                 );
             }else if($scope.selectedCategory == "SERVICES"){
+                $scope.preloader.send = true;
                 SearchService.getForServiceCategory($scope.page, $scope.size,$scope.partOfServiceName,$scope.lowerPrice,$scope.upperPrice,$scope.tariffOrServiceStatus).then(
                     function (data) {
                         $scope.services=data.services;
