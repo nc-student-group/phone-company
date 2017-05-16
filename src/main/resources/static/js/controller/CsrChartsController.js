@@ -58,7 +58,7 @@ angular.module('phone-company').controller('CsrChartsController', [
                 responseType: 'arraybuffer',
                 headers: {
                     'Content-type': 'application/json',
-                    'Accept': 'application/vnd.ms-excel'
+                    'Accept': 'application/octet-stream'
                 }
             }).success(function (data) {
                 $scope.preloader.send = false;
@@ -67,11 +67,10 @@ angular.module('phone-company').controller('CsrChartsController', [
                 });
                 let currentDate = new Date();
                 let uniqueIdentifier = currentDate >>> 3;
-                console.log(`{currentDate.getYear() ${currentDate.getYear()}`);
-                console.log(`{currentDate.getMonth() ${currentDate.getMonth()}`);
-                console.log(`{currentDate.getDay() ${currentDate.getDay()}`);
-                saveAs(blob, `report-${currentDate.getYear()}-${currentDate.getMonth()}-${currentDate.getDay()}-${uniqueIdentifier}.xlsx`);
-            }).error(function () {
+                saveAs(blob, `report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}-${uniqueIdentifier}.xlsx`);
+            }).error(function (error) {
+                console.log(`Error ${JSON.stringify(error)}`);
+                toastr.info("There were no tariff orders in this region during this period");
                 $scope.preloader.send = false;
             });
         };

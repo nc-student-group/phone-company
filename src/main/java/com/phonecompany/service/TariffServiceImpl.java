@@ -1,7 +1,9 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
@@ -19,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
-@SuppressWarnings("Duplicates")
-@Service
+@ServiceStereotype
 public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         implements TariffService, ExtendedStatisticsGenerating<LocalDate, Long> {
 
@@ -31,22 +32,19 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
-    private XSSFService xssfService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
                              FileService fileService,
                              OrderService orderService,
-                             CustomerTariffService customerTariffService,
-                             XSSFService xssfService) {
+                             CustomerTariffService customerTariffService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
-        this.xssfService = xssfService;
     }
 
     @Override
@@ -404,10 +402,13 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
         List<OrderStatistics> statisticsList = this.orderService
                 .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+        if (statisticsList.size() == 0) {
+            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+                    "this period");
+        }
 
         return orderService.prepareExcelSheetDataSet("Tariffs", statisticsList);
     }
-
 
 
     @Override
@@ -421,11 +422,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             throw new ConflictException("Incorrect parameter: tariff status.");
         }
 
-        if (category.equals("COMPANY")){
-            query.and().addCondition("is_corporate=?",true);
-        }else if (category.equals("PRIVATE")){
-            query.and().addCondition("is_corporate=?",false);
-        }else if(!category.equals("-")){
+        if (category.equals("COMPANY")) {
+            query.and().addCondition("is_corporate=?", true);
+        } else if (category.equals("PRIVATE")) {
+            query.and().addCondition("is_corporate=?", false);
+        } else if (!category.equals("-")) {
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
         query.addPaging(page, size);
@@ -442,11 +443,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             throw new ConflictException("Incorrect parameter: tariff status.");
         }
 
-        if (category.equals("COMPANY")){
-            query.and().addCondition("is_corporate=?",true);
-        }else if (category.equals("PRIVATE")){
-            query.and().addCondition("is_corporate=?",false);
-        }else if(!category.equals("-")){
+        if (category.equals("COMPANY")) {
+            query.and().addCondition("is_corporate=?", true);
+        } else if (category.equals("PRIVATE")) {
+            query.and().addCondition("is_corporate=?", false);
+        } else if (!category.equals("-")) {
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
         return tariffDao.getAllTariffsSearch(query.build()).size();

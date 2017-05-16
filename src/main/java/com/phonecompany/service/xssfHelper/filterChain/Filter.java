@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public abstract class Filter<K> {
 
-    protected Filter<?> successor;
-    protected K filteringKey;
+    Filter<?> successor;
+    K filteringKey;
 
     public Filter(K filteringKey) {
         this.filteringKey = filteringKey;
@@ -21,8 +21,8 @@ public abstract class Filter<K> {
 
     public abstract List<OrderStatistics> doFilter(List<OrderStatistics> statisticsList);
 
-    protected List<OrderStatistics> filterOutStatistics(List<OrderStatistics> statisticsList,
-                                                        Predicate<OrderStatistics> filteringPredicate) {
+    List<OrderStatistics> filterOutStatistics(List<OrderStatistics> statisticsList,
+                                              Predicate<OrderStatistics> filteringPredicate) {
         return statisticsList
                 .stream()
                 .filter(filteringPredicate)

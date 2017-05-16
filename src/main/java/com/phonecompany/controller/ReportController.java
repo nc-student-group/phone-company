@@ -53,7 +53,7 @@ public class ReportController {
         this.xssfService = xssfService;
     }
 
-    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
+    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/octet-stream")
     public ResponseEntity<?> getTariffReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                   @PathVariable("startDate")
                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
