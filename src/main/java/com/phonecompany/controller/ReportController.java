@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -37,9 +34,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class ReportController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportController.class);
-    private static final String EXCEL_EXTENSION = "xlsx";
-    private static final String CURRENT_DIRECTORY = "./";
-
     private TariffService tariffService;
     private OrderService orderService;
     private ComplaintService complaintService;
@@ -59,15 +53,10 @@ public class ReportController {
         this.xssfService = xssfService;
     }
 
-    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}",
-            method = GET, produces = "application/octet-stream")
-    public ResponseEntity<?> getTariffReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
-                                                                  @PathVariable("startDate")
-                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                          LocalDate startDate,
-                                                                  @PathVariable("endDate")
-                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                          LocalDate endDate) {
+    @RequestMapping(value = "/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/octet-stream")
+    public ResponseEntity<?> getOrderReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
+                                                                 @PathVariable("startDate") LocalDate startDate,
+                                                                 @PathVariable("endDate") LocalDate endDate) {
         List<Statistics> tariffStatisticsData = this.tariffService
                 .getTariffStatisticsData(regionId, startDate, endDate);
 
@@ -75,53 +64,25 @@ public class ReportController {
                 .prepareStatisticsDataSet("Tariffs", tariffStatisticsData,
                         startDate, endDate);
 
-        xssfService.generateReport(tariffStatisticsDataSet);
+        InputStream reportInputStream = xssfService.generateReport(tariffStatisticsDataSet);
 
-        InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
+        return this.getOctetStreamResponseEntity(reportInputStream);
 
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(xlsFileInputStream));
     }
 
-    @RequestMapping(value = "/complaint/{regionId}/{startDate}/{endDate}",
-            method = GET, produces = "application/vnd.ms-excel")
+    @RequestMapping(value = "/complaint/{regionId}/{startDate}/{endDate}", method = GET, produces = "application/vnd.ms-excel")
     public ResponseEntity<?> getComplaintReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
-                                                                     @PathVariable("startDate")
-                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                             LocalDate startDate,
-                                                                     @PathVariable("endDate")
-                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                             LocalDate endDate) {
-
-        LOG.debug("Creating complaint report");
-        long startTime = System.currentTimeMillis();
+                                                                     @PathVariable("startDate") LocalDate startDate,
+                                                                     @PathVariable("endDate") LocalDate endDate) {
         List<Statistics> complaintStatistics = this.complaintService
                 .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
         SheetDataSet<LocalDate, Long> complaintsDataSet = this.statisticsService
                 .prepareStatisticsDataSet("Complaints", complaintStatistics,
                         startDate, endDate);
-        xssfService.generateReport(complaintsDataSet);
-        LOG.debug("Time taken: {} ms", System.currentTimeMillis() - startTime);
+        InputStream reportInputStream = xssfService.generateReport(complaintsDataSet);
 
-        InputStream xlsFileInputStream = this.getXlsStreamFromRootDirectory();
-
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(xlsFileInputStream));
-    }
-
-    private InputStream getXlsStreamFromRootDirectory() {
-        try {
-            File[] files = getFilesWithExtensionFromPath(EXCEL_EXTENSION, CURRENT_DIRECTORY);
-            return new FileInputStream(files[files.length - 1]);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return this.getOctetStreamResponseEntity(reportInputStream);
     }
 
     @GetMapping("/order-statistics")
@@ -138,5 +99,12 @@ public class ReportController {
         WeeklyComplaintStatistics complaintStatistics = this.complaintService.getComplaintStatistics();
 
         return new ResponseEntity<>(complaintStatistics, HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> getOctetStreamResponseEntity(InputStream inputStream) {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(inputStream));
     }
 }

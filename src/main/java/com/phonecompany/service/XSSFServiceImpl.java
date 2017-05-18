@@ -17,24 +17,19 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @ServiceStereotype
 public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XSSFService.class);
-
-    private static final String FILE_NAME = "report-";
-    private static final String FILE_FORMAT = ".xlsx";
     private static final int CHART_HEIGHT = 15;
     private static final int FIRST_ROW_INDEX = 0;
     private int distanceBetweenTables = 25;
 
     @Override
-    public void generateReport(SheetDataSet<K, V> excelSheet) {
+    public InputStream generateReport(SheetDataSet<K, V> excelSheet) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         String sheetName = excelSheet.getSheetName();
         XSSFSheet sheet = workbook.createSheet(sheetName);
@@ -44,7 +39,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             this.createTable(sheet, rowPosition, tableDataSet);
             rowPosition += distanceBetweenTables;
         }
-        this.saveWorkBook(workbook);
+        return this.saveWorkBook(workbook);
     }
 
 
@@ -273,15 +268,15 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      *
      * @param workbook workbook to save.
      */
-    private void saveWorkBook(XSSFWorkbook workbook) {
-        try {
-            FileOutputStream out = new FileOutputStream(FILE_NAME + LocalDate.now() + FILE_FORMAT);
-            workbook.write(out);
+    private InputStream saveWorkBook(XSSFWorkbook workbook) {
+        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            workbook.write(byteArrayOutputStream);
             workbook.close();
-            out.flush();
-            out.close();
+            byteArrayOutputStream.flush();
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

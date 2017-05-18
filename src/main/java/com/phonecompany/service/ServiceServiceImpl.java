@@ -182,18 +182,4 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         }
         return serviceDao.getAllServicesSearch(query.build()).size();
     }
-
-    @Override
-    public SheetDataSet<LocalDate, Long> prepareStatisticsReportDataSet(LocalDate startDate,
-                                                                        LocalDate endDate) {
-        List<Order> serviceOrders = this.orderService.getServiceOrdersByTimePeriod(startDate, endDate);
-
-        GroupingStrategy<Order, String> servicesGroupingStrategy = new ServiceGroupingStrategy();
-
-        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
-                .getProductNamesToOrdersMap(serviceOrders, servicesGroupingStrategy);
-
-
-        return null;
-    }
 }

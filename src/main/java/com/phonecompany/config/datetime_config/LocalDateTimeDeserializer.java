@@ -1,4 +1,4 @@
-package com.phonecompany.config;
+package com.phonecompany.config.datetime_config;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
