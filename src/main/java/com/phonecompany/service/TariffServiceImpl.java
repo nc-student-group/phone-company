@@ -11,11 +11,11 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ import java.util.*;
 
 @ServiceStereotype
 public class TariffServiceImpl extends CrudServiceImpl<Tariff>
-        implements TariffService, ExtendedStatisticsGenerating<LocalDate, Long> {
+        implements TariffService, ExtendedStatisticsGenerating<LocalDate> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -397,17 +397,17 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
      * @return fully constructed {@link SheetDataSet}
      */
     @Override
-    public SheetDataSet<LocalDate, Long> prepareStatisticsDataSet(long regionId, LocalDate startDate,
-                                                                  LocalDate endDate) {
+    public List<Statistics> getTariffStatisticsData(long regionId, LocalDate startDate,
+                                                    LocalDate endDate) {
 
-        List<OrderStatistics> statisticsList = this.orderService
+        List<Statistics> statisticsList = this.orderService
                 .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
         if (statisticsList.size() == 0) {
             throw new EmptyResultSetException("There were no tariff orders in this region during " +
                     "this period");
         }
 
-        return orderService.prepareExcelSheetDataSet("Tariffs", statisticsList);
+        return statisticsList;
     }
 
 

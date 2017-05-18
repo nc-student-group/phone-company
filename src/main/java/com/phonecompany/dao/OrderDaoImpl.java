@@ -11,6 +11,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.model.proxy.DynamicProxy;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
+@SuppressWarnings("Duplicates")
 @Repository
 public class OrderDaoImpl extends CrudDaoImpl<Order>
         implements OrderDao {
@@ -308,9 +310,9 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
     }
 
     @Override
-    public List<OrderStatistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                                         LocalDate startDate,
-                                                                         LocalDate endDate) {
+    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                    LocalDate startDate,
+                                                                    LocalDate endDate) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
         try {
@@ -319,9 +321,9 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
             ps.setDate(2, toSqlDate(startDate));
             ps.setDate(3, toSqlDate(endDate));
             ResultSet rs = ps.executeQuery();
-            List<OrderStatistics> statisticsList = new ArrayList<>();
+            List<Statistics> statisticsList = new ArrayList<>();
             while (rs.next()) {
-                statisticsList.add(this.createStatisticsObject(rs));
+                statisticsList.add(this.createOrderStatisticsObject(rs));
             }
             return statisticsList;
         } catch (SQLException e) {
@@ -334,11 +336,11 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
         }
     }
 
-    private OrderStatistics createStatisticsObject(ResultSet rs) throws SQLException {
+    private OrderStatistics createOrderStatisticsObject(ResultSet rs) throws SQLException {
         return new OrderStatistics(rs.getLong("order_count"),
                 rs.getString("tariff_name"),
-                TypeMapper.toLocalDate(rs.getDate("creation_date")),
-                OrderType.valueOf(rs.getString("type")));
+                OrderType.valueOf(rs.getString("type")),
+                TypeMapper.toLocalDate(rs.getDate("creation_date")));
     }
 
     @Override

@@ -9,8 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+//TODO: please, remove all these unnecessary public access modifiers
 public interface TariffService extends CrudService<Tariff>,
-        ExtendedStatisticsGenerating<LocalDate, Long> {
+        ExtendedStatisticsGenerating<LocalDate> {
 
     List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
 

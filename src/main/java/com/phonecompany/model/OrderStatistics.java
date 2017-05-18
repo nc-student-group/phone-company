@@ -1,38 +1,44 @@
 package com.phonecompany.model;
 
+import com.phonecompany.model.enums.ItemType;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.time.LocalDate;
 
-public final class OrderStatistics {
+public final class OrderStatistics implements Statistics {
 
     private final long count;
     private final String targetName;
-    private final LocalDate creationDate;
     private final OrderType orderType;
+    private final LocalDate creationDate;
 
     public OrderStatistics(long count, String targetName,
-                           LocalDate creationDate, OrderType orderType) {
+                           OrderType orderType, LocalDate creationDate) {
         this.count = count;
         this.targetName = targetName;
-        this.creationDate = creationDate;
         this.orderType = orderType;
+        this.creationDate = creationDate;
     }
 
+    @Override
     public long getCount() {
         return count;
     }
 
-    public String getTargetName() {
+    @Override
+    public String getItemName() {
         return targetName;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    @Override
+    public ItemType getItemType() {
+        return orderType;
     }
 
-    public OrderType getOrderType() {
-        return orderType;
+    @Override
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     @Override
@@ -40,8 +46,8 @@ public final class OrderStatistics {
         return "OrderStatistics{" +
                 "count=" + count +
                 ", targetName='" + targetName + '\'' +
-                ", creationDate=" + creationDate +
                 ", orderType=" + orderType +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }

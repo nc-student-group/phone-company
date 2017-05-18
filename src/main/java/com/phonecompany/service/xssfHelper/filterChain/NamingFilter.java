@@ -1,6 +1,6 @@
 package com.phonecompany.service.xssfHelper.filterChain;
 
-import com.phonecompany.model.OrderStatistics;
+import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -14,10 +14,10 @@ public class NamingFilter extends Filter<String> {
     }
 
     @Override
-    public List<OrderStatistics> doFilter(List<OrderStatistics> statisticsList) {
-        Predicate<OrderStatistics> targetNamePredicate =
+    public List<Statistics> doFilter(List<Statistics> statisticsList) {
+        Predicate<Statistics> targetNamePredicate =
                 getStatisticsByTargetNamePredicate(filteringKey);
-        List<OrderStatistics> filteredStatistics = this
+        List<Statistics> filteredStatistics = this
                 .filterOutStatistics(statisticsList, targetNamePredicate);
         return successor.doFilter(filteredStatistics);
     }

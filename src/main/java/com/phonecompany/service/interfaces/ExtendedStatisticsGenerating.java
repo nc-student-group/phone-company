@@ -1,9 +1,11 @@
 package com.phonecompany.service.interfaces;
 
-import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.Statistics;
 
-public interface ExtendedStatisticsGenerating<K, V> {
-    SheetDataSet<K, V> prepareStatisticsDataSet(long identifier,
-                                                K startingCondition,
-                                                K endingCondition);
+import java.util.List;
+
+public interface ExtendedStatisticsGenerating<K> {
+    List<Statistics> getTariffStatisticsData(long identifier,
+                                             K startingCondition,
+                                             K endingCondition);
 }

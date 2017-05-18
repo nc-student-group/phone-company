@@ -1,6 +1,6 @@
 package com.phonecompany.model.enums;
 
-public enum OrderType {
+public enum OrderType implements ItemType {
     ACTIVATION,
     SUSPENSION,
     RESUMING,

@@ -25,12 +25,13 @@ import java.util.List;
 @ServiceStereotype
 public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(XSSFService.class);
+
     private static final String FILE_NAME = "report-";
     private static final String FILE_FORMAT = ".xlsx";
     private static final int CHART_HEIGHT = 15;
     private static final int FIRST_ROW_INDEX = 0;
     private int distanceBetweenTables = 25;
-
 
     @Override
     public void generateReport(SheetDataSet<K, V> excelSheet) {

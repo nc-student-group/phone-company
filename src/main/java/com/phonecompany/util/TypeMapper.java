@@ -1,8 +1,9 @@
 package com.phonecompany.util;
 
 import com.phonecompany.model.*;
-import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.enums.ItemType;
 import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.service.xssfHelper.Statistics;
 import org.springframework.util.Assert;
 
 import java.sql.Date;
@@ -81,15 +82,15 @@ public class TypeMapper {
         };
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByTargetNamePredicate(String targetName) {
-        return statistics -> statistics.getTargetName().equals(targetName);
+    public static Predicate<Statistics> getStatisticsByTargetNamePredicate(String targetName) {
+        return statistics -> statistics.getItemName().equals(targetName);
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByOrderTypePredicate(OrderType orderType) {
-        return statistics -> statistics.getOrderType().equals(orderType);
+    public static Predicate<Statistics> getStatisticsByOrderTypePredicate(ItemType itemType) {
+        return statistics -> statistics.getItemType().equals(itemType);
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByLocalDatePredicate(LocalDate date) {
+    public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
         return statistics -> statistics.getCreationDate().equals(date);
     }
 }
