@@ -9,8 +9,6 @@ angular.module('phone-company').controller('PmgChartsController', [
     'ChartService',
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
-        $scope.message = 'PMG Charts page';
-
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
         });
@@ -70,7 +68,7 @@ angular.module('phone-company').controller('PmgChartsController', [
             else {
                 $scope.preloader.send = true;
                 $http({
-                    url: `api/reports/complaint/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
+                    url: `api/reports/complaints/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
                     method: 'GET',
                     responseType: 'arraybuffer',
                     headers: {

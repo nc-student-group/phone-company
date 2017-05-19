@@ -11,7 +11,7 @@ import java.util.Map;
 
 //TODO: please, remove all these unnecessary public access modifiers
 public interface TariffService extends CrudService<Tariff>,
-        ExtendedStatisticsGenerating<LocalDate> {
+        ExtendedStatisticsGenerating<LocalDate, Long> {
 
     List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
 

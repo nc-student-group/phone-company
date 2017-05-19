@@ -29,7 +29,7 @@ public interface ComplaintService extends CrudService<Complaint> {
 
     public WeeklyComplaintStatistics getComplaintStatistics();
 
-    List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
-                                                                 LocalDate startDate,
-                                                                 LocalDate endDate);
+    SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
+                                                                LocalDate startDate,
+                                                                LocalDate endDate);
 }

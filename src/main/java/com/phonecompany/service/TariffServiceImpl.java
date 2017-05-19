@@ -23,7 +23,7 @@ import java.util.*;
 
 @ServiceStereotype
 public class TariffServiceImpl extends CrudServiceImpl<Tariff>
-        implements TariffService, ExtendedStatisticsGenerating<LocalDate> {
+        implements TariffService, ExtendedStatisticsGenerating<LocalDate, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -32,19 +32,22 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
                              TariffRegionService tariffRegionService,
                              FileService fileService,
                              OrderService orderService,
-                             CustomerTariffService customerTariffService) {
+                             CustomerTariffService customerTariffService,
+                             StatisticsService<LocalDate, Long> statisticsService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -397,19 +400,19 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
      * @return fully constructed {@link SheetDataSet}
      */
     @Override
-    public List<Statistics> getTariffStatisticsData(long regionId, LocalDate startDate,
-                                                    LocalDate endDate) {
-
+    public SheetDataSet<LocalDate, Long> getTariffStatisticsDataSet(long regionId,
+                                                                    LocalDate startDate,
+                                                                    LocalDate endDate) {
         List<Statistics> statisticsList = this.orderService
                 .getTariffOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
         if (statisticsList.size() == 0) {
             throw new EmptyResultSetException("There were no tariff orders in this region during " +
                     "this period");
         }
-
-        return statisticsList;
+        return statisticsService
+                .prepareStatisticsDataSet("Tariffs", statisticsList,
+                        startDate, endDate);
     }
-
 
     @Override
     public List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category) {

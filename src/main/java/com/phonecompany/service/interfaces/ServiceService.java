@@ -3,11 +3,10 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-import com.phonecompany.service.xssfHelper.Statistics;
-
-import java.util.List;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface ServiceService extends CrudService<Service> {
 
@@ -24,5 +23,5 @@ public interface ServiceService extends CrudService<Service> {
 
     int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
 
-    List<Statistics> getServiceStatisticsData(LocalDate startDate, LocalDate endDate);
+    SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate);
 }

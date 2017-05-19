@@ -1,17 +1,21 @@
 package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
+import com.phonecompany.exception.InsufficientFilteringException;
 import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
 import com.phonecompany.service.xssfHelper.filterChain.Filter;
 import com.phonecompany.service.xssfHelper.filterChain.ItemTypeFilter;
 import com.phonecompany.service.xssfHelper.filterChain.NamingFilter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @ServiceStereotype
-public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl
-        implements StatisticsService {
+public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<LocalDate, Long>
+        implements StatisticsService<LocalDate, Long> {
 
     @Override
     public Filter<?> createFilterChain(String itemName, ItemType itemType, LocalDate datePoint) {
@@ -22,5 +26,32 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl
         orderTypeFilter.setSuccessor(namingFilter);
         namingFilter.setSuccessor(dateFilter);
         return orderTypeFilter;
+    }
+
+    @Override
+    public Long getOrderNumber(List<Statistics> statisticsList) {
+            this.validateStatisticsList(statisticsList);
+            if (statisticsList.size() == 0) {
+                return 0L;
+            }
+            return statisticsList.get(0).getCount();
+    }
+
+    private void validateStatisticsList(List<Statistics> statisticsList) {
+        int statisticsListSize = statisticsList.size();
+        if (statisticsListSize > 1 || statisticsListSize < 0) {
+            throw new InsufficientFilteringException(statisticsList);
+        }
+    }
+
+    @Override
+    public List<LocalDate> generateTimeLine(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> timeLine = new ArrayList<>();
+        while (startDate.isBefore(endDate)) {
+            timeLine.add(startDate);
+            startDate = startDate.plusDays(1);
+        }
+        timeLine.add(startDate);
+        return timeLine;
     }
 }

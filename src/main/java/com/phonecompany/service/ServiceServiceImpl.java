@@ -9,7 +9,6 @@ import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.Order;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
@@ -18,10 +17,8 @@ import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.FileService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.ServiceService;
-import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
-import com.phonecompany.service.xssfHelper.strategies.ServiceGroupingStrategy;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -31,7 +28,6 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ServiceStereotype
@@ -46,19 +42,22 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private FileService fileService;
     private CustomerService customerService;
     private OrderService orderService;
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
                               FileService fileService,
                               CustomerService customerService,
-                              OrderService orderService) {
+                              OrderService orderService,
+                              StatisticsService<LocalDate, Long> statisticsService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
         this.customerService = customerService;
         this.orderService = orderService;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -155,13 +154,15 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public List<Statistics> getServiceStatisticsData(LocalDate startDate, LocalDate endDate) {
+    public SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate) {
         List<Statistics> statisticsList = this.orderService.getServiceOrderStatisticsByTimePeriod(startDate, endDate);
         if (statisticsList.size() == 0) {
             throw new EmptyResultSetException("There were no tariff orders in this region during " +
                     "this period");
         }
-        return statisticsList;
+        return statisticsService
+                .prepareStatisticsDataSet("Services", statisticsList,
+                        startDate, endDate);
     }
 
     @Override

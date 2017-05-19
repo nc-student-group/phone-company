@@ -37,13 +37,16 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
     private ComplaintDao complaintDao;
     private UserService userService;
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Autowired
     public ComplaintServiceImpl(ComplaintDao complaintDao,
-                                UserService userService) {
+                                UserService userService,
+                                StatisticsService<LocalDate, Long> statisticsService) {
         super(complaintDao);
         this.complaintDao = complaintDao;
         this.userService = userService;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -181,9 +184,15 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     }
 
     @Override
-    public List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
-                                                                        LocalDate startDate,
-                                                                        LocalDate endDate) {
-        return this.complaintDao.getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+    public SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
+                                                          LocalDate startDate,
+                                                          LocalDate endDate) {
+
+        List<Statistics> statisticsList = this.complaintDao
+                .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+
+        return this.statisticsService
+                .prepareStatisticsDataSet("Complaints", statisticsList,
+                        startDate, endDate);
     }
 }

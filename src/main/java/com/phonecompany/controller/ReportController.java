@@ -30,11 +30,11 @@ import static com.phonecompany.service.xssfHelper.SheetDataSet.combine;
 public class ReportController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportController.class);
+
     private TariffService tariffService;
     private ServiceService serviceService;
     private OrderService orderService;
     private ComplaintService complaintService;
-    private StatisticsService statisticsService;
     private XSSFService<LocalDate, Long> xssfService;
 
     @Autowired
@@ -42,13 +42,11 @@ public class ReportController {
                             ServiceService serviceService,
                             OrderService orderService,
                             ComplaintService complaintService,
-                            StatisticsService statisticsService,
                             XSSFService<LocalDate, Long> xssfService) {
         this.tariffService = tariffService;
         this.serviceService = serviceService;
         this.orderService = orderService;
         this.complaintService = complaintService;
-        this.statisticsService = statisticsService;
         this.xssfService = xssfService;
     }
 
@@ -56,19 +54,14 @@ public class ReportController {
     public ResponseEntity<?> getOrderReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                  @PathVariable("startDate") LocalDate startDate,
                                                                  @PathVariable("endDate") LocalDate endDate) {
-        List<Statistics> tariffStatisticsData = this.tariffService
-                .getTariffStatisticsData(regionId, startDate, endDate);
-        List<Statistics> servicesStatisticsData = this.serviceService
-                .getServiceStatisticsData(startDate, endDate);
+        SheetDataSet<LocalDate, Long> tariffStatisticsDataSet = this.tariffService
+                .getTariffStatisticsDataSet(regionId, startDate, endDate);
 
-        SheetDataSet<LocalDate, Long> tariffsStatisticsDataSet = statisticsService
-                .prepareStatisticsDataSet("Tariffs", tariffStatisticsData,
-                        startDate, endDate);
-        SheetDataSet<LocalDate, Long> servicesStatisticsDataSet = statisticsService
-                .prepareStatisticsDataSet("Services", servicesStatisticsData,
-                        startDate, endDate);
+        SheetDataSet<LocalDate, Long> servicesStatisticsDataSet = this.serviceService
+                .getServiceStatisticsDataSet(startDate, endDate);
 
-        BookDataSet<LocalDate, Long> bookDataSet = combine(tariffsStatisticsDataSet, servicesStatisticsDataSet);
+        BookDataSet<LocalDate, Long> bookDataSet = combine(tariffStatisticsDataSet,
+                servicesStatisticsDataSet);
 
         InputStream reportInputStream = xssfService.generateReport(bookDataSet);
 
@@ -76,21 +69,17 @@ public class ReportController {
 
     }
 
-    @GetMapping(value = "/complaint/{regionId}/{startDate}/{endDate}", produces = "application/octet-stream")
+    @GetMapping(value = "/complaints/{regionId}/{startDate}/{endDate}", produces = "application/octet-stream")
     public ResponseEntity<?> getComplaintReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                      @PathVariable("startDate") LocalDate startDate,
                                                                      @PathVariable("endDate") LocalDate endDate) {
-        List<Statistics> complaintStatistics = this.complaintService
-                .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
-
-        SheetDataSet<LocalDate, Long> complaintsDataSet = this.statisticsService
-                .prepareStatisticsDataSet("Complaints", complaintStatistics,
-                        startDate, endDate);
+        SheetDataSet<LocalDate, Long> complaintStatisticsDataSet = this.complaintService
+                .getComplaintStatisticsDataSet(regionId, startDate, endDate);
 
         BookDataSet<LocalDate, Long> bookDataSet = new BookDataSet<>();
 
         InputStream reportInputStream = xssfService
-                .generateReport(bookDataSet.addSheet(complaintsDataSet));
+                .generateReport(bookDataSet.addSheet(complaintStatisticsDataSet));
 
         return this.getOctetStreamResponseEntity(reportInputStream);
     }
