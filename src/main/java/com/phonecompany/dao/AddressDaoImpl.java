@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class AddressDaoImpl extends CrudDaoImpl<Address>
+public class AddressDaoImpl extends JdbcOperationsImpl<Address>
         implements AddressDao {
 
     private QueryLoader queryLoader;

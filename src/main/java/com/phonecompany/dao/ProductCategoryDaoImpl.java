@@ -15,7 +15,7 @@ import java.sql.*;
 
 @SuppressWarnings("Duplicates")
 @Repository
-public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
+public class ProductCategoryDaoImpl extends JdbcOperationsImpl<ProductCategory>
         implements ProductCategoryDao {
 
     private QueryLoader queryLoader;

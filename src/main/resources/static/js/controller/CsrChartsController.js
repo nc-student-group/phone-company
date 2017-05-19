@@ -53,12 +53,12 @@ angular.module('phone-company').controller('CsrChartsController', [
             console.log(`Converted end date ${convertedEndDate}`);
             $scope.preloader.send = true;
             $http({
-                url: `api/reports/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
+                url: `api/reports/orders/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
                 method: 'GET',
                 responseType: 'arraybuffer',
                 headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/octet-stream'
+                    'Content-type': 'application/json, application/json',
+                    'Accept': 'application/octet-stream, application/json'
                 }
             }).success(function (data) {
                 $scope.preloader.send = false;

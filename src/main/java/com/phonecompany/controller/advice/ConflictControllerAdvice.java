@@ -25,8 +25,10 @@ public class ConflictControllerAdvice {
     @ExceptionHandler(EmptyResultSetException.class)
     public ResponseEntity<?> emptyResultSetException(EmptyResultSetException e) {
         LOG.debug("e.getMessage: {}", e.getMessage());
+        LOG.debug("In handler method");
+        LOG.debug("e.getMessage: {}", e.getMessage());
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(e.getMessage(), headers, HttpStatus.BAD_REQUEST);
     }
 }

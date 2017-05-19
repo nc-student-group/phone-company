@@ -401,7 +401,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                                                     LocalDate endDate) {
 
         List<Statistics> statisticsList = this.orderService
-                .getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+                .getTariffOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
         if (statisticsList.size() == 0) {
             throw new EmptyResultSetException("There were no tariff orders in this region during " +
                     "this period");

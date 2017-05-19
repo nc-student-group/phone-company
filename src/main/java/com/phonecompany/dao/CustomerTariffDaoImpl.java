@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff>
+public class CustomerTariffDaoImpl extends JdbcOperationsImpl<CustomerTariff>
         implements CustomerTariffDao {
 
     private QueryLoader queryLoader;

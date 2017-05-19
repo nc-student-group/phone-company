@@ -3,20 +3,11 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.model.*;
-import com.phonecompany.model.enums.ItemType;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.OrderService;
-import com.phonecompany.service.xssfHelper.RowDataSet;
-import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.service.xssfHelper.TableDataSet;
-import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
-import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
-import com.phonecompany.service.xssfHelper.filterChain.Filter;
-import com.phonecompany.service.xssfHelper.filterChain.NamingFilter;
-import com.phonecompany.service.xssfHelper.filterChain.ItemTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 import java.time.LocalDate;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @ServiceStereotype
 public class OrderServiceImpl extends CrudServiceImpl<Order>
@@ -112,9 +100,14 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
-    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                                    LocalDate startDate,
-                                                                    LocalDate endDate) {
-        return this.orderDao.getOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+    public List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                          LocalDate startDate,
+                                                                          LocalDate endDate) {
+        return this.orderDao.getTariffsOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+    }
+
+    @Override
+    public List<Statistics> getServiceOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate) {
+        return this.orderDao.getServicesOrderStatisticsByTimePeriod(startDate, endDate);
     }
 }

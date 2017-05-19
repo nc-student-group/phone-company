@@ -72,28 +72,6 @@ public abstract class AbstractUserDaoImpl<T extends User>
     }
 
     @Override
-    public int getCountByKey(String key, String countQuery) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(countQuery);
-            ps.setString(1, key);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            return 0;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(key, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-    }
-
-    @Override
     public int getCountByEmail(String email) {
         return this.getCountByKey(email, this.getCountByEmailQuery());
     }

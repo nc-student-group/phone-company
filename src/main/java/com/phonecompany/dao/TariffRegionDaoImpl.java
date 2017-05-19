@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements TariffRegionDao {
+public class TariffRegionDaoImpl extends JdbcOperationsImpl<TariffRegion> implements TariffRegionDao {
 
     private QueryLoader queryLoader;
     private RegionDao regionDao;

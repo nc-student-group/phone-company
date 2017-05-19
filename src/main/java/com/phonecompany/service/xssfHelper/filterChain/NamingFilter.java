@@ -5,7 +5,7 @@ import com.phonecompany.service.xssfHelper.Statistics;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.phonecompany.util.TypeMapper.getStatisticsByTargetNamePredicate;
+import static com.phonecompany.util.TypeMapper.getStatisticsByItemNamePredicate;
 
 public class NamingFilter extends Filter<String> {
 
@@ -16,7 +16,7 @@ public class NamingFilter extends Filter<String> {
     @Override
     public List<Statistics> doFilter(List<Statistics> statisticsList) {
         Predicate<Statistics> targetNamePredicate =
-                getStatisticsByTargetNamePredicate(filteringKey);
+                getStatisticsByItemNamePredicate(filteringKey);
         List<Statistics> filteredStatistics = this
                 .filterOutStatistics(statisticsList, targetNamePredicate);
         return successor.doFilter(filteredStatistics);

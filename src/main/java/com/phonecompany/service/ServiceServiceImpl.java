@@ -6,6 +6,7 @@ import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Order;
@@ -17,6 +18,7 @@ import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.FileService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
 import com.phonecompany.service.xssfHelper.strategies.ServiceGroupingStrategy;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
@@ -150,6 +152,16 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @CacheClear
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
         this.serviceDao.updateServiceStatus(serviceId, productStatus);
+    }
+
+    @Override
+    public List<Statistics> getServiceStatisticsData(LocalDate startDate, LocalDate endDate) {
+        List<Statistics> statisticsList = this.orderService.getServiceOrderStatisticsByTimePeriod(startDate, endDate);
+        if (statisticsList.size() == 0) {
+            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+                    "this period");
+        }
+        return statisticsList;
     }
 
     @Override

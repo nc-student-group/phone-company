@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampaignServices>
+public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<MarketingCampaignServices>
         implements MarketingCampaignServicesDao {
 
     private QueryLoader queryLoader;

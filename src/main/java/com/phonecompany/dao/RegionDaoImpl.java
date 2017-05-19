@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class RegionDaoImpl extends CrudDaoImpl<Region> implements RegionDao {
+public class RegionDaoImpl extends JdbcOperationsImpl<Region> implements RegionDao {
 
     private QueryLoader queryLoader;
 

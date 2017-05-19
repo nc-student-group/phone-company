@@ -24,7 +24,7 @@ import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @Repository
-public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
+public class CustomerServiceDaoImpl extends JdbcOperationsImpl<CustomerServiceDto>
         implements CustomerServiceDao {
 
     private QueryLoader queryLoader;

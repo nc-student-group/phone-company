@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketingCampaignDaoImpl extends CrudDaoImpl<MarketingCampaign> implements MarketingCampaignDao {
+public class MarketingCampaignDaoImpl extends JdbcOperationsImpl<MarketingCampaign> implements MarketingCampaignDao {
 
     private QueryLoader queryLoader;
 

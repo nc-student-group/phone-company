@@ -1,5 +1,6 @@
 package com.phonecompany.service.xssfHelper;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,12 @@ public final class SheetDataSet<K, V> {
         TableDataSet<K, V> excelTable = new TableDataSet<>(tableName);
         tableDataSets.add(excelTable);
         return excelTable;
+    }
+
+    public static <K, V> BookDataSet<K, V> combine(SheetDataSet<K, V> firstSheet,
+                                                   SheetDataSet<K, V> secondSheet) {
+        BookDataSet<K, V> bookDataSet = new BookDataSet<>();
+        return bookDataSet.addSheet(firstSheet).addSheet(secondSheet);
     }
 
     @Override

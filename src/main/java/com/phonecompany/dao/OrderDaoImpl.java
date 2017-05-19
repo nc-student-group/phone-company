@@ -14,17 +14,13 @@ import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -35,12 +31,9 @@ import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
-@SuppressWarnings("Duplicates")
 @Repository
-public class OrderDaoImpl extends CrudDaoImpl<Order>
+public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         implements OrderDao {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
 
     private QueryLoader queryLoader;
 
@@ -310,37 +303,42 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
     }
 
     @Override
-    public List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                                    LocalDate startDate,
-                                                                    LocalDate endDate) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("tariff.statistics.by.region.and.time.period"));
-            ps.setLong(1, regionId);
-            ps.setDate(2, toSqlDate(startDate));
-            ps.setDate(3, toSqlDate(endDate));
-            ResultSet rs = ps.executeQuery();
-            List<Statistics> statisticsList = new ArrayList<>();
-            while (rs.next()) {
-                statisticsList.add(this.createOrderStatisticsObject(rs));
-            }
-            return statisticsList;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Could not extract service orders", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+    public List<Statistics> getTariffsOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                           LocalDate startDate,
+                                                                           LocalDate endDate) {
+        String query = this.getQuery("tariffs.statistics.by.region.and.time.period");
+        return this.executeForList(query, new Object[]{regionId, toSqlDate(startDate), toSqlDate(endDate)},
+                rs -> new OrderStatistics(rs.getLong("order_count"),
+                        rs.getString("tariff_name"),
+                        OrderType.valueOf(rs.getString("type")),
+                        TypeMapper.toLocalDate(rs.getDate("creation_date"))));
     }
 
-    private OrderStatistics createOrderStatisticsObject(ResultSet rs) throws SQLException {
-        return new OrderStatistics(rs.getLong("order_count"),
-                rs.getString("tariff_name"),
-                OrderType.valueOf(rs.getString("type")),
-                TypeMapper.toLocalDate(rs.getDate("creation_date")));
+    @Override
+    public List<Statistics> getServicesOrderStatisticsByTimePeriod(LocalDate startDate,
+                                                                   LocalDate endDate) {
+        CallableStatementCreator creator = this
+                .getServiceOrdersStatisticsCallableStatementCreator(startDate, endDate);
+        RowMapper<Statistics> rowMapper = this.getServiceOrdersStatisticsRowMapper();
+        return this.executeForList(creator, rowMapper);
+    }
+
+    private CallableStatementCreator getServiceOrdersStatisticsCallableStatementCreator(LocalDate startDate,
+                                                                                        LocalDate endDate) {
+        String query = this.getQuery("services.statistics.by.time.period");
+        return con -> {
+            CallableStatement callableStatement = con.prepareCall(query);
+            callableStatement.setObject(1, toSqlDate(startDate));
+            callableStatement.setObject(2, toSqlDate(endDate));
+            return callableStatement;
+        };
+    }
+
+    private RowMapper<Statistics> getServiceOrdersStatisticsRowMapper() {
+        return rs -> new OrderStatistics(rs.getLong("order_count"),
+                rs.getString("s_name"),
+                OrderType.valueOf(rs.getString("s_type")),
+                TypeMapper.toLocalDate(rs.getDate("s_creation_date")));
     }
 
     @Override
@@ -369,7 +367,6 @@ public class OrderDaoImpl extends CrudDaoImpl<Order>
         WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
         while (rs.next()) {
             result.put(weekOfMonth, rs.getInt(1));
-            LOG.debug("weekOfMonth.next(): {}", weekOfMonth.next());
             weekOfMonth = weekOfMonth.next();
         }
         return result;

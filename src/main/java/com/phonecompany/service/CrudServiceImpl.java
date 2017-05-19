@@ -1,8 +1,6 @@
 package com.phonecompany.service;
 
-import com.phonecompany.annotations.CacheClear;
-import com.phonecompany.annotations.Cacheable;
-import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.JdbcOperations;
 import com.phonecompany.model.DomainEntity;
 import com.phonecompany.service.interfaces.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,9 @@ public abstract class CrudServiceImpl<T extends DomainEntity>
         implements CrudService<T> {
 
     @Autowired
-    protected CrudDao<T> dao;
+    protected JdbcOperations<T> dao;
 
-    public CrudServiceImpl(CrudDao<T> dao) {
+    public CrudServiceImpl(JdbcOperations<T> dao) {
         this.dao = dao;
     }
 

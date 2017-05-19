@@ -3,6 +3,7 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
+import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface ServiceService extends CrudService<Service> {
     List<Service> getAllServicesSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
 
     int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
+
+    List<Statistics> getServiceStatisticsData(LocalDate startDate, LocalDate endDate);
 }

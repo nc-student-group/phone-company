@@ -33,7 +33,9 @@ public interface OrderService extends CrudService<Order> {
 
     WeeklyOrderStatistics getOrderStatistics();
 
-    List<Statistics> getOrderStatisticsByRegionAndTimePeriod(long regionId,
-                                                             LocalDate startDate,
-                                                             LocalDate endDate);
+    List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                   LocalDate startDate,
+                                                                   LocalDate endDate);
+
+    List<Statistics> getServiceOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate);
 }

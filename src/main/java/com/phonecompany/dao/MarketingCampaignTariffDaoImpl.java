@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaignTariff> implements MarketingCampaignTariffDao{
+public class MarketingCampaignTariffDaoImpl extends JdbcOperationsImpl<MarketingCampaignTariff> implements MarketingCampaignTariffDao{
 
     private QueryLoader queryLoader;
     private MarketingCampaignDao marketingCampaignDao;

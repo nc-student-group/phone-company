@@ -2,10 +2,10 @@ package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.service.interfaces.XSSFService;
+import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.TableDataSet;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -14,38 +14,56 @@ import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.xssf.usermodel.charts.XSSFLineChartData;
 import org.javatuples.Pair;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.time.LocalDate;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+
+import static org.apache.poi.ss.usermodel.CellType.STRING;
+import static org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER;
+import static org.apache.poi.ss.util.CellUtil.setAlignment;
 
 @ServiceStereotype
 public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(XSSFServiceImpl.class);
+
     private static final int CHART_HEIGHT = 15;
     private static final int FIRST_ROW_INDEX = 0;
+    private static final String PLURAL_FORM = "S";
     private int distanceBetweenTables = 25;
 
-    @Override
-    public InputStream generateReport(SheetDataSet<K, V> excelSheet) {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        String sheetName = excelSheet.getSheetName();
-        XSSFSheet sheet = workbook.createSheet(sheetName);
 
-        int rowPosition = 0;
-        for (TableDataSet<K, V> tableDataSet : excelSheet.getTableDataSets()) {
-            this.createTable(sheet, rowPosition, tableDataSet);
-            rowPosition += distanceBetweenTables;
+    @Override
+    public InputStream generateReport(BookDataSet<K, V> book) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        for (SheetDataSet<K, V> sheetDataSet : book.getSheetDataSets()) {
+
+            String sheetName = sheetDataSet.getSheetName();
+            XSSFSheet sheet = workbook.createSheet(sheetName);
+
+            int rowPosition = 0;
+            for (TableDataSet<K, V> tableDataSet : sheetDataSet.getTableDataSets()) {
+                this.createTable(sheet, rowPosition, tableDataSet);
+                rowPosition += distanceBetweenTables;
+            }
         }
+
         return this.saveWorkBook(workbook);
     }
 
-
     private void createTable(XSSFSheet sheet, int rowPosition,
                              TableDataSet<K, V> tableDataSet) {
-        this.createTableHeading(sheet, rowPosition++, tableDataSet.getTableDataSetName());
+        String tableName = tableDataSet.getTableDataSetName() + PLURAL_FORM;
+        this.createTableHeading(sheet, rowPosition++, tableName);
         int initialRowPosition = rowPosition;
         for (RowDataSet<K, V> rowDataSet : tableDataSet.getRowDataSets()) {
             int colPosition = 1;
@@ -56,7 +74,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
         int rowValuesNumber = firstTableRow.getRowValues().size();
         distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
-        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber); //TODO: remove this side effect
+        this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber, tableName);
     }
 
     /**
@@ -70,8 +88,15 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 4));
         XSSFRow tableNameRow = sheet.createRow(rowIndex);
         XSSFCell tableNameCell = tableNameRow.createCell(2);
-        tableNameCell.setCellType(CellType.STRING);
+        setAlignment(tableNameCell, CENTER);
+        this.setHeadingCellStyle(tableNameCell);
+        tableNameCell.setCellType(STRING);
         tableNameCell.setCellValue(tableHeading);
+    }
+
+    private void setHeadingCellStyle(XSSFCell cell) {
+        XSSFSheet sheet = cell.getRow().getSheet();
+        sheet.autoSizeColumn(cell.getColumnIndex());
     }
 
     /**
@@ -85,7 +110,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     private XSSFRow generateRowHeading(XSSFSheet sheet, int rowIndex, String headingName) {
         XSSFRow row = sheet.createRow(rowIndex);
         XSSFCell cell = row.createCell(0);
-        cell.setCellType(CellType.STRING);
+        this.setHeadingCellStyle(cell);
+        cell.setCellType(STRING);
         cell.setCellValue(headingName);
         return row;
     }
@@ -127,7 +153,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         int cellPosition = 1;
         for (Pair<K, V> pair : rowValues) {
             XSSFCell cell = row.createCell(cellPosition++);
-            cell.setCellType(CellType.STRING);
+            this.setHeadingCellStyle(cell);
+            cell.setCellType(STRING);
             cell.setCellValue(pair.getValue0().toString());
         }
     }
@@ -139,12 +166,14 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      * @param initialRowPosition first row index of the table the chart will be generated for
      * @param rowIndex           last row index of the table the chart will be generated for
      * @param rowValuesNumber    number of values in the row
+     * @param chartTitle
      */
-    private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex, int rowValuesNumber) {
+    private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex,
+                           int rowValuesNumber, String chartTitle) {
 
         XSSFChart chart = this.createChart(sheet, rowIndex);//initialRowPosition + rowValuesNumber);
         this.useGapsOnBlankCells(chart);
-
+        this.setChartTitle(chart, chartTitle);
         // Create data for the chart
         XSSFLineChartData data = chart.getChartDataFactory().createLineChartData();
 
@@ -159,6 +188,17 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         // Plot the chart with the inputs from data and chart axis
         chart.plot(data, bottomAxis, leftAxis);
         this.noSmoothedLinesForChart(chart);
+    }
+
+    private void setChartTitle(XSSFChart chart, String chartName) {
+        CTChart ctChart = chart.getCTChart();
+        CTTitle title = ctChart.addNewTitle();
+        CTTx tx = title.addNewTx();
+        CTTextBody rich = tx.addNewRich();
+        rich.addNewBodyPr();  // body properties must exist, but can be empty
+        CTTextParagraph para = rich.addNewP();
+        CTRegularTextRun r = para.addNewR();
+        r.setT(chartName);
     }
 
     /**
@@ -242,8 +282,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     /**
      * Draws a line chart.
      *
-     * @param sheet     sheet containing data.
-     * @param rowIndex  row index that helps to calculate chart position
+     * @param sheet    sheet containing data.
+     * @param rowIndex row index that helps to calculate chart position
      */
     private XSSFChart createChart(XSSFSheet sheet, int rowIndex) {
         // Create a drawing canvas on the worksheet
@@ -269,14 +309,15 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      * @param workbook workbook to save.
      */
     private InputStream saveWorkBook(XSSFWorkbook workbook) {
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             workbook.write(byteArrayOutputStream);
-            workbook.close();
             byteArrayOutputStream.flush();
+            workbook.close();
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }

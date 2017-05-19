@@ -12,7 +12,7 @@ import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
 
-public interface ComplaintDao extends CrudDao<Complaint>,
+public interface ComplaintDao extends JdbcOperations<Complaint>,
         AbstractPageableDao<Complaint> {
     public List<Complaint> getAllComplaintsSearch(Query query);
 

@@ -82,11 +82,11 @@ public class TypeMapper {
         };
     }
 
-    public static Predicate<Statistics> getStatisticsByTargetNamePredicate(String targetName) {
+    public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
         return statistics -> statistics.getItemName().equals(targetName);
     }
 
-    public static Predicate<Statistics> getStatisticsByOrderTypePredicate(ItemType itemType) {
+    public static Predicate<Statistics> getStatisticsByItemTypePredicate(ItemType itemType) {
         return statistics -> statistics.getItemType().equals(itemType);
     }
 

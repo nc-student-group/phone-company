@@ -6,7 +6,7 @@ import com.phonecompany.model.enums.ItemType;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.phonecompany.util.TypeMapper.getStatisticsByOrderTypePredicate;
+import static com.phonecompany.util.TypeMapper.getStatisticsByItemTypePredicate;
 
 public class ItemTypeFilter extends Filter<ItemType> {
 
@@ -16,10 +16,10 @@ public class ItemTypeFilter extends Filter<ItemType> {
 
     @Override
     public List<Statistics> doFilter(List<Statistics> statisticsList) {
-        Predicate<Statistics> targetNamePredicate =
-                getStatisticsByOrderTypePredicate(filteringKey);
+        Predicate<Statistics> itemTypePredicate =
+                getStatisticsByItemTypePredicate(filteringKey);
         List<Statistics> filteredStatistics = this
-                .filterOutStatistics(statisticsList, targetNamePredicate);
+                .filterOutStatistics(statisticsList, itemTypePredicate);
         return successor.doFilter(filteredStatistics);
     }
 }
