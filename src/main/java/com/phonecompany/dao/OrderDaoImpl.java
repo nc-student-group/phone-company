@@ -1,5 +1,7 @@
 package com.phonecompany.dao;
 
+import com.phonecompany.dao.interfaces.CustomerServiceDao;
+import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.CrudException;
@@ -11,10 +13,11 @@ import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
-import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import com.phonecompany.util.interfaces.QueryLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -27,8 +30,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
-import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
@@ -36,13 +37,20 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         implements OrderDao {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
+
     private QueryLoader queryLoader;
+    private CustomerServiceDao customerServiceDao;
+    private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader) {
+    public OrderDaoImpl(QueryLoader queryLoader,
+                        CustomerServiceDao customerServiceDao,
+                        CustomerTariffDao customerTariffDao) {
         this.queryLoader = queryLoader;
+        this.customerServiceDao = customerServiceDao;
+        this.customerTariffDao = customerTariffDao;
     }
-
     @Override
     public String getQuery(String type) {
         return queryLoader.getQuery("query.order." + type);
@@ -84,9 +92,11 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         try {
             order.setId(rs.getLong("id"));
             long customerServiceId = rs.getLong("customer_service_id");
-            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+//            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            order.setCustomerService(customerServiceDao.getById(customerServiceId));
             long customerTariffId = rs.getLong("customer_tariff_id");
-            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+//            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+            order.setCustomerTariff(customerTariffDao.getById(customerTariffId));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
@@ -312,7 +322,7 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
                 rs -> new OrderStatistics(rs.getLong("order_count"),
                         rs.getString("tariff_name"),
                         OrderType.valueOf(rs.getString("type")),
-                        TypeMapper.toLocalDate(rs.getDate("creation_date"))));
+                        toLocalDate(rs.getDate("creation_date"))));
     }
 
     @Override
@@ -339,7 +349,7 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         return rs -> new OrderStatistics(rs.getLong("order_count"),
                 rs.getString("s_name"),
                 OrderType.valueOf(rs.getString("s_type")),
-                TypeMapper.toLocalDate(rs.getDate("s_creation_date")));
+                toLocalDate(rs.getDate("s_creation_date")));
     }
 
     @Override

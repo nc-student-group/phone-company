@@ -88,6 +88,7 @@ public abstract class JdbcOperationsImpl<T extends DomainEntity>
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         try {
+            String getByIdQuery = this.getQuery("getById");
             ps = conn.prepareStatement(this.getQuery("getById"));
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();

@@ -15,46 +15,33 @@ import java.util.function.Function;
  *
  * @param <T> proxy type
  */
-public class DynamicProxy<T> implements MethodInterceptor {
+public class DynamicProxy<S, T> implements MethodInterceptor {
 
     private T source = null; // real object should be lazily loaded
-    private Long sourceId;
-    private Function<Long, T> mapper;
+    private S resultSet;
+    private Function<S, T> mapper;
 
-    private DynamicProxy(Long sourceId,
-                         Function<Long, T> mapper) {
-        this.sourceId = sourceId;
+    private DynamicProxy(S resultSet,
+                         Function<S, T> mapper) {
+        this.resultSet = resultSet;
         this.mapper = mapper;
-    }
-
-    /**
-     * Loads real object only when it was requested
-     *
-     * @return real object
-     */
-    private T getSource() {
-        if (source == null) {
-            source = mapper.apply(sourceId);
-        }
-        return source;
     }
 
     /**
      * Creates a proxy object of type inferred by the generic type of the
      * {@code SourceMapper}.
      *
-     * @param sourceId     id that will be used by the respective mapper to
-     *                     load an object
+     * @param resultSet    result set that will be used by the respective
+     *                     mapper to load an object
      * @param sourceMapper object which is used to load an entity by its id
      * @param <T>          type of the entity to load
-     *
-     * @return             CGlib proxy object
-     * @see                SourceMappers
+     * @return CGlib proxy object
+     * @see SourceMappers
      */
-    public static <T> T newInstance(Long sourceId, SourceMapper<T> sourceMapper) {
+    public static <S, T> T newInstance(S resultSet, SourceMapper<S, T> sourceMapper) {
 
         Class<?> type = sourceMapper.getType();
-        Function<Long, T> mapper = sourceMapper.getMapper();
+        Function<S, T> mapper = sourceMapper.getMapper();
 
         /**
          * It is safe to make this kind of cast because due to
@@ -65,25 +52,35 @@ public class DynamicProxy<T> implements MethodInterceptor {
          */
         //noinspection unchecked
         return (T) Enhancer.create(type,
-                new DynamicProxy<>(sourceId, mapper));
+                new DynamicProxy<>(resultSet, mapper));
     }
 
     /**
      * Intercepts calls to the methods of the proxy to provide required functionality
      *
-     * @param obj          the enhanced object
-     * @param method       intercepted Method
-     * @param args         argument array; primitive types are wrapped
-     * @param methodProxy  used to invoke super (non-intercepted method); may be called
-     *                     as many times as needed
+     * @param obj         the enhanced object
+     * @param method      intercepted Method
+     * @param args        argument array; primitive types are wrapped
+     * @param methodProxy used to invoke super (non-intercepted method); may be called
+     *                    as many times as needed
      */
     @Override
     public Object intercept(Object obj, Method method, Object[] args,
                             MethodProxy methodProxy) throws Throwable {
         T source = this.getSource(); // loads real object
-        if(source == null) return null;
-
+        if (source == null) return null;
         return method.invoke(source, args);
     }
-}
 
+    /**
+     * Loads real object only when it was requested
+     *
+     * @return real object
+     */
+    private T getSource() {
+        if (source == null) {
+            source = mapper.apply(resultSet);
+        }
+        return source;
+    }
+}
