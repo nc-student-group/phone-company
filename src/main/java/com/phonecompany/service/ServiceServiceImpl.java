@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ServiceStereotype
@@ -166,33 +168,23 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
     @Override
     @Cacheable
-    public List<Service> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
-        Query.Builder query = new Query.Builder("service");
-        query.where();
-        query.addLikeCondition("service_name",name);
-        query.and().addCondition("price > ?",lowerPrice);
-        query.and().addCondition("price < ?",upperPrice);
+    public Map<String, Object> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
+        Query.Builder queryBuilder = new Query.Builder("service");
+        queryBuilder.where();
+        queryBuilder.addLikeCondition("service_name",name);
+        queryBuilder.and().addCondition("price > ?",lowerPrice);
+        queryBuilder.and().addCondition("price < ?",upperPrice);
         if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
-            query.and().addCondition("product_status = ?",status);
+            queryBuilder.and().addCondition("product_status = ?",status);
         }else if(!status.equals("-")){
             throw new ConflictException("Incorrect parameter: service status");
         }
-        query.addPaging(page,size);
-        return serviceDao.getAllServicesSearch(query.build());
-    }
+        queryBuilder.addPaging(page,size);
 
-    @Override
-    public int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice) {
-        Query.Builder query = new Query.Builder("service");
-        query.where();
-        query.addLikeCondition("service_name",name);
-        query.and().addCondition("price > ?",lowerPrice);
-        query.and().addCondition("price < ?",upperPrice);
-        if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
-            query.and().addCondition("product_status = ?",status);
-        }else if(!status.equals("-")){
-            throw new ConflictException("Incorrect parameter: service status");
-        }
-        return serviceDao.getAllServicesSearch(query.build()).size();
+        Map<String, Object> response = new HashMap<>();
+        Query query = queryBuilder.build();
+        response.put("services", serviceDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", serviceDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        return response;
     }
 }

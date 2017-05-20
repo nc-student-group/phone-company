@@ -131,36 +131,24 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
     @Override
     public Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category) {
-        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
-        query.where();
-        query.addLikeCondition("email", email);
+        Query.Builder queryBuilder = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
+        queryBuilder.where();
+        queryBuilder.addLikeCondition("email", email);
         if (!status.equals("-")) {
-            query.and().addCondition("complaint.status=?", status);
+            queryBuilder.and().addCondition("complaint.status=?", status);
         }
         if (!category.equals("-")) {
-            query.and().addCondition("complaint.type=?", category);
+            queryBuilder.and().addCondition("complaint.type=?", category);
         }
-        query.addPaging(page, size);
+        queryBuilder.addPaging(page, size);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("complaints", complaintDao.getByQuery(query.build()));
-        response.put("entitiesSelected", complaintDao.getCountByQuery(query.build()));
+        Query query = queryBuilder.build();
+        response.put("complaints", complaintDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
         return response;
     }
 
-    @Override
-    public int getCountSearch(int page, int size, String email, String status, String category) {
-        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
-        query.where();
-        query.addLikeCondition("dbuser.email", email);
-        if (!status.equals("-")) {
-            query.and().addCondition("complaint.status=?", status);
-        }
-        if (!category.equals("-")) {
-            query.and().addCondition("complaint.type=?", category);
-        }
-        return complaintDao.getAllComplaintsSearch(query.build()).size();
-    }
 
     @Override
     public WeeklyComplaintStatistics getComplaintStatistics() {

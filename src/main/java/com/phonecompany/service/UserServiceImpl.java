@@ -24,7 +24,9 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ServiceStereotype
 public class UserServiceImpl extends AbstractUserServiceImpl<User>
@@ -148,36 +150,26 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     }
 
     @Override
-    public List<User> getAllUsersSearch(int page,int size,String email, int userRole, String status) {
-        Query.Builder query = new Query.Builder("dbuser");
-        query.where().addLikeCondition("email",email);
+    public Map<String, Object> getAllUsersSearch(int page,int size,String email, int userRole, String status) {
+        Query.Builder queryBuilder = new Query.Builder("dbuser");
+        queryBuilder.where().addLikeCondition("email",email);
 
         if (userRole>0) {
-            query.and().addCondition("role_id = ?",userRole);
+            queryBuilder.and().addCondition("role_id = ?",userRole);
         }else if(userRole!=0){
             throw new ConflictException("Incorrect search parameter: user role.");
         }
 
         if(!status.equals("ALL")){
-            query.and().addCondition("status = ?",status);
+            queryBuilder.and().addCondition("status = ?",status);
         }
-        query.addPaging(page,size);
-        return userDao.getAllUsersSearch(query.build());
+        queryBuilder.addPaging(page,size);
+
+        Map<String, Object> response = new HashMap<>();
+        Query query = queryBuilder.build();
+        response.put("users", userDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", userDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        return response;
     }
 
-    @Override
-    public int getCountSearch(int page, int size, String email, int userRole, String status) {
-        Query.Builder query = new Query.Builder("dbuser");
-        query.where().addLikeCondition("email",email);
-
-        if (userRole>0) {
-            query.and().addCondition("role_id = ?",userRole);
-        }else if(userRole!=0){
-            throw new ConflictException("Incorrect search parameter: user role.");
-        }
-        if(!status.equals("ALL")){
-            query.and().addCondition("status = ?",status);
-        }
-        return userDao.getAllUsersSearch(query.build()).size();
-    }
 }
