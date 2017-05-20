@@ -1,8 +1,10 @@
 package com.phonecompany.service;
 
-import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.JdbcOperations;
 import com.phonecompany.model.DomainEntity;
 import com.phonecompany.service.interfaces.CrudService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -10,10 +12,12 @@ import java.util.List;
 public abstract class CrudServiceImpl<T extends DomainEntity>
         implements CrudService<T> {
 
-    @Autowired
-    protected CrudDao<T> dao;
+    private static final Logger LOG = LoggerFactory.getLogger(CrudServiceImpl.class);
 
-    public CrudServiceImpl(CrudDao<T> dao) {
+    @Autowired
+    protected JdbcOperations<T> dao;
+
+    public CrudServiceImpl(JdbcOperations<T> dao) {
         this.dao = dao;
     }
 

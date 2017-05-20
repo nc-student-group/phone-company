@@ -1,18 +1,26 @@
 package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.Complaint;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
 
+import java.time.LocalDate;
 import java.util.List;
+
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
-import java.util.List;
 
-public interface ComplaintDao extends CrudDao<Complaint>,
+public interface ComplaintDao extends JdbcOperations<Complaint>,
         AbstractPageableDao<Complaint> {
     public List<Complaint> getAllComplaintsSearch(Query query);
+
     public EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type);
+
     public List<Complaint> getComplaintsByRegionId(Long regionId);
+
+    List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
+                                                                 LocalDate startDate,
+                                                                 LocalDate endDate);
 }

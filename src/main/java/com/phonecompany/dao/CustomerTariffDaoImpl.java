@@ -9,7 +9,7 @@ import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.enums.CustomerProductStatus;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CustomerTariffDaoImpl extends CrudDaoImpl<CustomerTariff>
+public class CustomerTariffDaoImpl extends JdbcOperationsImpl<CustomerTariff>
         implements CustomerTariffDao {
 
     private QueryLoader queryLoader;

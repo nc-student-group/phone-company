@@ -6,7 +6,7 @@ import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaignTariff;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class MarketingCampaignTariffDaoImpl extends CrudDaoImpl<MarketingCampaignTariff> implements MarketingCampaignTariffDao{
+public class MarketingCampaignTariffDaoImpl extends JdbcOperationsImpl<MarketingCampaignTariff> implements MarketingCampaignTariffDao{
 
     private QueryLoader queryLoader;
     private MarketingCampaignDao marketingCampaignDao;

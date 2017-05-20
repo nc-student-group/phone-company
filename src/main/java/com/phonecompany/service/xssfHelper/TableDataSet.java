@@ -9,9 +9,9 @@ import java.util.List;
  *
  * <p>Consists of {@link RowDataSet} objects</p>
  *
- * @param <K> type of the objects that represent range of values
+ * @param <V> type of the objects that represent range of values
  *            (type of the values contained within an xls cell)
- * @param <V> type of the objects that represent range of definition
+ * @param <K> type of the objects that represent range of definition
  *            (type of the values contained within an xls column header)
  */
 public final class TableDataSet<K, V> {

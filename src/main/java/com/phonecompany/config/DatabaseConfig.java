@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.beans.PropertyVetoException;
 
-
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfig {

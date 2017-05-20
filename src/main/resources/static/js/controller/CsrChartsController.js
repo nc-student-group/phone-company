@@ -9,8 +9,6 @@ angular.module('phone-company').controller('CsrChartsController', [
     'ChartService',
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
-        $scope.message = 'Charts page';
-
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
         });
@@ -53,12 +51,12 @@ angular.module('phone-company').controller('CsrChartsController', [
             console.log(`Converted end date ${convertedEndDate}`);
             $scope.preloader.send = true;
             $http({
-                url: `api/reports/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
+                url: `api/reports/orders/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
                 method: 'GET',
                 responseType: 'arraybuffer',
                 headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/vnd.ms-excel'
+                    'Content-type': 'application/json, application/json',
+                    'Accept': 'application/octet-stream, application/json'
                 }
             }).success(function (data) {
                 $scope.preloader.send = false;
@@ -67,8 +65,10 @@ angular.module('phone-company').controller('CsrChartsController', [
                 });
                 let currentDate = new Date();
                 let uniqueIdentifier = currentDate >>> 3;
-                saveAs(blob, `report-${currentDate.getDay()}-${currentDate.getMonth()}-${currentDate.getYear()}-${uniqueIdentifier}.xlsx`);
-            }).error(function () {
+                saveAs(blob, `report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}-${uniqueIdentifier}.xlsx`);
+            }).error(function (error) {
+                console.log(`Error ${JSON.stringify(error)}`);
+                toastr.info("There were no tariff orders in this region during this period");
                 $scope.preloader.send = false;
             });
         };

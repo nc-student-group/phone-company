@@ -129,7 +129,7 @@
                                     </div>
                                 </md-input-container>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Locality</label>
                                     <input name="locality" type="text" id="locality"
@@ -143,21 +143,21 @@
                                     </div>
                                 </md-input-container>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>Street</label>
                                     <input name="street" type="text" id="street"
                                            ng-model="customer.address.street"
-                                           ng-pattern="textFieldPattern">
+                                           ng-pattern="streetPattern">
 
                                     <div ng-messages="registerForm.street.$error" role="alert" multiple>
                                         <div ng-message="pattern">
-                                            This field can only contain letters
+                                            This field should not contain special characters or numbers
                                         </div>
                                     </div>
                                 </md-input-container>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                     <label>House number</label>
                                     <input name="houseNumber" type="text" id="houseNumber"
@@ -171,9 +171,9 @@
                                     </div>
                                 </md-input-container>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
-                                    <label>Apartment number</label>
+                                    <label>Flat number</label>
                                     <input name="apartmentNumber" id="apartmentNumber"
                                            ng-model="customer.address.apartmentNumber"
                                            ng-pattern="numberPattern">

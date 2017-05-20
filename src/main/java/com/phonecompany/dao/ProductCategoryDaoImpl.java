@@ -5,7 +5,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.ProductCategory;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
@@ -15,7 +15,7 @@ import java.sql.*;
 
 @SuppressWarnings("Duplicates")
 @Repository
-public class ProductCategoryDaoImpl extends CrudDaoImpl<ProductCategory>
+public class ProductCategoryDaoImpl extends JdbcOperationsImpl<ProductCategory>
         implements ProductCategoryDao {
 
     private QueryLoader queryLoader;

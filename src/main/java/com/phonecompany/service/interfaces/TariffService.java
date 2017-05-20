@@ -9,7 +9,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public interface TariffService extends CrudService<Tariff> {
+//TODO: please, remove all these unnecessary public access modifiers
+public interface TariffService extends CrudService<Tariff>,
+        ExtendedStatisticsGenerating<LocalDate, Long> {
+
     List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
 
     public Integer getCountByRegionId(long regionId);
@@ -60,10 +63,6 @@ public interface TariffService extends CrudService<Tariff> {
     public void activateTariffForSingleCustomer(long tariffId, Customer customer);
 
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
-
-    SheetDataSet prepareTariffStatisticsReportDataSet(long regionId,
-                                                      LocalDate startDate,
-                                                      LocalDate endDate);
 
     List<Tariff> getAllTariffsSearch(int page,int size,String name, String status, String category);
     int getCountSearch(int page,int size,String name, String status, String category);

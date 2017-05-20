@@ -8,7 +8,7 @@ import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.enums.CustomerProductStatus;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @Repository
-public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
+public class CustomerServiceDaoImpl extends JdbcOperationsImpl<CustomerServiceDto>
         implements CustomerServiceDao {
 
     private QueryLoader queryLoader;

@@ -1,41 +1,53 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.service.xssfHelper.Statistics;
 
-import java.util.EnumMap;
+import java.time.LocalDate;
 
-public class OrderStatistics {
+public final class OrderStatistics implements Statistics {
 
-    private EnumMap<WeekOfMonth, Integer> deactivations;
-    private EnumMap<WeekOfMonth, Integer> activations;
+    private final long count;
+    private final String targetName;
+    private final OrderType orderType;
+    private final LocalDate creationDate;
 
-    public OrderStatistics(EnumMap<WeekOfMonth, Integer> deactivations,
-                           EnumMap<WeekOfMonth, Integer> activations) {
-        this.deactivations = deactivations;
-        this.activations = activations;
+    public OrderStatistics(long count, String targetName,
+                           OrderType orderType, LocalDate creationDate) {
+        this.count = count;
+        this.targetName = targetName;
+        this.orderType = orderType;
+        this.creationDate = creationDate;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getDeactivations() {
-        return deactivations;
+    @Override
+    public long getCount() {
+        return count;
     }
 
-    public void setDeactivations(EnumMap<WeekOfMonth, Integer> deactivations) {
-        this.deactivations = deactivations;
+    @Override
+    public String getItemName() {
+        return targetName;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getActivations() {
-        return activations;
+    @Override
+    public ItemType getItemType() {
+        return orderType;
     }
 
-    public void setActivations(EnumMap<WeekOfMonth, Integer> activations) {
-        this.activations = activations;
+    @Override
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     @Override
     public String toString() {
         return "OrderStatistics{" +
-                "deactivations=" + deactivations +
-                ", activations=" + activations +
+                "count=" + count +
+                ", targetName='" + targetName + '\'' +
+                ", orderType=" + orderType +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }

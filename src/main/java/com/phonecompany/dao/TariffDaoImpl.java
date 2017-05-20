@@ -2,22 +2,16 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.*;
-import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
-import com.phonecompany.util.TypeMapper;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.phonecompany.util.TypeMapper.toLocalDate;

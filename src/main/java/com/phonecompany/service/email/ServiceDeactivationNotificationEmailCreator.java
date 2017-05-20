@@ -14,8 +14,6 @@ import org.thymeleaf.context.Context;
 public class ServiceDeactivationNotificationEmailCreator extends AbstractEmailCreator<Service>
         implements MailMessageCreator<Service> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceDeactivationNotificationEmailCreator.class);
-
     private TemplateEngine templateEngine;
 
     @Autowired

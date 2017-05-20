@@ -3,7 +3,8 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.GroupingStrategy;
+import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,19 +31,11 @@ public interface OrderService extends CrudService<Order> {
 
     Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType);
 
-    OrderStatistics getOrderStatistics();
+    WeeklyOrderStatistics getOrderStatistics();
 
-    List<Order> getTariffOrdersByRegionIdAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
+    List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
+                                                                   LocalDate startDate,
+                                                                   LocalDate endDate);
 
-    Map<String, List<Order>> getProductNamesToOrdersMap(List<Order> orders, GroupingStrategy<Order, String> filteringStrategy);
-
-    List<LocalDate> generateTimeLine(List<Order> orders);
-
-    List<Order> filterCompletedOrdersByType(List<Order> orders, OrderType type);
-
-    Long getOrderNumberByDate(List<Order> orderList, LocalDate date);
-
-    SheetDataSet prepareExcelSheetDataSet(String sheetName,
-                                          Map<String, List<Order>> productNamesToOrdersMap,
-                                          List<LocalDate> timeLine);
+    List<Statistics> getServiceOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate);
 }

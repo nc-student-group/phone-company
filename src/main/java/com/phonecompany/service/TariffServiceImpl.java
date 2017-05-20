@@ -1,7 +1,11 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.CacheClear;
+import com.phonecompany.annotations.Cacheable;
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
@@ -9,21 +13,19 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.TariffGroupingStrategy;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
 
-@SuppressWarnings("Duplicates")
-@Service
+@ServiceStereotype
 public class TariffServiceImpl extends CrudServiceImpl<Tariff>
-        implements TariffService {
+        implements TariffService, ExtendedStatisticsGenerating<LocalDate, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TariffServiceImpl.class);
 
@@ -32,7 +34,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     private FileService fileService;
     private OrderService orderService;
     private CustomerTariffService customerTariffService;
-    private XSSFService xssfService;
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Autowired
     public TariffServiceImpl(TariffDao tariffDao,
@@ -40,18 +42,20 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                              FileService fileService,
                              OrderService orderService,
                              CustomerTariffService customerTariffService,
-                             XSSFService xssfService) {
+                             StatisticsService<LocalDate, Long> statisticsService) {
         super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
         this.orderService = orderService;
         this.customerTariffService = customerTariffService;
-        this.xssfService = xssfService;
+        this.statisticsService = statisticsService;
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
+        LOGGER.debug("getByRegionIdAndPaging");
         return this.tariffDao.getPaging(page, size, regionId);
     }
 
@@ -61,6 +65,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
         this.tariffDao.updateTariffStatus(tariffId, productStatus);
     }
@@ -71,6 +76,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff updateTariff(List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff savedTariff = updateTariff(tariffRegions.get(0).getTariff());
@@ -83,6 +89,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff updateTariff(Tariff tariff) {
         Tariff temp = this.findByTariffName(tariff.getTariffName());
         if (temp != null && !temp.getId().equals(tariff.getId())) {
@@ -125,6 +132,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCustomer(Customer customer) {
         if (customer.getCorporate() == null) {
             return tariffDao.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId());
@@ -138,12 +146,15 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCorporate() {
         return this.tariffDao.getTariffsAvailableForCorporate();
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
+        LOGGER.debug("getTariffsAvailableForCustomer");
         return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
     }
 
@@ -153,6 +164,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size) {
         return this.tariffDao.getTariffsAvailableForCorporate(page, size);
     }
@@ -281,6 +293,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff addNewTariff(List<TariffRegion> tariffRegions) {
         Tariff tariff;
         if (tariffRegions.size() > 0) {
@@ -296,6 +309,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     @Transactional
     public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
@@ -322,6 +336,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
                                                int type, String fromStr, String toStr, int orderBy, String orderByType) {
         java.sql.Date from = null, to = null;
@@ -392,33 +407,27 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     /**
      * Responsible for creating a dataset containing statistical information regarding
-     * the tariff orders
+     * the tariff orders made in the requested region in some predefined period of time
      *
      * @param regionId  id of the region statistics should be generated for
      * @param startDate start of the period statistics should be generated for
      * @param endDate   end of the period statistics should be generated for
-     * @return fully constructed {@code SheetDataSet} object containing statistical
-     * information regarding tariff orders made in the requested region in
-     * some predefined period of time
+     * @return fully constructed {@link SheetDataSet}
      */
     @Override
-    public SheetDataSet prepareTariffStatisticsReportDataSet(long regionId, LocalDate startDate,
-                                                             LocalDate endDate) {
-
-        List<Order> tariffOrders = this.orderService
-                .getTariffOrdersByRegionIdAndTimePeriod(regionId, startDate, endDate);
-
-        TariffGroupingStrategy tariffFilteringStrategy = new TariffGroupingStrategy();
-
-        Map<String, List<Order>> productNamesToOrdersMap = this.orderService
-                .getProductNamesToOrdersMap(tariffOrders, tariffFilteringStrategy);
-
-        List<LocalDate> timeLine = this.orderService.generateTimeLine(tariffOrders);
-
-        return this.orderService
-                .prepareExcelSheetDataSet("Tariffs", productNamesToOrdersMap, timeLine);
+    public SheetDataSet<LocalDate, Long> getTariffStatisticsDataSet(long regionId,
+                                                                    LocalDate startDate,
+                                                                    LocalDate endDate) {
+        List<Statistics> statisticsList = this.orderService
+                .getTariffOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+        if (statisticsList.size() == 0) {
+            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+                    "this period");
+        }
+        return statisticsService
+                .prepareStatisticsDataSet("Tariffs", statisticsList,
+                        startDate, endDate);
     }
-
 
     @Override
     public List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category) {
@@ -432,9 +441,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
 
         if (category.equals("COMPANY")) {
-            query.and().addCondition("is_corporate=", true);
+            query.and().addCondition("is_corporate=?", true);
         } else if (category.equals("PRIVATE")) {
-            query.and().addCondition("is_corporate=", false);
+            query.and().addCondition("is_corporate=?", false);
         } else if (!category.equals("-")) {
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }
@@ -453,9 +462,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
 
         if (category.equals("COMPANY")) {
-            query.and().addCondition("is_corporate=", true);
+            query.and().addCondition("is_corporate=?", true);
         } else if (category.equals("PRIVATE")) {
-            query.and().addCondition("is_corporate=", false);
+            query.and().addCondition("is_corporate=?", false);
         } else if (!category.equals("-")) {
             throw new ConflictException("Incorrect parameter: is corporate tariff");
         }

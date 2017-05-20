@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 
 //@Ignore
-public class AddressDaoImplTest extends AbstractTest {
+public class AddressDaoImplTest {
 
     @Autowired
     private AddressDaoImpl addressDao;

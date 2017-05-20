@@ -6,23 +6,24 @@ import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
-import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,17 +38,23 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private ProductCategoryDao productCategoryDao;
     private FileService fileService;
     private CustomerService customerService;
+    private OrderService orderService;
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Autowired
     public ServiceServiceImpl(ServiceDao serviceDao,
                               ProductCategoryDao productCategoryDao,
                               FileService fileService,
-                              CustomerService customerService) {
+                              CustomerService customerService,
+                              OrderService orderService,
+                              StatisticsService<LocalDate, Long> statisticsService) {
         super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;
         this.customerService = customerService;
+        this.orderService = orderService;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -61,7 +68,9 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
         int serviceEntityCount = this.serviceDao.getEntityCount(firstFilter);
 
-        return new PagingResult<>(servicesWithDiscount, serviceEntityCount);
+        PagingResult<Service> pagingResult = new PagingResult<>(servicesWithDiscount, serviceEntityCount);
+        LOG.debug("Paging result to be returned: {}", pagingResult);
+        return pagingResult;
     }
 
     private List<Service> applyDiscount(List<Service> services) {
@@ -80,6 +89,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @Cacheable
     public Service getById(Long serviceId) {
         Service serviceFoundById = super.getById(serviceId);
         LOG.debug("Service price without a discount: {}", serviceFoundById.getPrice());
@@ -87,8 +97,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         LOG.debug("Service price after applying discount: {}", serviceWithDiscount.getPrice());
         return serviceWithDiscount;
     }
-
-
 
     private Service applyDiscount(Service service) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
@@ -145,6 +153,19 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    public SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate) {
+        List<Statistics> statisticsList = this.orderService.getServiceOrderStatisticsByTimePeriod(startDate, endDate);
+        if (statisticsList.size() == 0) {
+            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+                    "this period");
+        }
+        return statisticsService
+                .prepareStatisticsDataSet("Services", statisticsList,
+                        startDate, endDate);
+    }
+
+    @Override
+    @Cacheable
     public List<Service> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
         Query.Builder query = new Query.Builder("service");
         query.where();

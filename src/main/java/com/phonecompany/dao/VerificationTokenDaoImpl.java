@@ -4,9 +4,8 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.dao.interfaces.VerificationTokenDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
-import com.phonecompany.model.User;
 import com.phonecompany.model.VerificationToken;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class VerificationTokenDaoImpl extends CrudDaoImpl<VerificationToken>
+public class VerificationTokenDaoImpl extends JdbcOperationsImpl<VerificationToken>
         implements VerificationTokenDao {
 
     private QueryLoader queryLoader;

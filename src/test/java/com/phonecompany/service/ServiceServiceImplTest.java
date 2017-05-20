@@ -107,7 +107,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldApplyDiscountToIndividualServiceIfCurrentUserIsRepresentative() {
         //given
-        Service initialService = getSampleService();
+        Service initialService = getNonExistentService();
         Double initialPrice = initialService.getPrice();
         when(serviceDao.getById(anyLong()))
                 .thenReturn(initialService);
@@ -130,7 +130,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldThrowExceptionOnExistingService() {
         //given
-        Service sampleService = TestUtil.getSampleService();
+        Service sampleService = TestUtil.getNonExistentService();
         when(serviceDao.isExist(any())).thenReturn(true);
 
         thrown.expect(ServiceAlreadyPresentException.class);
@@ -148,7 +148,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldSaveService() {
         //given
-        Service sampleService = TestUtil.getSampleService();
+        Service sampleService = TestUtil.getNonExistentService();
         when(serviceDao.isExist(any())).thenReturn(false);
 
         //when

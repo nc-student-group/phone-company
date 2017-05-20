@@ -10,7 +10,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

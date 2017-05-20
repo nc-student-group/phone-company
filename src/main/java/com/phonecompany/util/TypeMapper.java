@@ -1,7 +1,9 @@
 package com.phonecompany.util;
 
 import com.phonecompany.model.*;
+import com.phonecompany.model.enums.ItemType;
 import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.service.xssfHelper.Statistics;
 import org.springframework.util.Assert;
 
 import java.sql.Date;
@@ -78,5 +80,17 @@ public class TypeMapper {
             service.setPrice(price);
             return service;
         };
+    }
+
+    public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
+        return statistics -> statistics.getItemName().equals(targetName);
+    }
+
+    public static Predicate<Statistics> getStatisticsByItemTypePredicate(ItemType itemType) {
+        return statistics -> statistics.getItemType().equals(itemType);
+    }
+
+    public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
+        return statistics -> statistics.getCreationDate().equals(date);
     }
 }

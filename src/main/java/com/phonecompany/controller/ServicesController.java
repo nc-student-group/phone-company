@@ -1,6 +1,9 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerServiceDto;
+import com.phonecompany.model.ProductCategory;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
@@ -9,14 +12,11 @@ import com.phonecompany.service.email.ServiceDeactivationNotificationEmailCreato
 import com.phonecompany.service.email.ServiceNotificationEmailCreator;
 import com.phonecompany.service.email.ServiceSuspensionNotificationEmailCreator;
 import com.phonecompany.service.interfaces.*;
-import com.phonecompany.service.interfaces.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
@@ -225,7 +225,7 @@ public class ServicesController {
     @PostMapping(value = "/suspend")
     public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
         customerServiceService.suspendCustomerService(data);
-        //TODO: one more questionable line
+        //TODO: questionable line
         CustomerServiceDto customerService = this.customerServiceService.
                 getById((new Long((Integer) data.get("customerServiceId"))));
         SimpleMailMessage notificationMessage = this.serviceSuspensionNotificationEmailCreator

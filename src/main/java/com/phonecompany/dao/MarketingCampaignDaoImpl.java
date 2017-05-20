@@ -5,7 +5,7 @@ import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaign;
 import com.phonecompany.model.enums.ProductStatus;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class MarketingCampaignDaoImpl extends CrudDaoImpl<MarketingCampaign> implements MarketingCampaignDao {
+public class MarketingCampaignDaoImpl extends JdbcOperationsImpl<MarketingCampaign>
+        implements MarketingCampaignDao {
 
     private QueryLoader queryLoader;
 
