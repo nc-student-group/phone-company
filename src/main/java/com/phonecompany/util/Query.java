@@ -62,6 +62,18 @@ public class Query {
             return this;
         }
 
+        public Builder openBracket(){
+            query.append(" ( ");
+            countQuery.append(" ( ");
+            return this;
+        }
+
+        public Builder closeBracket() {
+            query.append(" ) ");
+            countQuery.append(" ) ");
+            return this;
+        }
+
         public Builder or() {
             query.append(" or ");
             countQuery.append(" or ");

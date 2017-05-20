@@ -42,32 +42,24 @@ public class CustomerController {
     private AddressService addressService;
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
-    private CustomerTariffService customerTariffService;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
-                              UserService userService,
-                              CustomerTariffService customerTariffService) {
+                              UserService userService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
-        this.customerTariffService = customerTariffService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        customer.setRole(CLIENT); //TODO: extract logic to service
-        Address savedAddress = this.addressService.save(customer.getAddress());
-        customer.setAddress(savedAddress);
-        Customer persistedCustomer = this.customerService.save(customer);
+        Customer persistedCustomer = customerService.addNewCustomer(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
-
         this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
-
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
@@ -77,17 +69,19 @@ public class CustomerController {
     }
 
     @RequestMapping(method = GET, value = "/api/customers/{page}/{size}/{rId}/{status}")
-    public Map<String, Object> getAllCustomers(@PathVariable("page") int page, @PathVariable("size") int size,
-                                               @PathVariable("rId") long rId, @PathVariable("status") String status) {
+    public Map<String, Object> getAllCustomers(@PathVariable("page") int page,
+                                               @PathVariable("size") int size,
+                                               @PathVariable("rId") long rId,
+                                               @PathVariable("status") String status,
+                                               @RequestParam("em") String email,
+                                               @RequestParam("pon") String partOfName,
+                                               @RequestParam("ph") String phone,
+                                               @RequestParam("poc") String partOfCorporate,
+                                               @RequestParam("ob") int orderBy,
+                                               @RequestParam("obt") String orderByType) {
         LOG.info("Retrieving all the users contained in the database");
-        List<Customer> customers = this.customerService.getAllCustomersPaging(page, size, rId, status);
-        LOG.info("Users fetched from the database: " + customers);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("customers", customers);
-        response.put("customersSelected", customerService.getCountCustomers(rId, status));
-
-        return response;
+        return this.customerService.getAllCustomersPaging(page, size, rId, status, email, partOfName,
+                phone, partOfCorporate, orderBy, orderByType);
     }
 
     @GetMapping("/api/sendConfirmationEmail")
@@ -150,25 +144,6 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO: extract to customer tariff controller ??
-    @PatchMapping(value = "/api/customer/tariff/deactivate")
-    public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
-        customerTariffService.deactivateCustomerTariff(customerTariff);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/api/customer/tariff/suspend")
-    public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
-        this.customerTariffService.suspendCustomerTariff(data);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    @PatchMapping(value = "/api/customer/tariff/resume")
-    public ResponseEntity<Void> resumeCustomerTariff(@RequestBody CustomerTariff customerTariff) {
-        customerTariffService.resumeCustomerTariff(customerTariff);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     @GetMapping(value = "/api/customers/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") long id) {

@@ -15,7 +15,7 @@
         <intercept-url pattern="/index" access="permitAll()"/>
         <intercept-url pattern="/register" access="permitAll()"/>
         <intercept-url pattern="/view/**" access="permitAll()"/>
-        <intercept-url pattern="/api/users" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/api/users/**" method="GET" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/api/customers" access="permitAll()"/>
         <intercept-url pattern="/api/user/reset" access="permitAll()"/>
         <intercept-url pattern="/api/confirmRegistration" access="permitAll()"/>
@@ -37,9 +37,9 @@
         <intercept-url pattern="/api/customer-tariffs/customer-tariff" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/customer-tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN','PMG')"/>
         <intercept-url pattern="/api/customer-tariffs/corporate/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
-        <intercept-url pattern="/api/customer/tariff/deactivate" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
-        <intercept-url pattern="/api/customer/tariff/suspend" method="POST" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
-        <intercept-url pattern="/api/customer/tariff/resume" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customer-tariffs/deactivate" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/customer-tariffs/suspend" method="POST" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/customer-tariffs/resume" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/orders/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN', 'PMG')"/>
         <intercept-url pattern="/api/orders/history/corporate/**" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/orders/history/**" method="GET" access="hasRole('CLIENT')"/>

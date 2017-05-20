@@ -339,14 +339,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         Query query = this.buildQueryForTariffTable(page, size, name, status,
                 type, from, to, orderBy, orderByType);
         Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
-        List<Object> rows = new ArrayList<>();
-        tariffs.forEach((Tariff tariff) -> {
-            Map<String, Object> row = new HashMap<>();
-            row.put("tariff", tariff);
-            rows.add(row);
-        });
-        response.put("tariffs", rows);
+        response.put("tariffs", this.tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
         response.put("tariffsSelected", this.tariffDao.executeForInt(query.getCountQuery(),
                 query.getCountParams().toArray()));
         return response;
