@@ -8,7 +8,8 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
 
     var factory = {
         getMarketingCampaigns: getMarketingCampaigns,
-        getMarketingCampaignForCustomerById: getMarketingCampaignForCustomerById
+        getMarketingCampaignForCustomerById: getMarketingCampaignForCustomerById,
+        activateMarketingCampaign: activateMarketingCampaign
     };
 
     return factory;
@@ -29,6 +30,20 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
     function getMarketingCampaignForCustomerById(id) {
         var deferred = $q.defer();
         $http.get(GET_MARKETING_CAMPAIGN_BY_ID_URL + id).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function activateMarketingCampaign(id) {
+        console.log("ID: " + id);
+        var deferred = $q.defer();
+        $http.get(GET_MARKETING_CAMPAIGN_BY_ID_URL + id + '/activate').then(
             function (response) {
                 deferred.resolve(response.data);
             },

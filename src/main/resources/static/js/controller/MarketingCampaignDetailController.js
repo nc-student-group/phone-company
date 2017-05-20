@@ -19,28 +19,29 @@ angular.module('phone-company').controller('MarketingCampaignDetailController', 
                 $location.path("/client/tariffs/available");
             } else {
                 $scope.campaign = data;
+                $scope.tariffId = data.campaignTariff.tariffRegion.tariff.id;
             }
         }, function () {
             $scope.preloader.send = false;
         });
 
         $scope.activateClick = function () {
-            // $scope.preloader.send = true;
-            // TariffService.getCurrentCustomerTariff().then(function (data) {
-            //     $scope.currentTariff = data;
-            //     if ($scope.currentTariff.tariff != undefined && $scope.currentTariff.tariff.id == $scope.tariff.id) {
-            //         toastr.error("This tariff plan is already activated for you!", 'Error');
-            //     } else {
-            //         $scope.showChangeTariffModalWindow($scope.currentTariff, $scope.tariff, $scope.preloader, 0, false, undefined);
-            //     }
-            //     $scope.preloader.send = false;
-            // }, function (data) {
-            //     $scope.preloader.send = false;
-            //     if (data.message != undefined) {
-            //         toastr.error(data.message, 'Error');
-            //     }
-            // })
-            console.log("ACTIVATE!!!");
+            $scope.preloader.send = true;
+            TariffService.getCurrentCustomerTariff().then(function (data) {
+                $scope.currentTariff = data;
+                if ($scope.currentTariff.tariff !== undefined &&
+                    $scope.currentTariff.tariff.id === $scope.tariffId) {
+                    toastr.error("This tariff plan is already activated for you!", 'Error');
+                } else {
+                    $scope.showActivateMarketingCampaignModalWindow($scope.currentTariff, $scope.campaign, $scope.preloader);
+                }
+                $scope.preloader.send = false;
+            }, function (data) {
+                $scope.preloader.send = false;
+                if (data.message != undefined) {
+                    toastr.error(data.message, 'Error');
+                }
+            })
         };
 
 
