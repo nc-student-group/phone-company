@@ -98,6 +98,14 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     }
 
     @Override
+    public void resumeCustomerService(Order order) {
+        order.getCustomerService().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+        customerServiceDao.update(order.getCustomerService());
+        order.setOrderStatus(OrderStatus.DONE);
+        orderService.update(order);
+    }
+
+    @Override
     public CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData) {
         CustomerServiceDto customerService = customerServiceDao.
                 getById((new Long((Integer) suspensionData.get("customerServiceId"))));
@@ -110,7 +118,7 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
 
         Order suspensionOrder = new Order(customerService, OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
-        Order resumingOrder = new Order(customerService, OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
+        Order resumingOrder = new Order(customerService, OrderType.RESUMING, OrderStatus.CREATED, now, executionDate);
 
         customerServiceDao.update(customerService);
         orderService.save(suspensionOrder);
@@ -122,7 +130,7 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     @Override
     public CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer) {
         boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer);
-        if(isActivated) {
+        if (isActivated) {
             throw new ConflictException("This service was already activated for you");
         }
         Service service = serviceService.getById(serviceId);

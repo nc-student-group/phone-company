@@ -1,5 +1,7 @@
 package com.phonecompany.dao;
 
+import com.phonecompany.dao.interfaces.CustomerServiceDao;
+import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.CrudException;
@@ -12,6 +14,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.model.proxy.DynamicProxy;
+import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -37,10 +40,15 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         implements OrderDao {
 
     private QueryLoader queryLoader;
+    private CustomerServiceDao customerServiceDao;
+    private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader) {
+    public OrderDaoImpl(QueryLoader queryLoader, CustomerServiceDao customerServiceDao,
+                        CustomerTariffDao customerTariffDao) {
         this.queryLoader = queryLoader;
+        this.customerServiceDao = customerServiceDao;
+        this.customerTariffDao = customerTariffDao;
     }
 
     @Override
@@ -84,9 +92,11 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         try {
             order.setId(rs.getLong("id"));
             long customerServiceId = rs.getLong("customer_service_id");
-            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+//            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            order.setCustomerService(customerServiceDao.getById(customerServiceId));
             long customerTariffId = rs.getLong("customer_tariff_id");
-            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+//            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+            order.setCustomerTariff(customerTariffDao.getById(customerTariffId));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
@@ -371,5 +381,10 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
             weekOfMonth = weekOfMonth.next();
         }
         return result;
+    }
+
+    @Override
+    public Order getNextResumingOrder() {
+        return this.executeForObject(this.getQuery("nextResumingOrder"), new Object[]{});
     }
 }

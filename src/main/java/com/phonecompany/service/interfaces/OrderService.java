@@ -38,4 +38,6 @@ public interface OrderService extends CrudService<Order> {
                                                                    LocalDate endDate);
 
     List<Statistics> getServiceOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate);
+
+    Order getNextResumingOrder();
 }

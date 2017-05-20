@@ -147,4 +147,6 @@ public class TariffRegionDaoImpl extends JdbcOperationsImpl<TariffRegion> implem
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
+
+
 }

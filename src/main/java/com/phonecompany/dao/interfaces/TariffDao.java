@@ -8,25 +8,25 @@ import java.util.List;
 
 public interface TariffDao extends AbstractPageableDao<Tariff> {
 
-    public List<Tariff> getByRegionId(Long regionId);
+    List<Tariff> getByRegionId(Long regionId);
 
-    public void updateTariffStatus(long tariffId, ProductStatus productStatus);
+    void updateTariffStatus(long tariffId, ProductStatus productStatus);
 
-    public Tariff findByTariffName(String tariffName);
+    Tariff findByTariffName(String tariffName);
 
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
+    List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId);
+    List<Tariff> getTariffsAvailableForCustomer(long regionId);
 
-    public Integer getCountTariffsAvailableForCustomer(long regionId);
+    Integer getCountTariffsAvailableForCustomer(long regionId);
 
-    public List<Tariff> getTariffsAvailableForCorporate(int page, int size);
+    List<Tariff> getTariffsAvailableForCorporate(int page, int size);
 
-    public List<Tariff> getTariffsAvailableForCorporate();
+    List<Tariff> getTariffsAvailableForCorporate();
 
-    public Integer getCountTariffsAvailableForCorporate();
+    Integer getCountTariffsAvailableForCorporate();
 
-    public Tariff getByIdForSingleCustomer(long id, long regionId);
+    Tariff getByIdForSingleCustomer(long id, long regionId);
 
-    public List<Tariff> getAllTariffsSearch(Query query);
+    List<Tariff> getAllTariffsSearch(Query query);
 }

@@ -485,4 +485,5 @@ public class TariffDaoImpl extends AbstractPageableDaoImpl<Tariff> implements Ta
 //            DataSourceUtils.releaseConnection(conn, this.getDataSource());
 //        }
     }
+
 }

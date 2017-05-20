@@ -8,6 +8,8 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
@@ -27,6 +29,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
     private MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator;
     private EmailService<User> emailService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffService.class);
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
@@ -125,12 +128,21 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         orderService.update(pendingResumingOrder);
         orderService.save(resumingOrder);
 
-        if(customerTariff.getCustomer() != null) {
+        if (customerTariff.getCustomer() != null) {
             SimpleMailMessage notificationMessage = this.tariffResumingNotificationEmailCreator
                     .constructMessage(customerTariff.getTariff());
             this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
         }
         return customerTariff;
+    }
+
+    @Override
+    public void resumeCustomerTariff(Order order) {
+        LOGGER.debug("RESUMING ORDER ID {}", order.getId());
+        order.getCustomerTariff().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+        customerTariffDao.update(order.getCustomerTariff());
+        order.setOrderStatus(OrderStatus.DONE);
+        orderService.update(order);
     }
 
     @Override
@@ -149,7 +161,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
                 OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
         Order resumingOrder = new Order(null, customerTariff,
-                OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
+                OrderType.RESUMING, OrderStatus.CREATED, now, executionDate);
 
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);
