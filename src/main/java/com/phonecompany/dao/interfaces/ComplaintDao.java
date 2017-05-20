@@ -14,11 +14,11 @@ import java.util.EnumMap;
 
 public interface ComplaintDao extends JdbcOperations<Complaint>,
         AbstractPageableDao<Complaint> {
-    public List<Complaint> getAllComplaintsSearch(Query query);
+    List<Complaint> getAllComplaintsSearch(Query query);
 
-    public EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type);
+    EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type);
 
-    public List<Complaint> getComplaintsByRegionId(Long regionId);
+    List<Complaint> getComplaintsByRegionId(Long regionId);
 
     List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
                                                                  LocalDate startDate,

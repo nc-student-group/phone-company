@@ -36,4 +36,6 @@ public interface OrderDao extends JdbcOperations<Order> {
     List<Statistics> getTariffsOrderStatisticsByRegionAndTimePeriod(long regionId, LocalDate startDate, LocalDate endDate);
 
     List<Statistics> getServicesOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate);
+
+    Order getNextResumingOrder();
 }

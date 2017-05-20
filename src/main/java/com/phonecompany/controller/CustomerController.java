@@ -13,15 +13,21 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -154,8 +160,9 @@ public class CustomerController {
     @PostMapping(value = "/api/customer/tariff/suspend")
     public ResponseEntity<Void> suspendCustomerTariff(@RequestBody Map<String, Object> data) {
         this.customerTariffService.suspendCustomerTariff(data);
-      return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     @PatchMapping(value = "/api/customer/tariff/resume")
     public ResponseEntity<Void> resumeCustomerTariff(@RequestBody CustomerTariff customerTariff) {
@@ -164,7 +171,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/api/customers/{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable("id") long id){
+    public ResponseEntity<?> getCustomerById(@PathVariable("id") long id) {
         return new ResponseEntity<Object>(customerService.getById(id), HttpStatus.OK);
     }
 }
