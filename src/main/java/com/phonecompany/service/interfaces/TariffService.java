@@ -9,60 +9,59 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+//TODO: please, remove all these unnecessary public access modifiers
 public interface TariffService extends CrudService<Tariff>,
         ExtendedStatisticsGenerating<LocalDate, Long> {
 
-    List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size);
+    void updateTariffStatus(long tariffId, ProductStatus productStatus);
 
-    public Integer getCountByRegionId(long regionId);
+    Tariff findByTariffName(String tariffName);
 
-    public void updateTariffStatus(long tariffId, ProductStatus productStatus);
+    Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size);
 
-    public Tariff findByTariffName(String tariffName);
+    List<Tariff> getTariffsAvailableForCustomer(Customer customer);
 
-    public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size);
+    List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
-    public List<Tariff> getTariffsAvailableForCustomer(Customer customer);
+    Integer getCountTariffsAvailableForCustomer(long regionId);
 
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
+    List<Tariff> getTariffsAvailableForCorporate(int page, int size);
 
-    public Integer getCountTariffsAvailableForCustomer(long regionId);
+    List<Tariff> getTariffsAvailableForCorporate();
 
-    public List<Tariff> getTariffsAvailableForCorporate(int page, int size);
+    Integer getCountTariffsAvailableForCorporate();
 
-    public List<Tariff> getTariffsAvailableForCorporate();
+    Tariff getByIdForSingleCustomer(long id, long regionId);
 
-    public Integer getCountTariffsAvailableForCorporate();
+    void deactivateSingleTariff(CustomerTariff customerTariff);
 
-    public Tariff getByIdForSingleCustomer(long id, long regionId);
+    void deactivateCorporateTariff(CustomerTariff customerTariff);
 
-    public void deactivateSingleTariff(CustomerTariff customerTariff);
+    void activateSingleTariff(Customer customer, TariffRegion tariffRegion);
 
-    public void deactivateCorporateTariff(CustomerTariff customerTariff);
+    void activateCorporateTariff(Corporate corporate, Tariff tariff);
 
-    public void activateSingleTariff(Customer customer, TariffRegion tariffRegion);
+    void activateTariff(long tariffId, Customer customer);
 
-    public void activateCorporateTariff(Corporate corporate, Tariff tariff);
+    Tariff addNewTariff(List<TariffRegion> tariffRegions);
 
-    public void activateTariff(long tariffId, Customer customer);
+    Tariff addNewTariff(Tariff tariff);
 
-    public Tariff addNewTariff(List<TariffRegion> tariffRegions);
+    Tariff updateTariff(List<TariffRegion> tariffRegions);
 
-    public Tariff addNewTariff(Tariff tariff);
+    Tariff updateTariff(Tariff tariff);
 
-    public Tariff updateTariff(List<TariffRegion> tariffRegions);
+    Tariff getTariffForCustomer(long tariffId, Customer customer);
 
-    public Tariff updateTariff(Tariff tariff);
+    Map<String, Object> getTariffsTable(int page, int size, String name, int status,
+                                        int type, String from, String to, int orderBy, String orderByType);
 
-    public Tariff getTariffForCustomer(long tariffId, Customer customer);
+    void activateTariffForSingleCustomer(long tariffId, Customer customer);
 
-    public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
-                                               int type, String from, String to, int orderBy, String orderByType);
+    void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
-    public void activateTariffForSingleCustomer(long tariffId, Customer customer);
+    List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category);
 
-    public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
+    int getCountSearch(int page, int size, String name, String status, String category);
 
-    List<Tariff> getAllTariffsSearch(int page,int size,String name, String status, String category);
-    int getCountSearch(int page,int size,String name, String status, String category);
 }

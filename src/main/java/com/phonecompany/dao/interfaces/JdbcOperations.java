@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <T> entity type that CRUD operations are performed on
  */
-public interface CrudDao<T extends DomainEntity> {
+public interface JdbcOperations<T extends DomainEntity> {
     /**
      * Saves entity
      *

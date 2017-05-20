@@ -1,14 +1,15 @@
 package com.phonecompany.dao;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.phonecompany.dao.interfaces.CrudDao;
+import com.phonecompany.dao.interfaces.JdbcOperations;
+import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.support.JdbcUtils;
 
 import java.sql.*;
@@ -22,10 +23,10 @@ import java.util.List;
  *
  * @param <T> entity type
  */
-public abstract class CrudDaoImpl<T extends DomainEntity>
-        implements CrudDao<T> {
+public abstract class JdbcOperationsImpl<T extends DomainEntity>
+        implements JdbcOperations<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CrudDaoImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcOperationsImpl.class);
 
     @Autowired
     private ComboPooledDataSource dataSource;
@@ -171,10 +172,59 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.dataSource);
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
+            throw new CrudException("Failed to load entities. " +
+                    "Please, check your database connection or whether sql query is right", e);
         } finally {
             JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
+    }
+
+    public <E> List<E> executeForList(String query, Object[] params, RowMapper<E> rowMapper) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        CallableStatement cs = null;
+        try {
+            cs = conn.prepareCall(query);
+            for (int i = 0; i < params.length; i++) {
+                cs.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = cs.executeQuery();
+            List<E> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(rowMapper.mapRow(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(cs);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new CrudException("Failed to load entities. " +
+                    "Please, check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(cs);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
+    }
+
+    public <E> List<E> executeForList(CallableStatementCreator creator,
+                                      RowMapper<E> rowMapper) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        CallableStatement callableStatement = null;
+        try {
+            callableStatement = creator.createCallableStatement(conn);
+            ResultSet rs = callableStatement.executeQuery();
+            List<E> result = new ArrayList<>();
+            while (rs.next()) {
+                ResultSet resultSet = callableStatement.getResultSet();
+                result.add(rowMapper.mapRow(resultSet));
+            }
+            return result;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(callableStatement);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new CrudException("Failed to load entities. " +
+                    "Please, check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(callableStatement);
             DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
     }
@@ -258,9 +308,5 @@ public abstract class CrudDaoImpl<T extends DomainEntity>
 
     public ComboPooledDataSource getDataSource() {
         return dataSource;
-    }
-
-    public void setDataSource(ComboPooledDataSource dataSource) {
-        this.dataSource = dataSource;
     }
 }

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 
 //@Ignore
-public class AddressDaoImplTest extends AbstractTest {
+public class AddressDaoImplTest {
 
     @Autowired
     private AddressDaoImpl addressDao;
@@ -42,6 +42,9 @@ public class AddressDaoImplTest extends AbstractTest {
 
         SheetDataSet sheet =  this.prepareExcelSheetDataSet("Complaints", statusToComplaintsMap, timeLine);
 
+//        for (TableDataSet s: sheet.getTableDataSets()) {
+//            System.out.println(s);
+//        }
         System.out.println("-------TimeLine-----------\n");
         for (LocalDate t: timeLine) {
             System.out.println(t);

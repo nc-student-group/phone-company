@@ -1,6 +1,6 @@
 package com.phonecompany.model.enums;
 
-public enum ComplaintStatus {
+public enum ComplaintStatus implements ItemType {
     ACCEPTED,
     INTRAPROCESS,
     ACCOMPLISHED;

@@ -4,7 +4,7 @@ import com.phonecompany.dao.interfaces.RegionDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Region;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class RegionDaoImpl extends CrudDaoImpl<Region> implements RegionDao {
+public class RegionDaoImpl extends JdbcOperationsImpl<Region> implements RegionDao {
 
     private QueryLoader queryLoader;
 

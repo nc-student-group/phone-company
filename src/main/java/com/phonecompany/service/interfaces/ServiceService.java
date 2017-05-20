@@ -1,15 +1,15 @@
 package com.phonecompany.service.interfaces;
 
+import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-
-import java.util.List;
+import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 import java.time.LocalDate;
+import java.util.List;
 
-public interface ServiceService extends CrudService<Service>,
-        SimpleStatisticsGenerating<LocalDate, Long> {
+public interface ServiceService extends CrudService<Service> {
 
     PagingResult<Service> getServicesByProductCategoryId(int page, int size,
                                                          int productCategoryId);
@@ -20,6 +20,9 @@ public interface ServiceService extends CrudService<Service>,
 
     Service getById(Long id);
 
-    List<Service> getAllServicesSearch(int page, int size,String name,String  status,int lowerPrice,int upperPrice);
-    int getCountSearch(int page, int size,String name,String  status,int lowerPrice,int upperPrice);
+    List<Service> getAllServicesSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
+
+    int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
+
+    SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate);
 }

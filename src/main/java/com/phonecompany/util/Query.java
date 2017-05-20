@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: remove it please
 /**
  * Created by nik9str on 14.05.2017.
  */

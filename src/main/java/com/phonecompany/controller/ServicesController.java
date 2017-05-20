@@ -225,7 +225,7 @@ public class ServicesController {
     @PostMapping(value = "/suspend")
     public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
         customerServiceService.suspendCustomerService(data);
-        //TODO: one more questionable line
+        //TODO: questionable line
         CustomerServiceDto customerService = this.customerServiceService.
                 getById((new Long((Integer) data.get("customerServiceId"))));
         SimpleMailMessage notificationMessage = this.serviceSuspensionNotificationEmailCreator

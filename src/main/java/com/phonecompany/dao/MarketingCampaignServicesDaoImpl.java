@@ -6,15 +6,17 @@ import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaignServices;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketingCampaignServicesDaoImpl extends CrudDaoImpl<MarketingCampaignServices>
+@Repository
+public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<MarketingCampaignServices>
         implements MarketingCampaignServicesDao {
 
     private QueryLoader queryLoader;

@@ -1,6 +1,6 @@
 package com.phonecompany.service.xssfHelper.filterChain;
 
-import com.phonecompany.model.OrderStatistics;
+import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,8 +15,8 @@ public class DateFilter extends Filter<LocalDate> {
     }
 
     @Override
-    public List<OrderStatistics> doFilter(List<OrderStatistics> statisticsList) {
-        Predicate<OrderStatistics> orderDatePredicate =
+    public List<Statistics> doFilter(List<Statistics> statisticsList) {
+        Predicate<Statistics> orderDatePredicate =
                 getStatisticsByLocalDatePredicate(filteringKey);
         return this.filterOutStatistics(statisticsList, orderDatePredicate);
     }

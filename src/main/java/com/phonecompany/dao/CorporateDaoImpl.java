@@ -4,7 +4,7 @@ import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Corporate;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> implements CorporateDao {
 
     private QueryLoader queryLoader;
-    private String partOfName;
 
     @Autowired
     public CorporateDaoImpl(QueryLoader queryLoader) {

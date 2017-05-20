@@ -7,7 +7,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,30 +99,6 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
 
     @Override
     public List<User> getAllUsersSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-
-        try {
-            LOG.info("Execute query: " + query.getQuery());
-            ps = conn.prepareStatement(query.getQuery());
-
-            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
-                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<User> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 }

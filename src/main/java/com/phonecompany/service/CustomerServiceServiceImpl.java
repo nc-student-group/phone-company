@@ -13,12 +13,17 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.CustomerServiceService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @ServiceStereotype
 public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto>
@@ -98,6 +103,14 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     }
 
     @Override
+    public void resumeCustomerService(Order order) {
+        order.getCustomerService().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+        customerServiceDao.update(order.getCustomerService());
+        order.setOrderStatus(OrderStatus.DONE);
+        orderService.update(order);
+    }
+
+    @Override
     public CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData) {
         CustomerServiceDto customerService = customerServiceDao.
                 getById((new Long((Integer) suspensionData.get("customerServiceId"))));
@@ -110,19 +123,30 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
 
         Order suspensionOrder = new Order(customerService, OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
-        Order resumingOrder = new Order(customerService, OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
+        Order resumingOrder = new Order(customerService, OrderType.RESUMING, OrderStatus.CREATED, now, executionDate);
 
         customerServiceDao.update(customerService);
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
-
+        this.scheduleCustomerServiceResuming(resumingOrder);
         return customerService;
+    }
+
+    private void scheduleCustomerServiceResuming(Order resumingOrder) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler taskScheduler = new ConcurrentTaskScheduler(scheduledExecutorService);
+        taskScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                resumeCustomerService(resumingOrder);
+            }
+        }, TypeMapper.toUtilDate(resumingOrder.getExecutionDate()));
     }
 
     @Override
     public CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer) {
         boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer);
-        if(isActivated) {
+        if (isActivated) {
             throw new ConflictException("This service was already activated for you");
         }
         Service service = serviceService.getById(serviceId);

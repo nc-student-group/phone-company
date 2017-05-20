@@ -8,7 +8,7 @@ import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.enums.CustomerProductStatus;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @Repository
-public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
+public class CustomerServiceDaoImpl extends JdbcOperationsImpl<CustomerServiceDto>
         implements CustomerServiceDao {
 
     private QueryLoader queryLoader;
@@ -86,25 +86,7 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
 
     @Override
     public List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId) {
-        List<CustomerServiceDto> services = new ArrayList<>();
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getByCustomerId"));
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                services.add(init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return services;
+        return this.executeForList(this.getQuery("getByCustomerId"), new Object[]{customerId});
     }
 
     @Override
@@ -126,24 +108,6 @@ public class CustomerServiceDaoImpl extends CrudDaoImpl<CustomerServiceDto>
 
     @Override
     public List<CustomerServiceDto> getCurrentCustomerServices(long customerId) {
-        List<CustomerServiceDto> services = new ArrayList<>();
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getActiveOrSuspendedByCustomerId"));
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                services.add(init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return services;
+        return this.executeForList(this.getQuery("getActiveOrSuspendedByCustomerId"), new Object[]{customerId});
     }
 }

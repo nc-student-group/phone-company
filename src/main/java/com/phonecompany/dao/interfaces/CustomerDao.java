@@ -4,9 +4,8 @@ import com.phonecompany.model.Customer;
 import com.phonecompany.util.Query;
 
 import java.util.List;
-import java.util.Map;
 
-public interface CustomerDao extends CrudDao<Customer>,
+public interface CustomerDao extends JdbcOperations<Customer>,
         AbstractUserDao<Customer>, AbstractPageableDao<Customer> {
 
     Customer getByVerificationToken(String token);
@@ -16,5 +15,6 @@ public interface CustomerDao extends CrudDao<Customer>,
     int getCountByPhone(String phone);
 
     int getCountByEmail(String email);
+
     List<Customer> getAllCustomersSearch(Query query);
 }

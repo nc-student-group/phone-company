@@ -1,6 +1,6 @@
 package com.phonecompany.service.xssfHelper.filterChain;
 
-import com.phonecompany.model.OrderStatistics;
+import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public abstract class Filter<K> {
 
-    protected Filter<?> successor;
-    protected K filteringKey;
+    Filter<?> successor;
+    K filteringKey;
 
     public Filter(K filteringKey) {
         this.filteringKey = filteringKey;
@@ -19,10 +19,10 @@ public abstract class Filter<K> {
         this.successor = successor;
     }
 
-    public abstract List<OrderStatistics> doFilter(List<OrderStatistics> statisticsList);
+    public abstract List<Statistics> doFilter(List<Statistics> statisticsList);
 
-    protected List<OrderStatistics> filterOutStatistics(List<OrderStatistics> statisticsList,
-                                                        Predicate<OrderStatistics> filteringPredicate) {
+    List<Statistics> filterOutStatistics(List<Statistics> statisticsList,
+                                         Predicate<Statistics> filteringPredicate) {
         return statisticsList
                 .stream()
                 .filter(filteringPredicate)

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
-        extends CrudDaoImpl<T> implements AbstractPageableDao<T> {
+        extends JdbcOperationsImpl<T> implements AbstractPageableDao<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPageableDaoImpl.class);
 

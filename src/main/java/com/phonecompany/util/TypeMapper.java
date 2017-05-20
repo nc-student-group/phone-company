@@ -1,12 +1,14 @@
 package com.phonecompany.util;
 
 import com.phonecompany.model.*;
-import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.enums.ItemType;
 import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.service.xssfHelper.Statistics;
 import org.springframework.util.Assert;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +34,12 @@ public class TypeMapper {
     public static Date toSqlDate(LocalDate localDate) {
         return Optional.ofNullable(localDate)
                 .map(l -> Date.valueOf(localDate))
+                .orElse(null);
+    }
+
+    public static java.util.Date toUtilDate(LocalDate localDate) {
+        return Optional.ofNullable(localDate)
+                .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .orElse(null);
     }
 
@@ -81,15 +89,15 @@ public class TypeMapper {
         };
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByTargetNamePredicate(String targetName) {
-        return statistics -> statistics.getTargetName().equals(targetName);
+    public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
+        return statistics -> statistics.getItemName().equals(targetName);
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByOrderTypePredicate(OrderType orderType) {
-        return statistics -> statistics.getOrderType().equals(orderType);
+    public static Predicate<Statistics> getStatisticsByItemTypePredicate(ItemType itemType) {
+        return statistics -> statistics.getItemType().equals(itemType);
     }
 
-    public static Predicate<OrderStatistics> getStatisticsByLocalDatePredicate(LocalDate date) {
+    public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
         return statistics -> statistics.getCreationDate().equals(date);
     }
 }

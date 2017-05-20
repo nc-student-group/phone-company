@@ -2,8 +2,8 @@ package com.phonecompany.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.phonecompany.config.LocalDateTimeDeserializer;
-import com.phonecompany.config.LocalDateTimeSerializer;
+import com.phonecompany.config.datetime_config.LocalDateTimeDeserializer;
+import com.phonecompany.config.datetime_config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 

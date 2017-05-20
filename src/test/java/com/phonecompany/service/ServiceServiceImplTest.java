@@ -7,7 +7,6 @@ import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
-import com.phonecompany.service.xssfHelper.SheetDataSet;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,8 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,7 +107,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldApplyDiscountToIndividualServiceIfCurrentUserIsRepresentative() {
         //given
-        Service initialService = getSampleService();
+        Service initialService = getNonExistentService();
         Double initialPrice = initialService.getPrice();
         when(serviceDao.getById(anyLong()))
                 .thenReturn(initialService);
@@ -133,7 +130,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldThrowExceptionOnExistingService() {
         //given
-        Service sampleService = TestUtil.getSampleService();
+        Service sampleService = TestUtil.getNonExistentService();
         when(serviceDao.isExist(any())).thenReturn(true);
 
         thrown.expect(ServiceAlreadyPresentException.class);
@@ -151,7 +148,7 @@ public class ServiceServiceImplTest {
     @Test
     public void shouldSaveService() {
         //given
-        Service sampleService = TestUtil.getSampleService();
+        Service sampleService = TestUtil.getNonExistentService();
         when(serviceDao.isExist(any())).thenReturn(false);
 
         //when

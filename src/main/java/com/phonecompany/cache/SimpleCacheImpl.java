@@ -1,13 +1,9 @@
 package com.phonecompany.cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.*;
 
 public class SimpleCacheImpl<K, V> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleCacheImpl.class);
     private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<>();
 
     public SimpleCacheImpl(long expirationTime) {

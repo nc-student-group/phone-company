@@ -5,7 +5,7 @@ import com.phonecompany.dao.interfaces.RegionDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Address;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class AddressDaoImpl extends CrudDaoImpl<Address>
+public class AddressDaoImpl extends JdbcOperationsImpl<Address>
         implements AddressDao {
 
     private QueryLoader queryLoader;

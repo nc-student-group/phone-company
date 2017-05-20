@@ -6,11 +6,12 @@ import com.phonecompany.util.Query;
 
 import java.util.List;
 
-public interface ServiceDao extends CrudDao<Service>,
+public interface ServiceDao extends JdbcOperations<Service>,
         AbstractPageableDao<Service> {
 
     boolean isExist(Service service);
 
     void updateServiceStatus(long serviceId, ProductStatus productStatus);
+
     List<Service> getAllServicesSearch(Query query);
 }

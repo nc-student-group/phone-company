@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-@Component("confirmationEmailCreator")
+@Component
 public class ConfirmationEmailCreator extends AbstractEmailCreator<VerificationToken>
         implements MailMessageCreator<VerificationToken> {
 

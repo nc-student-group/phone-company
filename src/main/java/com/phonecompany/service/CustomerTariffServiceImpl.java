@@ -8,15 +8,22 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @ServiceStereotype
 public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
@@ -27,6 +34,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
     private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
     private MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator;
     private EmailService<User> emailService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffService.class);
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
@@ -125,11 +133,21 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         orderService.update(pendingResumingOrder);
         orderService.save(resumingOrder);
 
-        SimpleMailMessage notificationMessage = this.tariffResumingNotificationEmailCreator
-                .constructMessage(customerTariff.getTariff());
-        this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
-
+        if (customerTariff.getCustomer() != null) {
+            SimpleMailMessage notificationMessage = this.tariffResumingNotificationEmailCreator
+                    .constructMessage(customerTariff.getTariff());
+            this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
+        }
         return customerTariff;
+    }
+
+    @Override
+    public void resumeCustomerTariff(Order order) {
+        LOGGER.debug("RESUMING ORDER ID {}", order.getId());
+        order.getCustomerTariff().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+        customerTariffDao.update(order.getCustomerTariff());
+        order.setOrderStatus(OrderStatus.DONE);
+        orderService.update(order);
     }
 
     @Override
@@ -148,12 +166,23 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
                 OrderType.SUSPENSION, OrderStatus.DONE, now, now);
 
         Order resumingOrder = new Order(null, customerTariff,
-                OrderType.RESUMING, OrderStatus.PENDING, now, executionDate);
+                OrderType.RESUMING, OrderStatus.CREATED, now, executionDate);
 
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
-
+        this.scheduleCustomerTariffResuming(resumingOrder);
         return customerTariff;
+    }
+
+    private void scheduleCustomerTariffResuming(Order resumingOrder) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler taskScheduler = new ConcurrentTaskScheduler(scheduledExecutorService);
+        taskScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                resumeCustomerTariff(resumingOrder);
+            }
+        }, TypeMapper.toUtilDate(resumingOrder.getExecutionDate()));
     }
 }

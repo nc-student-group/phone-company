@@ -4,15 +4,16 @@ import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
+import com.phonecompany.model.ComplaintStatistics;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+
+import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
 public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> implements ComplaintDao {
@@ -37,13 +41,14 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
     private UserDao userDao;
 
     @Autowired
-    public ComplaintDaoImpl(QueryLoader queryLoader, UserDao userDao){
+    public ComplaintDaoImpl(QueryLoader queryLoader, UserDao userDao) {
         this.queryLoader = queryLoader;
         this.userDao = userDao;
     }
+
     @Override
     public String getQuery(String type) {
-            return queryLoader.getQuery("query.complaint."+type);
+        return queryLoader.getQuery("query.complaint." + type);
     }
 
     @Override
@@ -55,7 +60,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
-            preparedStatement.setObject(7,TypeMapper.getNullableId(entity.getResponsiblePmg()));
+            preparedStatement.setObject(7, TypeMapper.getNullableId(entity.getResponsiblePmg()));
             preparedStatement.setString(8, entity.getComment());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -71,7 +76,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             preparedStatement.setString(4, entity.getType().name());
             preparedStatement.setObject(5, TypeMapper.getNullableId(entity.getUser()));
             preparedStatement.setString(6, entity.getSubject());
-            preparedStatement.setObject(7,TypeMapper.getNullableId(entity.getResponsiblePmg()));
+            preparedStatement.setObject(7, TypeMapper.getNullableId(entity.getResponsiblePmg()));
             preparedStatement.setString(8, entity.getComment());
 
             preparedStatement.setLong(9, entity.getId());
@@ -108,7 +113,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
         Long userId = (long) args[2];
         Long responsibleId = (long) args[3];
 
-        if ((!category.equals("-"))||(!status.equals("-"))||(userId > 0)) where += " WHERE ";
+        if ((!category.equals("-")) || (!status.equals("-")) || (userId > 0)) where += " WHERE ";
 
         boolean moreThenOne = false;
         if (!category.equals("-")) {
@@ -131,38 +136,14 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
             this.preparedStatementParams.add(responsibleId);
             //moreThenOne = true;
         }
-
         return where;
     }
 
-
     @Override
     public List<Complaint> getAllComplaintsSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-        LOG.info("Execute query: " + query.getQuery());
-        try {
-            ps = conn.prepareStatement(query.getQuery());
-
-            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
-                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Complaint> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
+
     @Override
     public EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
@@ -189,33 +170,47 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
         WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
         while (rs.next()) {
             result.put(weekOfMonth, rs.getInt(1));
-            LOG.debug("weekOfMonth.next(): {}", weekOfMonth.next());
             weekOfMonth = weekOfMonth.next();
         }
         return result;
     }
 
     @Override
-    public List<Complaint> getComplaintsByRegionId(Long regionId){
+    public List<Complaint> getComplaintsByRegionId(Long regionId) {
+        return this.executeForList(this.getQuery("by.region.id"), new Object[]{regionId});
+    }
+
+    @Override
+    public List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
+                                                                        LocalDate startDate,
+                                                                        LocalDate endDate) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
         try {
-            ps = conn.prepareStatement(this.getQuery("by.region.id"));
+            ps = conn.prepareStatement(this.getQuery("by.region.id.and.time.period"));
             ps.setLong(1, regionId);
+            ps.setDate(2, toSqlDate(startDate));
+            ps.setDate(3, toSqlDate(endDate));
             ResultSet rs = ps.executeQuery();
-            List<Complaint> complaints = new ArrayList<>();
+            List<Statistics> statisticsList = new ArrayList<>();
             while (rs.next()) {
-                complaints.add(this.init(rs));
+                statisticsList.add(this.createComplaintStatisticsObject(rs));
             }
-            return complaints;
+            return statisticsList;
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(regionId, e);
+            throw new CrudException("Could not extract service orders", e);
         } finally {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }
     }
 
+    private ComplaintStatistics createComplaintStatisticsObject(ResultSet rs) throws SQLException {
+        return new ComplaintStatistics(rs.getLong("complaint_count"),
+                rs.getString("type"),
+                ComplaintStatus.valueOf(rs.getString("status")),
+                TypeMapper.toLocalDate(rs.getDate("date")));
+    }
 }

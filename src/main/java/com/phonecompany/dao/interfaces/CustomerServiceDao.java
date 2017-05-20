@@ -4,7 +4,7 @@ import com.phonecompany.model.CustomerServiceDto;
 
 import java.util.List;
 
-public interface CustomerServiceDao extends CrudDao<CustomerServiceDto> {
+public interface CustomerServiceDao extends JdbcOperations<CustomerServiceDto> {
 
     List<CustomerServiceDto> getCurrentCustomerServices(long customerId);
     List<CustomerServiceDto> getCustomerServicesByCustomerId(long customerId);

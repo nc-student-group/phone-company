@@ -6,7 +6,7 @@ import com.phonecompany.exception.*;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,57 +102,20 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("updateStatus"));
-            ps.setString(1, productStatus.name());
-            ps.setLong(2, serviceId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityModificationException(serviceId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        this.executeUpdate(this.getQuery("updateStatus"), new Object[]{productStatus.name(), serviceId});
     }
 
     @Override
     public List<Service> getAllServicesSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-
-        try {
-            LOG.info("Execute query: " + query.getQuery());
-            ps = conn.prepareStatement(query.getQuery());
-
-            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
-                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Service> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 
     @Override
     public boolean isExist(Service service) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
-        try { ps = conn.prepareStatement(this.getQuery("checkIfExists"));
+        try {
+            ps = conn.prepareStatement(this.getQuery("checkIfExists"));
             ps.setString(1, service.getServiceName());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -162,7 +125,7 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
             throw new EntityNotFoundException(service.getServiceName(), e);
-        }finally {
+        } finally {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.getDataSource());
         }

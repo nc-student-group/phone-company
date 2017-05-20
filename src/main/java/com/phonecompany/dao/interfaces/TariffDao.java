@@ -6,27 +6,25 @@ import com.phonecompany.util.Query;
 
 import java.util.List;
 
-public interface TariffDao extends AbstractPageableDao<Tariff> {
+public interface TariffDao extends JdbcOperations<Tariff> {
 
-    public List<Tariff> getByRegionId(Long regionId);
+    void updateTariffStatus(long tariffId, ProductStatus productStatus);
 
-    public void updateTariffStatus(long tariffId, ProductStatus productStatus);
+    Tariff findByTariffName(String tariffName);
 
-    public Tariff findByTariffName(String tariffName);
+    List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
 
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size);
+    List<Tariff> getTariffsAvailableForCustomer(long regionId);
 
-    public List<Tariff> getTariffsAvailableForCustomer(long regionId);
+    Integer getCountTariffsAvailableForCustomer(long regionId);
 
-    public Integer getCountTariffsAvailableForCustomer(long regionId);
+    List<Tariff> getTariffsAvailableForCorporate(int page, int size);
 
-    public List<Tariff> getTariffsAvailableForCorporate(int page, int size);
+    List<Tariff> getTariffsAvailableForCorporate();
 
-    public List<Tariff> getTariffsAvailableForCorporate();
+    Integer getCountTariffsAvailableForCorporate();
 
-    public Integer getCountTariffsAvailableForCorporate();
+    Tariff getByIdForSingleCustomer(long id, long regionId);
 
-    public Tariff getByIdForSingleCustomer(long id, long regionId);
-
-    public List<Tariff> getAllTariffsSearch(Query query);
+    List<Tariff> getAllTariffsSearch(Query query);
 }

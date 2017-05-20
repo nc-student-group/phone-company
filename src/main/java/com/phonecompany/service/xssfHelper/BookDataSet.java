@@ -5,29 +5,23 @@ import java.util.List;
 
 public class BookDataSet<K, V> {
 
-    private final String bookName;
     private final List<SheetDataSet<K, V>> sheetDataSets = new ArrayList<>();
 
-    public BookDataSet(String bookName) {
-        this.bookName = bookName;
-    }
-
-    public String getBookName() {
-        return bookName;
+    public BookDataSet() {
     }
 
     public List<SheetDataSet<K, V>> getSheetDataSets() {
         return sheetDataSets;
     }
 
-    public void addSheet(SheetDataSet<K, V> sheetDataSet) {
+    public BookDataSet<K, V> addSheet(SheetDataSet<K, V> sheetDataSet) {
         sheetDataSets.add(sheetDataSet);
+        return this;
     }
 
     @Override
     public String toString() {
         return "BookDataSet{" +
-                "bookName='" + bookName + '\'' +
                 ", sheetDataSets=" + sheetDataSets +
                 '}';
     }

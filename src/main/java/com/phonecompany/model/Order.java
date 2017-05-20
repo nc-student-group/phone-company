@@ -1,9 +1,5 @@
 package com.phonecompany.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.phonecompany.config.LocalDateTimeDeserializer;
-import com.phonecompany.config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 

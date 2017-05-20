@@ -1,51 +1,52 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.service.xssfHelper.Statistics;
 
-import java.util.EnumMap;
+import java.time.LocalDate;
 
-public class ComplaintStatistics {
+public final class ComplaintStatistics implements Statistics {
 
-    private EnumMap<WeekOfMonth, Integer> customerService;
-    private EnumMap<WeekOfMonth, Integer> suggestion;
-    private EnumMap<WeekOfMonth, Integer> technicalService;
+    private final long count;
+    private final String itemName;
+    private final ItemType itemType;
+    private final LocalDate creationDate;
 
-    public ComplaintStatistics(EnumMap<WeekOfMonth, Integer> customerService, EnumMap<WeekOfMonth, Integer> suggestion, EnumMap<WeekOfMonth, Integer> technicalService) {
-        this.customerService = customerService;
-        this.suggestion = suggestion;
-        this.technicalService = technicalService;
+    public ComplaintStatistics(long count, String itemName,
+                               ItemType itemType, LocalDate creationDate) {
+        this.count = count;
+        this.itemName = itemName;
+        this.itemType = itemType;
+        this.creationDate = creationDate;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getTechnicalService() {
-        return technicalService;
+    @Override
+    public long getCount() {
+        return count;
     }
 
-    public void setTechnicalService(EnumMap<WeekOfMonth, Integer> technicalService) {
-        this.technicalService = technicalService;
+    @Override
+    public String getItemName() {
+        return itemName;
     }
 
-    public EnumMap<WeekOfMonth, Integer> getCustomerService() {
-        return customerService;
+    @Override
+    public ItemType getItemType() {
+        return itemType;
     }
 
-    public void setCustomerService(EnumMap<WeekOfMonth, Integer> customerService) {
-        this.customerService = customerService;
-    }
-
-    public EnumMap<WeekOfMonth, Integer> getSuggestion() {
-        return suggestion;
-    }
-
-    public void setSuggestion(EnumMap<WeekOfMonth, Integer> suggestion) {
-        this.suggestion = suggestion;
+    @Override
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     @Override
     public String toString() {
-        return "ComplaintStatistics{" +
-                "customerService=" + customerService +
-                ", suggestion=" + suggestion +
-                ", technicalService=" + technicalService +
+        return "OrderStatistics{" +
+                "count=" + count +
+                ", itemName='" + itemName + '\'' +
+                ", itemType=" + itemType +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }

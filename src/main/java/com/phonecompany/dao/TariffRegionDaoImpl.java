@@ -9,7 +9,7 @@ import com.phonecompany.exception.EntityNotFoundException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Region;
 import com.phonecompany.model.TariffRegion;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements TariffRegionDao {
+public class TariffRegionDaoImpl extends JdbcOperationsImpl<TariffRegion> implements TariffRegionDao {
 
     private QueryLoader queryLoader;
     private RegionDao regionDao;
@@ -109,42 +109,14 @@ public class TariffRegionDaoImpl extends CrudDaoImpl<TariffRegion> implements Ta
 
     @Override
     public TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getAllByTariffIdAndRegionId"));
-            ps.setLong(1, tariffId);
-            ps.setLong(2, regionId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(tariffId, e);
-        }finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("getAllByTariffIdAndRegionId"),
+                new Object[]{tariffId, regionId});
     }
 
     @Override
     public void deleteByTariffId(long tariffId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(getQuery("deleteByTariffId"));
-            ps.setLong(1, tariffId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityDeletionException(tariffId, e);
-        }finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        this.executeUpdate(this.getQuery("deleteByTariffId"), new Object[]{tariffId});
     }
+
+
 }

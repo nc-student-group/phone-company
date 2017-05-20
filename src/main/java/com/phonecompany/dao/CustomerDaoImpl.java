@@ -10,7 +10,7 @@ import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,26 +113,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
 
     @Override
     public Customer getByVerificationToken(String token) {
-        String customerByVerificationTokenQuery = this.getByVerificationTokenQuery();
-        LOG.debug("customerByVerificationTokenQuery : {}", customerByVerificationTokenQuery);
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(customerByVerificationTokenQuery);
-            ps.setString(1, token);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return this.init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(token, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return executeForObject(this.getQuery("by.verification.token"), new Object[]{token});
     }
 
     @Override
@@ -140,63 +121,22 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         if (corporateId > 0) {
             return getByCorporate(corporateId);
         } else {
-            return getCustomersWithoutCorporate(corporateId);
+            return getCustomersWithoutCorporate();
         }
     }
 
     private List<Customer> getByCorporate(long corporateId) {
-        String customersByCorporate = this.getByCorporateIdQuery();
-        LOG.debug("customerByCompany : {}", customersByCorporate);
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(customersByCorporate);
-            ps.setLong(1, corporateId);
-            ResultSet rs = ps.executeQuery();
-            List<Customer> customers = new ArrayList<>();
-            while (rs.next()) {
-                customers.add(this.init(rs));
-            }
-            return customers;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(corporateId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("by.corporate"), new Object[]{corporateId});
     }
 
-    private List<Customer> getCustomersWithoutCorporate(long corporateId) {
-        String customersByCorporate = this.getWithoutCorporateQuery();
-        LOG.debug("customerWithoutCorporate : {}", customersByCorporate);
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(customersByCorporate);
-            ResultSet rs = ps.executeQuery();
-            List<Customer> customers = new ArrayList<>();
-            while (rs.next()) {
-                customers.add(this.init(rs));
-            }
-            return customers;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(corporateId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+    private List<Customer> getCustomersWithoutCorporate() {
+        return this.executeForList(this.getQuery("without.corporate"), new Object[]{});
     }
 
     @Override
     public int getCountByPhone(String phone) {
         return this.getCountByKey(phone, this.getCountByPhoneQuery());
     }
-
-
 
 
     private String getCountByPhoneQuery() {
@@ -242,30 +182,6 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
 
     @Override
     public List<Customer> getAllCustomersSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-
-        try {
-            LOG.info("Execute query: " + query.getQuery());
-            ps = conn.prepareStatement(query.getQuery());
-
-            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
-                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Customer> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 }
