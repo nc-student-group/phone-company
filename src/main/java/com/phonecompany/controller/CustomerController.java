@@ -43,21 +43,18 @@ public class CustomerController {
     private ApplicationEventPublisher eventPublisher;
     private UserService userService;
     private CustomerTariffService customerTariffService;
-    private Executor taskExecutor;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
                               ApplicationEventPublisher eventPublisher,
                               UserService userService,
-                              CustomerTariffService customerTariffService,
-                              Executor taskExecutor) {
+                              CustomerTariffService customerTariffService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.eventPublisher = eventPublisher;
         this.userService = userService;
         this.customerTariffService = customerTariffService;
-        this.taskExecutor = taskExecutor;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
