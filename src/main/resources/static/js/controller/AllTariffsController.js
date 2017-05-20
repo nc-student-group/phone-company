@@ -22,7 +22,7 @@ angular.module('phone-company').controller('AllTariffsController', [
         }, function () {
             $scope.preloader.send = false;
         });
-        $scope.tariffClick = function (id) {
+        $scope.campaignClick = function (id) {
             $location.path("/client/marketing-campaign/" + id);
         };
 

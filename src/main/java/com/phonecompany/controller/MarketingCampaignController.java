@@ -6,7 +6,10 @@ import com.phonecompany.service.interfaces.MarketingCampaignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +38,14 @@ public class MarketingCampaignController {
                         customerService.getCurrentlyLoggedInUser());
         LOGGER.info("Retrieved available marketing campaigns: " + marketingCampaigns);
         return marketingCampaigns;
+    }
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<?> getMarketingCampaignById(
+            @PathVariable("id") Long marketingCampaignId) {
+        MarketingCampaign marketingCampaign = marketingCampaignService
+                .getById(marketingCampaignId);
+        LOGGER.info("Retrieved marketing campaign: " + marketingCampaign);
+        return new ResponseEntity<>(marketingCampaign, HttpStatus.OK);
     }
 
 

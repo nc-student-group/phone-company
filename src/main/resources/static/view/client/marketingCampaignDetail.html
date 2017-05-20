@@ -1,0 +1,113 @@
+<div class="wrapper">
+    <ng-include src="'../../view/client/clientSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/client/clientHeader.html'"></ng-include>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title"><b>{{campaign.name}}</b></h4>
+                                <p>{{campaign.description}}</p>
+                            </div>
+                            <hr/>
+                            <!--<div class="row" style="margin: 0; padding: 20px;">-->
+                                <!--<div class="col-md-4">-->
+                                    <!--<div class="tariff-picture">-->
+                                        <!--<img ng-src="{{tariff.pictureUrl}}" width="90%"/>-->
+                                        <!--<div class="sale-picture"-->
+                                             <!--ng-show="tariff.discount > 0 && tariff.discount <= 100">-->
+                                            <!--<b>-{{tariff.discount}}%</b></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row" style="padding-top: 20px;">-->
+                                        <!--<button class="btn btn-info btn-fill col-md-8 col-md-offset-2"-->
+                                                <!--ng-click="activateClick()">-->
+                                            <!--ACTIVATE-->
+                                        <!--</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-8">-->
+                                    <!--<div class="row" style="text-align: center; font-size: 20px;">-->
+                                        <!--<b>Conditions</b>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-one">-->
+                                        <!--<div class="col-md-8 condition">-->
+                                            <!--<span>Calls in network</span>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-4 conditions-value">-->
+                                            <!--<span><b>{{tariff.callsInNetwork}}</b></span></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-two">-->
+                                        <!--<div class="col-md-8 condition"><span>Calls on other numbers</span></div>-->
+                                        <!--<div class="col-md-4 conditions-value">-->
+                                            <!--<span><b>{{tariff.callsOnOtherNumbers}}</b></span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-one">-->
+                                        <!--<div class="col-md-8 condition"><span>Roaming</span></div>-->
+                                        <!--<div class="col-md-4 conditions-value"><span><b>{{tariff.roaming}}</b></span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-two">-->
+                                        <!--<div class="col-md-8 condition"><span>Internet</span></div>-->
+                                        <!--<div class="col-md-4 conditions-value"><span><b>{{tariff.internet}}</b></span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-one">-->
+                                        <!--<div class="col-md-8 condition"><span>SMS</span></div>-->
+                                        <!--<div class="col-md-4 conditions-value"><span><b>{{tariff.sms}}</b></span></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-two">-->
+                                        <!--<div class="col-md-8 condition"><span>MMS</span></div>-->
+                                        <!--<div class="col-md-4 conditions-value"><span><b>{{tariff.mms}}</b></span></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="row row-one">-->
+                                        <!--<div class="col-md-8 condition"><span>Monthly payment</span></div>-->
+                                        <!--<div class="col-md-4"-->
+                                             <!--style="text-align: center; font-size: 16px; color: #161121"-->
+                                             <!--ng-hide="tariff.discount > 0 && tariff.discount <=100"><span>-->
+                                            <!--<b>{{tariff.price | number:2}} uah</b></span>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-md-4 conditions-value"-->
+                                             <!--ng-show="tariff.discount > 0 && tariff.discount <= 100">-->
+                                            <!--<span><b>{{tariff.price * (1 - tariff.discount/100) | number: 2}} uah</b><br>-->
+                                                <!--<s style="font-size: 14px; color: red">{{tariff.price | number: 2}} uah</s></span>-->
+                                        <!--</div>-->
+                                        <!--&lt;!&ndash;<div class="col-md-4">{{tariff.price * (1 - tariff.discount)}}</div>&ndash;&gt;-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-6" style="padding: 10px;" ng-repeat="t in tariffs">-->
+                                <!--<div class="tariff-picture"><img ng-src="{{t.pictureUrl}}" width="90%"/></div>-->
+                                <!--<div class="tariff-picture"-->
+                                <!--style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>-->
+                                <!--</div>-->
+                                <!--<div class="row" style="text-align: center; font-size: 16px; color: #161121">-->
+                                <!--{{t.price}} auh / 30 days-->
+                                <!--</div>-->
+                                <!--<div class="row">-->
+                                <!--<button class="btn btn-info btn-fill col-md-8 col-md-offset-2">-->
+                                <!--More-->
+                                <!--</button>-->
+                                <!--</div>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

@@ -18,7 +18,7 @@
                                 <hr/>
                                 <div class="row" style="margin: 0;">
                                     <div class="col-md-4" style="padding: 10px;" ng-repeat="mc in marketingCampaigns"
-                                         ng-click="tariffClick(mt.id)">
+                                         ng-click="campaignClick(mc.id)">
                                         <div class="tariff-picture">
                                             <img ng-src="{{mc.campaignTariff.tariffRegion.tariff.pictureUrl}}" width="90%"/>
                                             <div class="specials-picture"><b>Specials</b></div>
@@ -36,7 +36,7 @@
                                         </div>
                                         <div class="row">
                                             <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
-                                                    ng-click="tariffClick(mc.id); $event.stopPropagation();">
+                                                    ng-click="campaignClick(mc.id); $event.stopPropagation();">
                                                 More
                                             </button>
                                         </div>
