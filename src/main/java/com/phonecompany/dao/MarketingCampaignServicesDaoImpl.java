@@ -1,13 +1,12 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.dao.interfaces.MarketingCampaignDao;
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaignServices;
-import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,13 +20,11 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
         implements MarketingCampaignServicesDao {
 
     private QueryLoader queryLoader;
-    private MarketingCampaignDao marketingCampaignDao;
     private ServiceDao serviceDao;
 
     @Autowired
-    public MarketingCampaignServicesDaoImpl(QueryLoader queryLoader, MarketingCampaignDao marketingCampaignDao, ServiceDao serviceDao) {
+    public MarketingCampaignServicesDaoImpl(QueryLoader queryLoader, ServiceDao serviceDao) {
         this.queryLoader = queryLoader;
-        this.marketingCampaignDao = marketingCampaignDao;
         this.serviceDao = serviceDao;
     }
 
@@ -39,9 +36,8 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
     @Override
     public void populateSaveStatement(PreparedStatement preparedStatement, MarketingCampaignServices entity) {
         try {
-            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
-            preparedStatement.setDouble(3, entity.getPrice());
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setDouble(2, entity.getPrice());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -50,11 +46,9 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, MarketingCampaignServices entity) {
         try {
-            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getMarketingCampaign()));
-            preparedStatement.setObject(2, TypeMapper.getNullableId(entity.getService()));
-            preparedStatement.setDouble(3, entity.getPrice());
-
-            preparedStatement.setLong(4, entity.getId());
+            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getService()));
+            preparedStatement.setDouble(2, entity.getPrice());
+            preparedStatement.setLong(3, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -65,7 +59,6 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
         MarketingCampaignServices marketingCampaignServices = new MarketingCampaignServices();
         try {
             marketingCampaignServices.setId(rs.getLong("id"));
-            marketingCampaignServices.setMarketingCampaign(marketingCampaignDao.getById(rs.getLong("marketing_campaign_id")));
             marketingCampaignServices.setService(serviceDao.getById(rs.getLong("service_id")));
             marketingCampaignServices.setPrice(rs.getDouble("price"));
         } catch (SQLException e) {

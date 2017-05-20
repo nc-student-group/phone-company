@@ -1,15 +1,12 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
-import com.phonecompany.model.MarketingCampaign;
 import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.service.interfaces.MarketingCampaignServicesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class MarketingCampaignServicesServiceImpl extends CrudServiceImpl<MarketingCampaignServices>
@@ -25,9 +22,4 @@ public class MarketingCampaignServicesServiceImpl extends CrudServiceImpl<Market
         this.marketingCampaignServicesDao = marketingCampaignServicesDao;
     }
 
-    @Override
-    public List<MarketingCampaignServices> getMarketingCampaignServicesByMarketingCampaign(
-            MarketingCampaign campaign) {
-        return marketingCampaignServicesDao.getServicesByMarketingCampaignId(campaign.getId());
-    }
 }
