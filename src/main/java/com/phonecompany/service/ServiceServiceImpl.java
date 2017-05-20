@@ -68,7 +68,9 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
         int serviceEntityCount = this.serviceDao.getEntityCount(firstFilter);
 
-        return new PagingResult<>(servicesWithDiscount, serviceEntityCount);
+        PagingResult<Service> pagingResult = new PagingResult<>(servicesWithDiscount, serviceEntityCount);
+        LOG.debug("Paging result to be returned: {}", pagingResult);
+        return pagingResult;
     }
 
     private List<Service> applyDiscount(List<Service> services) {

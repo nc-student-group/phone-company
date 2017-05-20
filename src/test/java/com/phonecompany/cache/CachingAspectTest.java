@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -28,11 +28,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @Transactional
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CachingAspectTest {
 
-    private ServiceService serviceService;
+    @Autowired
+    private CachingAspect cachingAspect;
+
     @Autowired
     private ServiceDao serviceDao;
     @Autowired
@@ -43,19 +45,22 @@ public class CachingAspectTest {
     private OrderService orderService;
     @Autowired
     private StatisticsService<LocalDate, Long> statisticsService;
-
     @MockBean
     private CustomerService customerService;
 
+    private ServiceService serviceService;
     private Pair<String, List<Object>> resultIdentifier;
 
     @Before
     public void setUp() throws Exception {
+        serviceService = new ServiceServiceImpl(serviceDao, productCategoryDao, fileService,
+                customerService, orderService, statisticsService);
         List<Object> methodArguments = Arrays.asList(new Object[]{0, 5, 1});
         String methodNameToBeTested = "getServicesByProductCategoryId";
         resultIdentifier = Pair.with(methodNameToBeTested, methodArguments);
-        serviceService = new ServiceServiceImpl(serviceDao, productCategoryDao, fileService,
-                customerService, orderService, statisticsService);
+        Customer sampleRepresentative = TestUtil.getSampleRepresentative();
+        when(customerService.getCurrentlyLoggedInUser())
+                .thenReturn(sampleRepresentative);
     }
 
     @Test
@@ -63,9 +68,6 @@ public class CachingAspectTest {
         //given
         PagingResult<Service> pagingResult = serviceService
                 .getServicesByProductCategoryId(0, 5, 1);
-        Customer sampleRepresentative = TestUtil.getSampleRepresentative();
-        when(customerService.getCurrentlyLoggedInUser())
-                .thenReturn(sampleRepresentative);
 
         //when
         @SuppressWarnings("unchecked")

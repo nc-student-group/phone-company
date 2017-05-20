@@ -105,7 +105,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     }
 
     public String getCountQuery(Object... args) {
-        String getCountQuery = this.getQuery("getValue");
+        String getCountQuery = this.getQuery("getCount");
         getCountQuery += this.prepareWhereClause(args);
 
         return getCountQuery;

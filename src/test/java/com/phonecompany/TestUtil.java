@@ -40,6 +40,8 @@ public class TestUtil {
         return sampleServices;
     }
 
+    public static final int SAMPLE_SERVICES_ENTITY_COUNT = TestUtil.getSampleServices().size();
+
     public static Service getNonExistentService() {
         ProductCategory productCategory = new ProductCategory(1L, "Sample category", "Sample units");
         return new Service(1000L, "Service under test", 115,
@@ -57,6 +59,4 @@ public class TestUtil {
         ProductStatus[] productStatusValues = ProductStatus.values();
         return productStatusValues[(productStatus.ordinal() + 1) % productStatusValues.length];
     }
-
-    public static final int SAMPLE_SERVICES_ENTITY_COUNT = TestUtil.getSampleServices().size();
 }
