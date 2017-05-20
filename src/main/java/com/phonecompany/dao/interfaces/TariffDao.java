@@ -6,9 +6,7 @@ import com.phonecompany.util.Query;
 
 import java.util.List;
 
-public interface TariffDao extends AbstractPageableDao<Tariff> {
-
-    List<Tariff> getByRegionId(Long regionId);
+public interface TariffDao extends JdbcOperations<Tariff> {
 
     void updateTariffStatus(long tariffId, ProductStatus productStatus);
 

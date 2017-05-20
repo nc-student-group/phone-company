@@ -12,5 +12,6 @@ public interface ServiceDao extends JdbcOperations<Service>,
     boolean isExist(Service service);
 
     void updateServiceStatus(long serviceId, ProductStatus productStatus);
+
     List<Service> getAllServicesSearch(Query query);
 }

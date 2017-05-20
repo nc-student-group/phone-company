@@ -102,69 +102,17 @@ public class CustomerTariffDaoImpl extends JdbcOperationsImpl<CustomerTariff>
     }
 
     private List<CustomerTariff> getCustomerTariffsByClientIdQuery(Long id, String query) {
-        List<CustomerTariff> tariffs = new ArrayList<>();
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                tariffs.add(init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(id, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return tariffs;
+        return this.executeForList(query, new Object[]{id});
     }
 
     @Override
     public CustomerTariff getCurrentCustomerTariff(long customerId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getByCustomerId"));
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return (init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("getByCustomerId"), new Object[]{customerId});
     }
 
     @Override
     public CustomerTariff getCurrentCorporateTariff(long corporateId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getByCorporateId"));
-            ps.setLong(1, corporateId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return (init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(corporateId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("getByCorporateId"), new Object[]{corporateId});
     }
 
     @Override
@@ -180,23 +128,6 @@ public class CustomerTariffDaoImpl extends JdbcOperationsImpl<CustomerTariff>
     }
 
     private CustomerTariff getCustomerTariffByClientIdQuery(Long id, String query) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(id, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(query, new Object[]{id});
     }
 }

@@ -9,11 +9,13 @@ import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Repository
 public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<MarketingCampaignServices>
         implements MarketingCampaignServicesDao {
 
