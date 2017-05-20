@@ -15,23 +15,25 @@ angular.module('phone-company').controller('AllTariffsController', [
         $scope.inProgress = false;
 
         $scope.preloader.send = true;
-        MarketingCampaignService.getMarketingCampaings().then(function (data) {
-            $scope.marketingTariffs = data.marketingCampaignTariffs;
-            $scope.marketingServices = data.marketingCampaignServices;
-            $scope.marketingTariffsSize = $scope.marketingTariffs.length;
+        MarketingCampaignService.getMarketingCampaigns().then(function (data) {
+            $scope.marketingCampaigns = data;
+            $scope.marketingCampaignsSize = data.length;
             $scope.preloader.send = false;
         }, function () {
             $scope.preloader.send = false;
         });
+        $scope.tariffClick = function (id) {
+            $location.path("/client/marketing-campaign/" + id);
+        };
 
-        // $scope.preloader.send = true;
-        // TariffService.getTariffsAvailableForCustomer($scope.page, $scope.size).then(function (data) {
-        //     $scope.tariffs = data.tariffs;
-        //     $scope.tariffsCount = data.tariffsCount;
-        //     $scope.preloader.send = false;
-        // }, function () {
-        //     $scope.preloader.send = false;
-        // });
+        $scope.preloader.send = true;
+        TariffService.getTariffsAvailableForCustomer($scope.page, $scope.size).then(function (data) {
+            $scope.tariffs = data.tariffs;
+            $scope.tariffsCount = data.tariffsCount;
+            $scope.preloader.send = false;
+        }, function () {
+            $scope.preloader.send = false;
+        });
 
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer()
@@ -40,9 +42,9 @@ angular.module('phone-company').controller('AllTariffsController', [
                 $scope.preloader.send = false;
             });
         $scope.preloader.send = false;
-        // $scope.tariffClick = function (id) {
-        //     $location.path("/client/tariff/" + id);
-        // };
+        $scope.tariffClick = function (id) {
+            $location.path("/client/tariff/" + id);
+        };
 
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.tariffsCount) {

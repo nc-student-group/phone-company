@@ -2,18 +2,18 @@
 
 angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$http', '$filter', function ($q, $http, $filter) {
 
-    var GET_MARKETING_CAMPAIGNS_URL = "api/marketing-campaigns/available/";
+    var GET_AVAILABLE_MARKETING_CAMPAIGNS_URL = "api/marketing-campaigns/available/";
 
 
     var factory = {
-        getMarketingCampaings: getMarketingCampaings
+        getMarketingCampaigns: getMarketingCampaigns
     };
 
     return factory;
 
-    function getMarketingCampaings() {
+    function getMarketingCampaigns() {
         var deferred = $q.defer();
-        $http.get(GET_MARKETING_CAMPAIGNS_URL).then(
+        $http.get(GET_AVAILABLE_MARKETING_CAMPAIGNS_URL).then(
             function (response) {
                 deferred.resolve(response.data);
             },

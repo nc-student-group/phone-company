@@ -6,4 +6,4 @@ spring:
     url: jdbc:postgresql://localhost:5432/nc_phone_company_local?user=yzrllkhondutsx&password=root
     driver-class-name: org.postgresql.Driver
     tomcat:
-      max-active: 5
+      max-active: 10
