@@ -8,17 +8,22 @@ import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.*;
+import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @ServiceStereotype
 public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
@@ -166,7 +171,18 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         customerTariffDao.update(customerTariff);
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
-
+        this.scheduleCustomerTariffResuming(resumingOrder);
         return customerTariff;
+    }
+
+    private void scheduleCustomerTariffResuming(Order resumingOrder) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler taskScheduler = new ConcurrentTaskScheduler(scheduledExecutorService);
+        taskScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                resumeCustomerTariff(resumingOrder);
+            }
+        }, TypeMapper.toUtilDate(resumingOrder.getExecutionDate()));
     }
 }

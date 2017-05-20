@@ -13,12 +13,17 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.service.interfaces.CustomerServiceService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @ServiceStereotype
 public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceDto>
@@ -123,8 +128,19 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
         customerServiceDao.update(customerService);
         orderService.save(suspensionOrder);
         orderService.save(resumingOrder);
-
+        this.scheduleCustomerServiceResuming(resumingOrder);
         return customerService;
+    }
+
+    private void scheduleCustomerServiceResuming(Order resumingOrder) {
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        TaskScheduler taskScheduler = new ConcurrentTaskScheduler(scheduledExecutorService);
+        taskScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                resumeCustomerService(resumingOrder);
+            }
+        }, TypeMapper.toUtilDate(resumingOrder.getExecutionDate()));
     }
 
     @Override
