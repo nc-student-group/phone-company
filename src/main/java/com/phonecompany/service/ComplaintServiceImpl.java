@@ -130,7 +130,7 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     }
 
     @Override
-    public List<Complaint> getAllComplaintsSearch(int page, int size, String email, String status, String category) {
+    public Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category) {
         Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
         query.where();
         query.addLikeCondition("email", email);
@@ -141,7 +141,11 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
             query.and().addCondition("complaint.type=?", category);
         }
         query.addPaging(page, size);
-        return complaintDao.getAllComplaintsSearch(query.build());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("complaints", complaintDao.getByQuery(query.build()));
+        response.put("entitiesSelected", complaintDao.getCountByQuery(query.build()));
+        return response;
     }
 
     @Override

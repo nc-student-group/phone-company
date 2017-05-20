@@ -23,7 +23,7 @@ public interface ComplaintService extends CrudService<Complaint> {
 
     public Complaint setStatusAccomplished(Complaint complaint, String comment);
 
-    public List<Complaint> getAllComplaintsSearch(int page, int size, String email, String status, String category);
+    public Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category);
 
     public int getCountSearch(int page, int size, String email, String status, String category);
 

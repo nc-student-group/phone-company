@@ -78,13 +78,8 @@ public class SearchController {
             @PathVariable("status") String status,
             @PathVariable("category") String category,
             @RequestParam("e") String email) {
-        List<Complaint> complaints = this.complaintService.getAllComplaintsSearch(page,size,email, status, category);
-        Map<String, Object> response = new HashMap<>();
 
-        response.put("complaints", complaints);
-        response.put("entitiesSelected", this.complaintService.getCountSearch(page,size,email, status, category));
-
-        return response;
+        return this.complaintService.getAllComplaintsSearch(page,size,email, status, category);
     }
 
 
