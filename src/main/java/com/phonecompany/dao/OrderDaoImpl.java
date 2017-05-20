@@ -1,5 +1,7 @@
 package com.phonecompany.dao;
 
+import com.phonecompany.dao.interfaces.CustomerServiceDao;
+import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.CrudException;
@@ -12,6 +14,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.model.proxy.DynamicProxy;
+import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -37,10 +40,15 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         implements OrderDao {
 
     private QueryLoader queryLoader;
+    private CustomerServiceDao customerServiceDao;
+    private CustomerTariffDao customerTariffDao;
 
     @Autowired
-    public OrderDaoImpl(QueryLoader queryLoader) {
+    public OrderDaoImpl(QueryLoader queryLoader, CustomerServiceDao customerServiceDao,
+                        CustomerTariffDao customerTariffDao) {
         this.queryLoader = queryLoader;
+        this.customerServiceDao = customerServiceDao;
+        this.customerTariffDao = customerTariffDao;
     }
 
     @Override
@@ -84,9 +92,11 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         try {
             order.setId(rs.getLong("id"));
             long customerServiceId = rs.getLong("customer_service_id");
-            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+//            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
+            order.setCustomerService(customerServiceDao.getById(customerServiceId));
             long customerTariffId = rs.getLong("customer_tariff_id");
-            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+//            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
+            order.setCustomerTariff(customerTariffDao.getById(customerTariffId));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
@@ -99,47 +109,12 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
 
     @Override
     public Order getResumingOrderByCustomerTariffId(Long customerTariffId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getResumingByCustomerId"));
-            ps.setLong(1, customerTariffId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return init(rs);
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerTariffId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return null;
+        return this.executeForObject(this.getQuery("getResumingByCustomerId"), new Object[]{customerTariffId});
     }
 
     @Override
     public List<Order> getResumingOrderByCustomerServiceId(Long customerId) {
-        List<Order> orders = new ArrayList<>();
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getResumingServicesByCustomerId"));
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                orders.add(init(rs));
-            }
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
-        return orders;
+        return this.executeForList(this.getQuery("getResumingServicesByCustomerId"), new Object[]{customerId});
     }
 
     @Override
@@ -167,140 +142,33 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
     }
 
     private List<Order> getOrdersByClientIdPaged(String query, Long clientId, int page, int size) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setObject(1, clientId);
-            ps.setObject(2, size);
-            ps.setObject(3, page * size);
-            ResultSet rs = ps.executeQuery();
-            List<Order> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query, new Object[]{clientId, size, page * size});
     }
 
     private Integer getCountByClientId(String query, Long clientId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setLong(1, clientId);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(clientId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForInt(query, new Object[]{clientId});
     }
 
     @Override
     public List<Order> getOrdersForCustomerServicesByCustomerIdPaged(Long customerId, int page, int size) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getPagedForCustomerServicesByCustomerId"));
-            ps.setObject(1, customerId);
-            ps.setObject(2, size);
-            ps.setObject(3, page * size);
-            ResultSet rs = ps.executeQuery();
-            List<Order> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("getPagedForCustomerServicesByCustomerId"),
+                new Object[]{customerId, size, page * size});
     }
 
     @Override
     public Integer getCountOfServicesByCustomerId(Long customerId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("getCountOfServicesByCustomerId"));
-            ps.setLong(1, customerId);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(customerId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForInt(this.getQuery("getCountOfServicesByCustomerId"), new Object[]{customerId});
     }
 
     @Override
     public List<Order> getTariffOrdersByRegionId(long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("tariff.by.region.id"));
-            ps.setLong(1, regionId);
-            ResultSet rs = ps.executeQuery();
-            List<Order> tariffOrders = new ArrayList<>();
-            while (rs.next()) {
-                tariffOrders.add(this.init(rs));
-            }
-            return tariffOrders;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(regionId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("tariff.by.region.id"), new Object[]{regionId});
     }
 
     @Override
     public List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("services.by.time.period"));
-            ps.setDate(1, toSqlDate(startDate));
-            ps.setDate(2, toSqlDate(endDate));
-            ResultSet rs = ps.executeQuery();
-            List<Order> serviceOrders = new ArrayList<>();
-            while (rs.next()) {
-                serviceOrders.add(this.init(rs));
-            }
-            return serviceOrders;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Could not extract service orders", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("services.by.time.period"),
+                new Object[]{toSqlDate(startDate), toSqlDate(endDate)});
     }
 
     @Override
@@ -371,5 +239,10 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
             weekOfMonth = weekOfMonth.next();
         }
         return result;
+    }
+
+    @Override
+    public Order getNextResumingOrder() {
+        return this.executeForObject(this.getQuery("nextResumingOrder"), new Object[]{});
     }
 }

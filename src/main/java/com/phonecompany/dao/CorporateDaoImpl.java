@@ -16,7 +16,6 @@ import java.sql.SQLException;
 public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> implements CorporateDao {
 
     private QueryLoader queryLoader;
-    private String partOfName;
 
     @Autowired
     public CorporateDaoImpl(QueryLoader queryLoader) {

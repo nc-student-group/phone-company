@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,6 +34,12 @@ public class TypeMapper {
     public static Date toSqlDate(LocalDate localDate) {
         return Optional.ofNullable(localDate)
                 .map(l -> Date.valueOf(localDate))
+                .orElse(null);
+    }
+
+    public static java.util.Date toUtilDate(LocalDate localDate) {
+        return Optional.ofNullable(localDate)
+                .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .orElse(null);
     }
 
