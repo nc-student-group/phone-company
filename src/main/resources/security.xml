@@ -76,9 +76,9 @@
             <password-encoder ref="shaPasswordEncoder"/>
         </authentication-provider>
     </authentication-manager>
-    <beans:bean class="com.phonecompany.config.RESTAuthenticationEntryPoint" id="authenticationEntryPoint"/>
-    <beans:bean class="com.phonecompany.config.RESTAuthenticationFailureHandler" id="authenticationFailureHandler"/>
-    <beans:bean class="com.phonecompany.config.RESTAuthenticationSuccessHandler" id="authenticationSuccessHandler"/>
+    <beans:bean class="com.phonecompany.config.security_config.RESTAuthenticationEntryPoint" id="authenticationEntryPoint"/>
+    <beans:bean class="com.phonecompany.config.security_config.RESTAuthenticationFailureHandler" id="authenticationFailureHandler"/>
+    <beans:bean class="com.phonecompany.config.security_config.RESTAuthenticationSuccessHandler" id="authenticationSuccessHandler"/>
     <beans:bean class="com.phonecompany.service.UserDetailsServiceImpl" id="userDetailsService"/>
     <beans:bean id="shaPasswordEncoder"
                 class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>

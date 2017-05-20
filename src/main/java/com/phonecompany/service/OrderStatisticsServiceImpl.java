@@ -3,6 +3,7 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.exception.InsufficientFilteringException;
 import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
 import com.phonecompany.service.xssfHelper.filterChain.Filter;
@@ -29,7 +30,7 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
     }
 
     @Override
-    public Long getOrderNumber(List<Statistics> statisticsList) {
+    public Long getValue(List<Statistics> statisticsList) {
             this.validateStatisticsList(statisticsList);
             if (statisticsList.size() == 0) {
                 return 0L;
@@ -45,13 +46,13 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
     }
 
     @Override
-    public List<LocalDate> generateTimeLine(LocalDate startDate, LocalDate endDate) {
+    public List<LocalDate> getRangeOfDefinition(LocalDate rangeStart, LocalDate rangeEnd) {
         List<LocalDate> timeLine = new ArrayList<>();
-        while (startDate.isBefore(endDate)) {
-            timeLine.add(startDate);
-            startDate = startDate.plusDays(1);
+        while (rangeStart.isBefore(rangeEnd)) {
+            timeLine.add(rangeStart);
+            rangeStart = rangeStart.plusDays(1);
         }
-        timeLine.add(startDate);
+        timeLine.add(rangeStart);
         return timeLine;
     }
 }

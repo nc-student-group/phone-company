@@ -11,6 +11,7 @@ import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
+import com.phonecompany.service.email.ConfirmationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
@@ -39,26 +40,22 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Value("${application-url}")
     private String applicationUrl;
 
-    private ServiceDao serviceDao;
     private CustomerDao customerDao;
     private VerificationTokenService verificationTokenService;
-    private MailMessageCreator<VerificationToken> confirmMessageCreator;
+    private ConfirmationEmailCreator confirmMessageCreator;
     private EmailService<Customer> emailService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
     private ShaPasswordEncoder shaPasswordEncoder;
 
     @Autowired
-    public CustomerServiceImpl(ServiceDao serviceDao,
-                               CustomerDao customerDao,
+    public CustomerServiceImpl(CustomerDao customerDao,
                                VerificationTokenService verificationTokenService,
-                               @Qualifier("confirmationEmailCreator")
-                                       MailMessageCreator<VerificationToken> confirmMessageCreator,
+                               ConfirmationEmailCreator confirmMessageCreator,
                                EmailService<Customer> emailService,
                                TariffService tariffService,
                                CustomerTariffService customerTariffService,
                                ShaPasswordEncoder shaPasswordEncoder) {
-        this.serviceDao = serviceDao;
         this.customerDao = customerDao;
         this.verificationTokenService = verificationTokenService;
         this.confirmMessageCreator = confirmMessageCreator;
@@ -163,27 +160,27 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
-    public List<Customer> getAllCustomersSearch(int page,int size, String email, String phone, String surname, int corporate, int region, String status) {
+    public List<Customer> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
         Query.Builder query = new Query.Builder("dbuser");
         query.where();
-        query.addLikeCondition("email",email);
-        query.and().addLikeCondition("phone",phone);
-        query.and().addLikeCondition("lastname",surname);
+        query.addLikeCondition("email", email);
+        query.and().addLikeCondition("phone", phone);
+        query.and().addLikeCondition("lastname", surname);
 
-        if(!status.equals("ALL") &&(status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
-            query.and().addCondition("status=?",status);
-        }else if (!status.equals("ALL")){
+        if (!status.equals("ALL") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
+            query.and().addCondition("status=?", status);
+        } else if (!status.equals("ALL")) {
             throw new ConflictException("Search parameters error: status.");
         }
 
-        if(corporate==-1){
+        if (corporate == -1) {
             query.and().addIsNullCondition("corporate_id");
-        }else if(corporate>0){
-            query.and().addCondition("corporate_id=?",corporate);
-        }else if(corporate<-1) {
+        } else if (corporate > 0) {
+            query.and().addCondition("corporate_id=?", corporate);
+        } else if (corporate < -1) {
             throw new ConflictException("Search parameters error: corporate.");
         }
-        query.addPaging(page,size);
+        query.addPaging(page, size);
 
         return customerDao.getAllCustomersSearch(query.build());
     }
@@ -192,21 +189,21 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     public int getCountSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
         Query.Builder query = new Query.Builder("dbuser");
         query.where();
-        query.addLikeCondition("email",email);
-        query.and().addLikeCondition("phone",phone);
-        query.and().addLikeCondition("lastname",surname);
+        query.addLikeCondition("email", email);
+        query.and().addLikeCondition("phone", phone);
+        query.and().addLikeCondition("lastname", surname);
 
-        if(!status.equals("ALL") &&(status.equals("ACTIVATED") || status.equals("DEACTIVATED"))){
-            query.and().addCondition("status=?",status);
-        }else if (!status.equals("ALL")){
+        if (!status.equals("ALL") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
+            query.and().addCondition("status=?", status);
+        } else if (!status.equals("ALL")) {
             throw new ConflictException("Search parameters error: status.");
         }
 
-        if(corporate==-1){
+        if (corporate == -1) {
             query.and().addIsNullCondition("corporate_id");
-        }else if(corporate>0){
-            query.and().addCondition("corporate_id=?",corporate);
-        }else if(corporate<-1) {
+        } else if (corporate > 0) {
+            query.and().addCondition("corporate_id=?", corporate);
+        } else if (corporate < -1) {
             throw new ConflictException("Search parameters error: corporate.");
         }
 

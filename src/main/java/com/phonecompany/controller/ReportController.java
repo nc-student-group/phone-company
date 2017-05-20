@@ -2,11 +2,9 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.WeeklyComplaintStatistics;
 import com.phonecompany.model.WeeklyOrderStatistics;
-import com.phonecompany.service.StatisticsService;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.List;
 
 import static com.phonecompany.service.xssfHelper.SheetDataSet.combine;
 

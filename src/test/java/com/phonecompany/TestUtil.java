@@ -11,6 +11,7 @@ import java.util.List;
 
 public class TestUtil {
 
+    public static final long EXISTING_SERVICE_ID = 5L;
     public static final String EXAMPLE_EMAIL = "example@gmail.com";
     public static final String EXAMPLE_PASSWORD = "$root$";
     public static final boolean IS_REPRESENTATIVE = true;
@@ -39,10 +40,22 @@ public class TestUtil {
         return sampleServices;
     }
 
-    public static Service getSampleService() {
+    public static Service getNonExistentService() {
         ProductCategory productCategory = new ProductCategory(1L, "Sample category", "Sample units");
-        return new Service(200L, "Service under test", 115,
+        return new Service(1000L, "Service under test", 115,
                 ProductStatus.ACTIVATED, 0, productCategory, null, null, null, 0, 0);
+    }
+
+    public static Service getExistingService() {
+        return new Service(5L, "3G ONLINE 8GB", 129.99,
+                ProductStatus.ACTIVATED, 0, null,
+                "https://s3-us-west-2.amazonaws.com/contentorders/service/218969357/picture.png",
+                null, null, 30, 15);
+    }
+
+    public static ProductStatus getAnotherProductStatus(ProductStatus productStatus) {
+        ProductStatus[] productStatusValues = ProductStatus.values();
+        return productStatusValues[(productStatus.ordinal() + 1) % productStatusValues.length];
     }
 
     public static final int SAMPLE_SERVICES_ENTITY_COUNT = TestUtil.getSampleServices().size();

@@ -1,4 +1,4 @@
-package com.phonecompany.config;
+package com.phonecompany.config.security_config;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;

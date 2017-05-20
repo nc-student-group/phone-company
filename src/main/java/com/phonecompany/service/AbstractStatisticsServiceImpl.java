@@ -1,13 +1,12 @@
 package com.phonecompany.service;
 
 import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.TableDataSet;
 import com.phonecompany.service.xssfHelper.filterChain.Filter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.function.Function;
@@ -28,12 +27,12 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     @Override
     public SheetDataSet<K, V> prepareStatisticsDataSet(String sheetName,
                                                        List<Statistics> statisticsList,
-                                                       K startDate, K endDate) {
+                                                       K startOfRange, K endOfRange) {
         SheetDataSet<K, V> sheet = new SheetDataSet<>(sheetName);
         List<ItemType> itemTypes = this.getItemTypesFromStatistics(statisticsList);
-        List<K> timeLine = this.generateTimeLine(startDate, endDate);
+        List<K> timeLine = this.getRangeOfDefinition(startOfRange, endOfRange);
         for (ItemType itemType : itemTypes) {
-            this.populateExcelTableDataSet(sheet, itemType, statisticsList, timeLine);
+            this.populateTableDataSet(sheet, itemType, statisticsList, timeLine);
         }
         return sheet;
     }
@@ -51,7 +50,7 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
      *
      * @return set of unique dates corresponding to the elements in the incoming list
      */
-    public abstract List<K> generateTimeLine(K startDate, K endDate);
+    public abstract List<K> getRangeOfDefinition(K rangeStart, K rangeEnd);
 
     /**
      * Populates {@link SheetDataSet} object with its components (e.g. {@link TableDataSet})
@@ -60,10 +59,8 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
      * @param itemType item type that is used to filter out {@code Statistics} objects
      * @param timeLine
      */
-    private void populateExcelTableDataSet(SheetDataSet<K, V> sheet,
-                                           ItemType itemType,
-                                           List<Statistics> statisticsList,
-                                           List<K> timeLine) {
+    private void populateTableDataSet(SheetDataSet<K, V> sheet, ItemType itemType,
+                                      List<Statistics> statisticsList, List<K> timeLine) {
         TableDataSet<K, V> table = sheet.createTable(itemType.toString());
         List<String> uniqueProductNames = this.extractUniqueValues(statisticsList, Statistics::getItemName);
         for (String itemName : uniqueProductNames) {
@@ -72,8 +69,8 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
         }
     }
 
-    private List<String> extractUniqueValues(List<Statistics> statisticsList,
-                                             Function<Statistics, String> mapper) {
+    private <E> List<E> extractUniqueValues(List<Statistics> statisticsList,
+                                            Function<Statistics, E> mapper) {
         return statisticsList.stream()
                 .map(mapper)
                 .distinct()
@@ -83,22 +80,22 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     /**
      * Populates {@code RowDataSet} object with the cell representations
      *
-     * @param row            row to be populated with data
-     * @param statisticsList source to fetch statistical data from
-     * @param itemName       item name the given row corresponds to
-     * @param itemType       item type the given row corresponds to
-     * @param timeLine       a set of unique dates at which orders were made
+     * @param row               row to be populated with data
+     * @param statisticsList    source to fetch statistical data from
+     * @param itemName          item name the given row corresponds to
+     * @param itemType          item type the given row corresponds to
+     * @param rangeOfDefinition a set of unique dates at which orders were made
      */
     private void populateRowDataSet(RowDataSet<K, V> row,
                                     List<Statistics> statisticsList,
                                     String itemName, ItemType itemType,
-                                    List<K> timeLine) {
+                                    List<K> rangeOfDefinition) {
 
-        for (K date : timeLine) {
-            Filter<?> filterChainHead = this.createFilterChain(itemName, itemType, date);
+        for (K rangePoint : rangeOfDefinition) {
+            Filter<?> filterChainHead = this.createFilterChain(itemName, itemType, rangePoint);
             List<Statistics> filteredStatistics = filterChainHead.doFilter(statisticsList);
-            V orderNumberByDate = this.getOrderNumber(filteredStatistics);
-            row.addKeyValuePair(date, orderNumberByDate);
+            V value = this.getValue(filteredStatistics);
+            row.addKeyValuePair(rangePoint, value);
         }
     }
 
@@ -110,5 +107,5 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
      * @param statisticsList order list that number will be fetched from
      * @return order number
      */
-    public abstract V getOrderNumber(List<Statistics> statisticsList);
+    public abstract V getValue(List<Statistics> statisticsList);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 
 @Ignore
-public class VerificationTokenDaoImplTest extends AbstractTest {
+public class VerificationTokenDaoImplTest {
 
     @Autowired
     private VerificationTokenDaoImpl vtDao;

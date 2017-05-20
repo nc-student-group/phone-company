@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import static com.phonecompany.config.datetime_config.DateTimeFormatConverter.FORMATTER;
+
 @Component
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDate> {
     @Override
-    public void serialize(LocalDate arg0, JsonGenerator arg1, SerializerProvider arg2)
+    public void serialize(LocalDate value, JsonGenerator generator, SerializerProvider provider)
             throws IOException {
-        arg1.writeString(arg0.toString());
+        generator.writeString(value.format(FORMATTER));
     }
 }

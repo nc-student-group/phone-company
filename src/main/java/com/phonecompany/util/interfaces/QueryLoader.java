@@ -1,4 +1,6 @@
-package com.phonecompany.util;
+package com.phonecompany.util.interfaces;
+
+import com.phonecompany.util.QueryLoaderImpl;
 
 /**
  * The <code>QueryLoader</code> interface should be implemented by

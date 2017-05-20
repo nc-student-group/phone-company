@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-//TODO: added "s" letter to the customer-tariff resource
-//previous: @RequestMapping(value = "/api/customer-tariff")
 @RequestMapping(value = "/api/customer-tariffs")
 public class CustomerTariffController {
 

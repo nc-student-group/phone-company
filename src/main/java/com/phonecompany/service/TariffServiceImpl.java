@@ -1,5 +1,7 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.CacheClear;
+import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.ConflictException;
@@ -51,7 +53,9 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
+        LOGGER.debug("getByRegionIdAndPaging");
         return this.tariffDao.getPaging(page, size, regionId);
     }
 
@@ -61,6 +65,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
         this.tariffDao.updateTariffStatus(tariffId, productStatus);
     }
@@ -71,6 +76,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff updateTariff(List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff savedTariff = updateTariff(tariffRegions.get(0).getTariff());
@@ -83,6 +89,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff updateTariff(Tariff tariff) {
         Tariff temp = this.findByTariffName(tariff.getTariffName());
         if (temp != null && !temp.getId().equals(tariff.getId())) {
@@ -125,6 +132,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCustomer(Customer customer) {
         if (customer.getCorporate() == null) {
             return tariffDao.getTariffsAvailableForCustomer(customer.getAddress().getRegion().getId());
@@ -138,12 +146,15 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCorporate() {
         return this.tariffDao.getTariffsAvailableForCorporate();
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCustomer(long regionId, int page, int size) {
+        LOGGER.debug("getTariffsAvailableForCustomer");
         return tariffDao.getTariffsAvailableForCustomer(regionId, page, size);
     }
 
@@ -153,6 +164,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public List<Tariff> getTariffsAvailableForCorporate(int page, int size) {
         return this.tariffDao.getTariffsAvailableForCorporate(page, size);
     }
@@ -281,6 +293,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     public Tariff addNewTariff(List<TariffRegion> tariffRegions) {
         Tariff tariff;
         if (tariffRegions.size() > 0) {
@@ -296,6 +309,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @CacheClear
     @Transactional
     public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
@@ -322,6 +336,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Cacheable
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
                                                int type, String fromStr, String toStr, int orderBy, String orderByType) {
         java.sql.Date from = null, to = null;

@@ -5,18 +5,12 @@ import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
-import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
+import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.interfaces.UserService;
-import com.phonecompany.service.xssfHelper.RowDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.service.xssfHelper.TableDataSet;
-import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
-import com.phonecompany.service.xssfHelper.filterChain.Filter;
-import com.phonecompany.service.xssfHelper.filterChain.NamingFilter;
-import com.phonecompany.service.xssfHelper.filterChain.ItemTypeFilter;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 @ServiceStereotype
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>

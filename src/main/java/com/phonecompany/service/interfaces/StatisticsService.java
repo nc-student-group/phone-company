@@ -1,4 +1,4 @@
-package com.phonecompany.service;
+package com.phonecompany.service.interfaces;
 
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.SheetDataSet;

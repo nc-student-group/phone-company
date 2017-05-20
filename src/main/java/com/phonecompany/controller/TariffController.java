@@ -69,7 +69,6 @@ public class TariffController {
                                           @RequestParam("ob") int orderBy,
                                           @RequestParam("ot") String orderByType) {
         return tariffService.getTariffsTable(page, size, name, status, type, from, to, orderBy, orderByType);
-
     }
 
     @GetMapping(value = "/empty")

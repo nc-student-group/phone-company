@@ -7,14 +7,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 @Component
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDate> {
     @Override
-    public LocalDate deserialize(JsonParser arg0, DeserializationContext arg1)
+    public LocalDate deserialize(JsonParser jsonParser, DeserializationContext arg1)
             throws IOException {
-        return LocalDate.parse(arg0.getText());
+        return LocalDate.parse(jsonParser.getText());
     }
 }
 

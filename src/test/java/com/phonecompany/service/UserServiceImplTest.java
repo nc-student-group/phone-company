@@ -100,6 +100,7 @@ public class UserServiceImplTest {
         //then
         verify(shaPasswordEncoder, times(1))
                 .encodePassword(any(), any());
+        verify(userDao, times(1)).save(any());
 
         assertThat(savedUser.getStatus(), is(ACTIVATED));
         assertThat(initialPassword, is(not(savedUser.getPassword())));

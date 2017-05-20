@@ -2,6 +2,7 @@ package com.phonecompany.dao;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.phonecompany.dao.interfaces.JdbcOperations;
+import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.*;
 import com.phonecompany.model.DomainEntity;
 import org.slf4j.Logger;

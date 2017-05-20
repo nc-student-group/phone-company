@@ -1,6 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.OrderDao;
+import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.CrudException;
 import com.phonecompany.exception.EntityInitializationException;
 import com.phonecompany.exception.EntityNotFoundException;
@@ -12,7 +13,7 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.util.QueryLoader;
+import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCreator;

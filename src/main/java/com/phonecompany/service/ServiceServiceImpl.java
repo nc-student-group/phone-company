@@ -13,10 +13,7 @@ import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.FileService;
-import com.phonecompany.service.interfaces.OrderService;
-import com.phonecompany.service.interfaces.ServiceService;
+import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
@@ -166,6 +163,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    @Cacheable
     public List<Service> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
         Query.Builder query = new Query.Builder("service");
         query.where();

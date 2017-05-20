@@ -1,4 +1,4 @@
-package com.phonecompany.dao;
+package com.phonecompany.dao.interfaces;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
