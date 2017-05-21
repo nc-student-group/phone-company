@@ -37,10 +37,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Override
     public List<Order> getResumingOrderByCustomerService(CustomerServiceDto customerService) {
-        //?????????????????????
-//        return orderDao.getResumingOrderByCustomerServiceId(customerService.getId()).stream().
-//                filter(o -> OrderStatus.PENDING.equals(o.getOrderStatus()))
-//                .collect(Collectors.toList()).get(0);
         return orderDao.getResumingOrderByCustomerServiceId(customerService.getId());
     }
 
@@ -56,8 +52,8 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     @Override
     public List<Order> getOrdersHistoryByClient(Customer customer, int page, int size) {
         Long clientId = customer.getId();
-        return customer.getRepresentative() ? orderDao.getOrdersByCorporateIdPaged(clientId, page, size) :
-                orderDao.getOrdersByCustomerIdPaged(clientId, page, size);
+        return customer.getRepresentative() ? orderDao.getOrdersByCorporateIdPaged(customer.getCorporate().getId(),
+                page, size) : orderDao.getOrdersByCustomerIdPaged(clientId, page, size);
     }
 
     @Override
@@ -120,7 +116,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     }
 
     @Override
-    public Order getNextResumingOrder(){
+    public Order getNextResumingOrder() {
         return this.orderDao.getNextResumingOrder();
     }
 

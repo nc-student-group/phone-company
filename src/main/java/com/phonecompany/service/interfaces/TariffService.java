@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-//TODO: please, remove all these unnecessary public access modifiers
 public interface TariffService extends CrudService<Tariff>,
         ExtendedStatisticsGenerating<LocalDate, Long> {
 
@@ -60,8 +59,6 @@ public interface TariffService extends CrudService<Tariff>,
 
     void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);
 
-    List<Tariff> getAllTariffsSearch(int page, int size, String name, String status, String category);
-
-    int getCountSearch(int page, int size, String name, String status, String category);
+    Map<String, Object> getAllTariffsSearch(int page, int size, String name, String status, String category);
 
 }

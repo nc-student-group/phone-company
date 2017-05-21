@@ -72,9 +72,15 @@ public class ComplaintController {
     public Map<String, Object> getComplaints(@PathVariable("category") String category,
                                              @PathVariable("status") String status,
                                              @PathVariable("page") int page,
-                                             @PathVariable("size") int size) {
+                                             @PathVariable("size") int size,
+                                             @RequestParam("poe") String partOfEmail,
+                                             @RequestParam("df") String dateFrom,
+                                             @RequestParam("dt") String dateTo,
+                                             @RequestParam("pos") String partOfSubject,
+                                             @RequestParam("ob") int orderBy,
+                                             @RequestParam("obt") String orderByType) {
         LOG.debug("Fetching complaints with the category: {}", category);
-        return complaintService.getComplaints(category, status, page, size);
+        return complaintService.getComplaints(category, status, page, size, partOfEmail, dateFrom, dateTo, partOfSubject, orderBy, orderByType);
     }
 
     @GetMapping("/{id}/{page}/{size}")
@@ -88,10 +94,16 @@ public class ComplaintController {
     @GetMapping("/pmg/{category}/{page}/{size}")
     public Map<String, Object> getComplaintsByResponsible(@PathVariable("category") String category,
                                                           @PathVariable("page") int page,
-                                                          @PathVariable("size") int size) {
+                                                          @PathVariable("size") int size,
+                                                          @RequestParam("poe") String partOfEmail,
+                                                          @RequestParam("df") String dateFrom,
+                                                          @RequestParam("dt") String dateTo,
+                                                          @RequestParam("pos") String partOfSubject,
+                                                          @RequestParam("ob") int orderBy,
+                                                          @RequestParam("obt") String orderByType) {
         LOG.debug("Fetching complaints with category: {} for the responsible", category);
         return complaintService.getComplaintsByResponsible(userService.getCurrentlyLoggedInUser().getId(),
-                category, page, size);
+                category, page, size, partOfEmail, dateFrom, dateTo, partOfSubject, orderBy, orderByType);
     }
 
     @PutMapping("/pmg")

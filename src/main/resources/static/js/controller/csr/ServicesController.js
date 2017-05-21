@@ -18,6 +18,12 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.page = 0;
         $scope.size = 5;
         $scope.units = undefined;
+        $scope.partOfName = "";
+        $scope.priceFrom = 0;
+        $scope.priceTo = 0;
+        $scope.selectedStatus = 0;
+        $scope.orderBy = 0;
+        $scope.orderByType = "ASC";
 
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
@@ -26,7 +32,8 @@ angular.module('phone-company').controller('ServicesController', [
         });
 
         $scope.preloader.send = true;
-        ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
+        ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
+            $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
             .then(function (data) {
                 $scope.services = data.pagingResult;
                 console.log(JSON.stringify($scope.services));
@@ -39,22 +46,33 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.updateData = function () {
             $scope.page = 0;
             $scope.preloader.send = true;
-            ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
+            ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
+                $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
                 .then(function (data) {
                     $scope.services = data.pagingResult;
                     $scope.servicesCount = data.entityCount;
                     $scope.preloader.send = false;
                 }, function () {
                     $scope.preloader.send = false;
+                    $scope.inProgress = false;
                 });
         };
 
-        $scope.nextPage = function () {
-            if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.servicesCount) {
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.servicesCount / $scope.size);
+            if (max == $scope.servicesCount) {
+                return max;
+            }
+            return max + 1;
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
                 $scope.inProgress = true;
-                $scope.page = $scope.page + 1;
+                $scope.page = page;
                 $scope.preloader.send = true;
-                ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
+                ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.services = data.pagingResult;
                         $scope.servicesCount = data.entityCount;
@@ -62,6 +80,26 @@ angular.module('phone-company').controller('ServicesController', [
                         $scope.preloader.send = false;
                     }, function () {
                         $scope.preloader.send = false;
+                        $scope.inProgress = false;
+                    });
+            }
+        };
+
+        $scope.nextPage = function () {
+            if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.servicesCount) {
+                $scope.inProgress = true;
+                $scope.page = $scope.page + 1;
+                $scope.preloader.send = true;
+                ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+                    .then(function (data) {
+                        $scope.services = data.pagingResult;
+                        $scope.servicesCount = data.entityCount;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
+                        $scope.inProgress = false;
                     });
             }
         };
@@ -71,7 +109,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size)
+                ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.services = data.pagingResult;
                         $scope.servicesCount = data.entityCount;
@@ -79,6 +118,7 @@ angular.module('phone-company').controller('ServicesController', [
                         $scope.preloader.send = false;
                     }, function () {
                         $scope.preloader.send = false;
+                        $scope.inProgress = false;
                     });
             }
         };

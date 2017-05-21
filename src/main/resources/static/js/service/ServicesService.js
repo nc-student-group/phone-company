@@ -31,9 +31,11 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
-        function getServicesByProductCategoryId(productCategoryId, page, size) {
+        function getServicesByProductCategoryId(productCategoryId, page, size, partOfName, priceFrom,
+                                                priceTo, selectedStatus, order, orderByType) {
             let deferred = $q.defer();
-            $http.get(`${SERVICES}/category/${productCategoryId}/${page}/${size}`)
+            $http.get(`${SERVICES}/category/${productCategoryId}/${page}/${size}`+`?pon=`+partOfName+"&pf="+priceFrom+
+            "&pt="+priceTo+"&s="+selectedStatus+"&ob="+order+"&obt="+orderByType)
                 .then(function (response) {
                         deferred.resolve(response.data);
                     },
@@ -125,7 +127,7 @@ angular.module('phone-company')
 
         function activateServiceForCustomerId(serviceId, customerId) {
             var deferred = $q.defer();
-            $http.get(SERVICES+"/activate/"+serviceId+"/"+customerId).then(
+            $http.get(SERVICES + "/activate/" + serviceId + "/" + customerId).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -146,6 +148,6 @@ angular.module('phone-company')
             getServiceById: getServiceById,
             performServiceEdit: performServiceEdit,
             activateService: activateService,
-            activateServiceForCustomerId:activateServiceForCustomerId
+            activateServiceForCustomerId: activateServiceForCustomerId
         };
     }]);

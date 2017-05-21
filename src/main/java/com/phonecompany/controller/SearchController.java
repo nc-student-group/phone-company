@@ -43,13 +43,8 @@ public class SearchController {
             @PathVariable("role") int userRole,
             @PathVariable("status") String status,
             @RequestParam("s") String email) {
-        List<User> users = this.userService.getAllUsersSearch(page,size,email, userRole, status);
-        Map<String, Object> response = new HashMap<>();
 
-        response.put("users", users);
-        response.put("entitiesSelected", this.userService.getCountSearch(page,size,email, userRole, status));
-
-        return response;
+        return this.userService.getAllUsersSearch(page,size,email, userRole, status);
     }
 
     @GetMapping(value = "/customers/{page}/{size}/{status}/{region}")
@@ -62,13 +57,8 @@ public class SearchController {
             @RequestParam("ph") String phone,
             @RequestParam("c") int corporate,
             @RequestParam("s") String surname) {
-        List<Customer> customers = this.customerService.getAllCustomersSearch(page,size,email, phone, surname, corporate, region, status);
-        Map<String, Object> response = new HashMap<>();
 
-        response.put("customers", customers);
-        response.put("entitiesSelected", this.customerService.getCountSearch(page,size,email, phone, surname, corporate, region, status));
-
-        return response;
+        return this.customerService.getAllCustomersSearch(page,size,email, phone, surname, corporate, region, status);
     }
 
     @GetMapping(value = "/complaints/{page}/{size}/{status}/{category}")
@@ -78,13 +68,8 @@ public class SearchController {
             @PathVariable("status") String status,
             @PathVariable("category") String category,
             @RequestParam("e") String email) {
-        List<Complaint> complaints = this.complaintService.getAllComplaintsSearch(page,size,email, status, category);
-        Map<String, Object> response = new HashMap<>();
 
-        response.put("complaints", complaints);
-        response.put("entitiesSelected", this.complaintService.getCountSearch(page,size,email, status, category));
-
-        return response;
+        return this.complaintService.getAllComplaintsSearch(page,size,email, status, category);
     }
 
 
@@ -95,13 +80,7 @@ public class SearchController {
             @PathVariable("status") String status,
             @PathVariable("category") String category,
             @RequestParam("n") String name) {
-        List<Tariff> tariffs = this.tariffService.getAllTariffsSearch(page,size,name, status, category);
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("tariffs", tariffs);
-        response.put("entitiesSelected", this.tariffService.getCountSearch(page,size,name, status, category));
-
-        return response;
+        return this.tariffService.getAllTariffsSearch(page,size,name, status, category);
     }
 
     @GetMapping(value = "/services/{page}/{size}/{lowerPrice}/{upperPrice}/{status}")
@@ -112,13 +91,7 @@ public class SearchController {
             @PathVariable("lowerPrice") int lowerPrice,
             @PathVariable("upperPrice") int upperPrice,
             @RequestParam("n") String name) {
-        List<Service> services = this.serviceService.getAllServicesSearch(page,size,name, status, lowerPrice,upperPrice);
 
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("services", services);
-        response.put("entitiesSelected", this.serviceService.getCountSearch(page,size,name, status, lowerPrice,upperPrice));
-
-        return response;
+        return this.serviceService.getAllServicesSearch(page,size,name, status, lowerPrice,upperPrice);
     }
 }

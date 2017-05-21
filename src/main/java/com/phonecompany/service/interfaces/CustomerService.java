@@ -1,9 +1,7 @@
 package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.Customer;
-
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
-
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +21,7 @@ public interface CustomerService extends CrudService<Customer>,
 
     List<Customer> getCustomersByCorporate(long corporateId);
 
-    List<Customer> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
-
-    int getCountSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
+    Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
 
     Customer addNewCustomer(Customer customer);
 

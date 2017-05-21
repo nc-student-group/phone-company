@@ -35,7 +35,7 @@
                                         <div class="dataTables_length">
                                             <md-input-container class="md-block" flex-gt-sm>
                                                 <label>Category:</label>
-                                                <md-select ng-model="currentCategory" md-on-close="updateData()">
+                                                <md-select ng-model="currentCategory">
                                                     <md-option value="0">All Categories</md-option>
                                                     <md-option ng-repeat="c in categories" value="{{c.id}}">
                                                         {{c.categoryName}}
@@ -43,6 +43,61 @@
                                                 </md-select>
                                             </md-input-container>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Status:</label>
+                                            <md-select ng-model="selectedStatus">
+                                                <md-option value="0">All statuses</md-option>
+                                                <md-option value="1">ACTIVATED</md-option>
+                                                <md-option value="2">DEACTIVATED</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-left: 15px">
+                                    <div class="col-sm-3">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Name:</label>
+                                            <input type="text" ng-model="partOfName" maxlength="150"/>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Price from:</label>
+                                            <input type="number" ng-model="priceFrom" min="0"/>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Price to:</label>
+                                            <input type="number" ng-model="priceTo" min="0"/>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding: 15px">
+                                    <div class="col-sm-4">
+                                        <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
+                                            <label>Order by:</label>
+                                            <md-select ng-model="orderBy">
+                                                <md-option value="0">Name</md-option>
+                                                <md-option value="1">Price</md-option>
+                                                <md-option value="2">Status</md-option>
+                                                <md-option value="3">Category</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
+                                            <label>Order type:</label>
+                                            <md-select ng-model="orderByType">
+                                                <md-option value="ASC">&uarr;</md-option>
+                                                <md-option value="DESC">&darr;</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-info btn-fill" ng-click="updateData()">Filter</button>
                                     </div>
                                 </div>
                                 <div class="content table-responsive">
@@ -97,25 +152,65 @@
                                                  id="services_table_paginate">
                                                 <ul class="pagination">
                                                     <li class="paginate_button previous" id="tariffTable_previous">
-                                                        <a aria-controls="servicesTable" data-dt-idx="0"
-                                                           tabindex="0" ng-show="page > 0"
-                                                           ng-click="previousPage()">Previous</a>
+                                                        <a aria-controls="tariffTable" data-dt-idx="0"
+                                                           tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                    </li>
+                                                    <li class="paginate_button" ng-show="page > 2"
+                                                        ng-click="getPage(0)">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">1</a>
+                                                    </li>
+                                                    <li class="paginate_button" ng-show="page > 3">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">...</a>
+                                                    </li>
+                                                    <li class="paginate_button" ng-show="(page - 1)*size > 0"
+                                                        ng-click="getPage(page - 2)">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">{{page-1}}</a>
+                                                    </li>
+                                                    <li class="paginate_button" ng-show="(page)*size > 0"
+                                                        ng-click="getPage(page - 1)"><a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">{{page}}</a>
                                                     </li>
                                                     <li class="paginate_button active"><a
                                                             aria-controls="tariffTable"
-                                                            data-dt-idx="1" tabindex="0">{{page + 1}}</a>
+                                                            data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                     </li>
-                                                    <li class="paginate_button next pointable" id="servicesTable_next">
+                                                    <li class="paginate_button"
+                                                        ng-show="(page + +1)*size < servicesCount"
+                                                        ng-click="getPage(page+1)">
                                                         <a
-                                                                aria-controls="servicesTable" data-dt-idx="2"
-                                                                tabindex="0" ng-show="(page + 1) * size < servicesCount"
-                                                                ng-click="nextPage()">Next</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div>
-                                                <label><b>Services count: {{servicesCount}}</b></label>
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">{{page+2}}</a>
+                                                    </li>
+                                                    <li class="paginate_button"
+                                                        ng-show="(page + 2)*size < servicesCount"
+                                                        ng-click="getPage(page+2)">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">{{page+3}}</a>
+                                                    </li>
+                                                    <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">...</a>
+                                                    </li>
+                                                    <li class="paginate_button"
+                                                        ng-click="getPage(getMaxPageNumber() - 1)"
+                                                        ng-show="page < getMaxPageNumber() - 3">
+                                                        <a
+                                                                aria-controls="tariffTable"
+                                                                data-dt-idx="1" tabindex="0">{{getMaxPageNumber()}}</a>
+                                                    </li>
+                                                    <li class=" paginate_button next pointable" id="tariffTable_next"><a
+                                                            aria-controls="tariffTable" data-dt-idx="2"
+                                                            tabindex="0" ng-show="(page + 1)*size < servicesCount"
+                                                            ng-click="nextPage()">Next</a></li>
                                             </div>
                                         </div>
                                     </div>

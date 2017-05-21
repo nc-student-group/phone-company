@@ -158,8 +158,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     private Query buildQueryForCustomersTable(int page, int size, long regionId, String status, String partOfEmail,
-                                             String partOfName, String selectedPhone, String partOfCorporate,
-                                             int orderBy, String orderByType) {
+                                              String partOfName, String selectedPhone, String partOfCorporate,
+                                              int orderBy, String orderByType) {
         Query.Builder builder = new Query.Builder("dbuser inner join address on dbuser.address_id = address.id " +
                 "left join corporate on dbuser.corporate_id = corporate.id " +
                 "inner join region on address.region_id = region.id");
@@ -168,8 +168,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                 .and().openBracket().addLikeCondition("dbuser.firstname", partOfName)
                 .or().addLikeCondition("dbuser.secondname", partOfName)
                 .or().addLikeCondition("dbuser.lastname", partOfName).closeBracket()
-                .and().addLikeCondition("dbuser.phone", selectedPhone)
-                .and().addLikeCondition("corporate.corporate_name", partOfCorporate);
+                .and().addLikeCondition("dbuser.phone", selectedPhone);
+        if (partOfCorporate.length() > 0) builder.and().addLikeCondition("corporate.corporate_name", partOfCorporate);
         if (regionId > 0) builder.and().addCondition("address.region_id = ?", regionId);
         if (!status.equals("ALL")) builder.and().addCondition("dbuser.status = ?", status);
         String orderByField = buildOrderBy(orderBy);
@@ -215,55 +215,36 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
-    public List<Customer> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
-        Query.Builder query = new Query.Builder("dbuser");
-        query.where();
-        query.addLikeCondition("email", email);
-        query.and().addLikeCondition("phone", phone);
-        query.and().addLikeCondition("lastname", surname);
+    public Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
+        Query.Builder queryBuilder = new Query.Builder("dbuser");
+        queryBuilder.where();
+        queryBuilder.addLikeCondition("email", email);
+        queryBuilder.and().addLikeCondition("phone", phone);
+        queryBuilder.and().addLikeCondition("lastname", surname);
 
         if (!status.equals("ALL") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
-            query.and().addCondition("status=?", status);
+            queryBuilder.and().addCondition("status=?", status);
         } else if (!status.equals("ALL")) {
             throw new ConflictException("Search parameters error: status.");
         }
 
         if (corporate == -1) {
-            query.and().addIsNullCondition("corporate_id");
+            queryBuilder.and().addIsNullCondition("corporate_id");
         } else if (corporate > 0) {
-            query.and().addCondition("corporate_id=?", corporate);
+            queryBuilder.and().addCondition("corporate_id=?", corporate);
         } else if (corporate < -1) {
             throw new ConflictException("Search parameters error: corporate.");
         }
-        query.addPaging(page, size);
+        queryBuilder.addPaging(page, size);
 
-        return customerDao.getAllCustomersSearch(query.build());
+        Map<String, Object> response = new HashMap<>();
+
+        Query query = queryBuilder.build();
+        response.put("customers", customerDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", customerDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        return response;
     }
 
-    @Override
-    public int getCountSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
-        Query.Builder query = new Query.Builder("dbuser");
-        query.where();
-        query.addLikeCondition("email", email);
-        query.and().addLikeCondition("phone", phone);
-        query.and().addLikeCondition("lastname", surname);
-
-        if (!status.equals("ALL") && (status.equals("ACTIVATED") || status.equals("DEACTIVATED"))) {
-            query.and().addCondition("status=?", status);
-        } else if (!status.equals("ALL")) {
-            throw new ConflictException("Search parameters error: status.");
-        }
-
-        if (corporate == -1) {
-            query.and().addIsNullCondition("corporate_id");
-        } else if (corporate > 0) {
-            query.and().addCondition("corporate_id=?", corporate);
-        } else if (corporate < -1) {
-            throw new ConflictException("Search parameters error: corporate.");
-        }
-
-        return customerDao.getAllCustomersSearch(query.build()).size();
-    }
 
     @Override
     public void updateStatus(long id, Status status) {
