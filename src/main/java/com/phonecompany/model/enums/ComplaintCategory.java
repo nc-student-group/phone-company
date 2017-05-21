@@ -1,6 +1,6 @@
 package com.phonecompany.model.enums;
 
-public enum ComplaintCategory implements ItemType {
+public enum ComplaintCategory {
     TECHNICAL_SERVICE,
     SUGGESTION,
     CUSTOMER_SERVICE;

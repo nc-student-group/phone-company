@@ -1,4 +1,4 @@
-package com.phonecompany.exception;
+package com.phonecompany.exception.dao_layer;
 
 import java.sql.SQLException;
 

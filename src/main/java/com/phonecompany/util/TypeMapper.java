@@ -1,8 +1,9 @@
 package com.phonecompany.util;
 
-import com.phonecompany.model.*;
-import com.phonecompany.model.enums.ItemType;
-import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.model.DomainEntity;
+import com.phonecompany.model.Service;
+import com.phonecompany.model.enums.interfaces.DataBaseEnum;
+import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.service.xssfHelper.Statistics;
 import org.springframework.util.Assert;
 
@@ -15,45 +16,22 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Class provides with a set of methods that help to map one entity
+ * to another or to map some identifier to its corresponding entity.
+ */
 public class TypeMapper {
 
     /**
-     * Converts an instance of {@code java.sql.Date} to its corresponding
-     * {@code java.time.LocalDate} representation. This method does aware
-     * that its incoming parameter may be {@literal null}.
+     * Gets an enum instance that corresponds to its id from the storage.
      *
-     * @param date date to convert
-     * @return corresponding {@code java.time.LocalDate} object or {@literal null}
-     */
-    public static LocalDate toLocalDate(Date date) {
-        return Optional.ofNullable(date)
-                .map(Date::toLocalDate)
-                .orElse(null);
-    }
-
-    public static Date toSqlDate(LocalDate localDate) {
-        return Optional.ofNullable(localDate)
-                .map(l -> Date.valueOf(localDate))
-                .orElse(null);
-    }
-
-    public static java.util.Date toUtilDate(LocalDate localDate) {
-        return Optional.ofNullable(localDate)
-                .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                .orElse(null);
-    }
-
-    /**
-     * Gets a {@code UserRole} enum instance that corresponds to its id
-     * containing in the storage
-     *
-     * @param databaseId id that maps an enum instance to its storage entry
+     * @param id id that maps an enum instance to its storage entry
      * @return corresponding enum instance
-     * @see UserRole user role enum representation
      */
-    public static UserRole getUserRoleByDatabaseId(Long databaseId) {
-        return Arrays.stream(UserRole.values())
-                .filter(ur -> Objects.equals(ur.getDatabaseId(), databaseId))
+    public static <E extends Enum & DataBaseEnum> E getEnumValueByDatabaseId(Class<E> enumClass, Long id) {
+        E[] enumConstants = enumClass.getEnumConstants();
+        return Arrays.stream(enumConstants)
+                .filter(e -> Objects.equals(e.getDatabaseId(), id))
                 .findFirst().orElse(null);
     }
 
@@ -89,6 +67,48 @@ public class TypeMapper {
         };
     }
 
+    /**
+     * Converts an instance of {@code java.sql.Date} to its corresponding
+     * {@code java.time.LocalDate} representation. This method does aware
+     * that its incoming parameter may be {@literal null}.
+     *
+     * @param date date to convert
+     * @return corresponding {@code java.time.LocalDate} object or {@literal null}
+     */
+    public static LocalDate toLocalDate(Date date) {
+        return Optional.ofNullable(date)
+                .map(Date::toLocalDate)
+                .orElse(null);
+    }
+
+    /**
+     * Converts an instance of {@code java.time.LocalDate} to its corresponding
+     * {@code java.sql.Date} representation. This method does aware that its
+     * incoming parameter may be {@literal null}.
+     *
+     * @param localDate date to convert
+     * @return corresponding {@code java.sql.Date} object or {@literal null}
+     */
+    public static Date toSqlDate(LocalDate localDate) {
+        return Optional.ofNullable(localDate)
+                .map(l -> Date.valueOf(localDate))
+                .orElse(null);
+    }
+
+    /**
+     * Converts an instance of {@code java.time.LocalDate} to its corresponding
+     * {@code java.util.Date} representation. This method does aware that its
+     * incoming parameter may be {@literal null}.
+     *
+     * @param localDate date to convert
+     * @return corresponding {@code java.util.Date} object or {@literal null}
+     */
+    public static java.util.Date toUtilDate(LocalDate localDate) {
+        return Optional.ofNullable(localDate)
+                .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .orElse(null);
+    }
+
     public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
         return statistics -> statistics.getItemName().equals(targetName);
     }
@@ -98,6 +118,6 @@ public class TypeMapper {
     }
 
     public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
-        return statistics -> statistics.getCreationDate().equals(date);
+        return statistics -> statistics.getTimePoint().equals(date);
     }
 }

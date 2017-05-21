@@ -3,30 +3,26 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.CorporateDao;
 import com.phonecompany.dao.interfaces.CustomerDao;
-import com.phonecompany.exception.CrudException;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.util.Query;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
+import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
+
 @Repository
 public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         implements CustomerDao {
@@ -94,7 +90,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
             customer.setId(rs.getLong("id"));
             customer.setEmail(rs.getString("email"));
             customer.setPassword(rs.getString("password"));
-            customer.setRole(TypeMapper.getUserRoleByDatabaseId(rs.getLong("role_id")));
+            customer.setRole(getEnumValueByDatabaseId(UserRole.class, rs.getLong("role_id")));
             customer.setStatus(Status.valueOf(rs.getString("status")));
             customer.setFirstName(rs.getString("firstname"));
             customer.setSecondName(rs.getString("secondname"));

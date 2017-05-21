@@ -1,8 +1,8 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.CorporateDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Corporate;
 import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;

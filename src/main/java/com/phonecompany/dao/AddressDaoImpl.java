@@ -2,8 +2,8 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AddressDao;
 import com.phonecompany.dao.interfaces.RegionDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Address;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;

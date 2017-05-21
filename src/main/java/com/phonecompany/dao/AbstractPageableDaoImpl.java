@@ -1,7 +1,7 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AbstractPageableDao;
-import com.phonecompany.exception.CrudException;
+import com.phonecompany.exception.dao_layer.CrudException;
 import com.phonecompany.model.DomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public abstract class AbstractPageableDaoImpl<T extends DomainEntity>
     }
 
     public String getCountQuery(Object... args) {
-        String getCountQuery = this.getQuery("getCount");
+        String getCountQuery = this.getQuery("getValue");
         getCountQuery += this.prepareWhereClause(args);
 
         return getCountQuery;

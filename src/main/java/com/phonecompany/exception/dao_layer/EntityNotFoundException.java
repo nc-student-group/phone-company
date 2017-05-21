@@ -1,4 +1,6 @@
-package com.phonecompany.exception;
+package com.phonecompany.exception.dao_layer;
+
+import com.phonecompany.exception.dao_layer.CrudException;
 
 import java.sql.SQLException;
 

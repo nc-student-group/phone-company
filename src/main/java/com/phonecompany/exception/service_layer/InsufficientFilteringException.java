@@ -1,7 +1,10 @@
-package com.phonecompany.exception;
+package com.phonecompany.exception.service_layer;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class InsufficientFilteringException extends RuntimeException {
 
     public InsufficientFilteringException(List<?> failedList) {

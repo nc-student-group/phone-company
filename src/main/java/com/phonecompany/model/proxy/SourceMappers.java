@@ -2,7 +2,7 @@ package com.phonecompany.model.proxy;
 
 import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
-import com.phonecompany.exception.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.Order;
@@ -13,9 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.List;
 import java.util.function.Function;
 
 import static com.phonecompany.util.TypeMapper.toLocalDate;

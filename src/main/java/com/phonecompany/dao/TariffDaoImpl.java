@@ -1,7 +1,8 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.TariffDao;
-import com.phonecompany.exception.*;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.Query;

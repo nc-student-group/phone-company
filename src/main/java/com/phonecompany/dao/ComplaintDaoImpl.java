@@ -2,10 +2,9 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.CrudException;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.CrudException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.ComplaintStatistics;
 import com.phonecompany.service.xssfHelper.Statistics;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.EnumMap;
 
+import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
@@ -168,10 +168,11 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
     private EnumMap<WeekOfMonth, Integer> associateWeeksWithComplaintNumbers(ResultSet rs)
             throws SQLException {
         EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
-        WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
         while (rs.next()) {
-            result.put(weekOfMonth, rs.getInt(1));
-            weekOfMonth = weekOfMonth.next();
+            long weekNumber = rs.getLong("week_number");
+            int numberOfOrders = rs.getInt("number_of_complaints");
+            WeekOfMonth weekOfMonth = getEnumValueByDatabaseId(WeekOfMonth.class, weekNumber);
+            result.put(weekOfMonth, numberOfOrders);
         }
         return result;
     }

@@ -1,7 +1,7 @@
 package com.phonecompany.controller.advice;
 
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.exception.EmptyResultSetException;
+import com.phonecompany.exception.service_layer.MissingResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +22,8 @@ public class ConflictControllerAdvice {
         return new ResponseEntity<>(new Error(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(EmptyResultSetException.class)
-    public ResponseEntity<?> emptyResultSetException(EmptyResultSetException e) {
+    @ExceptionHandler(MissingResultException.class)
+    public ResponseEntity<?> emptyResultSetException(MissingResultException e) {
         LOG.debug("e.getMessage: {}", e.getMessage());
         LOG.debug("In handler method");
         LOG.debug("e.getMessage: {}", e.getMessage());

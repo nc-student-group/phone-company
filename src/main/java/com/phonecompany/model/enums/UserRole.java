@@ -1,11 +1,13 @@
 package com.phonecompany.model.enums;
 
+import com.phonecompany.model.enums.interfaces.DataBaseEnum;
+
 import static com.phonecompany.model.enums.UserRole.Constants.*;
 
 /**
  * Defines user roles
  */
-public enum UserRole {
+public enum UserRole implements DataBaseEnum {
     /* Can create users with such roles as: CLIENT, CSR, PMG */
     ADMIN(ADMIN_DATABASE_ID),
     /* Post tariffs and services available in the system*/

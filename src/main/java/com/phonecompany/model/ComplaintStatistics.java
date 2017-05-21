@@ -1,27 +1,31 @@
 package com.phonecompany.model;
 
-import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.model.enums.ComplaintStatus;
+import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.service.xssfHelper.Statistics;
 
 import java.time.LocalDate;
 
+/**
+ * {@inheritDoc}
+ */
 public final class ComplaintStatistics implements Statistics {
 
     private final long count;
     private final String itemName;
-    private final ItemType itemType;
+    private final ComplaintStatus complaintStatus;
     private final LocalDate creationDate;
 
     public ComplaintStatistics(long count, String itemName,
-                               ItemType itemType, LocalDate creationDate) {
+                               ComplaintStatus complaintStatus, LocalDate creationDate) {
         this.count = count;
         this.itemName = itemName;
-        this.itemType = itemType;
+        this.complaintStatus = complaintStatus;
         this.creationDate = creationDate;
     }
 
     @Override
-    public long getCount() {
+    public long getValue() {
         return count;
     }
 
@@ -32,11 +36,11 @@ public final class ComplaintStatistics implements Statistics {
 
     @Override
     public ItemType getItemType() {
-        return itemType;
+        return complaintStatus;
     }
 
     @Override
-    public LocalDate getCreationDate() {
+    public LocalDate getTimePoint() {
         return creationDate;
     }
 
@@ -45,7 +49,7 @@ public final class ComplaintStatistics implements Statistics {
         return "OrderStatistics{" +
                 "count=" + count +
                 ", itemName='" + itemName + '\'' +
-                ", itemType=" + itemType +
+                ", complaintStatus=" + complaintStatus +
                 ", creationDate=" + creationDate +
                 '}';
     }

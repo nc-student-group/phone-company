@@ -1,7 +1,7 @@
 package com.phonecompany.service.xssfHelper.filterChain;
 
+import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.model.enums.ItemType;
 
 import java.util.List;
 import java.util.function.Predicate;
