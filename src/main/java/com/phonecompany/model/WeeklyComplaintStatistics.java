@@ -10,7 +10,9 @@ public class WeeklyComplaintStatistics {
     private EnumMap<WeekOfMonth, Integer> suggestion;
     private EnumMap<WeekOfMonth, Integer> technicalService;
 
-    public WeeklyComplaintStatistics(EnumMap<WeekOfMonth, Integer> customerService, EnumMap<WeekOfMonth, Integer> suggestion, EnumMap<WeekOfMonth, Integer> technicalService) {
+    public WeeklyComplaintStatistics(EnumMap<WeekOfMonth, Integer> customerService,
+                                     EnumMap<WeekOfMonth, Integer> suggestion,
+                                     EnumMap<WeekOfMonth, Integer> technicalService) {
         this.customerService = customerService;
         this.suggestion = suggestion;
         this.technicalService = technicalService;

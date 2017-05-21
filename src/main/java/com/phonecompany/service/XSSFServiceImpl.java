@@ -1,6 +1,8 @@
 package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
+import com.phonecompany.exception.service_layer.TypeNotSupportedException;
+import com.phonecompany.exception.service_layer.WorkbookToInputStreamConversionException;
 import com.phonecompany.service.interfaces.XSSFService;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.RowDataSet;
@@ -24,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import static org.apache.poi.ss.usermodel.CellType.STRING;
@@ -40,7 +43,9 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     private static final String PLURAL_FORM = "S";
     private int distanceBetweenTables = 25;
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public InputStream generateReport(BookDataSet<K, V> book) {
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -49,7 +54,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
             String sheetName = sheetDataSet.getSheetName();
             XSSFSheet sheet = workbook.createSheet(sheetName);
-
+            LOG.debug("Created sheet with name: {}", sheetName);
             int rowPosition = 0;
             for (TableDataSet<K, V> tableDataSet : sheetDataSet.getTableDataSets()) {
                 this.createTable(sheet, rowPosition, tableDataSet);
@@ -60,6 +65,15 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         return this.saveWorkBook(workbook);
     }
 
+    /**
+     * Creates a table populated with a specified data.
+     *
+     * @param sheet        sheet where the table will be created on
+     * @param rowPosition  position of the row where table creation will
+     *                     start from
+     * @param tableDataSet object that contains data the following table
+     *                     will be populated with
+     */
     private void createTable(XSSFSheet sheet, int rowPosition,
                              TableDataSet<K, V> tableDataSet) {
         String tableName = tableDataSet.getTableDataSetName() + PLURAL_FORM;
@@ -72,6 +86,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         }
         RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
         this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
+        LOG.debug("Created table with name: {}", tableName);
         int rowValuesNumber = firstTableRow.getRowValues().size();
         distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
         this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber, tableName);
@@ -94,6 +109,11 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         tableNameCell.setCellValue(tableHeading);
     }
 
+    /**
+     * Applies kind of style that is particular to the heading.
+     *
+     * @param cell cell the style will be applied to
+     */
     private void setHeadingCellStyle(XSSFCell cell) {
         XSSFSheet sheet = cell.getRow().getSheet();
         sheet.autoSizeColumn(cell.getColumnIndex());
@@ -139,7 +159,15 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      */
     private void createCell(XSSFRow row, int colPosition, V cellValue) {
         XSSFCell cell = row.createCell(colPosition);
-        cell.setCellValue((Long) cellValue); //TODO: get rid of the cast
+        if (cellValue instanceof Number) {
+            cell.setCellValue((Double) cellValue);
+        } else if (cellValue instanceof String) {
+            cell.setCellValue((String) cellValue);
+        } else if (cellValue instanceof Date) {
+            cell.setCellValue((Date) cellValue);
+        } else {
+            throw new TypeNotSupportedException(cellValue.getClass());
+        }
     }
 
     /**
@@ -165,13 +193,14 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      * @param sheet              sheet containing data for the chart
      * @param initialRowPosition first row index of the table the chart will be generated for
      * @param rowIndex           last row index of the table the chart will be generated for
-     * @param rowValuesNumber    number of values in the row
-     * @param chartTitle
+     * @param rowValuesNumber    number of values in the row that corresponds to a single chart
+     *                           line
+     * @param chartTitle         title of the chart
      */
     private void drawChart(XSSFSheet sheet, int initialRowPosition, int rowIndex,
                            int rowValuesNumber, String chartTitle) {
 
-        XSSFChart chart = this.createChart(sheet, rowIndex);//initialRowPosition + rowValuesNumber);
+        XSSFChart chart = this.createChart(sheet, rowIndex);
         this.useGapsOnBlankCells(chart);
         this.setChartTitle(chart, chartTitle);
         // Create data for the chart
@@ -182,14 +211,19 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
-        // add chart series for each
+        // add chart series for each line
         this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
-        // Plot the chart with the inputs from data and chart axis
         chart.plot(data, bottomAxis, leftAxis);
         this.noSmoothedLinesForChart(chart);
     }
 
+    /**
+     * Defines chart title.
+     *
+     * @param chart     chart that the title will be specified for
+     * @param chartName name of the chart
+     */
     private void setChartTitle(XSSFChart chart, String chartName) {
         CTChart ctChart = chart.getCTChart();
         CTTitle title = ctChart.addNewTitle();
@@ -229,8 +263,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     }
 
     /**
-     * /**
-     * Adds chart series for each item containing in the table.
+     * Adds chart series for each item contained in the table.
      *
      * @param sheet           sheet containing data
      * @param data            object to write the series data into
@@ -306,7 +339,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     /**
      * Persist provided {@link XSSFWorkbook} workbook into the root of the project.
      *
-     * @param workbook workbook to save.
+     * @param workbook workbook to save
+     * @return {@code InputStream} of all bytes of the workbook
      */
     private InputStream saveWorkBook(XSSFWorkbook workbook) {
         try {
@@ -316,8 +350,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             workbook.close();
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new WorkbookToInputStreamConversionException(e);
         }
     }
 }

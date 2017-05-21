@@ -1,7 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.KeyAlreadyPresentException;
+import com.phonecompany.exception.service_layer.KeyAlreadyPresentException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.model.events.OnUserCreationEvent;

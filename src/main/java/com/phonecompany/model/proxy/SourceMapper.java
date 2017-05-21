@@ -2,6 +2,7 @@ package com.phonecompany.model.proxy;
 
 import org.springframework.core.GenericTypeResolver;
 
+import java.sql.ResultSet;
 import java.util.function.Function;
 
 /**
@@ -10,9 +11,9 @@ import java.util.function.Function;
  *
  * @param <T> type of the entity to be mapped
  */
-public abstract class SourceMapper<T> {
+public abstract class SourceMapper<S, T> {
 
-    private Class<?> type; //TODO: replace with Guava's TypeAdapter?
+    private Class<T> proxyTargetType;
 
     /**
      * As soon as Java does not allow type parameters to
@@ -23,15 +24,14 @@ public abstract class SourceMapper<T> {
      *
      * @see GenericTypeResolver
      */
-    public SourceMapper() {
-        this.type = GenericTypeResolver
-                .resolveTypeArgument(getClass(), SourceMapper.class);
+    public SourceMapper(Class<T> proxyTargetType) {
+        this.proxyTargetType = proxyTargetType;
     }
 
     public Class<?> getType() {
-        return this.type;
+        return this.proxyTargetType;
     }
 
-    public abstract Function<Long, T> getMapper();
+    public abstract Function<S, T> getMapper();
 }
 

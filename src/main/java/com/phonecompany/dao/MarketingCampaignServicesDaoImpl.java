@@ -2,8 +2,8 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.util.TypeMapper;
 import com.phonecompany.util.interfaces.QueryLoader;

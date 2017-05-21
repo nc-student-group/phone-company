@@ -95,6 +95,14 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 numberOfActivationOrdersForTheLastMonth);
     }
 
+    /**
+     * Gets a list of
+     *
+     * @param regionId
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @Override
     public List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
                                                                           LocalDate startDate,

@@ -1,8 +1,8 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.AbstractUserDao;
-import com.phonecompany.exception.EntityModificationException;
-import com.phonecompany.exception.EntityNotFoundException;
+import com.phonecompany.exception.dao_layer.EntityModificationException;
+import com.phonecompany.exception.dao_layer.EntityNotFoundException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import org.springframework.jdbc.datasource.DataSourceUtils;

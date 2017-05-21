@@ -1,14 +1,10 @@
-package com.phonecompany.exception;
+package com.phonecompany.exception.dao_layer;
 
 import com.phonecompany.model.DomainEntity;
 
 import java.sql.SQLException;
 
 public class EntityPersistenceException extends CrudException {
-
-    public EntityPersistenceException(String message, SQLException cause) {
-        super(message, cause);
-    }
 
     public <T extends DomainEntity> EntityPersistenceException(
             T failedEntity, SQLException cause) {

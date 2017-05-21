@@ -5,7 +5,7 @@ import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.TariffDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.exception.EmptyResultSetException;
+import com.phonecompany.exception.service_layer.MissingResultException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
@@ -396,7 +396,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         List<Statistics> statisticsList = this.orderService
                 .getTariffOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
         if (statisticsList.size() == 0) {
-            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+            throw new MissingResultException("There were no tariff orders in this region during " +
                     "this period");
         }
         return statisticsService

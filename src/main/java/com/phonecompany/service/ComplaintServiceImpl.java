@@ -26,6 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.phonecompany.model.enums.ComplaintCategory.CUSTOMER_SERVICE;
+import static com.phonecompany.model.enums.ComplaintCategory.SUGGESTION;
+import static com.phonecompany.model.enums.ComplaintCategory.TECHNICAL_SERVICE;
+
 @ServiceStereotype
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         implements ComplaintService {
@@ -219,11 +223,11 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     public WeeklyComplaintStatistics getComplaintStatistics() {
 
         EnumMap<WeekOfMonth, Integer> numberOfCSComplaintsForTheLastMonth =
-                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory.CUSTOMER_SERVICE);
+                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(CUSTOMER_SERVICE);
         EnumMap<WeekOfMonth, Integer> numberOfSComplaintsForTheLastMonth =
-                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory.SUGGESTION);
+                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(SUGGESTION);
         EnumMap<WeekOfMonth, Integer> numberOfTSComplaintsForTheLastMonth =
-                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory.TECHNICAL_SERVICE);
+                this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(TECHNICAL_SERVICE);
 
         return new WeeklyComplaintStatistics(numberOfCSComplaintsForTheLastMonth,
                 numberOfSComplaintsForTheLastMonth,

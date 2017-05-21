@@ -55,7 +55,7 @@ public class ReportController {
                 .getTariffStatisticsDataSet(regionId, startDate, endDate);
 
         SheetDataSet<LocalDate, Long> servicesStatisticsDataSet = this.serviceService
-                .getServiceStatisticsDataSet(startDate, endDate);
+                .prepareStatisticsReportDataSet(startDate, endDate);
 
         BookDataSet<LocalDate, Long> bookDataSet = combine(tariffStatisticsDataSet,
                 servicesStatisticsDataSet);
@@ -92,7 +92,7 @@ public class ReportController {
 
     @GetMapping("/complaints-statistics")
     public ResponseEntity<?> getComplaintStatisticsForTheLastMonthByWeeks() {
-        LOG.debug("Get complaints statistic");
+
         WeeklyComplaintStatistics complaintStatistics = this.complaintService.getComplaintStatistics();
 
         return new ResponseEntity<>(complaintStatistics, HttpStatus.OK);

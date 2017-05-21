@@ -161,7 +161,7 @@ public class ServicesController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateServiceStatus(@PathVariable("id") long serviceId,
-                                                 @RequestBody String status) { //TODO: must be enum
+                                                 @RequestBody String status) {
         LOG.debug("Service id to update: {}, status: {}", serviceId, status);
         this.serviceService.updateServiceStatus(serviceId, ProductStatus.valueOf(status));
         return new ResponseEntity<>(HttpStatus.OK);

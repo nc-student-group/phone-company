@@ -3,26 +3,22 @@ package com.phonecompany.dao;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.EntityNotFoundException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("Duplicates")
 @Repository
 public class CustomerServiceDaoImpl extends JdbcOperationsImpl<CustomerServiceDto>
         implements CustomerServiceDao {

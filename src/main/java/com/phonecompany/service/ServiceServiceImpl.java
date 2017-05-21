@@ -6,7 +6,7 @@ import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.exception.EmptyResultSetException;
+import com.phonecompany.exception.service_layer.MissingResultException;
 import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.ProductCategory;
@@ -197,10 +197,10 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
-    public SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate) {
+    public SheetDataSet<LocalDate, Long> prepareStatisticsReportDataSet(LocalDate startDate, LocalDate endDate) {
         List<Statistics> statisticsList = this.orderService.getServiceOrderStatisticsByTimePeriod(startDate, endDate);
         if (statisticsList.size() == 0) {
-            throw new EmptyResultSetException("There were no tariff orders in this region during " +
+            throw new MissingResultException("There were no tariff orders in this region during " +
                     "this period");
         }
         return statisticsService

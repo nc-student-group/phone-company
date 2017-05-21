@@ -4,17 +4,14 @@ import com.phonecompany.dao.interfaces.CustomerServiceDao;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.dao.interfaces.OrderDao;
 import com.phonecompany.dao.interfaces.RowMapper;
-import com.phonecompany.exception.CrudException;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.EntityNotFoundException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.CrudException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
-import com.phonecompany.model.proxy.DynamicProxy;
-import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -26,12 +23,10 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
-import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
+import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
@@ -233,10 +228,11 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
     private EnumMap<WeekOfMonth, Integer> associateWeeksWithOrderNumbers(ResultSet rs)
             throws SQLException {
         EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
-        WeekOfMonth weekOfMonth = WeekOfMonth.FIRST_WEEK;
         while (rs.next()) {
-            result.put(weekOfMonth, rs.getInt(1));
-            weekOfMonth = weekOfMonth.next();
+            long weekNumber = rs.getLong("week_number");
+            int numberOfOrders = rs.getInt("number_of_orders");
+            WeekOfMonth weekOfMonth = getEnumValueByDatabaseId(WeekOfMonth.class, weekNumber);
+            result.put(weekOfMonth, numberOfOrders);
         }
         return result;
     }

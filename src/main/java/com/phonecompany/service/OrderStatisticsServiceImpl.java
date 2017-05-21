@@ -1,8 +1,8 @@
 package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
-import com.phonecompany.exception.InsufficientFilteringException;
-import com.phonecompany.model.enums.ItemType;
+import com.phonecompany.exception.service_layer.InsufficientFilteringException;
+import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
@@ -35,7 +35,7 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
             if (statisticsList.size() == 0) {
                 return 0L;
             }
-            return statisticsList.get(0).getCount();
+            return statisticsList.get(0).getValue();
     }
 
     private void validateStatisticsList(List<Statistics> statisticsList) {

@@ -1,8 +1,6 @@
 package com.phonecompany.service.email;
 
-import com.phonecompany.exception.MailSendException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import com.phonecompany.exception.service_layer.MailMessageConstructionException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -51,7 +49,7 @@ public class EmailDispatchTask implements Runnable {
             mimeMessageHelper.setFrom(PHONE_COMPANY_EMAIL);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new MailSendException(e);
+            throw new MailMessageConstructionException(e);
         }
     }
 }

@@ -1,24 +1,22 @@
 package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.CrudException;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
+import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.util.Query;
 import com.phonecompany.util.interfaces.QueryLoader;
-import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 
 @Repository
 public class UserDaoImpl extends AbstractUserDaoImpl<User>
@@ -52,7 +50,7 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
             user.setId(rs.getLong("id"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
-            user.setRole(TypeMapper.getUserRoleByDatabaseId(rs.getLong("role_id")));
+            user.setRole(getEnumValueByDatabaseId(UserRole.class, rs.getLong("role_id")));
             user.setStatus(Status.valueOf(rs.getString("status")));
         } catch (SQLException e) {
             throw new EntityInitializationException(e);

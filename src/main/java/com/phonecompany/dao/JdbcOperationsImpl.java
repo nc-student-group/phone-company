@@ -3,7 +3,10 @@ package com.phonecompany.dao;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.phonecompany.dao.interfaces.JdbcOperations;
 import com.phonecompany.dao.interfaces.RowMapper;
-import com.phonecompany.exception.*;
+import com.phonecompany.exception.dao_layer.CrudException;
+import com.phonecompany.exception.dao_layer.EntityModificationException;
+import com.phonecompany.exception.dao_layer.EntityNotFoundException;
+import com.phonecompany.exception.dao_layer.EntityPersistenceException;
 import com.phonecompany.model.DomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +91,7 @@ public abstract class JdbcOperationsImpl<T extends DomainEntity>
         Connection conn = DataSourceUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         try {
+            String getByIdQuery = this.getQuery("getById");
             ps = conn.prepareStatement(this.getQuery("getById"));
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
