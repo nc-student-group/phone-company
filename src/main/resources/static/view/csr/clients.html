@@ -14,46 +14,46 @@
                                 <hr/>
 
                                 <div class="row" style="padding: 15px">
-                                    <div class="col-md-2">
-                                        <md-input-container class="md-block" flex-gt-sm>
-                                            <label>Show entries:</label>
-                                            <md-select ng-model="size" md-on-close="updateData()">
-                                                <md-option value="5">5</md-option>
-                                                <md-option value="10">10</md-option>
-                                                <md-option value="25">25</md-option>
-                                                <md-option value="50">50</md-option>
-                                                <md-option value="100">100</md-option>
-                                            </md-select>
-                                        </md-input-container>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <md-input-container class="md-block" flex-gt-sm>
-                                            <label>Region:</label>
-                                            <md-select ng-model="selectedRegion">
-                                                <md-option value="0">All regions</md-option>
-                                                <md-option ng-repeat="r in regions" ng-value="{{r.id}}">{{r.nameRegion}}
-                                                </md-option>
-                                            </md-select>
-                                        </md-input-container>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <md-input-container class="md-block" flex-gt-sm>
-                                            <label>Status:</label>
-                                            <md-select ng-model="selectedStatus">
-                                                <md-option value="ALL">ALL</md-option>
-                                                <md-option value="ACTIVATED">ACTIVATED</md-option>
-                                                <md-option value="INACTIVE">INACTIVE</md-option>
-                                                <md-option value="DEACTIVATED">DEACTIVATED</md-option>
-                                            </md-select>
-                                        </md-input-container>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <md-input-container class="md-block" flex-gt-sm>
-                                            <label>Email:</label>
-                                            <input type="text" ng-model="partOfEmail" maxlength="20"/>
-                                        </md-input-container>
-                                    </div>
+                                <div class="col-md-2">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Show entries:</label>
+                                        <md-select ng-model="size" md-on-close="updateData()">
+                                            <md-option value="5">5</md-option>
+                                            <md-option value="10">10</md-option>
+                                            <md-option value="25">25</md-option>
+                                            <md-option value="50">50</md-option>
+                                            <md-option value="100">100</md-option>
+                                        </md-select>
+                                    </md-input-container>
                                 </div>
+                                <div class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Region:</label>
+                                        <md-select ng-model="selectedRegion">
+                                            <md-option value="0">All regions</md-option>
+                                            <md-option ng-repeat="r in regions" ng-value="{{r.id}}">{{r.nameRegion}}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div class="col-md-3">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Status:</label>
+                                        <md-select ng-model="selectedStatus">
+                                            <md-option value="ALL">ALL</md-option>
+                                            <md-option value="ACTIVATED">ACTIVATED</md-option>
+                                            <md-option value="INACTIVE">INACTIVE</md-option>
+                                            <md-option value="DEACTIVATED">DEACTIVATED</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div class="col-md-4">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <label>Email:</label>
+                                        <input type="text" ng-model="partOfEmail" maxlength="20"/>
+                                    </md-input-container>
+                                </div>
+                            </div>
                                 <div class="row" style="padding: 15px">
                                     <div class="col-md-4">
                                         <md-input-container class="md-block" flex-gt-sm>
