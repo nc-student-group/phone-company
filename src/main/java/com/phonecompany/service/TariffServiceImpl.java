@@ -349,8 +349,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                                            int type, Date from, Date to, int orderBy, String orderByType) {
         Query.Builder builder = new Query.Builder("tariff");
         builder.where().addLikeCondition("tariff_name", name);
-        if (status == 1) builder.and().addCondition("product_status = ? ", "DEACTIVATED");
-        if (status == 2) builder.and().addCondition("product_status = ? ", "ACTIVATED");
+        if (status == 1) builder.and().addCondition("product_status = ? ", "ACTIVATED");
+        if (status == 2) builder.and().addCondition("product_status = ? ", "DEACTIVATED");
         if (type == 1) builder.and().addCondition("is_corporate = ? ", true);
         if (type == 2) builder.and().addCondition("is_corporate = ? ", false);
         if (from != null && to != null) builder.and().addBetweenCondition("creation_date", from, to);

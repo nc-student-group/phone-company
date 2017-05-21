@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface ServiceService extends CrudService<Service> {
 
-    PagingResult<Service> getServicesByProductCategoryId(int page, int size,
-                                                         int productCategoryId);
+    PagingResult<Service> getServicesByProductCategoryId(int page, int size, int productCategoryId,
+                                                         String partOfName, double priceFrom, double priceTo,
+                                                         int status, int orderBy, String orderByType);
 
     Service save(Service service);
 

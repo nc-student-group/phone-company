@@ -11,7 +11,7 @@ angular.module('phone-company').controller('AllTariffsController', [
         console.log('This is AllTariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
-        $scope.size = 6;
+        $scope.size = 5;
         $scope.inProgress = false;
 
         $scope.preloader.send = true;

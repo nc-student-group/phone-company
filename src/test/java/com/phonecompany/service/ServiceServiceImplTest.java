@@ -72,7 +72,8 @@ public class ServiceServiceImplTest {
 
         //when
         PagingResult<Service> servicesByProductCategoryId = serviceService
-                .getServicesByProductCategoryId(1, 0, 5);
+                .getServicesByProductCategoryId(1, 0, 5, "",
+                        0.0, 0.0, 0, 0, "ASC");
         List<Service> pagingResult = servicesByProductCategoryId.getPagingResult();
         int entityCount = servicesByProductCategoryId.getEntityCount();
 

@@ -163,8 +163,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     private Query buildQueryForCustomersTable(int page, int size, long regionId, String status, String partOfEmail,
-                                             String partOfName, String selectedPhone, String partOfCorporate,
-                                             int orderBy, String orderByType) {
+                                              String partOfName, String selectedPhone, String partOfCorporate,
+                                              int orderBy, String orderByType) {
         Query.Builder builder = new Query.Builder("dbuser inner join address on dbuser.address_id = address.id " +
                 "left join corporate on dbuser.corporate_id = corporate.id " +
                 "inner join region on address.region_id = region.id");
@@ -173,8 +173,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                 .and().openBracket().addLikeCondition("dbuser.firstname", partOfName)
                 .or().addLikeCondition("dbuser.secondname", partOfName)
                 .or().addLikeCondition("dbuser.lastname", partOfName).closeBracket()
-                .and().addLikeCondition("dbuser.phone", selectedPhone)
-                .and().addLikeCondition("corporate.corporate_name", partOfCorporate);
+                .and().addLikeCondition("dbuser.phone", selectedPhone);
+        if (partOfCorporate.length() > 0) builder.and().addLikeCondition("corporate.corporate_name", partOfCorporate);
         if (regionId > 0) builder.and().addCondition("address.region_id = ?", regionId);
         if (!status.equals("ALL")) builder.and().addCondition("dbuser.status = ?", status);
         String orderByField = buildOrderBy(orderBy);

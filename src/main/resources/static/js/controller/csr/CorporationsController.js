@@ -30,11 +30,20 @@
             corporateName: ''
         };
 
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.corporationsSelected / $scope.size);
+            if (max == $scope.corporationsSelected) {
+                return max;
+            }
+            return max + 1;
+        };
+
         $scope.getAll = function () {
             console.info($scope.partOfName);
             $scope.preloader.send = true;
             CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                 $scope.corporations = data.corporates;
+                $scope.corporationsSelected = data.corporatesSelected;
                 $scope.preloader.send = false;
             })
         };
@@ -45,6 +54,7 @@
                     $log.debug("Created Corporation: ", createdCorporation);
                     CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
                         $scope.corporations = data.corporates;
+                        $scope.corporationsSelected = data.corporatesSelected;
                     });
                 }, function (error) {
                     toastr.error(error.data.message);
@@ -56,7 +66,7 @@
                 .then(function (createdCorporation) {
                     toastr.success("Corporation created");
                     $log.debug("Created Corporation: ", createdCorporation);
-                    $scope.corporations = CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName);
+                    $scope.getAll();
                 }, function (error) {
                     toastr.error(error.data.message);
                     $log.error("Failed to save corporation", error);
@@ -74,6 +84,23 @@
 
         $scope.detailsClick = function (corporation) {
             $location.path('/csr/corporation/' + corporation.id);
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                CorporationService.getAllCorporationPaging($scope.page, $scope.size, $scope.partOfName).then(function (data) {
+                    $scope.corporations = data.corporates;
+                    $scope.corporationsSelected = data.corporatesSelected;
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                });
+            }
         };
 
         $scope.nextPage = function () {
