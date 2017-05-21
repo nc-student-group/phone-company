@@ -24,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ServiceStereotype
@@ -59,18 +62,59 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
     @Override
     @Cacheable
-    public PagingResult<Service> getServicesByProductCategoryId(int page, int size,
-                                                                int firstFilter) {
-
-        List<Service> pagedServices = this.serviceDao.getPaging(page, size, firstFilter);
-        List<Service> servicesWithDiscount = this.applyDiscount(pagedServices);
+    public PagingResult<Service> getServicesByProductCategoryId(int page, int size, int productCategoryId,
+                                                                String partOfName, double priceFrom, double priceTo,
+                                                                int status, int orderBy, String orderByType) {
+        if (priceFrom > 0 && priceTo > 0 && priceTo < priceFrom) {
+            throw new ConflictException("Price from must be less than to");
+        }
+        Query query = this.buildQueryForTariffTable(page, size, productCategoryId,
+                partOfName, priceFrom, priceTo, status, orderBy, orderByType);
+        List<Service> services = this.serviceDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+        List<Service> servicesWithDiscount = this.applyDiscount(services);
         LOG.debug("Services to be put in response: {}", servicesWithDiscount);
 
-        int serviceEntityCount = this.serviceDao.getEntityCount(firstFilter);
+        int serviceEntityCount = this.serviceDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray());
 
         PagingResult<Service> pagingResult = new PagingResult<>(servicesWithDiscount, serviceEntityCount);
         LOG.debug("Paging result to be returned: {}", pagingResult);
         return pagingResult;
+    }
+
+    private Query buildQueryForTariffTable(int page, int size, int productCategoryId,
+                                           String partOfName, double priceFrom, double priceTo,
+                                           int status, int orderBy, String orderByType) {
+        Query.Builder builder = new Query.Builder("service " +
+                "inner join product_category on service.prod_category_id = product_category.id");
+        builder.where().addLikeCondition("service_name", partOfName);
+        if (status == 1) builder.and().addCondition("product_status = ? ", "ACTIVATED");
+        if (status == 2) builder.and().addCondition("product_status = ? ", "DEACTIVATED");
+        if (productCategoryId > 0) builder.and().addCondition("prod_category_id = ?", productCategoryId);
+        if (priceFrom > 0 && priceTo > 0) builder.and().addBetweenCondition("price", priceFrom, priceTo);
+        if (priceFrom > 0) builder.and().addCondition("price >= ?", priceFrom);
+        if (priceTo > 0) builder.and().addCondition("price <= ?", priceTo);
+        String orderByField = buildOrderBy(orderBy);
+        if (orderByField.length() > 0) {
+            builder.orderBy(orderByField);
+            builder.orderByType(orderByType);
+        }
+        builder.addPaging(page, size);
+        return builder.build();
+    }
+
+    private String buildOrderBy(int orderBy) {
+        switch (orderBy) {
+            case 0://by name
+                return "service_name";
+            case 1://by price
+                return "price";
+            case 2://by status
+                return "product_status";
+            case 3://by category
+                return "category_name";
+            default:
+                return "";
+        }
     }
 
     private List<Service> applyDiscount(List<Service> services) {
@@ -166,33 +210,23 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
     @Override
     @Cacheable
-    public List<Service> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
-        Query.Builder query = new Query.Builder("service");
-        query.where();
-        query.addLikeCondition("service_name",name);
-        query.and().addCondition("price > ?",lowerPrice);
-        query.and().addCondition("price < ?",upperPrice);
+    public Map<String, Object> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
+        Query.Builder queryBuilder = new Query.Builder("service");
+        queryBuilder.where();
+        queryBuilder.addLikeCondition("service_name",name);
+        queryBuilder.and().addCondition("price > ?",lowerPrice);
+        queryBuilder.and().addCondition("price < ?",upperPrice);
         if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
-            query.and().addCondition("product_status = ?",status);
+            queryBuilder.and().addCondition("product_status = ?",status);
         }else if(!status.equals("-")){
             throw new ConflictException("Incorrect parameter: service status");
         }
-        query.addPaging(page,size);
-        return serviceDao.getAllServicesSearch(query.build());
-    }
+        queryBuilder.addPaging(page,size);
 
-    @Override
-    public int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice) {
-        Query.Builder query = new Query.Builder("service");
-        query.where();
-        query.addLikeCondition("service_name",name);
-        query.and().addCondition("price > ?",lowerPrice);
-        query.and().addCondition("price < ?",upperPrice);
-        if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
-            query.and().addCondition("product_status = ?",status);
-        }else if(!status.equals("-")){
-            throw new ConflictException("Incorrect parameter: service status");
-        }
-        return serviceDao.getAllServicesSearch(query.build()).size();
+        Map<String, Object> response = new HashMap<>();
+        Query query = queryBuilder.build();
+        response.put("services", serviceDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", serviceDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        return response;
     }
 }

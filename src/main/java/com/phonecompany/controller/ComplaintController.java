@@ -68,41 +68,42 @@ public class ComplaintController {
         return Collections.unmodifiableCollection(complaints);
     }
 
-    @GetMapping("/{page}/{size}")
-    public Map<String, Object> getComplaints(@PathVariable("page") int page,
+    @GetMapping("/{category}/{status}/{page}/{size}")
+    public Map<String, Object> getComplaints(@PathVariable("category") String category,
+                                             @PathVariable("status") String status,
+                                             @PathVariable("page") int page,
                                              @PathVariable("size") int size,
-                                             @RequestParam("category") int category,
-                                             @RequestParam("status") int status,
-                                             @RequestParam("email") String email,
-                                             @RequestParam("from") String from,
-                                             @RequestParam("to") String to,
-                                             @RequestParam("orderBy") int orderBy,
-                                             @RequestParam("orderByType") String orderByType) {
-        LOG.debug("Fetching complaints");
-        return complaintService.getComplaintsTable(category, status, email, from, to,
-                orderBy, orderByType, null, null, page, size);
-                //getComplaints(category, status, page, size);
+                                             @RequestParam("poe") String partOfEmail,
+                                             @RequestParam("df") String dateFrom,
+                                             @RequestParam("dt") String dateTo,
+                                             @RequestParam("pos") String partOfSubject,
+                                             @RequestParam("ob") int orderBy,
+                                             @RequestParam("obt") String orderByType) {
+        LOG.debug("Fetching complaints with the category: {}", category);
+        return complaintService.getComplaints(category, status, page, size, partOfEmail, dateFrom, dateTo, partOfSubject, orderBy, orderByType);
     }
 
     @GetMapping("/{id}/{page}/{size}")
-    public Map<String, Object> getComplaintsByCustomer(@PathVariable("id") Long id,
+    public Map<String, Object> getComplaintsByCustomer(@PathVariable("id") int id,
                                                        @PathVariable("page") int page,
                                                        @PathVariable("size") int size) {
         LOG.debug("Fetching complaints for the customer with id: {}", id);
-        return complaintService.getComplaintsTable(0, 0, "null", "null", "null",
-                -1, null, null, id, page, size);
-        //return complaintService.getComplaintsByCustomer(id, page, size);
+        return complaintService.getComplaintsByCustomer(id, page, size);
     }
 
     @GetMapping("/pmg/{category}/{page}/{size}")
-    public Map<String, Object> getComplaintsByResponsible(@PathVariable("category") int category,
+    public Map<String, Object> getComplaintsByResponsible(@PathVariable("category") String category,
                                                           @PathVariable("page") int page,
-                                                          @PathVariable("size") int size) {
+                                                          @PathVariable("size") int size,
+                                                          @RequestParam("poe") String partOfEmail,
+                                                          @RequestParam("df") String dateFrom,
+                                                          @RequestParam("dt") String dateTo,
+                                                          @RequestParam("pos") String partOfSubject,
+                                                          @RequestParam("ob") int orderBy,
+                                                          @RequestParam("obt") String orderByType) {
         LOG.debug("Fetching complaints with category: {} for the responsible", category);
-        return complaintService.getComplaintsTable(category, 0, "null", "null", "null",
-                -1, null, userService.getCurrentlyLoggedInUser().getId(), null, page, size);
-//        return complaintService.getComplaintsByResponsible(userService.getCurrentlyLoggedInUser().getId(),
-//                category, page, size);
+        return complaintService.getComplaintsByResponsible(userService.getCurrentlyLoggedInUser().getId(),
+                category, page, size, partOfEmail, dateFrom, dateTo, partOfSubject, orderBy, orderByType);
     }
 
     @PutMapping("/pmg")

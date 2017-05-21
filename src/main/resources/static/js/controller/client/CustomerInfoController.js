@@ -22,7 +22,7 @@
                     ctrl.$formatters.push(validator);
 
                     // This is to force validator when the original password gets changed
-                    scope.$watch('matchTarget', function(newval, oldval) {
+                    scope.$watch('matchTarget', function (newval, oldval) {
                         validator(ctrl.$viewValue);
                     });
 
@@ -52,6 +52,7 @@
         $scope.numberPattern = /^[0-9]+$/;
         $scope.newPassword = null;
         $scope.passwordConfirmation = null;
+        $scope.inProgress = false;
 
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
@@ -71,7 +72,6 @@
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
         });
-        $scope.preloader.send = false;
         $scope.loadCurrentServices = function () {
             $scope.preloader.send = true;
             CustomerInfoService.getCurrentServices()
@@ -84,8 +84,12 @@
                     }
                     $scope.loading = false;
                     $scope.preloader.send = false;
+                    if ($scope.servicesOrders == undefined) {
+                        $scope.loadServicesHistory();
+                    }
                 }, function (data) {
                     $scope.preloader.send = false;
+                    $scope.loading = false;
                 });
         };
         // $scope.loadCurrentServices();
@@ -103,10 +107,11 @@
                     $scope.loading = false;
                     $scope.preloader.send = false;
                 }, function (data) {
+                    $scope.loading = false;
                     $scope.preloader.send = false;
                 });
         };
-        $scope.loadCurrentTariff();
+        // $scope.loadCurrentTariff();
 
         $scope.myTariffPlansTabClick = function () {
             if ($scope.currentTariff == undefined) {
@@ -120,9 +125,6 @@
         $scope.myServicesTabClick = function () {
             if ($scope.currentServices == undefined) {
                 $scope.loadCurrentServices();
-            }
-            if ($scope.servicesOrders == undefined) {
-                $scope.loadServicesHistory();
             }
         };
 
@@ -138,9 +140,35 @@
         };
         // $scope.loadTariffsHistory();
 
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.ordersFound / $scope.size);
+            if (max == $scope.ordersFound) {
+                return max;
+            }
+            return max + 1;
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
+                    .then(function (data) {
+                        $scope.orders = data.orders;
+                        $scope.ordersFound = data.ordersFound;
+                        $scope.loading = false;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
         $scope.nextPage = function () {
             if (($scope.page + 1) * $scope.size < $scope.ordersFound) {
-                $scope.loading = true;
                 $scope.page = $scope.page + 1;
                 CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
                     .then(function (data) {
@@ -153,7 +181,6 @@
 
         $scope.previousPage = function () {
             if ($scope.page > 0) {
-                $scope.loading = true;
                 $scope.page = $scope.page - 1;
                 CustomerInfoService.getTariffsHistory($scope.page, $scope.size)
                     .then(function (data) {
@@ -164,41 +191,75 @@
             }
         };
 
-        $scope.loading = true;
         $scope.loadServicesHistory = function () {
-            $scope.loading = true;
+            $scope.preloader.send = true;
             CustomerInfoService.getServicesHistory($scope.page, $scope.size)
                 .then(function (data) {
                     $scope.servicesOrders = data.orders;
                     $scope.servicesOrdersFound = data.ordersFound;
                     console.log($scope.servicesOrders);
                     $scope.loading = false;
+                    $scope.preloader.send = false;
+                }, function () {
+                    $scope.loading = false;
+                    $scope.preloader.send = false;
                 });
         };
         // $scope.loadServicesHistory();
 
+        $scope.getServicesPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.servicesPage = page;
+                $scope.preloader.send = true;
+                CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
+                    .then(function (data) {
+                        $scope.servicesOrders = data.orders;
+                        $scope.servicesOrdersFound = data.ordersFound;
+                        $scope.loading = false;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.inProgress = true;
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+
+        $scope.getMaxServicesPageNumber = function () {
+            var max = Math.floor($scope.servicesOrdersFound / $scope.size);
+            if (max == $scope.servicesOrdersFound) {
+                return max;
+            }
+            return max + 1;
+        };
+
         $scope.servicesNextPage = function () {
+            $scope.preloader.send = true;
             if (($scope.servicesPage + 1) * $scope.servicesSize < $scope.servicesOrdersFound) {
-                $scope.loading = true;
                 $scope.servicesPage = $scope.servicesPage + 1;
                 CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
                     .then(function (data) {
                         $scope.servicesOrders = data.orders;
                         $scope.servicesOrdersFound = data.ordersFound;
-                        $scope.loading = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
             }
         };
 
         $scope.servicesPreviousPage = function () {
+            $scope.preloader.send = true;
             if ($scope.servicesPage > 0) {
-                $scope.loading = true;
-                $scope.servicesPage = $scope.page - 1;
+                $scope.servicesPage = $scope.servicesPage - 1;
                 CustomerInfoService.getServicesHistory($scope.servicesPage, $scope.servicesSize)
                     .then(function (data) {
                         $scope.servicesOrders = data.orders;
                         $scope.servicesOrdersFound = data.ordersFound;
-                        $scope.loading = false;
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
                     });
             }
         };
@@ -500,7 +561,7 @@
                 function (response) {
                     toastr.success("Your profile has been updated");
                 },
-                function(error){
+                function (error) {
                     toastr.error("Error, profile  wasn't updated");
                 }
             );

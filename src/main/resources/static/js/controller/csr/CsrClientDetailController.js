@@ -42,6 +42,21 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 $location.path("/csr/editCustomer/" + id);
             };
 
+            $scope.getMaxPageNumber = function () {
+                var max = Math.floor($scope.ordersFound / $scope.size);
+                if (max == $scope.ordersFound) {
+                    return max;
+                }
+                return max + 1;
+            };
+            $scope.getMaxServicesPageNumber = function () {
+                var max = Math.floor($scope.servicesOrdersFound / $scope.size);
+                if (max == $scope.servicesOrdersFound) {
+                    return max;
+                }
+                return max + 1;
+            };
+
             $scope.loadCurrentServices = function () {
                 if (!$scope.inProgress) {
                     $scope.inProgress = true;
@@ -198,6 +213,24 @@ angular.module('phone-company').controller('CsrClientDetailController',
                 }
             };
 
+            $scope.getPage = function (page) {
+                if ($scope.inProgress == false) {
+                    $scope.inProgress = true;
+                    $scope.page = page;
+                    $scope.preloader.send = true;
+                    CustomerInfoService.getTariffsHistoryByCustomerId($routeParams['id'], $scope.page, $scope.size)
+                        .then(function (data) {
+                            $scope.orders = data.orders;
+                            $scope.ordersFound = data.ordersFound;
+                            $scope.preloader.send = false;
+                            $scope.inProgress=false;
+                        }, function (data) {
+                            $scope.preloader.send = false;
+                            $scope.inProgress=false;
+                        });
+                }
+            };
+
             $scope.nextPage = function () {
                 if (($scope.page + 1) * $scope.size < $scope.ordersFound) {
                     $scope.loading = true;
@@ -245,6 +278,25 @@ angular.module('phone-company').controller('CsrClientDetailController',
                         }, function (data) {
                             $scope.inProgressHistory = false;
                             $scope.preloader.send = false;
+                        });
+                }
+            };
+
+            $scope.getServicesPage = function (page) {
+                if ($scope.inProgress == false) {
+                    $scope.inProgress = true;
+                    $scope.page = page;
+                    $scope.preloader.send = true;
+                    CustomerInfoService.getServicesHistoryByCustomerId($routeParams['id'], $scope.page, $scope.size)
+                        .then(function (data) {
+                            $scope.servicesOrders = data.orders;
+                            $scope.servicesOrdersFound = data.ordersFound;
+                            $scope.loading = false;
+                            $scope.preloader.send = false;
+                            $scope.inProgress=false;
+                        }, function (data) {
+                            $scope.preloader.send = false;
+                            $scope.inProgress=false;
                         });
                 }
             };

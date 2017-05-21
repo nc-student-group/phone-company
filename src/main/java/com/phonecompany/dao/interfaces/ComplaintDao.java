@@ -12,8 +12,7 @@ import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
 
-public interface ComplaintDao extends JdbcOperations<Complaint>,
-        AbstractPageableDao<Complaint> {
+public interface ComplaintDao extends JdbcOperations<Complaint> {
     List<Complaint> getAllComplaintsSearch(Query query);
 
     EnumMap<WeekOfMonth, Integer> getNumberOfComplaintsForTheLastMonthByCategory(ComplaintCategory type);

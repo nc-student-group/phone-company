@@ -1,6 +1,5 @@
 package com.phonecompany.service;
 
-import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.exception.ConflictException;
@@ -18,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -69,9 +69,55 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     }
 
     @Override
-    @Cacheable
-    public Map<String, Object> getComplaintsTable(int category, int status, String email, String fromStr, String toStr,
-                                                  int orderBy, String orderByType, Long responsible, Long user, int page, int size) {
+    public Map<String, Object> getComplaints(String category, String status, int page, int size, String partOfEmail,
+                                             String dateFrom, String dateTo, String partOfSubject, int orderBy,
+                                             String orderByType) {
+        Query query = this.buildQuery(0, status, category, page, size, partOfEmail, dateFrom, dateTo,
+                partOfSubject, orderBy, orderByType);
+        List<Complaint> complaints = this.complaintDao.executeForList(query.getQuery(),
+                query.getPreparedStatementParams().toArray());
+        LOG.debug("Fetched complaints: {}", complaints);
+        Map<String, Object> response = new HashMap<>();
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.executeForInt(query.getCountQuery(),
+                query.getCountParams().toArray()));
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getComplaintsByCustomer(int id, int page, int size) {
+        Query.Builder builder = new Query.Builder("complaint");
+        builder.where().addCondition("user_id=?", id).addPaging(page, size);
+        Query query = builder.build();
+        List<Complaint> complaints = this.complaintDao.executeForList(query.getQuery(),
+                query.getPreparedStatementParams().toArray());
+        LOG.debug("Fetched complaints: {}", complaints);
+        Map<String, Object> response = new HashMap<>();
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.executeForInt(query.getCountQuery(),
+                query.getCountParams().toArray()));
+        return response;
+    }
+
+    @Override
+    public Map<String, Object> getComplaintsByResponsible(long responsibleId, String category, int page, int size,
+                                                          String partOfEmail, String dateFrom, String dateTo,
+                                                          String partOfSubject, int orderBy, String orderByType) {
+        Query query = this.buildQuery(responsibleId, ComplaintStatus.INTRAPROCESS.name(),
+                category, page, size, partOfEmail, dateFrom, dateTo, partOfSubject, orderBy, orderByType);
+        Map<String, Object> response = new HashMap<>();
+        List<Complaint> complaints = this.complaintDao
+                .executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+        LOG.debug("Fetched complaints: {}", complaints);
+        response.put("complaints", complaints);
+        response.put("complaintsCount", this.complaintDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
+        return response;
+    }
+
+
+    private Query buildQuery(long responsibleId, String status, String category, int page, int size,
+                             String partOfEmail, String fromStr, String toStr,
+                             String partOfSubject, int orderBy, String orderByType) {
         java.sql.Date from = null, to = null;
         if (!fromStr.equals("null")) {
             from = java.sql.Date.valueOf(fromStr);
@@ -82,45 +128,16 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         if (from != null && to != null && from.getTime() > to.getTime()) {
             throw new ConflictException("Date from must be less then to");
         }
-        Query query = this.buildQueryForComplaintsTable(category, status, email, from, to,
-                orderBy, orderByType, responsible, user, page, size);
-        Map<String, Object> response = new HashMap<>();
-        List<Complaint> complaints = this.complaintDao.executeForList(query.getQuery(),
-                query.getPreparedStatementParams().toArray());
-        List<Object> rows = new ArrayList<>();
-        complaints.forEach((Complaint complaint) -> {
-            Map<String, Object> row = new HashMap<>();
-            row.put("complaint", complaint);
-            rows.add(row);
-        });
-        response.put("complaints", rows);
-        response.put("complaintsSelected", this.complaintDao.executeForInt(query.getCountQuery(),
-                query.getCountParams().toArray()));
-        return response;
-    }
-
-    private Query buildQueryForComplaintsTable(int category, int status, String email, Date from, Date to,
-                                           int orderBy, String orderByType, Long responsible, Long user, int page, int size) {
-        //Query.Builder builder = new Query.Builder("complaint");
-        Query.Builder builder = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
-        if(!email.equals("null")) builder.where().addLikeCondition("email", email);
-
-        if (category == 1) builder.and().addCondition("type = ? ", ComplaintCategory.TECHNICAL_SERVICE);
-        else if (category == 2) builder.and().addCondition("type = ? ", ComplaintCategory.SUGGESTION);
-        else if (category == 3) builder.and().addCondition("type = ? ", ComplaintCategory.CUSTOMER_SERVICE);
-
-        if (status == 1) builder.and().addCondition("status = ? ", ComplaintStatus.ACCEPTED);
-        else if (status == 2) builder.and().addCondition("status = ? ", ComplaintStatus.INTRAPROCESS);
-        else if (status == 3) builder.and().addCondition("status = ? ", ComplaintStatus.ACCOMPLISHED);
-
+        Query.Builder builder = new Query.Builder("complaint " +
+                "inner join dbuser on complaint.user_id = dbuser.id");
+        builder.where().addLikeCondition("subject", partOfSubject);
+        if (!category.equals("-")) builder.and().addCondition("type = ?", category);
+        if (!status.equals("-")) builder.and().addCondition("complaint.status = ?", status);
         if (from != null && to != null) builder.and().addBetweenCondition("date", from, to);
         if (from != null) builder.and().addCondition("date >= ?", from);
-        if (to != null) builder.and().addCondition("cdate <= ?", to);
-
-        if(responsible != null) builder.and().addCondition("responsible_pmg = ? ", responsible);
-
-        if(user != null) builder.and().addCondition("user_id = ? ", responsible);
-
+        if (to != null) builder.and().addCondition("date <= ?", to);
+        if (responsibleId > 0) builder.and().addCondition("responsible_pmg = ?", responsibleId);
+        if (partOfEmail.length() > 0) builder.and().addLikeCondition("email", partOfEmail);
         String orderByField = buildOrderBy(orderBy);
         if (orderByField.length() > 0) {
             builder.orderBy(orderByField);
@@ -132,61 +149,18 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
     private String buildOrderBy(int orderBy) {
         switch (orderBy) {
-            case 0://by id
-                return "id";
-            case 1://by email
+            case 0://by email
                 return "email";
-            case 2://by date
+            case 1://by date
                 return "date";
-            case 3://by status
-                return "status";
-            case 4://by text
-                return "text";
-            case 5://by type
+            case 2://by category
                 return "type";
-            case 6://by subject
+            case 3://by subject
                 return "subject";
             default:
                 return "";
         }
     }
-
-//    @Override
-//    public Map<String, Object> getComplaints(String category, String status, int page, int size) {
-//        Map<String, Object> response = new HashMap<>();
-//        Object[] args = new Object[]{category, status, new Long(0), new Long(0)};
-//        List<Complaint> complaints = this.complaintDao.getPaging(page, size, args);
-//
-//        LOG.debug("Fetched complaints: {}", complaints);
-//        response.put("complaints", complaints);
-//        response.put("complaintsCount", this.complaintDao.getEntityCount(args));
-//
-//        return response;
-//    }
-//
-//    @Override
-//    public Map<String, Object> getComplaintsByCustomer(int id, int page, int size) {
-//        Map<String, Object> response = new HashMap<>();
-//        Object[] args = new Object[]{"-", "-", new Long(id), new Long(0)};
-//        List<Complaint> complaints = this.complaintDao.getPaging(page, size, args);
-//
-//        LOG.debug("Fetched complaints: {}", complaints);
-//        response.put("complaints", complaints);
-//        response.put("complaintsCount", this.complaintDao.getEntityCount(args));
-//        return response;
-//    }
-//
-//    @Override
-//    public Map<String, Object> getComplaintsByResponsible(long responsibleId, String category, int page, int size) {
-//        Map<String, Object> response = new HashMap<>();
-//        Object[] args = new Object[]{category, ComplaintStatus.INTRAPROCESS.toString(), new Long(0), responsibleId};
-//        List<Complaint> complaints = this.complaintDao.getPaging(page, size, args);
-//
-//        LOG.debug("Fetched complaints: {}", complaints);
-//        response.put("complaints", complaints);
-//        response.put("complaintsCount", this.complaintDao.getEntityCount(args));
-//        return response;
-//    }
 
     @Override
     public Complaint setStatusIntraprocess(Complaint complaint) {
@@ -216,33 +190,25 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     }
 
     @Override
-    public List<Complaint> getAllComplaintsSearch(int page, int size, String email, String status, String category) {
-        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
-        query.where();
-        query.addLikeCondition("email", email);
+    public Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category) {
+        Query.Builder queryBuilder = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
+        queryBuilder.where();
+        queryBuilder.addLikeCondition("email", email);
         if (!status.equals("-")) {
-            query.and().addCondition("complaint.status=?", status);
+            queryBuilder.and().addCondition("complaint.status=?", status);
         }
         if (!category.equals("-")) {
-            query.and().addCondition("complaint.type=?", category);
+            queryBuilder.and().addCondition("complaint.type=?", category);
         }
-        query.addPaging(page, size);
-        return complaintDao.getAllComplaintsSearch(query.build());
+        queryBuilder.addPaging(page, size);
+
+        Map<String, Object> response = new HashMap<>();
+        Query query = queryBuilder.build();
+        response.put("complaints", complaintDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        return response;
     }
 
-    @Override
-    public int getCountSearch(int page, int size, String email, String status, String category) {
-        Query.Builder query = new Query.Builder("complaint inner join dbuser on complaint.user_id = dbuser.id");
-        query.where();
-        query.addLikeCondition("dbuser.email", email);
-        if (!status.equals("-")) {
-            query.and().addCondition("complaint.status=?", status);
-        }
-        if (!category.equals("-")) {
-            query.and().addCondition("complaint.type=?", category);
-        }
-        return complaintDao.getAllComplaintsSearch(query.build()).size();
-    }
 
     @Override
     public WeeklyComplaintStatistics getComplaintStatistics() {
@@ -261,8 +227,8 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
     @Override
     public SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
-                                                          LocalDate startDate,
-                                                          LocalDate endDate) {
+                                                                       LocalDate startDate,
+                                                                       LocalDate endDate) {
 
         List<Statistics> statisticsList = this.complaintDao
                 .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);

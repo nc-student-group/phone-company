@@ -15,6 +15,12 @@
         $scope.inProgress = false;
         $scope.selectedStatus = "ALL";
         $scope.selectedRegion = 0;
+        $scope.partOfEmail = "";
+        $scope.partOfName = "";
+        $scope.selectedPhone = "";
+        $scope.partOfCorporate = "";
+        $scope.orderBy = 0;
+        $scope.orderByType = "ASC";
 
         $scope.corporateUser = false;
 
@@ -50,9 +56,11 @@
             };
         });
 
-        $scope.preloader.send = true;
         $scope.getAllCustomer = function () {
-            CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus).then(function (data) {
+            $scope.preloader.send = true;
+            CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                $scope.orderBy, $scope.orderByType).then(function (data) {
                 $scope.customers = data.customers;
                 $scope.customersSelected = data.customersSelected;
                 $scope.preloader.send = false;
@@ -67,6 +75,33 @@
             $scope.preloader.send = true;
             $scope.getAllCustomer();
 
+        };
+
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.customersSelected / $scope.size);
+            if (max == $scope.customersSelected) {
+                return max;
+            }
+            return max + 1;
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                    $scope.orderBy, $scope.orderByType).then(function (data) {
+                    $scope.customers = data.customers;
+                    $scope.customersSelected = data.customersSelected;
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                });
+            }
         };
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.customersSelected) {

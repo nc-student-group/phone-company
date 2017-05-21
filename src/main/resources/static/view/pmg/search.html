@@ -59,9 +59,9 @@
                                     <button ng-hide="selectedCategory==''" style="width: 100%" class="btn btn-toggle btn-fill pull-left"
                                             ng-click="searchClick()">Search
                                     </button>
+
                                 </div>
                                 <div ng-hide="selectedCategory==''"  class="content table-responsive">
-
                                     <div class="row">
                                         <div class="col-sm-2">
                                             <div class="dataTables_length" id="tariffTable_length">
@@ -78,7 +78,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <table ng-show="selectedCategory=='COMPLAINTS'" class="table table-striped table-bordered table-hover"
                                            id="activeComplaintsTable">
                                         <!--id-->
@@ -188,13 +187,12 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <div>
-                                                <label><b>Founded: {{entitiesSelected}}</b></label>
-                                            </div>
-                                        </div>
+                                        <!--<div class="col-sm-3">-->
+                                            <!--<div>-->
+                                                <!--<label><b>Founded: {{entitiesSelected}}</b></label>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
                                     </div>
-
                                 </div>
                             </div>
                         </div>

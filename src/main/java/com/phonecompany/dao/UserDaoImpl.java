@@ -78,24 +78,6 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         return queryLoader.getQuery("query.user." + type);
     }
 
-    @Override
-    public String prepareWhereClause(Object... args) {
-
-        String where = "";
-
-        int roleId = (int) args[0];
-        String status = (String) args[1];
-
-        if (roleId > 0) {
-            where += " AND role_id = ?";
-            this.preparedStatementParams.add(roleId);
-        }
-        if (!status.equals("ALL")) {
-            where += " AND status = ?";
-            this.preparedStatementParams.add(status);
-        }
-        return where;
-    }
 
     @Override
     public List<User> getAllUsersSearch(Query query) {

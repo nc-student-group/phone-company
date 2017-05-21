@@ -108,7 +108,7 @@
                                                                 <h3 style="text-align: center">
                                                                     {{currentTariff.tariff.tariffName}}</h3>
                                                             </div>
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-3" ng-hide="isCorporate">
                                                                 <button style="width: 100%"
                                                                         class="btn btn-danger btn-fill pull-left"
                                                                         ng-click="showDeactivationModalWindow(currentTariff, loadCurrentTariff, loadTariffsHistory, preloader)">
@@ -441,22 +441,62 @@
                                                             <div class="col-sm-7">
                                                                 <div class="dataTables_paginate paging_simple_numbers">
                                                                     <ul class="pagination">
-                                                                        <li class="paginate_button previous">
-                                                                            <a aria-controls="tariffTable"
-                                                                               data-dt-idx="0"
-                                                                               tabindex="0" ng-show="page > 0"
-                                                                               ng-click="previousPage()">Previous</a>
+                                                                        <li class="paginate_button previous" id="tariffTable_previous">
+                                                                            <a aria-controls="tariffTable" data-dt-idx="0"
+                                                                               tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="page > 2"
+                                                                            ng-click="getPage(0)">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">1</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="page > 3">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">...</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="(page - 1)*size > 0"
+                                                                            ng-click="getPage(page - 2)">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">{{page-1}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="(page)*size > 0"
+                                                                            ng-click="getPage(page - 1)"><a
+                                                                                aria-controls="tariffTable"
+                                                                                data-dt-idx="1" tabindex="0">{{page}}</a>
                                                                         </li>
                                                                         <li class="paginate_button active"><a
                                                                                 aria-controls="tariffTable"
-                                                                                data-dt-idx="1"
-                                                                                tabindex="0">{{page+1}}</a>
+                                                                                data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                                         </li>
-                                                                        <li class="paginate_button next pointable"><a
-                                                                                aria-controls="tariffTable"
-                                                                                data-dt-idx="2"
-                                                                                tabindex="0"
-                                                                                ng-show="(page + 1)*size < ordersFound"
+                                                                        <li class="paginate_button" ng-show="(page + +1)*size < ordersFound"
+                                                                            ng-click="getPage(page+1)">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">{{page+2}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="(page + 2)*size < ordersFound"
+                                                                            ng-click="getPage(page+2)">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">{{page+3}}</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">...</a>
+                                                                        </li>
+                                                                        <li class="paginate_button" ng-click="getPage(getMaxPageNumber() - 1)"
+                                                                            ng-show="page < getMaxPageNumber() - 3">
+                                                                            <a
+                                                                                    aria-controls="tariffTable"
+                                                                                    data-dt-idx="1" tabindex="0">{{getMaxPageNumber()}}</a>
+                                                                        </li>
+                                                                        <li class=" paginate_button next pointable" id="tariffTable_next"><a
+                                                                                aria-controls="tariffTable" data-dt-idx="2"
+                                                                                tabindex="0" ng-show="(page + 1)*size < ordersFound"
                                                                                 ng-click="nextPage()">Next</a></li>
                                                                     </ul>
                                                                 </div>
@@ -547,25 +587,63 @@
                                                                     <div class="col-sm-7">
                                                                         <div class="dataTables_paginate paging_simple_numbers">
                                                                             <ul class="pagination">
-                                                                                <li class="paginate_button previous">
-                                                                                    <a aria-controls="serviceTable"
-                                                                                       data-dt-idx="0"
-                                                                                       tabindex="0"
-                                                                                       ng-show="servicesPage > 0"
-                                                                                       ng-click="servicesPreviousPage()">Previous</a>
+                                                                                <li class="paginate_button previous" id="tariffTable_previous">
+                                                                                    <a aria-controls="tariffTable" data-dt-idx="0"
+                                                                                       tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-show="page > 2"
+                                                                                    ng-click="getServicesPage(0)">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">1</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-show="page > 3">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">...</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-show="(page - 1)*size > 0"
+                                                                                    ng-click="getServicesPage(page - 2)">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">{{page-1}}</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-show="(page)*size > 0"
+                                                                                    ng-click="getServicesPage(page - 1)"><a
+                                                                                        aria-controls="tariffTable"
+                                                                                        data-dt-idx="1" tabindex="0">{{page}}</a>
                                                                                 </li>
                                                                                 <li class="paginate_button active"><a
-                                                                                        aria-controls="serviceTable"
+                                                                                        aria-controls="tariffTable"
                                                                                         data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                                                 </li>
-                                                                                <li class="paginate_button next pointable">
+                                                                                <li class="paginate_button" ng-show="(page + +1)*size < servicesOrdersFound"
+                                                                                    ng-click="getServicesPage(page+1)">
                                                                                     <a
-                                                                                            aria-controls="serviceTable"
-                                                                                            data-dt-idx="2"
-                                                                                            tabindex="0"
-                                                                                            ng-show="(servicesPage + 1)*servicesSize < servicesOrdersFound"
-                                                                                            ng-click="servicesNextPage()">Next</a>
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">{{page+2}}</a>
                                                                                 </li>
+                                                                                <li class="paginate_button" ng-show="(page + 2)*size < servicesOrdersFound"
+                                                                                    ng-click="getServicesPage(page+2)">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">{{page+3}}</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-show="page < getMaxServicesPageNumber() - 4">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">...</a>
+                                                                                </li>
+                                                                                <li class="paginate_button" ng-click="getServicesPage(getMaxServicesPageNumber() - 1)"
+                                                                                    ng-show="page < getMaxServicesPageNumber() - 3">
+                                                                                    <a
+                                                                                            aria-controls="tariffTable"
+                                                                                            data-dt-idx="1" tabindex="0">{{getMaxServicesPageNumber()}}</a>
+                                                                                </li>
+                                                                                <li class=" paginate_button next pointable"><a
+                                                                                        aria-controls="tariffTable" data-dt-idx="2"
+                                                                                        tabindex="0" ng-show="(page + 1)*size < servicesOrdersFound"
+                                                                                        ng-click="nextPage()">Next</a></li>
                                                                             </ul>
                                                                         </div>
                                                                     </div>

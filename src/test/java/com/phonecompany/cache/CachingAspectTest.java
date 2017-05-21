@@ -67,7 +67,8 @@ public class CachingAspectTest {
     public void shouldCacheResults() {
         //given
         PagingResult<Service> pagingResult = serviceService
-                .getServicesByProductCategoryId(0, 5, 1);
+                .getServicesByProductCategoryId(1, 0, 5, "",
+                        0.0, 0.0, 0, 0, "ASC");
 
         //when
         @SuppressWarnings("unchecked")

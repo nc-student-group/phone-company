@@ -5,13 +5,26 @@ angular.module('phone-company').controller('AllTariffsController', [
     '$location',
     'TariffService',
     'CustomerInfoService',
-    function ($scope, $rootScope, $location, TariffService,CustomerInfoService) {
+    'MarketingCampaignService',
+    function ($scope, $rootScope, $location, TariffService, CustomerInfoService,
+              MarketingCampaignService) {
         console.log('This is AllTariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
-        $scope.size = 6;
+        $scope.size = 5;
         $scope.inProgress = false;
 
+        $scope.preloader.send = true;
+        MarketingCampaignService.getMarketingCampaigns().then(function (data) {
+            $scope.marketingCampaigns = data;
+            $scope.marketingCampaignsSize = data.length;
+            $scope.preloader.send = false;
+        }, function () {
+            $scope.preloader.send = false;
+        });
+        $scope.campaignClick = function (id) {
+            $location.path("/client/marketing-campaign/" + id);
+        };
 
         $scope.preloader.send = true;
         TariffService.getTariffsAvailableForCustomer($scope.page, $scope.size).then(function (data) {

@@ -194,5 +194,50 @@ angular.module('phone-company').controller('MainController', [
             };
         }
 
+        $scope.showActivateMarketingCampaignModalWindow = function (currentTariff, marketingCampaign, preloader) {
+            $mdDialog.show({
+                controller: ActivateMarketingCampaignDialogController,
+                templateUrl: '../../view/client/activateMarketingCampaignModal.html',
+                locals: {
+                    currentTariff: currentTariff,
+                    marketingCampaign: marketingCampaign,
+                    preloader: preloader
+                },
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                escapeToClose: true
+            })
+                .then(function (answer) {
+
+                });
+        };
+
+        function ActivateMarketingCampaignDialogController($scope, $mdDialog, currentTariff, marketingCampaign, MarketingCampaignService, preloader) {
+            $scope.currentTariff = currentTariff;
+            $scope.marketingCampaign = marketingCampaign;
+            $scope.preloader = preloader;
+
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function (message) {
+                $scope.preloader.send = true;
+                MarketingCampaignService.activateMarketingCampaign($scope.marketingCampaign.id).then(function () {
+                    $mdDialog.cancel();
+                    $location.path("/client");
+                    $scope.preloader.send = false;
+                }, function (data) {
+                    toastr.error(data.data.message, 'Error');
+                    $mdDialog.cancel();
+                    $scope.preloader.send = false;
+                    $location.path("/client/tariffs/available");
+                });
+            };
+        }
+
 
     }]);

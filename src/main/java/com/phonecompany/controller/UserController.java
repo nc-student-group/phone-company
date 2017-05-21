@@ -89,7 +89,7 @@ public class UserController {
 
     @RequestMapping(method = POST, value = "/api/user/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody HashMap<String, String> pass) {
-        userService.changePassword(pass.get("oldPass"), pass.get("newPass"));
+        userService.changePassword(pass.get("oldPass"), pass.get("newPass"), userService.getCurrentlyLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -110,15 +110,13 @@ public class UserController {
 
     @RequestMapping(method = GET, value = "/api/users/{page}/{size}/{role}/{status}")
     public Map<String, Object> getAllUsers(@PathVariable("page") int page, @PathVariable("size") int size,
-                                           @PathVariable("role") int userRole, @PathVariable("status") String status) {
+                                           @PathVariable("role") int userRole, @PathVariable("status") String status,
+                                           @RequestParam("em") String email, @RequestParam("ob") int orderBy,
+                                           @RequestParam("obt") String orderByType) {
         LOG.info("Retrieving all the paginated users contained in the database");
-
-        List<User> users = this.userService.getAllUsersPaging(page, size, userRole, status);
-
-        LOG.info("Users fetched from the database: " + users);
-        Map<String, Object> response = new HashMap<>();
-        response.put("users", users);
-        response.put("usersSelected", userService.getCountUsers(userRole, status));
+        Map<String, Object> response = this.userService.getAllUsersPaging(page, size, userRole, status, email,
+                orderBy, orderByType);
+        LOG.info("Users fetched from the database: " + response.get("users"));
         return response;
     }
 

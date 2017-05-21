@@ -95,9 +95,13 @@
             return deferred.promise;
         };
 
-        CustomerService.getAllCustomer = function (page, size, selectedRegion, selectedStatus) {
+        CustomerService.getAllCustomer = function (page, size, selectedRegion, selectedStatus, partOfEmail,
+                                                   partOfName, selectedPhone, partOfCorporate,
+                                                   orderBy, orderByType) {
             var deferred = $q.defer();
-            $http.get(GET_ALL_CUSTOMERS_URL + page + '/' + size + "/" + selectedRegion + "/" + selectedStatus).then(
+            $http.get(GET_ALL_CUSTOMERS_URL + page + '/' + size + "/" + selectedRegion + "/" + selectedStatus +
+                "?em=" + partOfEmail + "&pon=" + partOfName + "&ph=" + selectedPhone + "&poc=" + partOfCorporate +
+                "&ob="+orderBy+"&obt="+orderByType).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

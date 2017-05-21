@@ -1,27 +1,21 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.Tariff;
-import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.CaptchaService;
-import com.phonecompany.service.interfaces.TariffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/captcha")
 public class CaptchaController {
 
     private CaptchaService captchaService;
-    private TariffService tariffService;
 
     @Autowired
-    public CaptchaController(CaptchaService captchaService, TariffService tariffService) {
+    public CaptchaController(CaptchaService captchaService) {
         this.captchaService = captchaService;
-        this.tariffService = tariffService;
     }
 
     @PostMapping
