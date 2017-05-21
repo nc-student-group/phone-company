@@ -70,9 +70,10 @@ public class ReportController {
     public ResponseEntity<?> getComplaintReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                      @PathVariable("startDate") LocalDate startDate,
                                                                      @PathVariable("endDate") LocalDate endDate) {
+        LOG.debug("Get complaints report");
         SheetDataSet<LocalDate, Long> complaintStatisticsDataSet = this.complaintService
                 .getComplaintStatisticsDataSet(regionId, startDate, endDate);
-
+        LOG.debug("Complaints report: {}", complaintStatisticsDataSet);
         BookDataSet<LocalDate, Long> bookDataSet = new BookDataSet<>();
 
         InputStream reportInputStream = xssfService

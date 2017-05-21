@@ -26,7 +26,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -150,27 +149,33 @@ public class ComplaintDaoImpl extends JdbcOperationsImpl<Complaint> implements C
     public List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
                                                                         LocalDate startDate,
                                                                         LocalDate endDate) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("by.region.id.and.time.period"));
-            ps.setLong(1, regionId);
-            ps.setDate(2, toSqlDate(startDate));
-            ps.setDate(3, toSqlDate(endDate));
-            ResultSet rs = ps.executeQuery();
-            List<Statistics> statisticsList = new ArrayList<>();
-            while (rs.next()) {
-                statisticsList.add(this.createComplaintStatisticsObject(rs));
-            }
-            return statisticsList;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Could not extract service orders", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        String query = this.getQuery("by.region.id.and.time.period");
+        return this.executeForList(query, new Object[]{regionId, toSqlDate(startDate), toSqlDate(endDate)},
+                rs -> new ComplaintStatistics(rs.getLong("complaint_count"),
+                        rs.getString("type"),
+                        ComplaintStatus.valueOf(rs.getString("status")),
+                        TypeMapper.toLocalDate(rs.getDate("date"))));
+//        Connection conn = DataSourceUtils.getConnection(getDataSource());
+//        PreparedStatement ps = null;
+//        try {
+//            ps = conn.prepareStatement(this.getQuery("by.region.id.and.time.period"));
+//            ps.setLong(1, regionId);
+//            ps.setDate(2, toSqlDate(startDate));
+//            ps.setDate(3, toSqlDate(endDate));
+//            ResultSet rs = ps.executeQuery();
+//            List<Statistics> statisticsList = new ArrayList<>();
+//            while (rs.next()) {
+//                statisticsList.add(this.createComplaintStatisticsObject(rs));
+//            }
+//            return statisticsList;
+//        } catch (SQLException e) {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//            throw new CrudException("Could not extract service orders", e);
+//        } finally {
+//            JdbcUtils.closeStatement(ps);
+//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+//        }
     }
 
     private ComplaintStatistics createComplaintStatisticsObject(ResultSet rs) throws SQLException {

@@ -49,27 +49,31 @@ angular.module('phone-company').controller('CsrChartsController', [
             console.log(`Converted start date ${convertedStartDate}`);
             let convertedEndDate = $filter('date')($scope.endDate, "yyyy-MM-dd");
             console.log(`Converted end date ${convertedEndDate}`);
-            $scope.preloader.send = true;
-            $http({
-                url: `api/reports/orders/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
-                method: 'GET',
-                responseType: 'arraybuffer',
-                headers: {
-                    'Content-type': 'application/json, application/json',
-                    'Accept': 'application/octet-stream, application/json'
-                }
-            }).success(function (data) {
-                $scope.preloader.send = false;
-                let blob = new Blob([data], {
-                    type: 'application/vnd.ms-excel'
+            if(convertedStartDate > convertedEndDate)
+                toastr.error('Start date must be less than end date!', 'Error');
+            else {
+                $scope.preloader.send = true;
+                $http({
+                    url: `api/reports/orders/${$scope.currentRegion}/${convertedStartDate}/${convertedEndDate}`,
+                    method: 'GET',
+                    responseType: 'arraybuffer',
+                    headers: {
+                        'Content-type': 'application/json, application/json',
+                        'Accept': 'application/octet-stream, application/json'
+                    }
+                }).success(function (data) {
+                    $scope.preloader.send = false;
+                    let blob = new Blob([data], {
+                        type: 'application/vnd.ms-excel'
+                    });
+                    let currentDate = new Date();
+                    let uniqueIdentifier = currentDate >>> 3;
+                    saveAs(blob, `report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}-${uniqueIdentifier}.xlsx`);
+                }).error(function (error) {
+                    console.log(`Error ${JSON.stringify(error)}`);
+                    toastr.info("There were no tariff orders in this region during this period");
+                    $scope.preloader.send = false;
                 });
-                let currentDate = new Date();
-                let uniqueIdentifier = currentDate >>> 3;
-                saveAs(blob, `report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}-${uniqueIdentifier}.xlsx`);
-            }).error(function (error) {
-                console.log(`Error ${JSON.stringify(error)}`);
-                toastr.info("There were no tariff orders in this region during this period");
-                $scope.preloader.send = false;
-            });
+            }
         };
     }]);

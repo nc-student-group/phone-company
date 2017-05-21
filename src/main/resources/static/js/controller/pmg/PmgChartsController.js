@@ -59,9 +59,9 @@ angular.module('phone-company').controller('PmgChartsController', [
 
         $scope.generateReport = function () {
             console.log(`Generation complaint report`);
-            let convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");
+            var convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");
             console.log(`Converted start date ${convertedStartDate}`);
-            let convertedEndDate = $filter('date')($scope.endDate, "yyyy-MM-dd");
+            var convertedEndDate = $filter('date')($scope.endDate, "yyyy-MM-dd");
             console.log(`Converted end date ${convertedEndDate}`);
             if(convertedStartDate > convertedEndDate)
                 toastr.error('Start date must be less than end date!', 'Error');
@@ -72,18 +72,20 @@ angular.module('phone-company').controller('PmgChartsController', [
                     method: 'GET',
                     responseType: 'arraybuffer',
                     headers: {
-                        'Content-type': 'application/json',
-                        'Accept': 'application/vnd.ms-excel'
+                        'Content-type': 'application/json, application/json',
+                        'Accept': 'application/octet-stream, application/json'
                     }
                 }).success(function (data) {
                     $scope.preloader.send = false;
-                    let blob = new Blob([data], {
+                    var blob = new Blob([data], {
                         type: 'application/vnd.ms-excel'
                     });
-                    let currentDate = new Date();
-                    let uniqueIdentifier = currentDate >>> 3;
+                    var currentDate = new Date();
+                    var uniqueIdentifier = currentDate >>> 3;
                     saveAs(blob, `complaint-report-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}-${uniqueIdentifier}.xlsx`);
-                }).error(function () {
+                }).error(function (error) {
+                    console.log(`Error ${JSON.stringify(error)}`);
+                    toastr.info("There were no complaints in this region during this period");
                     $scope.preloader.send = false;
                 });
             }
