@@ -148,8 +148,8 @@
                                         <td>{{t.productStatus}}</td>
                                         <td>{{t.creationDate | date:'dd MMM yyyy'}}</td>
                                         <td>
-                                            <span ng-show="t.isCorporate">+</span>
-                                            <span ng-hide="t.isCorporate">-</span>
+                                            <span ng-show="t.isCorporate">Yes</span>
+                                            <span ng-hide="t.isCorporate">No</span>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -220,11 +220,6 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div>
-                                            <label><b>Founded: {{entitiesSelected}}</b></label>
-                                        </div>
-                                    </div>
                                 </div>
 
                             </div>
@@ -232,14 +227,6 @@
                     </div>
                 </div>
             </div>
-
-            <footer class="footer">
-                <div class="container-fluid">
-                    <p class="copyright">
-                        &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
-                    </p>
-                </div>
-            </footer>
 
         </div>
 
