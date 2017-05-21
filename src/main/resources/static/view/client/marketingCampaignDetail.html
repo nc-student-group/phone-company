@@ -104,7 +104,8 @@
                                                         <td>
                                                             <div ng-hide="ms.service.discount > 0
                                                         && ms.service.discount < 100"
-                                                                 class="service-price-individual">
+                                                                 class="service-price-individual"
+                                                                 style="text-decoration: line-through">
                                                                 {{ms.service.price | number : 2}} &#8372;
                                                             </div>
                                                             <div ng-show="ms.service.discount > 0

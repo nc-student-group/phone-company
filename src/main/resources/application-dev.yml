@@ -3,7 +3,5 @@
 ##
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/nc_phone_company_local?user=yzrllkhondutsx&password=root
-    driver-class-name: org.postgresql.Driver
-    tomcat:
-      max-active: 10
+    url: jdbc:postgresql://localhost:5432/phone-company?user=postgres&password=1111
+    driver-class-name: org.h2.Driver
