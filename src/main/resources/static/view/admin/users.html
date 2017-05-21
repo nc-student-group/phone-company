@@ -64,10 +64,10 @@
                                 </div>
                                 <div class="col-sm-2">
                                     <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
-                                        <label>Order type:</label>
+                                        <label>Direction:</label>
                                         <md-select ng-model="orderByType">
-                                            <md-option value="ASC">&uarr;</md-option>
-                                            <md-option value="DESC">&darr;</md-option>
+                                            <md-option value="ASC">▲</md-option>
+                                            <md-option value="DESC">▼</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
@@ -110,7 +110,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="row" style="padding: 15px">
+                            <div class="row" style="padding: 0px 0px 15px 15px">
                                 <div class="col-sm-7">
                                     <div class="dataTables_paginate paging_simple_numbers"
                                          id="tariffTable_paginate">
@@ -173,11 +173,6 @@
                                                     tabindex="0" ng-show="(page + 1)*size < usersSelected"
                                                     ng-click="nextPage()">Next</a></li>
                                         </ul>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div>
-                                        <label><b>Users founded: {{usersSelected}}</b></label>
                                     </div>
                                 </div>
                             </div>

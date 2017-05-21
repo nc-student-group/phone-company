@@ -26,9 +26,7 @@ public interface ComplaintService extends CrudService<Complaint> {
 
     Complaint setStatusAccomplished(Complaint complaint, String comment);
 
-    List<Complaint> getAllComplaintsSearch(int page, int size, String email, String status, String category);
-
-    int getCountSearch(int page, int size, String email, String status, String category);
+    Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category);
 
     WeeklyComplaintStatistics getComplaintStatistics();
 

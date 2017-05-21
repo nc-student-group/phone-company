@@ -92,10 +92,10 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
-                                            <label>Order type:</label>
+                                            <label>Direction:</label>
                                             <md-select ng-model="orderByType">
-                                                <md-option value="ASC">&uarr;</md-option>
-                                                <md-option value="DESC">&darr;</md-option>
+                                                <md-option value="ASC">▲</md-option>
+                                                <md-option value="DESC">▼</md-option>
                                             </md-select>
                                         </md-input-container>
                                     </div>
@@ -148,7 +148,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="row" style="padding: 15px">
+                                <div class="row" style="padding: 0px 0px 15px 15px">
                                     <div class="col-sm-7">
                                         <div class="dataTables_paginate paging_simple_numbers"
                                              id="tariffTable_paginate">
@@ -472,13 +472,14 @@
                 </div>
             </div>
         </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
     </div>
 
-    <footer class="footer">
-        <div class="container-fluid">
-            <p class="copyright">
-                &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
-            </p>
-        </div>
-    </footer>
+
 </div>

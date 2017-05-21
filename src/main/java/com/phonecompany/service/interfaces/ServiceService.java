@@ -8,6 +8,7 @@ import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface ServiceService extends CrudService<Service> {
 
@@ -21,9 +22,7 @@ public interface ServiceService extends CrudService<Service> {
 
     Service getById(Long id);
 
-    List<Service> getAllServicesSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
-
-    int getCountSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
+    Map<String, Object> getAllServicesSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice);
 
     SheetDataSet<LocalDate, Long> getServiceStatisticsDataSet(LocalDate startDate, LocalDate endDate);
 }
