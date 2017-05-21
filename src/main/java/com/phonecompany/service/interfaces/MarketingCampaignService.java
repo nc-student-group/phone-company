@@ -9,4 +9,6 @@ public interface MarketingCampaignService extends CrudService<MarketingCampaign>
 
     List<MarketingCampaign> getMarketingCampaignsAvailableForCustomer(Customer customer);
 
+    void activateMarketingCampaign(MarketingCampaign campaign, Customer customer);
+
 }
