@@ -19,13 +19,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ServiceStereotype
@@ -120,27 +118,53 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
     }
 
     @Override
-    public List<User> getAllUsersPaging(int page, int size, int roleId, String status) {
-        return userDao.getPaging(page, size, roleId, status);
+    public Map<String, Object> getAllUsersPaging(int page, int size, int roleId, String status, String email,
+                                                 int orderBy, String orderByType) {
+        Query query = buildQueryForUsersTable(page, size, roleId, status, email, orderBy, orderByType);
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", this.userDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("usersSelected", this.userDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
+        return response;
     }
 
-    //TODO: we should not know currently logged in user at the service layer
+    private Query buildQueryForUsersTable(int page, int size, int roleId, String status, String email,
+                                          int orderBy, String orderByType) {
+        Query.Builder builder = new Query.Builder("dbuser");
+        builder.where().addCondition("dbuser.role_id <> ?", 4).and().addCondition("dbuser.role_id <> ?", 1)
+                .and().addLikeCondition("dbuser.email", email);
+        if (roleId > 0) builder.and().addCondition("dbuser.role_id = ?", roleId);
+        if (!status.equals("ALL")) builder.and().addCondition("dbuser.status = ?", status);
+        String orderByField = buildOrderBy(orderBy);
+        if (orderByField.length() > 0) {
+            builder.orderBy(orderByField);
+            builder.orderByType(orderByType);
+        }
+        builder.addPaging(page, size);
+        return builder.build();
+    }
+
+    private String buildOrderBy(int orderBy) {
+        switch (orderBy) {
+            case 0://by email
+                return "dbuser.email";
+            case 1://by role
+                return "dbuser.role_id";
+            case 2://by status
+                return "dbuser.status";
+            default:
+                return "";
+        }
+    }
+
+
     @Override
-    public void changePassword(String oldPass, String newPass) {
-        User user = this.getCurrentlyLoggedInUser();
+    public void changePassword(String oldPass, String newPass, User user) {
         if (shaPasswordEncoder.encodePassword(oldPass, null).equals(user.getPassword())) {
             user.setPassword(shaPasswordEncoder.encodePassword(newPass, null));
             userDao.update(user);
         } else {
             throw new ConflictException("Old password is wrong");
         }
-    }
-
-    //TODO: method is called "getCountUsers" but accepts status as a parameter
-    //TODO: rename to getUserCountByStatus ?
-    @Override
-    public int getCountUsers(int roleId, String status) {
-        return userDao.getEntityCount(roleId, status);
     }
 
     //TODO: untestable method. does not return anything
@@ -171,5 +195,4 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         response.put("entitiesSelected", userDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
         return response;
     }
-
 }

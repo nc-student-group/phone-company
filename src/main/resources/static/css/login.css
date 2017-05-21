@@ -284,6 +284,20 @@
     transform: rotate(-30deg);
 }
 
+.specials-picture {
+    position: absolute;
+    background: url("../../css/img/sale.png") 50% 50% no-repeat;
+    background-size: 70px 70px;
+    top: 0px;
+    right: 0px;
+    width: 70px;
+    height: 70px;
+    text-align: center;
+    padding-top: 23px;
+    font-size: 16px;
+    transform: rotate(-30deg);
+}
+
 .conditions-value {
     text-align: center;
     font-size: 16px;

@@ -14,7 +14,7 @@
                             </div>
                             <hr/>
                             <div class="content table-responsive">
-                                <div class="row">
+                                <div class="row" style="padding: 15px">
                                     <div class="col-sm-2">
                                         <div class="dataTables_length" id="tariffTable_length">
                                             <md-input-container class="md-block" flex-gt-sm>
@@ -45,9 +45,8 @@
                                             </md-select>
                                         </md-input-container>
                                     </div>
-
                                 </div>
-                                <div class="row">
+                                <div class="row" style="padding: 0px 15px 15px 15px">
                                     <div class="col-sm-4">
                                         <md-input-container class="md-block" flex-gt-sm>
                                             <label>Type:</label>
@@ -73,7 +72,7 @@
                                         </md-input-container>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="padding: 15px">
                                     <div class="col-sm-4">
                                         <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
                                             <label>Order by:</label>
@@ -85,12 +84,12 @@
                                             </md-select>
                                         </md-input-container>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-2">
                                         <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
                                             <label>Order type:</label>
                                             <md-select ng-model="orderByType">
-                                                <md-option value="ASC">ASC</md-option>
-                                                <md-option value="DESC">DESC</md-option>
+                                                <md-option value="ASC">&uarr;</md-option>
+                                                <md-option value="DESC">&darr;</md-option>
                                             </md-select>
                                         </md-input-container>
                                     </div>
@@ -101,114 +100,38 @@
                                 <table id="tariffTable" class="table table-striped table-bordered table-hover">
                                     <col width="30%">
                                     <col width="15%">
-                                    <!--<col width="42%">-->
                                     <col width="20%">
                                     <col width="15%">
                                     <col width="15%">
                                     <thead>
                                     <th>Name</th>
-                                    <!--<th>Region & Price</th>-->
                                     <th>Status</th>
-                                    <!--<th>Calls/SMS/MMS/Internet</th>-->
-                                    <!--<th>SMS/MMS/Internet</th>-->
                                     <th>Creation date</th>
-                                    <th>Corp.</th>
+                                    <th>Is Corp.</th>
                                     <th>Action</th>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="t in tariffs" class="tariff-td">
-                                        <td><a href="/#/csr/tariff/{{t.tariff.id}}">{{t.tariff.tariffName}}</a><br>
-                                            <!--<a target="_blank" href="{{t.tariff.pictureUrl}}">picture</a>-->
+                                        <td><a href="/#/csr/tariff/{{t.id}}">{{t.tariffName}}</a><br>
                                         </td>
-                                        <!--<td style="padding: 0;">-->
-                                        <!--<div ng-hide="t.tariff.isCorporate" style="height: 200px; overflow: auto;">-->
-                                        <!--<table width="100%" style="table-layout: fixed;"-->
-                                        <!--class="table table-striped" ng-hide="t.tariff.isCorporate">-->
-                                        <!--<col width="70%">-->
-                                        <!--&lt;!&ndash;region price&ndash;&gt;-->
-                                        <!--<col width="30%">-->
-                                        <!--<tr>-->
-                                        <!--<td><b>Discount:</b></td>-->
-                                        <!--<td><b>{{t.tariff.discount}}%</b></td>-->
-                                        <!--</tr>-->
-                                        <!--<tr ng-repeat="r in t.regions" class="tariff-td">-->
-                                        <!--<td>{{r.region.nameRegion}}</td>-->
-                                        <!--<td style="text-align: left; padding-right: 0;">{{r.price}}</td>-->
-                                        <!--</tr>-->
-                                        <!--</table>-->
-                                        <!--</div>-->
-                                        <!--<span ng-show="t.tariff.isCorporate">-->
-                                        <!--Price: {{t.tariff.price}}<br>-->
-                                        <!--<b>Discount: {{t.tariff.discount}}%</b>-->
-                                        <!--</span>-->
-                                        <!--</td>-->
-                                        <td>{{t.tariff.productStatus}}</td>
-                                        <!--<td style="padding: 0;">-->
-                                        <!--<table width="100%" style="table-layout: fixed;"-->
-                                        <!--class="table table-striped">-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td style="word-wrap: break-word;">Calls in Network</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.callsInNetwork}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td style="word-wrap: break-word;">Calls on other numbers</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.callsOnOtherNumbers}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td style="word-wrap: break-word;">Roaming</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.roaming}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>SMS</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.sms}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>MMS</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.mms}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>Internet</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.internet}}</td>-->
-                                        <!--</tr>-->
-                                        <!--</table>-->
-                                        <!--</td>-->
-                                        <!--<td style="padding: 0;">-->
-                                        <!--<table width="100%" style="table-layout: fixed;"-->
-                                        <!--class="table table-striped">-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>SMS</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.sms}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>MMS</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.mms}}</td>-->
-                                        <!--</tr>-->
-                                        <!--<tr class="tariff-td">-->
-                                        <!--<td>Internet</td>-->
-                                        <!--<td style="text-align: left">{{t.tariff.internet}}</td>-->
-                                        <!--</tr>-->
-                                        <!--</table>-->
-                                        <!--</td>-->
-                                        <td>{{t.tariff.creationDate | date:'dd MMM yyyy'}}</td>
+                                        <td>{{t.productStatus}}</td>
+                                        <td>{{t.creationDate | date:'dd MMM yyyy'}}</td>
                                         <td>
-                                            <span ng-show="t.tariff.isCorporate">+</span>
-                                            <span ng-hide="t.tariff.isCorporate">-</span>
+                                            <span ng-show="t.isCorporate">Yes</span>
+                                            <span ng-hide="t.isCorporate">No</span>
                                         </td>
                                         <td>
-                                            <button style="width: 100%" ng-hide="t.tariff.productStatus === 'ACTIVATED'"
+                                            <button style="width: 100%" ng-hide="t.productStatus === 'ACTIVATED'"
                                                     class="btn btn-success btn-fill pull-left"
                                                     ng-click="activateTariff($index)">Activate
                                             </button>
-                                            <button style="width: 100%" ng-show="t.tariff.productStatus === 'ACTIVATED'"
+                                            <button style="width: 100%" ng-show="t.productStatus === 'ACTIVATED'"
                                                     class="btn btn-danger btn-fill pull-left"
                                                     ng-click="deactivateTariff($index)">Deactivate
                                             </button>
                                             <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                    ng-click="editClick(t.tariff.id)">Edit
+                                                    ng-click="editClick(t.id)">Edit
                                             </button>
-                                            <!--<button style="width: 100%" class="btn btn-toggle btn-fill pull-left"-->
-                                                    <!--ng-click="detailClick(t.tariff.id)">Detail-->
-                                            <!--</button>-->
                                         </td>
                                     </tr>
                                     </tbody>
@@ -278,11 +201,11 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div>
-                                            <label><b>Tariffs founded: {{tariffsSelected}}</b></label>
-                                        </div>
-                                    </div>
+                                    <!--<div class="col-sm-3">-->
+                                        <!--<div>-->
+                                            <!--<label><b>Tariffs founded: {{tariffsSelected}}</b></label>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                 </div>
 
                             </div>

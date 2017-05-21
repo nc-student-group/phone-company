@@ -161,26 +161,6 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     }
 
     @Override
-    public String prepareWhereClause(Object... args) {
-
-        String where = "";
-
-        long regionId = (long) args[0];
-        String status = (String) args[1];
-
-        if (regionId > 0) {
-            where += " AND address.region_id = ?";
-            this.preparedStatementParams.add(regionId);
-        }
-        if (!status.equals("ALL")) {
-            where += " AND dbuser.status = ?";
-            this.preparedStatementParams.add(status);
-        }
-
-        return where;
-    }
-
-    @Override
     public List<Customer> getAllCustomersSearch(Query query) {
         return executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }

@@ -19,5 +19,8 @@ public interface CustomerServiceService extends CrudService<CustomerServiceDto> 
 
     CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer);
 
+    CustomerServiceDto activateMarketingServiceForCustomer(
+            MarketingCampaignServices marketingCampaignService, Customer customer);
+
     void resumeCustomerService(Order order);
 }

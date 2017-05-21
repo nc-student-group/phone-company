@@ -11,7 +11,7 @@
         $scope.activePage = 'users';
         $scope.editing = false;
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
-        $scope.users = UserService.getUsers();
+        // $scope.users = UserService.getUsers();
         $scope.user = {
             email: '',
             role: ''
@@ -23,6 +23,9 @@
         $scope.inProgress = false;
         $scope.selectedStatus = "ALL";
         $scope.selectedRole = 0;
+        $scope.partOfEmail = "";
+        $scope.orderBy = 0;
+        $scope.orderByType = "ASC";
 
         $scope.createUser = function () {
             $log.debug('User: ' + JSON.stringify($scope.user));
@@ -38,11 +41,12 @@
                 });
         };
 
-        $scope.users = UserService.getUsers();
+        // $scope.users = UserService.getUsers();
 
         $scope.preloader.send = true;
         $scope.getAllUser = function () {
-            UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
+            UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus,
+                $scope.partOfEmail, $scope.orderBy, $scope.orderByType).then(function (data) {
                 $scope.users = data.users;
                 $scope.usersSelected = data.usersSelected;
                 $scope.preloader.send = false;
@@ -57,14 +61,41 @@
             $scope.page = 0;
             $scope.preloader.send = true;
             $scope.getAllUser();
-
         };
+
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.usersSelected / $scope.size);
+            if (max == $scope.usersSelected) {
+                return max;
+            }
+            return max + 1;
+        };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.orderBy, $scope.orderByType).then(function (data) {
+                    $scope.users = data.users;
+                    $scope.usersSelected = data.usersSelected;
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                });
+            }
+        };
+
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.usersSelected) {
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
+                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.orderBy, $scope.orderByType).then(function (data) {
                     $scope.users = data.users;
                     $scope.usersSelected = data.usersSelected;
                     $scope.preloader.send = false;
@@ -81,7 +112,8 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus).then(function (data) {
+                UserService.getAllUsers($scope.page, $scope.size, $scope.selectedRole, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.orderBy, $scope.orderByType).then(function (data) {
                     $scope.users = data.users;
                     $scope.usersSelected = data.usersSelected;
                     $scope.preloader.send = false;
@@ -140,7 +172,7 @@
         };
 
         $scope.cancelClick = function () {
-            $scope.editing=false;
+            $scope.editing = false;
         }
     }
 }());

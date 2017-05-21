@@ -1,10 +1,7 @@
 package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.Customer;
-import com.phonecompany.model.CustomerServiceDto;
-import com.phonecompany.model.Service;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
-
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +11,9 @@ public interface CustomerService extends CrudService<Customer>,
 
     void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent);
 
-    List<Customer> getAllCustomersPaging(int page, int size, long rId, String status);
-
-    int getCountCustomers(long rId, String status);
+    Map<String, Object> getAllCustomersPaging(int page, int size, long regionId, String status, String partOfEmail,
+                                              String partOfName, String selectedPhone, String partOfCorporate,
+                                              int orderBy, String orderByType);
 
     void deactivateCustomer(long id);
 
@@ -25,4 +22,7 @@ public interface CustomerService extends CrudService<Customer>,
     List<Customer> getCustomersByCorporate(long corporateId);
 
     Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
+
+    Customer addNewCustomer(Customer customer);
+
 }
