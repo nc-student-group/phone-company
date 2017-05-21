@@ -37,10 +37,10 @@
                                                         <md-input-container class="md-block" flex-gt-sm>
                                                             <label>Category:</label>
                                                             <md-select ng-model="currentCategory" md-on-close="updateResponsibleData()" >
-                                                                <md-option value="-">ALL CATEGORIES</md-option>
-                                                                <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
-                                                                <md-option value="SUGGESTION">SUGGESTION</md-option>
-                                                                <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                                <md-option value="0">ALL CATEGORIES</md-option>
+                                                                <md-option value="1">TECHNICAL SERVICE</md-option>
+                                                                <md-option value="2">SUGGESTION</md-option>
+                                                                <md-option value="3">CUSTOMER SERVICE</md-option>
                                                                 <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
                                                                     {{c}}
                                                                 </md-option-->
@@ -78,21 +78,21 @@
                                                         </thead>
                                                         <tbody>
                                                         <tr ng-repeat="c in complaints">
-                                                            <td>{{c.id}}</td>
+                                                            <td>{{c.complaint.id}}</td>
                                                             <td>
-                                                                {{c.user.email}}
+                                                                {{c.complaint.user.email}}
                                                             </td>
-                                                            <td>{{c.date}}</td>
-                                                            <td>{{c.type}}</td>
-                                                            <td>{{c.status}}</td>
-                                                            <td>{{c.subject}}</td>
+                                                            <td>{{c.complaint.date}}</td>
+                                                            <td>{{c.complaint.type}}</td>
+                                                            <td>{{c.complaint.status}}</td>
+                                                            <td>{{c.complaint.subject}}</td>
                                                             <td>
-                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.complaint.text}}</textarea>
                                                             </td>
 
                                                             <td>
                                                                 <button style="width: 100%" class="btn btn-success btn-fill pull-left"
-                                                                        ng-click="detailInfo(c)">Solve
+                                                                        ng-click="detailInfo(c.complaint)">Solve
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -299,10 +299,10 @@
                                                         <md-input-container class="md-block" flex-gt-sm>
                                                             <label>Category:</label>
                                                             <md-select ng-model="currentCategory" md-on-close="updateData()" >
-                                                                <md-option value="-">ALL CATEGORIES</md-option>
-                                                                <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
-                                                                <md-option value="SUGGESTION">SUGGESTION</md-option>
-                                                                <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                                <md-option value="0">ALL CATEGORIES</md-option>
+                                                                <md-option value="1">TECHNICAL SERVICE</md-option>
+                                                                <md-option value="2">SUGGESTION</md-option>
+                                                                <md-option value="3">CUSTOMER SERVICE</md-option>
                                                                 <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
                                                                     {{c}}
                                                                 </md-option-->
@@ -315,10 +315,10 @@
                                                         <md-input-container class="md-block" flex-gt-sm>
                                                             <label>Status:</label>
                                                             <md-select ng-model="currentStatus" md-on-close="updateData()" >
-                                                                <md-option value="-">ALL STATUS</md-option>
-                                                                <md-option value="ACCEPTED">ACCEPTED</md-option>
-                                                                <md-option value="INTRAPROCESS">INTRAPROCESS</md-option>
-                                                                <md-option value="ACCOMPLISHED">ACCOMPLISHED</md-option>
+                                                                <md-option value="0">ALL STATUS</md-option>
+                                                                <md-option value="1">ACCEPTED</md-option>
+                                                                <md-option value="2">INTRAPROCESS</md-option>
+                                                                <md-option value="3">ACCOMPLISHED</md-option>
                                                             </md-select>
                                                         </md-input-container>
                                                     </div>
@@ -353,24 +353,24 @@
                                                         </thead>
                                                         <tbody>
                                                         <tr ng-repeat="c in complaints">
-                                                            <td>{{c.id}}</td>
+                                                            <td>{{c.complaint.id}}</td>
                                                             <td>
-                                                                <a href="#/pmg/complaints" ng-click="customerData(c.user.id, c.user.email)">{{c.user.email}}</a>
+                                                                <a href="#/pmg/complaints" ng-click="customerData(c.complaint.user.id, c.complaint.user.email)">{{c.complaint.user.email}}</a>
                                                             </td>
-                                                            <td>{{c.date}}</td>
-                                                            <td>{{c.type}}</td>
-                                                            <td>{{c.status}}</td>
-                                                            <td>{{c.subject}}</td>
+                                                            <td>{{c.complaint.date}}</td>
+                                                            <td>{{c.complaint.type}}</td>
+                                                            <td>{{c.complaint.status}}</td>
+                                                            <td>{{c.complaint.subject}}</td>
                                                             <td>
-                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.text}}</textarea>
+                                                                <textarea readonly style="resize: vertical; width: 100%">{{c.complaint.text}}</textarea>
                                                             </td>
 
                                                             <td>
-                                                                <button ng-show="c.status === 'ACCEPTED'" style="width: 100%" class="btn btn-info btn-fill pull-left"
-                                                                        ng-click="handleComplaint(c.id)">Handle
+                                                                <button ng-show="c.complaint.status === 'ACCEPTED'" style="width: 100%" class="btn btn-info btn-fill pull-left"
+                                                                        ng-click="handleComplaint(c.complaint.id)">Handle
                                                                 </button>
                                                                 <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                                        ng-click="complaintDetailData(c)">Detail
+                                                                        ng-click="complaintDetailData(c.complaint)">Detail
                                                                 </button>
                                                             </td>
                                                         </tr>

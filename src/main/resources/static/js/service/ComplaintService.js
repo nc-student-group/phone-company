@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('phone-company').factory('ComplaintService', ['$q', '$http', function ($q, $http) {
+angular.module('phone-company').factory('ComplaintService', ['$q', '$http', '$filter', function ($q, $http, $filter) {
 
     const COMPLAINTS = "api/complaints";
 
@@ -16,10 +16,23 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
     };
 
     return factory;
-
-    function getComplaints(category, status, page, size) {
+    // @PathVariable("category") int category,
+    //     @PathVariable("status") int status,
+    //     @PathVariable("email") String email,
+    //     @PathVariable("from") String from,
+    //     @PathVariable("to") String to,
+    //     @PathVariable("orderBy") int orderBy,
+    //     @PathVariable("orderByType") String orderByType,
+    //     @PathVariable("responsible") Long responsible,
+    //     @PathVariable("user") Long user,
+    //     @PathVariable("page") int page,
+    //     @PathVariable("size") int size)
+    function getComplaints(category, status, email, from, to, orderBy, orderByType, page, size) {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/${category}/${status}/${page}/${size}`).then(
+        var convertedStartDate = $filter('date')(from, "yyyy-MM-dd");
+        var convertedEndDate = $filter('date')(to, "yyyy-MM-dd");
+        $http.get(`${COMPLAINTS}/${page}/${size}?category=${category}&status=${status}&email=${email}&from=${convertedStartDate}&to=${convertedEndDate}&orderBy=${orderBy}&orderByType=${orderByType}`
+        ).then(
             function (response) {
                 deferred.resolve(response.data);
             },

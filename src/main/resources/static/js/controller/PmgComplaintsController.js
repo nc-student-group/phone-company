@@ -16,8 +16,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         $scope.customerPage = 0;
         $scope.size = 5;
         $scope.inProgress = false;
-        $scope.currentCategory = "-";
-        $scope.currentStatus = "-";
+        $scope.currentCategory = 0;
+        $scope.currentStatus = 0;
         $scope.complaintsCount = 0;
         $scope.complaint = {
             id: '',
@@ -84,10 +84,13 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             console.log("Updating data:", $scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size);
             $scope.page = 0;
             $scope.preloader.send = true;
-            ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size)
+            // getComplaints(category, status, email, from, to, orderBy, orderByType, responsible, user,
+            //     page, size)
+            ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, null, null, null,
+                -1, null, $scope.page, $scope.size)
                 .then(function (data) {
                     $scope.complaints = data.complaints;
-                    $scope.complaintsCount = data.complaintsCount;
+                    $scope.complaintsCount = data.complaintsSelected;
                     $scope.preloader.send = false;
                 }, function () {
                     $scope.preloader.send = false;
@@ -97,8 +100,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         $scope.allComplaintsClick = function () {
             $scope.selectedTab = 1;
             $scope.selected = "";
-            $scope.currentCategory = "-";
-            $scope.currentStatus = "-";
+            $scope.currentCategory = 0;
+            $scope.currentStatus = 0;
             $scope.updateData();
         };
 
@@ -238,7 +241,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         $scope.activeComplaintsClick = function () {
             $scope.selectedTab = 0;
             $scope.selectedDetail = '';
-            $scope.currentCategory = "-";
+            $scope.currentCategory = 0;
             $scope.updateResponsibleData();
         };
 
@@ -249,7 +252,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 $scope.complaint = data;
                 console.log("Handle complaint");
                 if ($scope.complaint.id != undefined) {
-                    $scope.currentCategory = "-";
+                    $scope.currentCategory = 0;
                     $scope.updateResponsibleData();
                     $scope.selectedTab = 0;
                     $scope.selectedDetail = '';
