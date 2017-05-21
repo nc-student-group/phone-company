@@ -34,7 +34,7 @@ import java.util.EnumMap;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
 
 @Repository
-public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> implements ComplaintDao {
+public class ComplaintDaoImpl extends JdbcOperationsImpl<Complaint> implements ComplaintDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintDaoImpl.class);
 
@@ -105,40 +105,6 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
         return complaint;
     }
 
-    @Override
-    public String prepareWhereClause(Object... args) {
-
-        String where = "";
-        String category = (String) args[0];
-        String status = (String) args[1];
-        Long userId = (long) args[2];
-        Long responsibleId = (long) args[3];
-
-        if ((!category.equals("-")) || (!status.equals("-")) || (userId > 0)) where += " WHERE ";
-
-        boolean moreThenOne = false;
-        if (!category.equals("-")) {
-            where += " type = ? ";
-            this.preparedStatementParams.add(category);
-            moreThenOne = true;
-        }
-        if (!status.equals("-")) {
-            where += moreThenOne ? " and status = ? " : " status = ? ";
-            this.preparedStatementParams.add(status);
-            moreThenOne = true;
-        }
-        if (userId > 0) {
-            where += moreThenOne ? " and user_id = ? " : " user_id = ? ";
-            this.preparedStatementParams.add(userId);
-            moreThenOne = true;
-        }
-        if (responsibleId > 0) {
-            where += moreThenOne ? " and responsible_pmg = ? " : " responsible_pmg = ? ";
-            this.preparedStatementParams.add(responsibleId);
-            //moreThenOne = true;
-        }
-        return where;
-    }
 
     @Override
     public List<Complaint> getAllComplaintsSearch(Query query) {

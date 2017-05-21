@@ -6,7 +6,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
     '$window',
     'ComplaintService',
     'CustomerService',
-    function ($scope, $rootScope, $location,  $window, ComplaintService, CustomerService) {
+    function ($scope, $rootScope, $location, $window, ComplaintService, CustomerService) {
         console.log('This is CsrComplaintsController');
         $scope.activePage = 'complaints';
 
@@ -29,6 +29,12 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         $scope.selectedCustomer = {};
         $scope.selectedComplaint = {};
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
+        $scope.partOfEmail = "";
+        $scope.partOfSubject = "";
+        $scope.dateFrom = null;
+        $scope.dateTo = null;
+        $scope.orderBy = 0;
+        $scope.orderByType = "ASC";
 
         $scope.getAllComplaints = function () {
             console.log('Get all complaints:');
@@ -43,13 +49,13 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             });
         };
 
-
-        $scope.nextPage = function () {
-            if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.complaintsCount) {
+        $scope.getPageAll = function (page) {
+            if ($scope.inProgress == false) {
                 $scope.inProgress = true;
-                $scope.page = $scope.page + 1;
+                $scope.page = page;
                 $scope.preloader.send = true;
-                ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size)
+                ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.complaints = data.complaints;
                         $scope.complaintsCount = data.complaintsCount;
@@ -57,6 +63,26 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                         $scope.preloader.send = false;
                         $window.scrollTo(0, 0);
                     }, function () {
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                    });
+            }
+        };
+        $scope.nextPage = function () {
+            if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.complaintsCount) {
+                $scope.inProgress = true;
+                $scope.page = $scope.page + 1;
+                $scope.preloader.send = true;
+                ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
+                    .then(function (data) {
+                        $scope.complaints = data.complaints;
+                        $scope.complaintsCount = data.complaintsCount;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                        $window.scrollTo(0, 0);
+                    }, function () {
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     });
             }
@@ -67,7 +93,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size)
+                ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.complaints = data.complaints;
                         $scope.complaintsCount = data.complaintsCount;
@@ -75,6 +102,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                         $scope.preloader.send = false;
                         $window.scrollTo(0, 0);
                     }, function () {
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     });
             }
@@ -84,7 +112,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             console.log("Updating data:", $scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size);
             $scope.page = 0;
             $scope.preloader.send = true;
-            ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size)
+            ComplaintService.getComplaints($scope.currentCategory, $scope.currentStatus, $scope.page, $scope.size,
+                $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                 .then(function (data) {
                     $scope.complaints = data.complaints;
                     $scope.complaintsCount = data.complaintsCount;
@@ -102,6 +131,34 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             $scope.updateData();
         };
 
+
+        $scope.getMaxCustomerComplaintsPageNumber = function () {
+            var max = Math.floor($scope.customerComplaintsCount / $scope.size);
+            if (max == $scope.customerComplaintsCount) {
+                return max;
+            }
+            return max + 1;
+        };
+
+        $scope.getCustomerPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                ComplaintService.getComplaintByCustomer($scope.selectedCustomer.id, $scope.customerPage, $scope.size)
+                    .then(function (data) {
+                        $scope.customerComplaints = data.complaints;
+                        $scope.customerComplaintsCount = data.complaintsCount;
+                        $scope.inProgress = false;
+                        $scope.preloader.send = false;
+                        $scope.inProgress = false;
+                        $window.scrollTo(0, 0);
+                    }, function () {
+                        $scope.preloader.send = false;
+                        $scope.inProgress = false;
+                    });
+            }
+        };
         $scope.customerNextPage = function () {
             if ($scope.inProgress == false && ($scope.customerPage + 1) * $scope.size < $scope.customerComplaintsCount) {
                 $scope.inProgress = true;
@@ -188,7 +245,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
+                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.complaints = data.complaints;
                         $scope.complaintsCount = data.complaintsCount;
@@ -206,7 +264,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
+                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.complaints = data.complaints;
                         $scope.complaintsCount = data.complaintsCount;
@@ -223,7 +282,8 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             console.log("Updating data for pmg:", $scope.currentCategory, $scope.page, $scope.size);
             $scope.page = 0;
             $scope.preloader.send = true;
-            ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size)
+            ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size,
+                $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
                 .then(function (data) {
                     $scope.complaints = data.complaints;
                     $scope.complaintsCount = data.complaintsCount;
@@ -234,7 +294,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
         };
 
         $scope.updateResponsibleData();
-        
+
         $scope.activeComplaintsClick = function () {
             $scope.selectedTab = 0;
             $scope.selectedDetail = '';
@@ -242,24 +302,51 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             $scope.updateResponsibleData();
         };
 
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                ComplaintService.getComplaintsByResponsible($scope.currentCategory, $scope.page, $scope.size,
+                    $scope.partOfEmail, $scope.dateFrom, $scope.dateTo, $scope.partOfSubject, $scope.orderBy, $scope.orderByType)
+                    .then(function (data) {
+                        $scope.complaints = data.complaints;
+                        $scope.complaintsCount = data.complaintsCount;
+                        $scope.preloader.send = false;
+                        $scope.inProgress = false;
+                    }, function () {
+                        $scope.preloader.send = false;
+                        $scope.inProgress = false;
+                    });
+            }
+        };
+
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.complaintsCount / $scope.size);
+            if (max == $scope.complaintsCount) {
+                return max;
+            }
+            return max + 1;
+        };
+
         $scope.handleComplaint = function (selectedComplaintId) {
             console.log("Solving complaint with id: ", selectedComplaintId);
 
             ComplaintService.handleComplaint(selectedComplaintId).then(function (data) {
-                $scope.complaint = data;
-                console.log("Handle complaint");
-                if ($scope.complaint.id != undefined) {
-                    $scope.currentCategory = "-";
-                    $scope.updateResponsibleData();
-                    $scope.selectedTab = 0;
-                    $scope.selectedDetail = '';
-                    toastr.success('Complaint status updated successfully!');
-                    console.log("Complaint updated", $scope.complaint);
-                } else {
-                    toastr.error('Error during complaint status updating!', 'Error');
-                    console.log("Complaint wasn't updated");
-                }
-            },
+                    $scope.complaint = data;
+                    console.log("Handle complaint");
+                    if ($scope.complaint.id != undefined) {
+                        $scope.currentCategory = "-";
+                        $scope.updateResponsibleData();
+                        $scope.selectedTab = 0;
+                        $scope.selectedDetail = '';
+                        toastr.success('Complaint status updated successfully!');
+                        console.log("Complaint updated", $scope.complaint);
+                    } else {
+                        toastr.error('Error during complaint status updating!', 'Error');
+                        console.log("Complaint wasn't updated");
+                    }
+                },
                 function (data) {
                     if (data.message != undefined) {
                         toastr.error(data.message, 'Error');
@@ -299,18 +386,18 @@ angular.module('phone-company').controller('PmgComplaintsController', [
             $scope.selectedDetail = '';
             ComplaintService.completeComplaint($scope.selectedComplaint.id, $scope.selectedComplaint.comment)
                 .then(function (data) {
-                    $scope.complaint = data;
-                    console.log("Complete complaint");
-                    if ($scope.complaint.id != undefined) {
-                        $scope.updateResponsibleData();
-                        $scope.selectedTab = 0;
-                        $scope.selectedComplaint = {};
-                        toastr.success('Complaint solved successfully!');
-                        console.log("Complaint updated", $scope.complaint);
-                    } else {
-                        toastr.error('Error during complaint status updating!', 'Error');
-                        console.log("Complaint wasn't updated");
-                    }
+                        $scope.complaint = data;
+                        console.log("Complete complaint");
+                        if ($scope.complaint.id != undefined) {
+                            $scope.updateResponsibleData();
+                            $scope.selectedTab = 0;
+                            $scope.selectedComplaint = {};
+                            toastr.success('Complaint solved successfully!');
+                            console.log("Complaint updated", $scope.complaint);
+                        } else {
+                            toastr.error('Error during complaint status updating!', 'Error');
+                            console.log("Complaint wasn't updated");
+                        }
                     },
                     function (data) {
                         if (data.message != undefined) {

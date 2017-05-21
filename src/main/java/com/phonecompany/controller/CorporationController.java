@@ -32,16 +32,7 @@ public class CorporationController {
     public Map<String, Object> getAllCorporationsPaging(@PathVariable("page") int page,
                                                         @PathVariable("size") int size,
                                                         @RequestParam("s") String partOfName) {
-        LOG.info("Retrieving all the corporations contained in the database");
-
-        List<Corporate> corporates = this.corporateService.getAllCorporatePaging(page, size, partOfName);
-
-        LOG.info("Corporates fetched from the database: " + corporates);
-        Map<String, Object> response = new HashMap<>();
-        response.put("corporates", corporates);
-        response.put("corporatesSelected", corporateService.getCountCorporates(partOfName));
-
-        return response;
+        return this.corporateService.getAllCorporatePaging(page, size, partOfName);
     }
 
     @RequestMapping(method = GET)

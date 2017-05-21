@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
+public class ServiceDaoImpl extends JdbcOperationsImpl<Service>
         implements ServiceDao {
 
     private QueryLoader queryLoader;
@@ -138,18 +138,4 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
         return rowCount != 0;
     }
 
-
-    @Override
-    public String prepareWhereClause(Object... args) {
-
-        String where = "";
-        int productCategoryId = (int) args[0];
-
-        if (productCategoryId != 0) {
-            where += " INNER JOIN product_category AS pc ON pc.id = s.prod_category_id " +
-                    "WHERE prod_category_id = ?";
-            this.preparedStatementParams.add(productCategoryId);
-        }
-        return where;
-    }
 }

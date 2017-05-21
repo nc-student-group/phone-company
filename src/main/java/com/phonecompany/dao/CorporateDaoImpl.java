@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> implements CorporateDao {
+public class CorporateDaoImpl extends JdbcOperationsImpl<Corporate> implements CorporateDao {
 
     private QueryLoader queryLoader;
 
@@ -59,12 +59,4 @@ public class CorporateDaoImpl extends AbstractPageableDaoImpl<Corporate> impleme
         return corporate;
     }
 
-    @Override
-    public String prepareWhereClause(Object... args) {
-        String where = "";
-        String partOfName = (String) args[0];
-        where +=  " WHERE corporate_name LIKE CONCAT('%',?,'%')";
-        this.preparedStatementParams.add(partOfName);
-        return where;
-    }
 }

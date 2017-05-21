@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('phone-company').factory('ComplaintService', ['$q', '$http', function ($q, $http) {
+angular.module('phone-company').factory('ComplaintService', ['$q', '$http', '$filter', function ($q, $http, $filter) {
 
     const COMPLAINTS = "api/complaints";
 
@@ -17,9 +17,13 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
 
     return factory;
 
-    function getComplaints(category, status, page, size) {
+    function getComplaints(category, status, page, size, partOfEmail, dateFrom, dateTo,
+                           partOfSubject, orderBy, orderByType) {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/${category}/${status}/${page}/${size}`).then(
+        var convertedStartDate = $filter('date')(dateFrom, "yyyy-MM-dd");
+        var convertedEndDate = $filter('date')(dateTo, "yyyy-MM-dd");
+        $http.get(`${COMPLAINTS}/${category}/${status}/${page}/${size}` + "?poe=" + partOfEmail + "&df=" + convertedStartDate +
+            "&dt=" + convertedEndDate + "&pos=" + partOfSubject + "&ob=" + orderBy + "&obt=" + orderByType).then(
             function (response) {
                 deferred.resolve(response.data);
             },
@@ -43,10 +47,14 @@ angular.module('phone-company').factory('ComplaintService', ['$q', '$http', func
             });
         return deferred.promise;
     }
-    
-    function getComplaintsByResponsible(category, page, size) {
+
+    function getComplaintsByResponsible(category, page, size, partOfEmail, dateFrom, dateTo, partOfSubject,
+                                        orderBy, orderByType) {
         var deferred = $q.defer();
-        $http.get(`${COMPLAINTS}/pmg/${category}/${page}/${size}`).then(
+        var convertedStartDate = $filter('date')(dateFrom, "yyyy-MM-dd");
+        var convertedEndDate = $filter('date')(dateTo, "yyyy-MM-dd");
+        $http.get(`${COMPLAINTS}/pmg/${category}/${page}/${size}` + "?poe=" + partOfEmail + "&df=" + convertedStartDate +
+            "&dt=" + convertedEndDate + "&pos=" + partOfSubject + "&ob=" + orderBy + "&obt=" + orderByType).then(
             function (response) {
                 deferred.resolve(response.data);
             },
