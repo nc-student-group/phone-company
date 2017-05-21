@@ -13,12 +13,12 @@ angular.module('phone-company').factory('CustomerInfoService',
         const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
         const GET_CURRENT_CUSTOMER_SERVICES_URL = "api/services/current/";
         const CUSTOMERS = "api/customers/";
-        const DEACTIVATE_TARIFF_URL = "api/customer/tariff/deactivate";
+        const DEACTIVATE_TARIFF_URL = "api/customer-tariffs/deactivate";
         const DEACTIVATE_SERVICE_URL = "api/services/deactivate";
         const ACTIVATE_SERVICE_URL = "api/services/resume";
-        const SUSPEND_TARIFF_URL = "api/customer/tariff/suspend";
+        const SUSPEND_TARIFF_URL = "api/customer-tariffs/suspend";
         const SUSPEND_SERVICE_URL = "api/services/suspend";
-        const RESUME_TARIFF_URL = "api/customer/tariff/resume";
+        const RESUME_TARIFF_URL = "api/customer-tariffs/resume";
         const GET_CURRENT_CUSTOMER_SERVICES_BY_CUSTOMER_ID_URL = "api/services/current/customer/";
 
         return {

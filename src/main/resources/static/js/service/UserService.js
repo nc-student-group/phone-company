@@ -40,9 +40,11 @@
             return deferred.promise;
         };
 
-        UserService.getAllUsers = function (page, size, selectedRole, selectedStatus) {
+        UserService.getAllUsers = function (page, size, selectedRole, selectedStatus,
+                                            partOfEmail, orderBy, orderByType) {
             var deferred = $q.defer();
-            $http.get(GET_ALL_USERS_URL + page + '/' + size + "/" + selectedRole + "/" + selectedStatus).then(
+            $http.get(GET_ALL_USERS_URL + page + '/' + size + "/" + selectedRole + "/" + selectedStatus +
+                "?em=" + partOfEmail + "&ob=" + orderBy + "&obt=" + orderByType).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -94,10 +96,12 @@
             return deferred.promise;
         };
 
-        UserService.changePassword = function (oldPass,newPass) {
+        UserService.changePassword = function (oldPass, newPass) {
             var deferred = $q.defer();
-            var pass = {'oldPass':oldPass,
-                'newPass':newPass};
+            var pass = {
+                'oldPass': oldPass,
+                'newPass': newPass
+            };
             $http.post(CHANGE_PASSWORD_URL, pass).then(
                 function (response) {
                     deferred.resolve(response.data);
