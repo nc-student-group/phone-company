@@ -110,4 +110,10 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     public List<Statistics> getServiceOrderStatisticsByTimePeriod(LocalDate startDate, LocalDate endDate) {
         return this.orderDao.getServicesOrderStatisticsByTimePeriod(startDate, endDate);
     }
+
+    @Override
+    public Order getNextResumingOrder(){
+        return this.orderDao.getNextResumingOrder();
+    }
+
 }

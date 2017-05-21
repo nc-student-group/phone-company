@@ -78,51 +78,9 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         return queryLoader.getQuery("query.user." + type);
     }
 
-    @Override
-    public String prepareWhereClause(Object... args) {
-
-        String where = "";
-
-        int roleId = (int) args[0];
-        String status = (String) args[1];
-
-        if (roleId > 0) {
-            where += " AND role_id = ?";
-            this.preparedStatementParams.add(roleId);
-        }
-        if (!status.equals("ALL")) {
-            where += " AND status = ?";
-            this.preparedStatementParams.add(status);
-        }
-        return where;
-    }
 
     @Override
     public List<User> getAllUsersSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-
-        try {
-            LOG.info("Execute query: " + query.getQuery());
-            ps = conn.prepareStatement(query.getQuery());
-
-            for(int i = 0; i<query.getPreparedStatementParams().size();i++){
-                ps.setObject(i+1,query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<User> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 }

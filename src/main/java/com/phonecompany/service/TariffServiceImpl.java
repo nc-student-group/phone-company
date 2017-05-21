@@ -53,18 +53,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
-    @Cacheable
-    public List<Tariff> getByRegionIdAndPaging(long regionId, int page, int size) {
-        LOGGER.debug("getByRegionIdAndPaging");
-        return this.tariffDao.getPaging(page, size, regionId);
-    }
-
-    @Override
-    public Integer getCountByRegionId(long regionId) {
-        return tariffDao.getEntityCount(regionId);
-    }
-
-    @Override
     @CacheClear
     public void updateTariffStatus(long tariffId, ProductStatus productStatus) {
         this.tariffDao.updateTariffStatus(tariffId, productStatus);
@@ -318,12 +306,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
         tariff.setProductStatus(ProductStatus.ACTIVATED);
         tariff.setCreationDate(LocalDate.now());
-//        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
-//                "tariff/" + tariff.hashCode()));
+        tariff.setPictureUrl(fileService.stringToFile(tariff.getPictureUrl(),
+                "tariff/" + tariff.hashCode()));
         Tariff savedTariff = this.save(tariff);
         LOGGER.debug("Tariff added {}", savedTariff);
-        throw new ConflictException("test conflict");
-//        return savedTariff;
+        return savedTariff;
     }
 
     @Override
@@ -351,20 +338,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
         Query query = this.buildQueryForTariffTable(page, size, name, status,
                 type, from, to, orderBy, orderByType);
-        LOGGER.debug("Query: {}", query.getQuery());
-        LOGGER.debug("Query params paging : {}", query.getPreparedStatementParams());
-        LOGGER.debug("Query params: {}", query.getCountParams());
         Map<String, Object> response = new HashMap<>();
-        List<Tariff> tariffs = this.tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
-//        getPaging(page, size, name, status, type, from, to, orderBy, orderByType);
-        List<Object> rows = new ArrayList<>();
-        tariffs.forEach((Tariff tariff) -> {
-            Map<String, Object> row = new HashMap<>();
-            row.put("tariff", tariff);
-            rows.add(row);
-        });
-        response.put("tariffs", rows);
-//        response.put("tariffsSelected", this.tariffDao.getEntityCount(name, status, type, from, to, -1, -1));
+        response.put("tariffs", this.tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
         response.put("tariffsSelected", this.tariffDao.executeForInt(query.getCountQuery(),
                 query.getCountParams().toArray()));
         return response;
@@ -470,4 +445,5 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         }
         return tariffDao.getAllTariffsSearch(query.build()).size();
     }
+
 }

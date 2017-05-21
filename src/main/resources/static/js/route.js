@@ -161,6 +161,11 @@
                 templateUrl: 'view/client/tariffDetail.html',
                 controller: 'TariffDetailController'
             });
+        $routeProvider.when('/client/marketing-campaign/:id',
+            {
+                templateUrl: 'view/client/marketingCampaignDetail.html',
+                controller: 'MarketingCampaignDetailController'
+            });
         $routeProvider.when('/client/complaints',
             {
                 templateUrl: 'view/client/complaints.html',

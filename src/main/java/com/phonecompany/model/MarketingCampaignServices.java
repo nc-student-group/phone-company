@@ -4,8 +4,6 @@ import javax.validation.constraints.NotNull;
 
 public class MarketingCampaignServices extends DomainEntity{
 
-    @NotNull(message = "MarketingCampaign must not be null")
-    private MarketingCampaign marketingCampaign;
     @NotNull(message = "Service must not be null")
     private Service service;
     @NotNull(message = "Price must not be null")
@@ -14,15 +12,10 @@ public class MarketingCampaignServices extends DomainEntity{
     public MarketingCampaignServices() {
     }
 
-    public MarketingCampaignServices(MarketingCampaign marketingCampaign, Service service, double price) {
-        this.marketingCampaign = marketingCampaign;
+    public MarketingCampaignServices(Service service, double price) {
         this.service = service;
         this.price = price;
     }
-
-    public MarketingCampaign getMarketingCampaign() { return marketingCampaign; }
-
-    public void setMarketingCampaign(MarketingCampaign marketingCampaign) { this.marketingCampaign = marketingCampaign; }
 
     public Service getService() { return service; }
 
@@ -35,8 +28,7 @@ public class MarketingCampaignServices extends DomainEntity{
     @Override
     public String toString() {
         return "MarketingCampaignServices{" +
-                "marketingCampaign=" + marketingCampaign +
-                ", service=" + service +
+                "service=" + service +
                 ", price=" + price +
                 '}';
     }

@@ -20,8 +20,7 @@ import java.sql.SQLException;
  *
  * @param <T> entity type
  */
-public abstract class AbstractUserDaoImpl<T extends User>
-        extends AbstractPageableDaoImpl<T> implements AbstractUserDao<T> {
+public abstract class AbstractUserDaoImpl<T extends User> extends JdbcOperationsImpl<T> implements AbstractUserDao<T> {
 
     /**
      * Finds entity by its email

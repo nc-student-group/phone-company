@@ -1,359 +1,484 @@
 <div class="wrapper">
     <ng-include src="'../../view/admin/adminSidebar.html'"></ng-include>
-
     <div class="main-panel">
         <ng-include src="'../../view/admin/adminHeader.html'"></ng-include>
-
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Customer list</h4>
-                            </div>
-                            <hr/>
+                        <div>
+                            <div class="card">
+                                <div class="header">
+                                    <h4 class="title">Customer list</h4>
+                                </div>
+                                <hr/>
 
-                            <div class="row" style="padding: 15px">
-                                <div class="col-md-2">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Show entries:</label>
-                                        <md-select ng-model="size" md-on-close="updateData()">
-                                            <md-option value="5">5</md-option>
-                                            <md-option value="10">10</md-option>
-                                            <md-option value="25">25</md-option>
-                                            <md-option value="50">50</md-option>
-                                            <md-option value="100">100</md-option>
-                                        </md-select>
-                                    </md-input-container>
-                                </div>
-                                <div class="col-md-3">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Region:</label>
-                                        <md-select ng-model="selectedRegion" md-on-close="updateData()">
-                                            <md-option value="0">All regions</md-option>
-                                            <md-option ng-repeat="r in regions" ng-value="{{r.id}}">{{r.nameRegion}}
-                                            </md-option>
-                                        </md-select>
-                                    </md-input-container>
-                                </div>
-                                <div class="col-md-3">
-                                    <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Status:</label>
-                                        <md-select ng-model="selectedStatus" md-on-close="updateData()">
-                                            <md-option value="ALL">ALL</md-option>
-                                            <md-option value="ACTIVATED">ACTIVATED</md-option>
-                                            <md-option value="INACTIVE">INACTIVE</md-option>
-                                            <md-option value="DEACTIVATED">DEACTIVATED</md-option>
-                                        </md-select>
-                                    </md-input-container>
-                                </div>
-                            </div>
-                            <div class="content table-responsive">
-                                <table id="servicesTable" class="table table-striped table-bordered table-hover"
-                                       cellspacing="0" width="100%">
-                                    <thead>
-                                    <th>Email</th>
-                                    <th>Full name</th>
-                                    <th>Phone</th>
-                                    <th>Region</th>
-                                    <th>Corporate</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="c in customers">
-                                        <td>{{c.email}}</td>
-                                        <td>
-                                            {{c.firstName}}<br>
-                                            {{c.secondName}}<br>
-                                            {{c.lastName}}
-                                        </td>
-                                        <td>{{c.phone}}</td>
-                                        <td>{{c.address.region.nameRegion}}</td>
-                                        <td>
-                                            <span ng-show="c.corporate==undefined">-</span>
-                                            {{c.corporate.corporateName}}
-                                        </td>
-                                        <td>{{c.status}}</td>
-                                        <td>
-                                            <button style="width: 100%" ng-hide="c.status === 'ACTIVATED'"
-                                                    class="btn btn-success btn-fill pull-left"
-                                                    ng-click="activateClick($index)">Activate
-                                            </button>
-                                            <button style="width: 100%" ng-show="c.status === 'ACTIVATED'"
-                                                    class="btn btn-danger btn-fill pull-left"
-                                                    ng-click="deactivateClick($index)">Deactivate
-                                            </button>
-                                            <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
-                                                    ng-click="editClick(c.id)">Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row" style="padding: 15px">
-                                <div class="col-sm-7">
-                                    <div class="dataTables_paginate paging_simple_numbers"
-                                         id="tariffTable_paginate">
-                                        <ul class="pagination">
-                                            <li class="paginate_button previous" id="tariffTable_previous">
-                                                <a aria-controls="tariffTable" data-dt-idx="0"
-                                                   tabindex="0" ng-show="page > 0"
-                                                   ng-click="previousPage()">Previous</a>
-                                            </li>
-                                            <li class="paginate_button active"><a
-                                                    aria-controls="tariffTable"
-                                                    data-dt-idx="1" tabindex="0">{{page+1}}</a>
-                                            </li>
-                                            <li class="paginate_button next" id="tariffTable_next"><a
-                                                    aria-controls="tariffTable" data-dt-idx="2"
-                                                    tabindex="0" ng-show="(page + 1)*size < customersSelected"
-                                                    ng-click="nextPage()">Next</a></li>
-                                        </ul>
+                                <div class="row" style="padding: 15px">
+                                    <div class="col-md-2">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Show entries:</label>
+                                            <md-select ng-model="size" md-on-close="updateData()">
+                                                <md-option value="5">5</md-option>
+                                                <md-option value="10">10</md-option>
+                                                <md-option value="25">25</md-option>
+                                                <md-option value="50">50</md-option>
+                                                <md-option value="100">100</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Region:</label>
+                                            <md-select ng-model="selectedRegion">
+                                                <md-option value="0">All regions</md-option>
+                                                <md-option ng-repeat="r in regions" ng-value="{{r.id}}">{{r.nameRegion}}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Status:</label>
+                                            <md-select ng-model="selectedStatus">
+                                                <md-option value="ALL">ALL</md-option>
+                                                <md-option value="ACTIVATED">ACTIVATED</md-option>
+                                                <md-option value="INACTIVE">INACTIVE</md-option>
+                                                <md-option value="DEACTIVATED">DEACTIVATED</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Email:</label>
+                                            <input type="text" ng-model="partOfEmail" maxlength="20"/>
+                                        </md-input-container>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <div>
-                                        <label><b>Customers founded: {{customersSelected}}</b></label>
+                                <div class="row" style="padding: 15px">
+                                    <div class="col-md-4">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Part of name:</label>
+                                            <input type="text" ng-model="partOfName" maxlength="20"/>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Phone:</label>
+                                            <input type="text" ng-model="selectedPhone" maxlength="13"/>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Corporate name:</label>
+                                            <input type="text" ng-model="partOfCorporate" maxlength="20"/>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding: 15px">
+                                    <div class="col-sm-4">
+                                        <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
+                                            <label>Order by:</label>
+                                            <md-select ng-model="orderBy">
+                                                <md-option value="0">Email</md-option>
+                                                <md-option value="1">First name</md-option>
+                                                <md-option value="2">Second name</md-option>
+                                                <md-option value="3">Last name</md-option>
+                                                <md-option value="4">Phone</md-option>
+                                                <md-option value="5">Region</md-option>
+                                                <md-option value="6">Corporate</md-option>
+                                                <md-option value="7">Status</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
+                                            <label>Order type:</label>
+                                            <md-select ng-model="orderByType">
+                                                <md-option value="ASC">&uarr;</md-option>
+                                                <md-option value="DESC">&darr;</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-info btn-fill" ng-click="updateData()">Filter</button>
+                                    </div>
+                                </div>
+                                <div class="content table-responsive">
+                                    <table id="servicesTable" class="table table-striped table-bordered table-hover"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <th>Email</th>
+                                        <th>Full name</th>
+                                        <th>Phone</th>
+                                        <th>Region</th>
+                                        <th>Corporate</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="c in customers">
+                                            <td ng-click="moreClick(c.id)"><a>{{c.email}}</a></td>
+                                            <td>
+                                                {{c.firstName}}<br>
+                                                {{c.secondName}}<br>
+                                                {{c.lastName}}
+                                            </td>
+                                            <td>{{c.phone}}</td>
+                                            <td>{{c.address.region.nameRegion}}</td>
+                                            <td>
+                                                <span ng-show="c.corporate==undefined">-</span>
+                                                {{c.corporate.corporateName}}
+                                                <span ng-show="c.isRepresentative">(representative)</span>
+                                            </td>
+                                            <td>{{c.status}}</td>
+                                            <td>
+                                                <button style="width: 100%" ng-hide="c.status === 'ACTIVATED'"
+                                                        class="btn btn-success btn-fill pull-left"
+                                                        ng-click="activateClick($index)">Activate
+                                                </button>
+                                                <button style="width: 100%" ng-show="c.status === 'ACTIVATED'"
+                                                        class="btn btn-danger btn-fill pull-left"
+                                                        ng-click="deactivateClick($index)">Deactivate
+                                                </button>
+                                                <button style="width: 100%" class="btn btn-toggle btn-fill pull-left"
+                                                        ng-click="moreClick(c.id)">More
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row" style="padding: 15px">
+                                    <div class="col-sm-7">
+                                        <div class="dataTables_paginate paging_simple_numbers"
+                                             id="tariffTable_paginate">
+                                            <ul class="pagination">
+                                                <li class="paginate_button previous" id="tariffTable_previous">
+                                                    <a aria-controls="tariffTable" data-dt-idx="0"
+                                                       tabindex="0" ng-show="page > 0" ng-click="previousPage()">Previous</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="page > 2"
+                                                    ng-click="getPage(0)">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">1</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="page > 3">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">...</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="(page - 1)*size > 0"
+                                                    ng-click="getPage(page - 2)">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">{{page-1}}</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="(page)*size > 0"
+                                                    ng-click="getPage(page - 1)"><a
+                                                        aria-controls="tariffTable"
+                                                        data-dt-idx="1" tabindex="0">{{page}}</a>
+                                                </li>
+                                                <li class="paginate_button active"><a
+                                                        aria-controls="tariffTable"
+                                                        data-dt-idx="1" tabindex="0">{{page+1}}</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="(page + +1)*size < customersSelected"
+                                                    ng-click="getPage(page+1)">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">{{page+2}}</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="(page + 2)*size < customersSelected"
+                                                    ng-click="getPage(page+2)">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">{{page+3}}</a>
+                                                </li>
+                                                <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">...</a>
+                                                </li>
+                                                <li class="paginate_button" ng-click="getPage(getMaxPageNumber() - 1)"
+                                                    ng-show="page < getMaxPageNumber() - 3">
+                                                    <a
+                                                            aria-controls="tariffTable"
+                                                            data-dt-idx="1" tabindex="0">{{getMaxPageNumber()}}</a>
+                                                </li>
+                                                <li class=" paginate_button next pointable" id="tariffTable_next"><a
+                                                        aria-controls="tariffTable" data-dt-idx="2"
+                                                        tabindex="0" ng-show="(page + 1)*size < customersSelected"
+                                                        ng-click="nextPage()">Next</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Add Customer</h4>
-                            </div>
-                            <div class="content">
-                                <form name="customerForm" ng-submit="createCustomer()">
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block">
-                                                <label>Email</label>
-                                                <input name="email" id="email" ng-model="customer.email"
-                                                       required ng-pattern="emailPattern">
-                                                <div ng-messages="customerForm.email.$error" role="alert" multiple>
-                                                    <div ng-message="required" class="my-message">Email is required.
+                            <div class="card">
+                                <div class="header">
+                                    <h4 class="title">Add Customer</h4>
+                                </div>
+                                <div class="content">
+                                    <form name="customerForm" ng-submit="createCustomer()">
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block">
+                                                    <label>Email</label>
+                                                    <input name="email" id="email" ng-model="customer.email"
+                                                           required ng-pattern="emailPattern">
+                                                    <div ng-messages="customerForm.email.$error" role="alert" multiple>
+                                                        <div ng-message="required" class="my-message">Email is required.
+                                                        </div>
+                                                        <div ng-message="pattern" class="my-message">That doesn't look
+                                                            like
+                                                            a valid
+                                                            email.
+                                                        </div>
                                                     </div>
-                                                    <div ng-message="pattern" class="my-message">That doesn't look like
-                                                        a valid
-                                                        email.
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block">
+                                                    <label>Phone number</label>
+                                                    <input name="phone" type="text" id="phone"
+                                                           ng-model="customer.phone"
+                                                           required ng-pattern="phonePattern">
+
+                                                    <div ng-messages="customerForm.phone.$error" role="alert" multiple>
+                                                        <div ng-message="pattern">
+                                                            Example: +380990076563
+                                                        </div>
+                                                        <div ng-message="required">
+                                                            Phone is required
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </md-input-container>
+                                                </md-input-container>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block">
-                                                <label>Phone number</label>
-                                                <input name="phone" type="text" id="phone"
-                                                       ng-model="customer.phone"
-                                                       required ng-pattern="phonePattern">
-
-                                                <div ng-messages="customerForm.phone.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        Example: +380990076563
-                                                    </div>
-                                                    <div ng-message="required">
-                                                        Phone is required
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>First name</label>
-                                                <input name="firstName" type="text" id="firstName"
-                                                       ng-model="customer.firstName"
-                                                       ng-pattern="textFieldPattern">
-
-                                                <div ng-messages="customerForm.firstName.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Second name</label>
-                                                <input name="secondName" type="text" id="secondName"
-                                                       ng-model="customer.secondName"
-                                                       ng-pattern="textFieldPattern">
-
-                                                <div ng-messages="customerForm.secondName.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Last name</label>
-                                                <input name="lastName" type="text" id="lastName"
-                                                       ng-model="customer.lastName"
-                                                       ng-pattern="textFieldPattern">
-
-                                                <div ng-messages="customerForm.lastName.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <md-checkbox ng-model="corporateUser"
-                                                             aria-label="Is client corporate ">
-                                                    Is corporate
-                                                </md-checkbox>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" ng-hide="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Region</label>
-                                                <md-select ng-model="customer.address.region" ng-required="!corporateUser">
-                                                    <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
-                                                        {{r.nameRegion}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row" ng-hide="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Locality</label>
-                                                <input name="locality" type="text" id="locality"
-                                                       ng-model="customer.address.locality"
-                                                       ng-pattern="textFieldPattern">
-
-                                                <div ng-messages="customerForm.locality.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row" ng-hide="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Street</label>
-                                                <input name="street" type="text" id="street"
-                                                       ng-model="customer.address.street"
-                                                       ng-pattern="textFieldPattern">
-
-                                                <div ng-messages="customerForm.street.$error" role="alert" multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" ng-hide="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>House number</label>
-                                                <input name="houseNumber" type="text" id="houseNumber"
-                                                       ng-model="customer.address.houseNumber"
-                                                       ng-pattern="textFieldPatternWithNumbers">
-
-                                                <div ng-messages="customerForm.houseNumber.$error" role="alert"
-                                                     multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain letters and numbers
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" ng-hide="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Apartment number</label>
-                                                <input name="apartmentNumber" type="number" id="apartmentNumber"
-                                                       ng-model="customer.address.apartmentNumber"
-                                                       ng-pattern="numberPattern">
-
-                                                <div ng-messages="customerForm.apartmentNumber.$error" role="alert"
-                                                     multiple>
-                                                    <div ng-message="pattern">
-                                                        This field can only contain positive numbers
-                                                    </div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" ng-show="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
-                                                <label>Corporation</label>
-                                                <md-select ng-model="customer.corporate.id">
-                                                    <md-option ng-repeat="c in corporations" value="{{c.id}}">
-                                                        {{c.corporateName}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </div>
-                                    </div>
-                                    <div class="row" ng-show="corporateUser">
-                                        <div class="form-group col-sm-11">
-                                            <md-input-container class="md-block" flex-gt-sm>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
                                                 <md-input-container class="md-block" flex-gt-sm>
-                                                    <md-checkbox ng-model="customer.isRepresentative"
-                                                                 aria-label="Representaive">
-                                                        Representative
+                                                    <label>First name</label>
+                                                    <input name="firstName" type="text" id="firstName"
+                                                           ng-model="customer.firstName"
+                                                           ng-pattern="textFieldPattern">
+
+                                                    <div ng-messages="customerForm.firstName.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Second name</label>
+                                                    <input name="secondName" type="text" id="secondName"
+                                                           ng-model="customer.secondName"
+                                                           ng-pattern="textFieldPattern">
+
+                                                    <div ng-messages="customerForm.secondName.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Last name</label>
+                                                    <input name="lastName" type="text" id="lastName"
+                                                           ng-model="customer.lastName"
+                                                           ng-pattern="textFieldPattern">
+
+                                                    <div ng-messages="customerForm.lastName.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <md-checkbox ng-model="corporateUser"
+                                                                 aria-label="Is client corporate">
+                                                        Is corporate
                                                     </md-checkbox>
                                                 </md-input-container>
-                                            </md-input-container>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <button ng-class="{unsubmitable : customerForm.$invalid,
+                                        <div class="row" ng-hide="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Region</label>
+                                                    <md-select ng-model="customer.address.region"
+                                                               ng-required="!corporateUser">
+                                                        <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
+                                                            {{r.nameRegion}}
+                                                        </md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-hide="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Locality</label>
+                                                    <input name="locality" type="text" id="locality"
+                                                           ng-model="customer.address.locality"
+                                                           ng-pattern="textFieldPattern">
+
+                                                    <div ng-messages="customerForm.locality.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-hide="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Street</label>
+                                                    <input name="street" type="text" id="street"
+                                                           ng-model="customer.address.street"
+                                                           ng-pattern="textFieldPattern">
+
+                                                    <div ng-messages="customerForm.street.$error" role="alert" multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" ng-hide="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>House number</label>
+                                                    <input name="houseNumber" type="text" id="houseNumber"
+                                                           ng-model="customer.address.houseNumber"
+                                                           ng-pattern="textFieldPatternWithNumbers">
+
+                                                    <div ng-messages="customerForm.houseNumber.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain letters and numbers
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" ng-hide="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Apartment number</label>
+                                                    <input name="apartmentNumber" type="number" id="apartmentNumber"
+                                                           ng-model="customer.address.apartmentNumber"
+                                                           ng-pattern="numberPattern">
+
+                                                    <div ng-messages="customerForm.apartmentNumber.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            This field can only contain positive numbers
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" ng-show="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Corporation</label>
+                                                    <md-select ng-model="customer.corporate.id">
+                                                        <md-option ng-repeat="c in corporations" value="{{c.id}}">
+                                                            {{c.corporateName}}
+                                                        </md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="corporateUser">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                        <md-checkbox ng-model="customer.isRepresentative"
+                                                                     aria-label="Representaive">
+                                                            Representative
+                                                        </md-checkbox>
+                                                    </md-input-container>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <button ng-class="{unsubmitable : customerForm.$invalid,
                         submitable: !customerForm.$invalid}"
-                                            ng-disabled="customerForm.$invalid"
-                                            style="width: 300px;"
-                                            type="submit" class="center-block register-button">
-                                        Add customer
-                                    </button>
+                                                ng-disabled="customerForm.$invalid"
+                                                style="width: 300px;"
+                                                type="submit" class="center-block register-button">
+                                            Add customer
+                                        </button>
 
-                                    <div class="clearfix"></div>
-                                </form>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="card" ng-show="editing">
+                                <div class="header">
+                                    <h4 class="title">Edit Corporation</h4>
+                                </div>
+                                <div class="content">
+                                    <form name="editCorporationsForm" id="editCorporationsForm"
+                                          autocomplete="off" novalidate>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <md-input-container class="md-block">
+                                                    <input type="text" placeholder="Corporation name"
+                                                           name="corporationName"
+                                                           ng-model="editCorporation.corporateName" md-maxlength="50"
+                                                           required/>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-info btn-fill pull-left"
+                                                ng-disabled="editCorporationsForm.$invalid"
+                                                ng-click="saveCorporation()">Save corporation
+                                        </button>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <p class="copyright">
-                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
-                </p>
-            </div>
-        </footer>
-
     </div>
 
-
+    <footer class="footer">
+        <div class="container-fluid">
+            <p class="copyright">
+                &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+            </p>
+        </div>
+    </footer>
 </div>

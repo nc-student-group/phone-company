@@ -102,50 +102,12 @@ public class ServiceDaoImpl extends AbstractPageableDaoImpl<Service>
 
     @Override
     public void updateServiceStatus(long serviceId, ProductStatus productStatus) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("updateStatus"));
-            ps.setString(1, productStatus.name());
-            ps.setLong(2, serviceId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityModificationException(serviceId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        this.executeUpdate(this.getQuery("updateStatus"), new Object[]{productStatus.name(), serviceId});
     }
 
     @Override
     public List<Service> getAllServicesSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-
-        try {
-            LOG.info("Execute query: " + query.getQuery());
-            ps = conn.prepareStatement(query.getQuery());
-
-            for (int i = 0; i < query.getPreparedStatementParams().size(); i++) {
-                ps.setObject(i + 1, query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Service> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 
     @Override

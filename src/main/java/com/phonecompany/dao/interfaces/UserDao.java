@@ -5,7 +5,6 @@ import com.phonecompany.util.Query;
 
 import java.util.List;
 
-public interface UserDao extends JdbcOperations<User>, AbstractUserDao<User>,
-        AbstractPageableDao<User> {
+public interface UserDao extends JdbcOperations<User>, AbstractUserDao<User> {
     List<User> getAllUsersSearch(Query query);
 }

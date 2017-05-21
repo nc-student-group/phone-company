@@ -15,6 +15,12 @@
         $scope.inProgress = false;
         $scope.selectedStatus = "ALL";
         $scope.selectedRegion = 0;
+        $scope.partOfEmail = "";
+        $scope.partOfName = "";
+        $scope.selectedPhone = "";
+        $scope.partOfCorporate = "";
+        $scope.orderBy = 0;
+        $scope.orderByType = "ASC";
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
@@ -67,7 +73,7 @@
             }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
-                    toastr.success('Customer '+ createdCustomer.email +' has been successfully created. Please, check your email for the password');
+                    toastr.success('Customer ' + createdCustomer.email + ' has been successfully created. Please, check your email for the password');
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {
@@ -78,7 +84,9 @@
 
         $scope.preloader.send = true;
         $scope.getAllCustomer = function () {
-            CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus).then(function (data) {
+            CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                $scope.orderBy, $scope.orderByType).then(function (data) {
                 $scope.customers = data.customers;
                 $scope.customersSelected = data.customersSelected;
                 $scope.preloader.send = false;
@@ -94,12 +102,34 @@
             $scope.getAllCustomer();
 
         };
+
+        $scope.getPage = function (page) {
+            if ($scope.inProgress == false) {
+                $scope.inProgress = true;
+                $scope.page = page;
+                $scope.preloader.send = true;
+                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                    $scope.orderBy, $scope.orderByType).then(function (data) {
+                    $scope.customers = data.customers;
+                    $scope.customersSelected = data.customersSelected;
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                }, function () {
+                    $scope.preloader.send = false;
+                    $scope.inProgress = false;
+                });
+            }
+        };
+
         $scope.nextPage = function () {
             if ($scope.inProgress == false && ($scope.page + 1) * $scope.size < $scope.customersSelected) {
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus).then(function (data) {
+                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                    $scope.orderBy, $scope.orderByType).then(function (data) {
                     $scope.customers = data.customers;
                     $scope.customersSelected = data.customersSelected;
                     $scope.preloader.send = false;
@@ -116,7 +146,9 @@
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus).then(function (data) {
+                CustomerService.getAllCustomer($scope.page, $scope.size, $scope.selectedRegion, $scope.selectedStatus,
+                    $scope.partOfEmail, $scope.partOfName, $scope.selectedPhone, $scope.partOfCorporate,
+                    $scope.orderBy, $scope.orderByType).then(function (data) {
                     $scope.customers = data.customers;
                     $scope.customersSelected = data.customersSelected;
                     $scope.preloader.send = false;
@@ -128,11 +160,11 @@
             }
         };
         $scope.moreClick = function (id) {
-            $location.path("/csr/clients/"+id);
+            $location.path("/csr/clients/" + id);
         };
 
         $scope.editClick = function (id) {
-            $location.path("/csr/editCustomer/"+id);
+            $location.path("/csr/editCustomer/" + id);
         };
 
 
@@ -193,5 +225,13 @@
                 })
             };
         }
+
+        $scope.getMaxPageNumber = function () {
+            var max = Math.floor($scope.customersSelected / $scope.size);
+            if (max == $scope.customersSelected) {
+                return max;
+            }
+            return max + 1;
+        };
     }
 }());

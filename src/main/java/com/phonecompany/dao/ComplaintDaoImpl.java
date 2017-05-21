@@ -142,30 +142,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
 
     @Override
     public List<Complaint> getAllComplaintsSearch(Query query) {
-        Connection conn = DataSourceUtils.getConnection(this.getDataSource());
-        PreparedStatement ps = null;
-        LOG.info("Execute query: " + query.getQuery());
-        try {
-            ps = conn.prepareStatement(query.getQuery());
-
-            for (int i = 0; i < query.getPreparedStatementParams().size(); i++) {
-                ps.setObject(i + 1, query.getPreparedStatementParams().get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            List<Complaint> result = new ArrayList<>();
-            while (rs.next()) {
-                result.add(init(rs));
-            }
-            return result;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Failed to load all the entities. " +
-                    "Check your database connection or whether sql query is right", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
 
     @Override
@@ -201,25 +178,7 @@ public class ComplaintDaoImpl extends AbstractPageableDaoImpl<Complaint> impleme
 
     @Override
     public List<Complaint> getComplaintsByRegionId(Long regionId) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(this.getQuery("by.region.id"));
-            ps.setLong(1, regionId);
-            ResultSet rs = ps.executeQuery();
-            List<Complaint> complaints = new ArrayList<>();
-            while (rs.next()) {
-                complaints.add(this.init(rs));
-            }
-            return complaints;
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new EntityNotFoundException(regionId, e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        return this.executeForList(this.getQuery("by.region.id"), new Object[]{regionId});
     }
 
     @Override
