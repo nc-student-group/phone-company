@@ -16,12 +16,12 @@
                             </div>
                             <hr/>
                             <div class="header">
-                                <h4 class="title"><b>{{campaign.campaignTariff.tariffRegion.tariff.tariffName}}</b></h4>
+                                <h4 class="title"><b>{{campaign.tariffRegion.tariff.tariffName}}</b></h4>
                             </div>
                             <div class="row" style="margin: 0; padding: 20px;">
                                 <div class="col-md-4">
                                     <div class="tariff-picture">
-                                        <img ng-src="{{campaign.campaignTariff.tariffRegion.tariff.pictureUrl}}" width="90%"/>
+                                        <img ng-src="{{campaign.tariffRegion.tariff.pictureUrl}}" width="90%"/>
                                         <div class="specials-picture"><b>Specials</b></div>
                                     </div>
                                 </div>
@@ -34,45 +34,45 @@
                                             <span>Calls in network</span>
                                         </div>
                                         <div class="col-md-4 conditions-value">
-                                            <span><b>{{campaign.campaignTariff.tariffRegion.tariff.callsInNetwork}}</b></span></div>
+                                            <span><b>{{campaign.tariffRegion.tariff.callsInNetwork}}</b></span></div>
                                     </div>
                                     <div class="row row-two">
                                         <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
                                         <div class="col-md-4 conditions-value">
-                                            <span><b>{{campaign.campaignTariff.tariffRegion.tariff.callsOnOtherNumbers}}</b></span>
+                                            <span><b>{{campaign.tariffRegion.tariff.callsOnOtherNumbers}}</b></span>
                                         </div>
                                     </div>
                                     <div class="row row-one">
                                         <div class="col-md-8 condition"><span>Roaming</span></div>
-                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.campaignTariff.tariffRegion.tariff.roaming}}</b></span>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.roaming}}</b></span>
                                         </div>
                                     </div>
                                     <div class="row row-two">
                                         <div class="col-md-8 condition"><span>Internet</span></div>
-                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.campaignTariff.tariffRegion.tariff.internet}}</b></span>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.internet}}</b></span>
                                         </div>
                                     </div>
                                     <div class="row row-one">
                                         <div class="col-md-8 condition"><span>SMS</span></div>
-                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.campaignTariff.tariffRegion.tariff.sms}}</b></span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.sms}}</b></span></div>
                                     </div>
                                     <div class="row row-two">
                                         <div class="col-md-8 condition"><span>MMS</span></div>
-                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.campaignTariff.tariffRegion.tariff.mms}}</b></span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.mms}}</b></span></div>
                                     </div>
                                     <div class="row row-one">
                                         <div class="col-md-8 condition"><span>Monthly payment</span></div>
                                         <div class="col-md-4"
                                              style="text-align: center; font-size: 16px; color: #161121"
-                                             ng-hide="campaign.campaignTariff.tariffRegion.tariff.discount > 0 &&
-                                             campaign.campaignTariff.tariffRegion.tariff.discount <=100"><span>
-                                            <b>{{campaign.campaignTariff.tariffRegion.tariff.price | number:2}} uah</b></span>
+                                             ng-hide="campaign.tariffRegion.tariff.discount > 0 &&
+                                             campaign.tariffRegion.tariff.discount <=100"><span>
+                                            <b>{{campaign.tariffRegion.tariff.price | number:2}} uah</b></span>
                                         </div>
                                         <div class="col-md-4 conditions-value"
-                                             ng-show="campaign.campaignTariff.tariffRegion.tariff.discount > 0
-                                             && campaign.campaignTariff.tariffRegion.tariff.discount <= 100">
-                                            <span><b>{{campaign.campaignTariff.tariffRegion.tariff.price * (1 - campaign.campaignTariff.tariffRegion.tariff.discount/100) | number: 2}} uah</b><br>
-                                                <s style="font-size: 14px; color: red">{{campaign.campaignTariff.tariffRegion.tariff.price | number: 2}} uah</s></span>
+                                             ng-show="campaign.tariffRegion.tariff.discount > 0
+                                             && campaign.tariffRegion.tariff.discount <= 100">
+                                            <span><b>{{campaign.tariffRegion.tariff.price * (1 - campaign.tariffRegion.tariff.discount/100) | number: 2}} uah</b><br>
+                                                <s style="font-size: 14px; color: red">{{campaign.tariffRegion.tariff.price | number: 2}} uah</s></span>
                                         </div>
                                     </div>
                                 </div>

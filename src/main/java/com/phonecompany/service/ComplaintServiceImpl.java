@@ -3,7 +3,10 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.model.*;
+import com.phonecompany.exception.service_layer.MissingResultException;
+import com.phonecompany.model.Complaint;
+import com.phonecompany.model.User;
+import com.phonecompany.model.WeeklyComplaintStatistics;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
@@ -17,7 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.phonecompany.model.enums.ComplaintCategory.CUSTOMER_SERVICE;
 import static com.phonecompany.model.enums.ComplaintCategory.SUGGESTION;
@@ -205,8 +211,8 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
         Map<String, Object> response = new HashMap<>();
         Query query = queryBuilder.build();
-        response.put("complaints", complaintDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("complaints", complaintDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 
@@ -233,6 +239,11 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
         List<Statistics> statisticsList = this.complaintDao
                 .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+
+        if (statisticsList.size() == 0) {
+            throw new MissingResultException("There were no complaints orders in this region during " +
+                    "this period");
+        }
 
         return this.statisticsService
                 .prepareStatisticsDataSet("Complaints", statisticsList,

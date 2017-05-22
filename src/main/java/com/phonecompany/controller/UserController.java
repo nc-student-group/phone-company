@@ -50,6 +50,7 @@ public class UserController {
         return Collections.unmodifiableCollection(users);
     }
 
+    //TODO: should not be POST. Updates are performed via PUT
     @RequestMapping(method = POST, value = "/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
@@ -61,6 +62,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    //TODO: i think it should be: value = "/api/users/logged-in-user"
     @RequestMapping(method = GET, value = "/api/user/get")
     public User getUser() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
@@ -93,7 +95,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @RequestMapping(method = POST, value = "api/user/reset")
     public ResponseEntity<?> resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
@@ -120,6 +121,7 @@ public class UserController {
         return response;
     }
 
+    //TODO: should not be done via GET. Updates are performed with PUT
     @RequestMapping(value = "/api/user/update/{id}/{status}", method = RequestMethod.GET)
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);

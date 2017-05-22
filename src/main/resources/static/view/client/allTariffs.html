@@ -20,19 +20,19 @@
                                     <div class="col-md-4" style="padding: 10px;" ng-repeat="mc in marketingCampaigns"
                                          ng-click="campaignClick(mc.id)">
                                         <div class="tariff-picture">
-                                            <img ng-src="{{mc.campaignTariff.tariffRegion.tariff.pictureUrl}}" width="90%"/>
+                                            <img ng-src="{{mc.tariffRegion.tariff.pictureUrl}}" width="90%"/>
                                             <div class="specials-picture"><b>Specials</b></div>
                                         </div>
-                                        <div style="text-align: center; color: #212121; font-size: 18px;"><b>{{mc.campaignTariff.tariffRegion.tariff.tariffName}}</b>
+                                        <div style="text-align: center; color: #212121; font-size: 18px;"><b>{{mc.tariffRegion.tariff.tariffName}}</b>
                                         </div>
                                         <div class="row" style="text-align: center; font-size: 16px; color: #161121"
-                                             ng-hide="mc.campaignTariff.tariffRegion.tariff.discount > 0 && mc.campaignTariff.tariffRegion.tariff.discount <= 100">
-                                            <b>{{mc.campaignTariff.tariffRegion.price}} auh / 30 days</b>
+                                             ng-hide="mc.tariffRegion.tariff.discount > 0 && mc.tariffRegion.tariff.discount <= 100">
+                                            <b>{{mc.tariffRegion.price}} auh / 30 days</b>
                                         </div>
-                                        <div class="row" ng-show="mc.campaignTariff.tariffRegion.tariff.discount > 0 && mc.campaignTariff.tariffRegion.tariff.discount <= 100"
+                                        <div class="row" ng-show="mc.tariffRegion.tariff.discount > 0 && mc.tariffRegion.tariff.discount <= 100"
                                              style="text-align: center; font-size: 16px; color: #161121">
-                                            <b>{{mc.campaignTariff.tariffRegion.price * (1 - mc.campaignTariff.tariffRegion.tariff.discount/100)}} auh / 30 days</b>
-                                            <s style="font-size: 14px; color: red">{{mc.campaignTariff.tariffRegion.price}} auh / 30 days</s>
+                                            <b>{{mc.tariffRegion.price * (1 - mc.tariffRegion.tariff.discount/100)}} auh / 30 days</b>
+                                            <s style="font-size: 14px; color: red">{{mc.tariffRegion.price}} auh / 30 days</s>
                                         </div>
                                         <div class="row">
                                             <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
