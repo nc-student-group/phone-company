@@ -4,10 +4,14 @@ import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
 
-public class WeeklyOrdersAmount {
+/**
+ * Defines amount of orders distinguished by type that were made at the
+ * given week of month.
+ */
+public final class WeeklyOrdersAmount {
 
-    private EnumMap<WeekOfMonth, Integer> deactivations;
-    private EnumMap<WeekOfMonth, Integer> activations;
+    private final EnumMap<WeekOfMonth, Integer> deactivations;
+    private final EnumMap<WeekOfMonth, Integer> activations;
 
     public WeeklyOrdersAmount(EnumMap<WeekOfMonth, Integer> deactivations,
                               EnumMap<WeekOfMonth, Integer> activations) {
@@ -19,16 +23,8 @@ public class WeeklyOrdersAmount {
         return deactivations;
     }
 
-    public void setDeactivations(EnumMap<WeekOfMonth, Integer> deactivations) {
-        this.deactivations = deactivations;
-    }
-
     public EnumMap<WeekOfMonth, Integer> getActivations() {
         return activations;
-    }
-
-    public void setActivations(EnumMap<WeekOfMonth, Integer> activations) {
-        this.activations = activations;
     }
 
     @Override

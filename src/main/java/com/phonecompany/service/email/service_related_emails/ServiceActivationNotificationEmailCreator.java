@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-@Component("serviceActivationNotificationEmailCreator")
+@Component
 public class ServiceActivationNotificationEmailCreator extends AbstractEmailCreator<Service>
         implements MailMessageCreator<Service> {
 

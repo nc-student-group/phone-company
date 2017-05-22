@@ -108,16 +108,4 @@ public class TypeMapper {
                 .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .orElse(null);
     }
-
-    public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
-        return statistics -> statistics.getItemName().equals(targetName);
-    }
-
-    public static Predicate<Statistics> getStatisticsByItemTypePredicate(ItemType itemType) {
-        return statistics -> statistics.getItemType().equals(itemType);
-    }
-
-    public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
-        return statistics -> statistics.getTimePoint().equals(date);
-    }
 }

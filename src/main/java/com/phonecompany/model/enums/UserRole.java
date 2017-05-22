@@ -14,7 +14,7 @@ public enum UserRole implements DataBaseEnum {
     CSR(CSR_DATABASE_ID),
     /* Accepts complaints, responds to them */
     PMG(PMG_DATABASE_ID),
-    /* Will post complaints or make requests to the system regarding
+    /* Will post complaints or will make requests to the system regarding
     details of the service */
     CLIENT(CLIENT_DATABASE_ID);
 

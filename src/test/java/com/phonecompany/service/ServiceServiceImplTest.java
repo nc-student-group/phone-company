@@ -59,7 +59,7 @@ public class ServiceServiceImplTest {
 
 //    @Test
 //    public void shouldApplyDiscountIfCurrentUserIsRepresentative() {
-//        //given
+//        given
 //        List<Service> sampleServices = getSampleServices();
 //        List<Double> initialPrices = this.getInitialPrices(sampleServices);
 //
@@ -70,14 +70,14 @@ public class ServiceServiceImplTest {
 //        when(customerService.getCurrentlyLoggedInUser())
 //                .thenReturn(getSampleRepresentative());
 //
-//        //when
+//        when
 //        PagingResult<Service> servicesByProductCategoryId = serviceService
 //                .getServicesByProductCategoryId(1, 0, 5, "",
 //                        0.0, 0.0, 0, 0, "ASC");
 //        List<Service> pagingResult = servicesByProductCategoryId.getPagingResult();
 //        int entityCount = servicesByProductCategoryId.getEntityCount();
 //
-//        //then
+//        then
 //        verify(serviceDao, times(1)).getEntityCount(any());
 //        verify(customerService, times(1)).getCurrentlyLoggedInUser();
 //

@@ -7,9 +7,9 @@ import com.phonecompany.service.interfaces.Statistics;
  * this interface is a type of an entity that statistics
  * could be generated for.
  *
- * @see Statistics
  * @see com.phonecompany.model.enums.OrderType
  * @see com.phonecompany.model.enums.ComplaintStatus
+ * @see Statistics
  */
 public interface ItemType {
 }

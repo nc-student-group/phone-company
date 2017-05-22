@@ -16,29 +16,31 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@inheritDoc}
+ */
 @ServiceStereotype
 public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<LocalDate, Long>
         implements StatisticsService<LocalDate, Long> {
 
-    private OrderDao orderDao;
-
-    @Autowired
-    public OrderStatisticsServiceImpl(OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Filter<Statistics, ?> createFilterChain(String itemName, ItemType itemType,
-                                                   LocalDate rangeOfDefinitionPoint) {
+                                                   LocalDate rangePoint) {
         Filter<Statistics, ItemType> orderTypeFilter = new ItemTypeFilter(itemType);
         Filter<Statistics, String> namingFilter = new NamingFilter(itemName);
-        Filter<Statistics, LocalDate> dateFilter = new DateFilter(rangeOfDefinitionPoint);
+        Filter<Statistics, LocalDate> dateFilter = new DateFilter(rangePoint);
 
         orderTypeFilter.setSuccessor(namingFilter);
         namingFilter.setSuccessor(dateFilter);
         return orderTypeFilter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long getValue(List<Statistics> statisticsList) {
         this.validateStatisticsList(statisticsList);
@@ -48,6 +50,12 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
         return statisticsList.get(0).getValue();
     }
 
+    /**
+     * Makes sure that the incoming list was filtered properly
+     *
+     * @param statisticsList list to validate
+     * @throws InsufficientFilteringException if list was not properly filtered
+     */
     private void validateStatisticsList(List<Statistics> statisticsList) {
         int statisticsListSize = statisticsList.size();
         if (statisticsListSize > 1 || statisticsListSize < 0) {
@@ -55,6 +63,9 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<LocalDate> getRangeOfDefinition(LocalDate startOfRange, LocalDate endOfRange) {
         List<LocalDate> timeLine = new ArrayList<>();

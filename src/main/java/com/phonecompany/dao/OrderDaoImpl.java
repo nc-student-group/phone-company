@@ -12,6 +12,7 @@ import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
+import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
@@ -28,6 +29,8 @@ import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
 
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;

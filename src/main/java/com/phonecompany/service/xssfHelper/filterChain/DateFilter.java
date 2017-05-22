@@ -6,14 +6,20 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.phonecompany.util.TypeMapper.getStatisticsByLocalDatePredicate;
+import static com.phonecompany.util.FilteringPredicates.getStatisticsByLocalDatePredicate;
 
+/**
+ * {@inheritDoc}
+ */
 public class DateFilter extends Filter<Statistics, LocalDate> {
 
     public DateFilter(LocalDate filteringKey) {
         super(filteringKey);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Statistics> doFilter(List<Statistics> targetList) {
         Predicate<Statistics> orderDatePredicate =

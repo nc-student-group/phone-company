@@ -4,15 +4,19 @@ import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
 
-public class WeeklyComplaintStatistics {
+/**
+ * Defines amount of complaints distinguished by type that were posted at the
+ * given week of month.
+ */
+public class WeeklyComplaintsAmount {
 
     private EnumMap<WeekOfMonth, Integer> customerService;
     private EnumMap<WeekOfMonth, Integer> suggestion;
     private EnumMap<WeekOfMonth, Integer> technicalService;
 
-    public WeeklyComplaintStatistics(EnumMap<WeekOfMonth, Integer> customerService,
-                                     EnumMap<WeekOfMonth, Integer> suggestion,
-                                     EnumMap<WeekOfMonth, Integer> technicalService) {
+    public WeeklyComplaintsAmount(EnumMap<WeekOfMonth, Integer> customerService,
+                                  EnumMap<WeekOfMonth, Integer> suggestion,
+                                  EnumMap<WeekOfMonth, Integer> technicalService) {
         this.customerService = customerService;
         this.suggestion = suggestion;
         this.technicalService = technicalService;
@@ -44,7 +48,7 @@ public class WeeklyComplaintStatistics {
 
     @Override
     public String toString() {
-        return "WeeklyComplaintStatistics{" +
+        return "WeeklyComplaintsAmount{" +
                 "customerService=" + customerService +
                 ", suggestion=" + suggestion +
                 ", technicalService=" + technicalService +

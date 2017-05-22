@@ -12,21 +12,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * {@inheritDoc}
+ */
 public abstract class AbstractStatisticsServiceImpl<K, V>
         implements StatisticsService<K, V> {
 
     /**
-     * Prepares data set containing statistical information rearranged in
-     * such way that it can be easily parsed later on.
-     *
-     * @param sheetName      expected sheet name
-     * @param statisticsList list containing statistical data which is to
-     *                       be rearranged into {@link SheetDataSet} object
-     * @param startOfRange   start of the time period that statistics was
-     *                       generated for
-     * @param endOfRange     end of the time period that statistics was
-     *                       generated for
-     * @return constructed sheet data set
+     * {@inheritDoc}
      */
     @Override
     public SheetDataSet<K, V> prepareStatisticsDataSet(String sheetName,
@@ -34,9 +27,9 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
                                                        K startOfRange, K endOfRange) {
         SheetDataSet<K, V> sheet = new SheetDataSet<>(sheetName);
         List<ItemType> itemTypes = this.getItemTypesFromStatistics(statisticsList);
-        List<K> timeLine = this.getRangeOfDefinition(startOfRange, endOfRange);
+        List<K> rangeOfDefinition = this.getRangeOfDefinition(startOfRange, endOfRange);
         for (ItemType itemType : itemTypes) {
-            this.populateTableDataSet(sheet, itemType, statisticsList, timeLine);
+            this.populateTableDataSet(sheet, itemType, statisticsList, rangeOfDefinition);
         }
         return sheet;
     }
@@ -67,7 +60,7 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     public abstract List<K> getRangeOfDefinition(K startOfRange, K endOfRange);
 
     /**
-     * Populates {@link SheetDataSet} object with its components (with {@link TableDataSet}s)
+     * Populates {@link SheetDataSet} object with its components (with {@link TableDataSet}s).
      *
      * @param sheet           sheet that a corresponding table representation will be created on
      * @param itemType        item type that is used to filter out {@code Statistics} objects
@@ -86,13 +79,13 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     }
 
     /**
-     * Maps items from the list that represent statistical information to a
-     * set of distinct values somehow related to the items from this list.
+     * Maps items from the list that represent statistical information to a set of
+     * distinct values somehow related to the items from this list.
      *
      * @param statisticsList list that distinct values will be retrieved from
-     * @param mapper         instance of {@code Function} used to map
-     * @param <E>
-     * @return
+     * @param mapper         instance of {@code Function} used to perform mapping
+     * @param <E>            type of objects contained in the resulting list
+     * @return {@code List} filled with distinct values
      */
     private <E> List<E> extractUniqueValues(List<Statistics> statisticsList,
                                             Function<Statistics, E> mapper) {
@@ -112,10 +105,8 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
      * @param rangeOfDefinition a set of unique values that represent a
      *                          range of definition for the given row
      */
-    private void populateRowDataSet(RowDataSet<K, V> row,
-                                    List<Statistics> statisticsList,
-                                    String itemName, ItemType itemType,
-                                    List<K> rangeOfDefinition) {
+    private void populateRowDataSet(RowDataSet<K, V> row, List<Statistics> statisticsList,
+                                    String itemName, ItemType itemType, List<K> rangeOfDefinition) {
 
         for (K rangePoint : rangeOfDefinition) {
             Filter<Statistics, ?> filterChainHead = this
@@ -127,23 +118,26 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     }
 
     /**
-     * Constructs an object that will perform filtering upon the {@code List} of
-     * {@link Statistics} objects
+     * Constructs filter chain that will perform filtering upon the {@code List} of {@link Statistics}
+     * objects.
      *
-     * @param itemName               item name that will be used to create one of the filtering chains
-     * @param itemType               item type that will be used to create one of the filtering chains
-     * @param rangeOfDefinitionPoint range of definition point that will be used to create
-     *                               one of the filtering chains
+     * @param itemName   item <b>name</b> that will be used to create one of the filtering units
+     * @param itemType   item <b>type</b> that will be used to create one of the filtering units
+     * @param rangePoint single <b>point</b> on range of definition that will be used to create
+     *                   one of the filtering units
      * @return filter head that filtering process will begin from
      */
     public abstract Filter<Statistics, ?> createFilterChain(String itemName, ItemType itemType,
-                                                            K rangeOfDefinitionPoint);
+                                                            K rangePoint);
 
     /**
-     * Gets the number of orders made at the specified date.
+     * Gets the value that serves as a numerical representation of the statistical data.
+     * <p>
+     * <p>For instance: number of orders or number of complaints</p>
      *
-     * @param statisticsList order list that number will be fetched from
-     * @return order number
+     * @param statisticsList list of statistical data that numerical representations will
+     *                       be extracted from
+     * @return numerical representation
      */
     public abstract V getValue(List<Statistics> statisticsList);
 }

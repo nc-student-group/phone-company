@@ -1,6 +1,6 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.WeeklyComplaintStatistics;
+import com.phonecompany.model.WeeklyComplaintsAmount;
 import com.phonecompany.model.WeeklyOrdersAmount;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.BookDataSet;
@@ -93,7 +93,7 @@ public class ReportController {
     @GetMapping("/complaints-statistics")
     public ResponseEntity<?> getComplaintStatisticsForTheLastMonthByWeeks() {
 
-        WeeklyComplaintStatistics complaintStatistics = this.complaintService.getComplaintStatistics();
+        WeeklyComplaintsAmount complaintStatistics = this.complaintService.getComplaintStatistics();
 
         return new ResponseEntity<>(complaintStatistics, HttpStatus.OK);
     }

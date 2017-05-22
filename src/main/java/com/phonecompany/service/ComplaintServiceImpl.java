@@ -6,7 +6,7 @@ import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.service_layer.MissingResultException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
-import com.phonecompany.model.WeeklyComplaintStatistics;
+import com.phonecompany.model.WeeklyComplaintsAmount;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
@@ -218,7 +218,7 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
 
     @Override
-    public WeeklyComplaintStatistics getComplaintStatistics() {
+    public WeeklyComplaintsAmount getComplaintStatistics() {
 
         EnumMap<WeekOfMonth, Integer> numberOfCSComplaintsForTheLastMonth =
                 this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(CUSTOMER_SERVICE);
@@ -227,11 +227,20 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         EnumMap<WeekOfMonth, Integer> numberOfTSComplaintsForTheLastMonth =
                 this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(TECHNICAL_SERVICE);
 
-        return new WeeklyComplaintStatistics(numberOfCSComplaintsForTheLastMonth,
+        return new WeeklyComplaintsAmount(numberOfCSComplaintsForTheLastMonth,
                 numberOfSComplaintsForTheLastMonth,
                 numberOfTSComplaintsForTheLastMonth);
     }
 
+    /**
+     * Responsible for creating a dataset containing statistical information regarding
+     * complaints posted by users from the requested region in some predefined period of time
+     *
+     * @param regionId  id of the region that statistics should be generated for
+     * @param startDate start of the period that statistics should be generated for
+     * @param endDate   end of the period that statistics should be generated for
+     * @return fully constructed {@link SheetDataSet}
+     */
     @Override
     public SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
                                                                        LocalDate startDate,
