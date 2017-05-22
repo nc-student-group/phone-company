@@ -1,7 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.MarketingCampaignDao;
-import com.phonecompany.dao.interfaces.MarketingCampaignTariffDao;
+import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
@@ -21,7 +21,7 @@ import java.util.List;
 public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampaign>
         implements MarketingCampaignService {
 
-    private MarketingCampaignTariffDao marketingCampaignTariffDao;
+    private TariffRegionDao tariffRegionDao;
     private MarketingCampaignDao marketingCampaignDao;
     private TariffService tariffService;
     private CustomerServiceService customerServiceService;
@@ -31,13 +31,13 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
 
     @Autowired
     public MarketingCampaignServiceImpl(MarketingCampaignDao marketingCampaignDao,
-                                        MarketingCampaignTariffDao marketingCampaignTariffDao,
+                                        TariffRegionDao tariffRegionDao,
                                         TariffService tariffService,
                                         CustomerServiceService customerServiceService,
                                         OrderService orderService) {
         super(marketingCampaignDao);
         this.marketingCampaignDao = marketingCampaignDao;
-        this.marketingCampaignTariffDao = marketingCampaignTariffDao;
+        this.tariffRegionDao = tariffRegionDao;
         this.tariffService = tariffService;
         this.customerServiceService = customerServiceService;
         this.orderService = orderService;
@@ -49,12 +49,11 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         LOG.info("Retrieving available marketing campaigns for customer with id = "
                 + customer.getId());
         if (customer.getCorporate() == null) {
-            List<MarketingCampaignTariff> tariffs = marketingCampaignTariffDao.
-                    getMarketingCampaignTariffsAvailableForCustomer(customer
-                            .getAddress().getRegion().getId());
+            List<TariffRegion> tariffs = tariffRegionDao.
+                    getAllByRegionId(customer.getAddress().getRegion().getId());
             if (tariffs != null) {
-                for (MarketingCampaignTariff tariff: tariffs) {
-                    campaigns.addAll(marketingCampaignDao.getAllByMarketingTariff(tariff.getId()));
+                for (TariffRegion tariff: tariffs) {
+                    campaigns.addAll(marketingCampaignDao.getAllByTariffRegion(tariff.getId()));
                 }
             }
         } else {
@@ -73,8 +72,7 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
             this.orderService.saveCustomerServiceOrder(
                     activatedCustomerService, OrderType.ACTIVATION);
         }
-        Long tariffId = campaign.getCampaignTariff()
-                .getTariffRegion().getTariff().getId();
+        Long tariffId = campaign.getTariffRegion().getTariff().getId();
         tariffService.activateTariffForSingleCustomer(tariffId, customer);
     }
 }

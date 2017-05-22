@@ -19,7 +19,7 @@ angular.module('phone-company').controller('MarketingCampaignDetailController', 
                 $location.path("/client/tariffs/available");
             } else {
                 $scope.campaign = data;
-                $scope.tariffId = data.campaignTariff.tariffRegion.tariff.id;
+                $scope.tariffId = data.tariffRegion.tariff.id;
             }
         }, function () {
             $scope.preloader.send = false;

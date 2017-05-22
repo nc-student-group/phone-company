@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface MarketingCampaignDao extends JdbcOperations<MarketingCampaign> {
 
-    List<MarketingCampaign> getAllByMarketingTariff(Long marketingTariffId);
+    List<MarketingCampaign> getAllByTariffRegion(Long tariffRegionId);
 
 }

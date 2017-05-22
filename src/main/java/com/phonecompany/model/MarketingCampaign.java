@@ -13,8 +13,8 @@ public class MarketingCampaign extends DomainEntity {
     private ProductStatus marketingCampaignStatus;
     @NotNull(message = "Description must not be null")
     private String description;
-    @NotNull(message = "Marketing campaign tariff must not be null")
-    private MarketingCampaignTariff campaignTariff;
+    @NotNull(message = "Tariff region must not be null")
+    private TariffRegion tariffRegion;
     @NotNull(message = "Marketing campaign services must not be null")
     private List<MarketingCampaignServices> services;
 
@@ -23,11 +23,11 @@ public class MarketingCampaign extends DomainEntity {
     }
 
     public MarketingCampaign(String name, ProductStatus marketingCampaignStatus, String description,
-                             MarketingCampaignTariff campaignTariff, List<MarketingCampaignServices> services) {
+                             TariffRegion tariffRegion, List<MarketingCampaignServices> services) {
         this.name = name;
         this.marketingCampaignStatus = marketingCampaignStatus;
         this.description = description;
-        this.campaignTariff = campaignTariff;
+        this.tariffRegion = tariffRegion;
         this.services = services;
     }
 
@@ -43,12 +43,12 @@ public class MarketingCampaign extends DomainEntity {
 
     public void setDescription(String description) { this.description = description; }
 
-    public MarketingCampaignTariff getCampaignTariff() {
-        return campaignTariff;
+    public TariffRegion getTariffRegion() {
+        return tariffRegion;
     }
 
-    public void setCampaignTariff(MarketingCampaignTariff campaignTariff) {
-        this.campaignTariff = campaignTariff;
+    public void setTariffRegion(TariffRegion tariffRegion) {
+        this.tariffRegion = tariffRegion;
     }
 
     public List<MarketingCampaignServices> getServices() {
@@ -65,7 +65,7 @@ public class MarketingCampaign extends DomainEntity {
                 "name='" + name + '\'' +
                 ", marketingCampaignStatus=" + marketingCampaignStatus +
                 ", description='" + description + '\'' +
-                ", marketingCampaignTariff='" + campaignTariff + '\'' +
+                ", tariffRegion='" + tariffRegion + '\'' +
                 ", marketingCampaignServices='" + services + '\'' +
                 '}';
     }
