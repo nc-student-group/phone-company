@@ -45,11 +45,13 @@ public interface JdbcOperations<T extends DomainEntity> {
 
     int getCountByKey(String key, String countQuery);
 
-    public List<T> executeForList(String query, Object[] params);
+    List<T> executeForList(String query, Object[] params);
 
-    public T executeForObject(String query, Object[] params);
+    T executeForObject(String query, Object[] params);
 
-    public void executeUpdate(String query, Object[] params);
+    void executeUpdate(String query, Object[] params);
 
-    public int executeForInt(String query, Object[] params);
+    int executeForInt(String query, Object[] params);
+
+    <E> E executeForObject(String query, Object[] params, RowMapper<E> rowMapper);
 }

@@ -13,7 +13,7 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                              OrderService orderService,
                              CustomerTariffService customerTariffService,
                              StatisticsService<LocalDate, Long> statisticsService) {
-        super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
@@ -431,5 +430,4 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         response.put("entitiesSelected", tariffDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
         return response;
     }
-
 }

@@ -1,10 +1,11 @@
-package com.phonecompany.service.email;
+package com.phonecompany.service.email.customer_related_emails;
 
 import com.phonecompany.model.Complaint;
+import com.phonecompany.service.email.AbstractEmailCreator;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
-@Component("complaintAcceptedEmailCreator")
+@Component
 public class ComplaintChangeStatusEmailCreator extends AbstractEmailCreator<Complaint>
         implements MailMessageCreator<Complaint> {
 

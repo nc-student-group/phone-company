@@ -1,20 +1,21 @@
-package com.phonecompany.service.email;
+package com.phonecompany.service.email.tariff_related_emails;
 
 import com.phonecompany.model.Tariff;
+import com.phonecompany.service.email.AbstractEmailCreator;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-@Component("tariffActivationNotificationEmailCreator")
-public class TariffActivationNotificationEmailCreator extends AbstractEmailCreator<Tariff>
+@Component("tariffSuspensionNotificationEmailCreator")
+public class TariffSuspensionNotificationEmailCreator extends AbstractEmailCreator<Tariff>
         implements MailMessageCreator<Tariff> {
 
     private TemplateEngine templateEngine;
 
     @Autowired
-    public TariffActivationNotificationEmailCreator(TemplateEngine templateEngine) {
+    public TariffSuspensionNotificationEmailCreator(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
     }
 
@@ -23,11 +24,12 @@ public class TariffActivationNotificationEmailCreator extends AbstractEmailCreat
         Context context = new Context();
         context.setVariable("tariffName", tariff.getTariffName());
         return this.templateEngine
-                .process("tariff-activation-notification", context);
+                .process("tariff-suspension-notification", context);
     }
 
     @Override
     public String getEmailSubject() {
-        return "Tariff activation notification";
+        return "Tariff suspension";
     }
 }
+

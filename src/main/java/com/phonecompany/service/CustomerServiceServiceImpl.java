@@ -33,7 +33,6 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     public CustomerServiceServiceImpl(CustomerServiceDao customerServiceDao,
                                       OrderService orderService,
                                       ServiceService serviceService) {
-        super(customerServiceDao);
         this.customerServiceDao = customerServiceDao;
         this.orderService = orderService;
         this.serviceService = serviceService;

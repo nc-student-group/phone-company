@@ -4,6 +4,11 @@ import com.phonecompany.model.enums.interfaces.DataBaseEnum;
 
 import static com.phonecompany.model.enums.WeekOfMonth.Constants.*;
 
+/**
+ * Defines weeks of month
+ *
+ * @see
+ */
 public enum WeekOfMonth implements DataBaseEnum {
     FIRST_WEEK(FIRST_WEEK_DATABASE_ID),
     SECOND_WEEK(SECOND_WEEK_DATABASE_ID),

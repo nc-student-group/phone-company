@@ -7,8 +7,8 @@ import com.phonecompany.exception.service_layer.KeyAlreadyPresentException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
-import com.phonecompany.service.email.PasswordAssignmentEmailCreator;
-import com.phonecompany.service.email.ResetPasswordEmailCreator;
+import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
+import com.phonecompany.service.email.customer_related_emails.ResetPasswordEmailCreator;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
 import com.phonecompany.util.Query;
@@ -167,32 +167,31 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         }
     }
 
-    //TODO: untestable method. does not return anything
     @Override
     public void updateStatus(long id, Status status) {
         userDao.updateStatus(id, status);
     }
 
     @Override
-    public Map<String, Object> getAllUsersSearch(int page,int size,String email, int userRole, String status) {
+    public Map<String, Object> getAllUsersSearch(int page, int size, String email, int userRole, String status) {
         Query.Builder queryBuilder = new Query.Builder("dbuser");
-        queryBuilder.where().addLikeCondition("email",email);
+        queryBuilder.where().addLikeCondition("email", email);
 
-        if (userRole>0) {
-            queryBuilder.and().addCondition("role_id = ?",userRole);
-        }else if(userRole!=0){
+        if (userRole > 0) {
+            queryBuilder.and().addCondition("role_id = ?", userRole);
+        } else if (userRole != 0) {
             throw new ConflictException("Incorrect search parameter: user role.");
         }
 
-        if(!status.equals("ALL")){
-            queryBuilder.and().addCondition("status = ?",status);
+        if (!status.equals("ALL")) {
+            queryBuilder.and().addCondition("status = ?", status);
         }
-        queryBuilder.addPaging(page,size);
+        queryBuilder.addPaging(page, size);
 
         Map<String, Object> response = new HashMap<>();
         Query query = queryBuilder.build();
-        response.put("users", userDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", userDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("users", userDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", userDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 }

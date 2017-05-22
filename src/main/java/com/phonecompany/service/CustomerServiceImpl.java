@@ -10,7 +10,7 @@ import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnRegistrationCompleteEvent;
-import com.phonecompany.service.email.ConfirmationEmailCreator;
+import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.VerificationTokenService;

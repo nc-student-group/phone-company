@@ -13,7 +13,6 @@ public class AddressServiceImpl extends CrudServiceImpl<Address> implements Addr
 
     @Autowired
     public AddressServiceImpl(AddressDao dao) {
-        super(dao);
         this.addressDao = dao;
     }
 

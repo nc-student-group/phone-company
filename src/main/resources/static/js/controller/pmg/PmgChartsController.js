@@ -34,13 +34,6 @@ angular.module('phone-company').controller('PmgChartsController', [
                     $scope.reportStatistics.technicalService.THIRD_WEEK,
                     $scope.reportStatistics.technicalService.FOURTH_WEEK
                 ]
-                // ,
-                // [
-                //     $scope.reportStatistics.activations.FIRST_WEEK,
-                //     $scope.reportStatistics.activations.SECOND_WEEK,
-                //     $scope.reportStatistics.activations.THIRD_WEEK,
-                //     $scope.reportStatistics.activations.FOURTH_WEEK
-                // ]
             ];
         });
 

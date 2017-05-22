@@ -4,20 +4,18 @@ import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
-import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.interfaces.UserService;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -39,7 +37,6 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     public ComplaintServiceImpl(ComplaintDao complaintDao,
                                 UserService userService,
                                 StatisticsService<LocalDate, Long> statisticsService) {
-        super(complaintDao);
         this.complaintDao = complaintDao;
         this.userService = userService;
         this.statisticsService = statisticsService;

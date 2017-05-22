@@ -3,21 +3,25 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerTariffDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.CustomerTariff;
+import com.phonecompany.model.Order;
+import com.phonecompany.model.User;
 import com.phonecompany.model.enums.CustomerProductStatus;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.interfaces.*;
+import com.phonecompany.service.email.tariff_related_emails.TariffResumingNotificationEmailCreator;
+import com.phonecompany.service.email.tariff_related_emails.TariffSuspensionNotificationEmailCreator;
+import com.phonecompany.service.interfaces.CustomerTariffService;
+import com.phonecompany.service.interfaces.EmailService;
+import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,19 +35,16 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     private CustomerTariffDao customerTariffDao;
     private OrderService orderService;
-    private MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator;
-    private MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator;
+    private TariffSuspensionNotificationEmailCreator tariffSuspensionNotificationEmailCreator;
+    private TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator;
     private EmailService<User> emailService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffService.class);
 
     @Autowired
     public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
-                                     @Qualifier("tariffSuspensionNotificationEmailCreator")
-                                             MailMessageCreator<Tariff> tariffSuspensionNotificationEmailCreator,
-                                     @Qualifier("tariffResumingNotificationEmailCreator")
-                                             MailMessageCreator<Tariff> tariffResumingNotificationEmailCreator,
+                                     TariffSuspensionNotificationEmailCreator tariffSuspensionNotificationEmailCreator,
+                                     TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator,
                                      EmailService<User> emailService) {
-        super(customerTariffDao);
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
         this.tariffSuspensionNotificationEmailCreator = tariffSuspensionNotificationEmailCreator;

@@ -3,6 +3,7 @@ package com.phonecompany.controller;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
+import com.phonecompany.service.email.tariff_related_emails.TariffNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
@@ -28,14 +29,13 @@ public class TariffRegionController {
     private TariffService tariffService;
     private CustomerService customerService;
     private EmailService<Customer> emailService;
-    private MailMessageCreator<Tariff> tariffNotificationMailCreator;
+    private TariffNotificationEmailCreator tariffNotificationMailCreator;
 
     @Autowired
     public TariffRegionController(TariffService tariffService,
                                   CustomerService customerService,
                                   EmailService<Customer> emailService,
-                                  @Qualifier("tariffNotificationEmailCreator")
-                                  MailMessageCreator<Tariff> tariffNotificationMailCreator){
+                                  TariffNotificationEmailCreator tariffNotificationMailCreator){
         this.tariffService = tariffService;
         this.customerService = customerService;
         this.emailService = emailService;

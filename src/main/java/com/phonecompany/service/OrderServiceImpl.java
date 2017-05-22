@@ -7,7 +7,7 @@ import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.OrderService;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
+
+import static com.phonecompany.model.enums.OrderType.ACTIVATION;
+import static com.phonecompany.model.enums.OrderType.DEACTIVATION;
 
 @ServiceStereotype
 public class OrderServiceImpl extends CrudServiceImpl<Order>
@@ -26,7 +29,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
 
     @Autowired
     public OrderServiceImpl(OrderDao orderDao) {
-        super(orderDao);
         this.orderDao = orderDao;
     }
 
@@ -83,18 +85,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getCountOfServicesByCustomerId(customer.getId());
     }
 
-    @Override
-    public WeeklyOrderStatistics getOrderStatistics() {
-
-        EnumMap<WeekOfMonth, Integer> numberOfActivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.ACTIVATION);
-        EnumMap<WeekOfMonth, Integer> numberOfDeactivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfOrdersForTheLastMonthByType(OrderType.DEACTIVATION);
-
-        return new WeeklyOrderStatistics(numberOfDeactivationOrdersForTheLastMonth,
-                numberOfActivationOrdersForTheLastMonth);
-    }
-
     /**
      * Gets a list of
      *
@@ -108,6 +98,18 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                                                                           LocalDate startDate,
                                                                           LocalDate endDate) {
         return this.orderDao.getTariffsOrderStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
+    }
+
+    @Override
+    public WeeklyOrdersAmount getWeeklyOrdersAmount() {
+
+        EnumMap<WeekOfMonth, Integer> numberOfActivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfOrdersForTheLastMonthByType(ACTIVATION);
+        EnumMap<WeekOfMonth, Integer> numberOfDeactivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfOrdersForTheLastMonthByType(DEACTIVATION);
+
+        return new WeeklyOrdersAmount(numberOfDeactivationOrdersForTheLastMonth,
+                numberOfActivationOrdersForTheLastMonth);
     }
 
     @Override

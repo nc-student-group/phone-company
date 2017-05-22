@@ -33,6 +33,14 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER;
 import static org.apache.poi.ss.util.CellUtil.setAlignment;
 
+/**
+ * Class responsible for creating xls reports
+ *
+ * @param <K> type of objects that represent range of definition
+ *            of the rows contained in the report
+ * @param <V> type of objects that represent range of values
+ *            of the rows contained in the report
+ */
 @ServiceStereotype
 public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
@@ -214,8 +222,9 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         // add chart series for each line
         this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
-        chart.plot(data, bottomAxis, leftAxis);
         this.noSmoothedLinesForChart(chart);
+        chart.plot(data, bottomAxis, leftAxis);
+        LOG.debug("Chart for {} has been drawn", chartTitle);
     }
 
     /**
@@ -348,6 +357,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             workbook.write(byteArrayOutputStream);
             byteArrayOutputStream.flush();
             workbook.close();
+            LOG.debug("Workbook has been written into an OutputStream");
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             throw new WorkbookToInputStreamConversionException(e);

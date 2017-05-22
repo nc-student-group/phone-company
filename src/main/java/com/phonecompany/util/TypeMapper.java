@@ -4,7 +4,7 @@ import com.phonecompany.model.DomainEntity;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.interfaces.DataBaseEnum;
 import com.phonecompany.model.enums.interfaces.ItemType;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import org.springframework.util.Assert;
 
 import java.sql.Date;

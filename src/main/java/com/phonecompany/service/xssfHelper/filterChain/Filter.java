@@ -1,28 +1,26 @@
 package com.phonecompany.service.xssfHelper.filterChain;
 
-import com.phonecompany.service.xssfHelper.Statistics;
-
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public abstract class Filter<K> {
+public abstract class Filter<T, K> {
 
-    Filter<?> successor;
+    Filter<T, ?> successor;
     K filteringKey;
 
     public Filter(K filteringKey) {
         this.filteringKey = filteringKey;
     }
 
-    public void setSuccessor(Filter<?> successor) {
+    public void setSuccessor(Filter<T, ?> successor) {
         this.successor = successor;
     }
 
-    public abstract List<Statistics> doFilter(List<Statistics> statisticsList);
+    public abstract List<T> doFilter(List<T> targetList);
 
-    List<Statistics> filterOutStatistics(List<Statistics> statisticsList,
-                                         Predicate<Statistics> filteringPredicate) {
+    List<T> filterOutTargetList(List<T> statisticsList,
+                                Predicate<T> filteringPredicate) {
         return statisticsList
                 .stream()
                 .filter(filteringPredicate)

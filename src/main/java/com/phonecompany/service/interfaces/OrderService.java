@@ -2,16 +2,11 @@ package com.phonecompany.service.interfaces;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
-import com.phonecompany.service.xssfHelper.strategies.GroupingStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
-@SuppressWarnings("SameParameterValue")
-public interface OrderService extends CrudService<Order> {
+public interface OrderService extends CrudService<Order>, OrderStatisticsService {
 
     Order getResumingOrderByCustomerTariff(CustomerTariff customerTariff);
 
@@ -30,8 +25,6 @@ public interface OrderService extends CrudService<Order> {
     Integer getOrdersCountByCorporateId(long corporateId);
 
     Order saveCustomerServiceOrder(CustomerServiceDto customerService, OrderType orderType);
-
-    WeeklyOrderStatistics getOrderStatistics();
 
     List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
                                                                    LocalDate startDate,

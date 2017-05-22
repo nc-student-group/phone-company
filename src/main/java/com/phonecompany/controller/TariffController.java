@@ -4,6 +4,8 @@ package com.phonecompany.controller;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.email.tariff_related_emails.TariffDeactivationNotificationEmailCreator;
+import com.phonecompany.service.email.tariff_related_emails.TariffNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CorporateService;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.TariffRegionService;
@@ -33,8 +35,8 @@ public class TariffController {
     private TariffRegionService tariffRegionService;
     private TariffService tariffService;
     private EmailService<Customer> emailService;
-    private MailMessageCreator<Tariff> tariffNotificationMailCreator;
-    private MailMessageCreator<Tariff> tariffActivationNotificationMailCreator;
+    private TariffNotificationEmailCreator tariffNotificationMailCreator;
+    private TariffDeactivationNotificationEmailCreator tariffActivationNotificationMailCreator;
     private CustomerService customerService;
     private CorporateService corporateService;
 
@@ -42,10 +44,8 @@ public class TariffController {
     public TariffController(TariffRegionService tariffRegionService,
                             TariffService tariffService,
                             EmailService<Customer> emailService,
-                            @Qualifier("tariffNotificationEmailCreator")
-                                    MailMessageCreator<Tariff> tariffNotificationMailCreator,
-                            @Qualifier("tariffDeactivationNotificationEmailCreator")
-                                    MailMessageCreator<Tariff> tariffActivationNotificationMailCreator,
+                            TariffNotificationEmailCreator tariffNotificationMailCreator,
+                            TariffDeactivationNotificationEmailCreator tariffActivationNotificationMailCreator,
                             CustomerService customerService,
                             CorporateService corporateService) {
         this.tariffRegionService = tariffRegionService;

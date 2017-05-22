@@ -15,7 +15,6 @@ public class ProductCategoryServiceImpl extends CrudServiceImpl<ProductCategory>
 
     @Autowired
     public ProductCategoryServiceImpl(ProductCategoryDao productCategoryDao){
-        super(productCategoryDao);
         this.productCategoryDao = productCategoryDao;
     }
 }

@@ -13,7 +13,7 @@
                             </md-tab>
                         </md-tabs>
                         <div class="container-fluid services-cards">
-                            <div ng-repeat="s in services" class="col-md-4">
+                            <div ng-repeat="s in services | limitTo:size" class="col-md-4">
                                 <figure class="snip1174 blue">
                                     <p ng-hide="s.discount > 0 && s.discount < 100"
                                        class="service-price">{{s.price | number : 2}} &#8372;</p>
@@ -46,6 +46,7 @@
                             Show more
                         </p>
                     </md-content>
+                    <div id="service_page_bottom"></div>
                 </div>
             </div>
         </div>

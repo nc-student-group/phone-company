@@ -19,7 +19,6 @@ public class CorporateServiceImpl extends CrudServiceImpl<Corporate> implements 
 
     @Autowired
     public CorporateServiceImpl(CorporateDao corporateDao) {
-        super(corporateDao);
         this.corporateDao = corporateDao;
     }
 

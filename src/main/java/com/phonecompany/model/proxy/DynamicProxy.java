@@ -15,15 +15,15 @@ import java.util.function.Function;
  *
  * @param <T> proxy type
  */
-public class DynamicProxy<S, T> implements MethodInterceptor {
+public class DynamicProxy<T> implements MethodInterceptor {
 
     private T source = null; // real object should be lazily loaded
-    private S resultSet;
-    private Function<S, T> mapper;
+    private Long sourceId;
+    private Function<Long, T> mapper;
 
-    private DynamicProxy(S resultSet,
-                         Function<S, T> mapper) {
-        this.resultSet = resultSet;
+    private DynamicProxy(Long sourceId,
+                         Function<Long, T> mapper) {
+        this.sourceId = sourceId;
         this.mapper = mapper;
     }
 
@@ -31,17 +31,17 @@ public class DynamicProxy<S, T> implements MethodInterceptor {
      * Creates a proxy object of type inferred by the generic type of the
      * {@code SourceMapper}.
      *
-     * @param resultSet    result set that will be used by the respective
+     * @param sourceId    result set that will be used by the respective
      *                     mapper to load an object
      * @param sourceMapper object which is used to load an entity by its id
      * @param <T>          type of the entity to load
      * @return CGlib proxy object
      * @see SourceMappers
      */
-    public static <S, T> T newInstance(S resultSet, SourceMapper<S, T> sourceMapper) {
+    public static <T> T newInstance(Long sourceId, SourceMapper<T> sourceMapper) {
 
         Class<?> type = sourceMapper.getType();
-        Function<S, T> mapper = sourceMapper.getMapper();
+        Function<Long, T> mapper = sourceMapper.getMapper();
 
         /**
          * It is safe to make this kind of cast because due to
@@ -52,7 +52,7 @@ public class DynamicProxy<S, T> implements MethodInterceptor {
          */
         //noinspection unchecked
         return (T) Enhancer.create(type,
-                new DynamicProxy<>(resultSet, mapper));
+                new DynamicProxy<>(sourceId, mapper));
     }
 
     /**
@@ -79,7 +79,7 @@ public class DynamicProxy<S, T> implements MethodInterceptor {
      */
     private T getSource() {
         if (source == null) {
-            source = mapper.apply(resultSet);
+            source = mapper.apply(sourceId);
         }
         return source;
     }

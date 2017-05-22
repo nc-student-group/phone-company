@@ -11,9 +11,9 @@ import java.util.function.Function;
  *
  * @param <T> type of the entity to be mapped
  */
-public abstract class SourceMapper<S, T> {
+public abstract class SourceMapper<T> {
 
-    private Class<T> proxyTargetType;
+    private Class<?> type;
 
     /**
      * As soon as Java does not allow type parameters to
@@ -24,14 +24,15 @@ public abstract class SourceMapper<S, T> {
      *
      * @see GenericTypeResolver
      */
-    public SourceMapper(Class<T> proxyTargetType) {
-        this.proxyTargetType = proxyTargetType;
+    public SourceMapper() {
+        this.type = GenericTypeResolver
+                .resolveTypeArgument(getClass(), SourceMapper.class);
     }
 
     public Class<?> getType() {
-        return this.proxyTargetType;
+        return this.type;
     }
 
-    public abstract Function<S, T> getMapper();
+    public abstract Function<Long, T> getMapper();
 }
 

@@ -2,7 +2,7 @@ package com.phonecompany.model;
 
 import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.model.enums.OrderType;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 
 import java.time.LocalDate;
 

@@ -15,7 +15,7 @@ import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
                               CustomerService customerService,
                               OrderService orderService,
                               StatisticsService<LocalDate, Long> statisticsService) {
-        super(serviceDao);
         this.serviceDao = serviceDao;
         this.productCategoryDao = productCategoryDao;
         this.fileService = fileService;

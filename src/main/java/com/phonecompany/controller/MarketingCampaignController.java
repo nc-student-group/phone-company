@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.MarketingCampaign;
+import com.phonecompany.service.email.csr_related_emails.MarketingCampaignActivationNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.MailMessageCreator;
@@ -29,15 +30,13 @@ public class MarketingCampaignController {
     private MarketingCampaignService marketingCampaignService;
     private CustomerService customerService;
     private EmailService<Customer> emailService;
-    private MailMessageCreator<MarketingCampaign> marketingCampaignMailMessageCreator;
+    private MarketingCampaignActivationNotificationEmailCreator marketingCampaignMailMessageCreator;
 
     @Autowired
     public MarketingCampaignController(MarketingCampaignService marketingCampaignService,
                                        CustomerService customerService,
                                        EmailService<Customer> emailService,
-                                       @Qualifier("marketingCampaignActivationNotificationEmailCreator")
-                                                   MailMessageCreator<MarketingCampaign>
-                                                   marketingCampaignMailMessageCreator) {
+                                       MarketingCampaignActivationNotificationEmailCreator marketingCampaignMailMessageCreator) {
         this.marketingCampaignService = marketingCampaignService;
         this.customerService = customerService;
         this.emailService = emailService;
@@ -76,6 +75,4 @@ public class MarketingCampaignController {
         LOGGER.info("Retrieved marketing campaign: " + marketingCampaign);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }

@@ -4,13 +4,13 @@ import com.phonecompany.model.enums.WeekOfMonth;
 
 import java.util.EnumMap;
 
-public class WeeklyOrderStatistics {
+public class WeeklyOrdersAmount {
 
     private EnumMap<WeekOfMonth, Integer> deactivations;
     private EnumMap<WeekOfMonth, Integer> activations;
 
-    public WeeklyOrderStatistics(EnumMap<WeekOfMonth, Integer> deactivations,
-                                 EnumMap<WeekOfMonth, Integer> activations) {
+    public WeeklyOrdersAmount(EnumMap<WeekOfMonth, Integer> deactivations,
+                              EnumMap<WeekOfMonth, Integer> activations) {
         this.deactivations = deactivations;
         this.activations = activations;
     }
@@ -33,7 +33,7 @@ public class WeeklyOrderStatistics {
 
     @Override
     public String toString() {
-        return "WeeklyOrderStatistics{" +
+        return "WeeklyOrdersAmount{" +
                 "deactivations=" + deactivations +
                 ", activations=" + activations +
                 '}';

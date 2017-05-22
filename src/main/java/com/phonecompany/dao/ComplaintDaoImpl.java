@@ -7,7 +7,7 @@ import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.ComplaintStatistics;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.util.Query;

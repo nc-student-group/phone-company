@@ -22,7 +22,6 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
 
     @Autowired
     public TariffRegionServiceImpl(TariffRegionDao tariffRegionDao){
-        super(tariffRegionDao);
         this.tariffRegionDao = tariffRegionDao;
     }
 

@@ -18,7 +18,6 @@ public class MarketingCampaignTariffServiceImpl extends CrudServiceImpl<Marketin
 
     @Autowired
     public MarketingCampaignTariffServiceImpl(MarketingCampaignTariffDao marketingCampaignTariffDao) {
-        super(marketingCampaignTariffDao);
         this.marketingCampaignTariffDao = marketingCampaignTariffDao;
     }
 }

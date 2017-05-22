@@ -1,21 +1,24 @@
-package com.phonecompany.service.email;
+package com.phonecompany.service.email.service_related_emails;
 
 import com.phonecompany.model.Service;
 import com.phonecompany.model.Tariff;
+import com.phonecompany.service.email.AbstractEmailCreator;
 import com.phonecompany.service.interfaces.MailMessageCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-@Component("serviceSuspensionNotificationEmailCreator")
-public class ServiceSuspensionNotificationEmailCreator extends AbstractEmailCreator<Service>
+@Component("serviceDeactivationNotificationEmailCreator")
+public class ServiceDeactivationNotificationEmailCreator extends AbstractEmailCreator<Service>
         implements MailMessageCreator<Service> {
 
     private TemplateEngine templateEngine;
 
     @Autowired
-    public ServiceSuspensionNotificationEmailCreator(TemplateEngine templateEngine) {
+    public ServiceDeactivationNotificationEmailCreator(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
     }
 
@@ -24,12 +27,11 @@ public class ServiceSuspensionNotificationEmailCreator extends AbstractEmailCrea
         Context context = new Context();
         context.setVariable("serviceName", service.getServiceName());
         return this.templateEngine
-                .process("service-suspension-notification", context);
+                .process("service-deactivation-notification", context);
     }
 
     @Override
     public String getEmailSubject() {
-        return "Service suspension";
+        return "Service deactivation";
     }
 }
-

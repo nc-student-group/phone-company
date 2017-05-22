@@ -35,7 +35,6 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
                                         TariffService tariffService,
                                         CustomerServiceService customerServiceService,
                                         OrderService orderService) {
-        super(marketingCampaignDao);
         this.marketingCampaignDao = marketingCampaignDao;
         this.marketingCampaignTariffDao = marketingCampaignTariffDao;
         this.tariffService = tariffService;

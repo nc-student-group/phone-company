@@ -1,6 +1,7 @@
-package com.phonecompany.service.email;
+package com.phonecompany.service.email.customer_related_emails;
 
 import com.phonecompany.model.User;
+import com.phonecompany.service.email.AbstractEmailCreator;
 import com.phonecompany.service.interfaces.MailMessageCreator;
 import org.springframework.stereotype.Component;
 
