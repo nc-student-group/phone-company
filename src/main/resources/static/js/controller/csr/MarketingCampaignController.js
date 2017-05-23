@@ -191,185 +191,13 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 r.price = 2000;
             }
             for (var i = 0; i < list.length; i++) {
-                if (list[i].id == r.id)
+                if (list[i].service.id == r.service.id) {
                     list[i].price = r.price;
+                }
             }
         };
 
-        //
-        // $scope.successAddTariff = function () {
-        //     toastr.success('Your tariff "' + $scope.currentTariff.tariffName + '" added successfully!');
-        //     console.log("Tariff added");
-        //     $scope.getNewTariff();
-        //     $scope.regionsToAdd = [];
-        //     for (var i = 0; i < $scope.regions.length; i++) {
-        //         $scope.regionsToAdd.push({
-        //             id: '',
-        //             price: 0,
-        //             region: $scope.regions[i],
-        //             tariff: {}
-        //         });
-        //     }
-        //     $scope.updateData();
-        //     $scope.preloader.send = false;
-        //     $window.scrollTo(0, 0);
-        // };
-        //
-        // $scope.toggle = function (item, list) {
-        //     var idx = -1;
-        //     for (var i = 0; i < list.length; i++) {
-        //         if (list[i] == item)
-        //             idx = i;
-        //     }
-        //     if (idx > -1) {
-        //         list.splice(idx, 1);
-        //     }
-        //     else {
-        //         list.push(item);
-        //     }
-        // };
-        //
-        // $scope.exists = function (item, list) {
-        //     if (list != undefined) {
-        //         var idx = -1;
-        //         for (var i = 0; i < list.length; i++) {
-        //             if (list[i] == item)
-        //                 idx = i;
-        //         }
-        //         return idx > -1;
-        //     }
-        //     return false;
-        // };
-        //
-        // $scope.checkPrice = function (r, list) {
-        //     if (r.price < 0) {
-        //         r.price = 0;
-        //     }
-        //     if (r.price > 2000) {
-        //         r.price = 2000;
-        //     }
-        //     for (var i = 0; i < list.length; i++) {
-        //         if (list[i].region.id == r.region.id)
-        //             list[i].price = r.price;
-        //     }
-        // };
-        //
-        // $scope.checkTariffPrice = function (t) {
-        //     if (t.price < 0) {
-        //         t.price = 0;
-        //     }
-        //     if (t.price > 2000) {
-        //         t.price = 2000;
-        //     }
-        // };
-        //
-        // $scope.editClick = function (id) {
-        //     $location.path("/csr/tariff/edit/" + id);
-        //     // $scope.preloader.send = true;
-        //     // TariffService.getTariffToEditById(id).then(function (data) {
-        //     //     $scope.tariffToEdit = data.tariff;
-        //     //     $scope.regionsToEdit = data.regions;
-        //     //     for (var i = 0; i < data.regions.length; i++) {
-        //     //         for (var j = 0; j < $scope.regionsToAdd.length; j++) {
-        //     //             if (data.regions[i].region.id == $scope.regionsToAdd[j].region.id) {
-        //     //                 $scope.regionsToAdd[j].price = data.regions[i].price;
-        //     //             }
-        //     //         }
-        //     //     }
-        //     //     $scope.preloader.send = false;
-        //     //     $scope.editing = true;
-        //     //     $window.scrollTo(0, 0);
-        //     // }, function () {
-        //     //     $scope.preloader.send = false;
-        //     // });
-        // };
-        //
-        // $scope.toggleEdit = function (item, list) {
-        //     var idx = -1;
-        //     for (var i = 0; i < list.length; i++) {
-        //         if (list[i].region.id == item.region.id)
-        //             idx = i;
-        //     }
-        //     if (idx > -1) {
-        //         list.splice(idx, 1);
-        //     }
-        //     else {
-        //         list.push(item);
-        //     }
-        // };
-        //
-        // $scope.existsEdit = function (item, list) {
-        //     if (list != undefined) {
-        //         var idx = -1;
-        //         for (var i = 0; i < list.length; i++) {
-        //             if (list[i].region.id == item.region.id)
-        //                 idx = i;
-        //         }
-        //         return idx > -1;
-        //     }
-        //     return false;
-        // };
-        //
-        // $scope.cancelEdit = function () {
-        //     $scope.editing = false;
-        //     $scope.regionsToAdd = [];
-        //     $scope.regionsToEdit = [];
-        //     $scope.tariffToEdit = undefined;
-        //     for (var i = 0; i < $scope.regions.length; i++) {
-        //         $scope.regionsToAdd.push({
-        //             id: '',
-        //             price: 0,
-        //             region: $scope.regions[i],
-        //             tariff: {}
-        //         });
-        //     }
-        //     $scope.updateData();
-        //     $scope.tariffToEdit = undefined;
-        //     $scope.regionsToEdit = undefined;
-        //     $window.scrollTo(0, 0);
-        // };
-        //
-        // $scope.saveTariff = function () {
-        //     if (!$scope.validateTariff($scope.tariffToEdit, $scope.regionsToEdit)) {
-        //         return;
-        //     }
-        //     $scope.preloader.send = true;
-        //     console.log($scope.regionsToEdit);
-        //     if ($scope.regionsToEdit.length == 0 || $scope.tariffToEdit.isCorporate) {
-        //         TariffService.saveTariffSingle($scope.tariffToEdit).then(function (data) {
-        //             $scope.successTariffUpdate();
-        //         }, function (data) {
-        //             if (data.message != undefined) {
-        //                 toastr.error(data.message, 'Error');
-        //             } else {
-        //                 toastr.error('Error during tariff update. Try again!', 'Error');
-        //             }
-        //             $scope.preloader.send = false;
-        //         })
-        //     } else {
-        //         TariffService.saveTariff($scope.regionsToEdit).then(function (data) {
-        //                 $scope.successTariffUpdate();
-        //             },
-        //             function (data) {
-        //                 if (data.message != undefined) {
-        //                     toastr.error(data.message, 'Error');
-        //                 } else {
-        //                     toastr.error('Error during tariff update. Try again!', 'Error');
-        //                 }
-        //                 $scope.preloader.send = false;
-        //             }
-        //         );
-        //     }
-        // };
-        //
-        // $scope.successTariffUpdate = function () {
-        //     toastr.success('Your tariff "' + $scope.tariffToEdit.tariffName + '" updated successfully!');
-        //     console.log("Tariff updated");
-        //     $scope.preloader.send = false;
-        //     $window.scrollTo(0, 0);
-        // };
-        //
-        //
+
         $scope.validateCampaign = function (campaign) {
             if (campaign.name == undefined || campaign.name.length < 1) {
                 toastr.error('Campaign name field length must be greater than zero and less than 150', 'Error');
@@ -384,18 +212,6 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 return false;
             }
 
-            // for (var i = 0; i < regionsToSave.length; i++) {
-            //     regionsToSave[i].tariff = tariff;
-            //     console.log(regionsToSave[i].price);
-            //     if (regionsToSave[i].price == undefined) {
-            //         toastr.error('Bad price for ' + regionsToSave[i].region.nameRegion, 'Error');
-            //         return false;
-            //     }
-            //     if (regionsToSave[i].price <= 0 || regionsToSave[i].price > 2000) {
-            //         toastr.error('Price must be greater than zero and less than 2000 for ' + regionsToSave[i].region.nameRegion, 'Error');
-            //         return false;
-            //     }
-            // }
             return true;
         };
         //
