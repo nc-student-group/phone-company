@@ -73,6 +73,13 @@ public class ServicesController {
         return allServices;
     }
 
+    @GetMapping(value = "/active")
+    public Collection<Service> getAllActiveServices() {
+        List<Service> allServices = this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
+        LOG.debug("Services fetched from the storage: {}", allServices);
+        return allServices;
+    }
+
     @GetMapping("/category/{id}/{page}/{size}")
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,
@@ -104,7 +111,7 @@ public class ServicesController {
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
         CustomerServiceDto activatedCustomerService = this.customerServiceService
-                .activateServiceForCustomer(serviceId, loggedInCustomer);
+                .activateServiceForCustomer(serviceId, loggedInCustomer, false);
         this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
                 .serviceActivationNotificationEmailCreator
@@ -117,13 +124,12 @@ public class ServicesController {
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
                                                     @PathVariable("customerId") long customerId) {
         Customer loggedInCustomer = this.customerService.getById(customerId);
-        Service currentService = this.serviceService.getById(serviceId);
-        CustomerServiceDto activatedCustomerService = this
-                .customerServiceService
-                .activateServiceForCustomer(serviceId, loggedInCustomer);
+        CustomerServiceDto activatedCustomerService = this.customerServiceService
+                .activateServiceForCustomer(serviceId, loggedInCustomer, true);
         this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
-                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+                .serviceActivationNotificationEmailCreator
+                .constructMessage(activatedCustomerService.getService());
         this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -227,5 +233,13 @@ public class ServicesController {
                 .constructMessage(customerService.getService());
         this.emailService.sendMail(notificationMessage, customerService.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/productCategoryAvailable/{customerId}/{categoryId}/{isForCorporateCustomer}")
+    public Boolean isProductCategoryAvailable(@PathVariable("customerId") long customerId,
+                                              @PathVariable("categoryId") long categoryId,
+                                              @PathVariable("isForCorporateCustomer") boolean isForCorporateCustomer) {
+        Customer customer = this.customerService.getById(customerId);
+        return customerServiceService.isProductCategoryAvailable(customer, categoryId, isForCorporateCustomer);
     }
 }

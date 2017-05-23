@@ -5,6 +5,7 @@ import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.EntityNotFoundException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
+import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.Query;
@@ -109,6 +110,11 @@ public class ServiceDaoImpl extends JdbcOperationsImpl<Service>
     @Override
     public List<Service> getAllServicesSearch(Query query) {
         return this.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+    }
+
+    @Override
+    public List<Service> getServicesByStatus(ProductStatus status) {
+        return this.executeForList(this.getQuery("getAllByStatus"), new Object[]{status.toString()});
     }
 
     @Override

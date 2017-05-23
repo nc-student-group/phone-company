@@ -17,10 +17,12 @@ public interface CustomerServiceService extends CrudService<CustomerServiceDto> 
 
     CustomerServiceDto suspendCustomerService(Map<String, Object> suspensionData);
 
-    CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer);
+    CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer, boolean isForCorporateCustomer);
 
     CustomerServiceDto activateMarketingServiceForCustomer(
             MarketingCampaignServices marketingCampaignService, Customer customer);
 
     void resumeCustomerService(Order order);
+
+    boolean isProductCategoryAvailable(Customer customer, long categoryId, boolean isForCorporateCustomer);
 }

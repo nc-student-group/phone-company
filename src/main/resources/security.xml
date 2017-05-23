@@ -33,6 +33,7 @@
         <intercept-url pattern="/api/regions/get" access="permitAll()"/>
         <intercept-url pattern="/api/customers/empty-customer" access="permitAll()"/>
         <intercept-url pattern="/api/customers/logged-in-user/**" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customers/suitableCustomersForService/**" method="GET" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/customers/**" method="GET" access="hasAnyRole('CSR','ADMIN','PMG')"/>
         <intercept-url pattern="/api/customer-tariffs/customer-tariff" access="hasRole('CLIENT')"/>
         <intercept-url pattern="/api/customer-tariffs/customer/**" method="GET" access="hasAnyRole('CSR','ADMIN','PMG')"/>
@@ -54,9 +55,13 @@
         <intercept-url pattern="/api/tariffs" method="PUT" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/**" method="PATCH" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariff-region/region/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/reports/**" method="GET" access="hasAnyRole('CSR', 'PMG')"/>
 
-        <intercept-url pattern="/api/marketing-campaigns/available/**" method="GET" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/marketing-campaigns/**" method="GET" access="hasAnyRole('CLIENT', 'CSR')"/>
+        <intercept-url pattern="/api/marketing-campaigns/**" method="PATCH" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/marketing-campaigns/**" method="POST" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/marketing-campaigns/empty" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
 
         <intercept-url pattern="api/corporations/**" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/complaints/" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>

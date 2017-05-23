@@ -138,6 +138,11 @@ public class CustomerController {
         return this.customerService.getCustomersByCorporate(corporateId);
     }
 
+    @RequestMapping(method = GET, value = "/api/customers/suitableCustomersForService/{corporateId}")
+    public List<Customer> getSuitableCustomersForService(@PathVariable("corporateId") long corporateId) {
+        return this.customerService.getSuitableCustomersForService(corporateId);
+    }
+
     @PatchMapping(value = "/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);

@@ -3,7 +3,6 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-import com.phonecompany.service.xssfHelper.SheetDataSet;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +14,8 @@ public interface ServiceService extends CrudService<Service>,
     PagingResult<Service> getServicesByProductCategoryId(int page, int size, int productCategoryId,
                                                          String partOfName, double priceFrom, double priceTo,
                                                          int status, int orderBy, String orderByType);
+
+    List<Service> getServicesByStatus(ProductStatus status);
 
     Service save(Service service);
 

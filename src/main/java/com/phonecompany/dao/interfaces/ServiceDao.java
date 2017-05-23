@@ -13,4 +13,6 @@ public interface ServiceDao extends JdbcOperations<Service> {
     void updateServiceStatus(long serviceId, ProductStatus productStatus);
 
     List<Service> getAllServicesSearch(Query query);
+
+    List<Service> getServicesByStatus(ProductStatus status);
 }

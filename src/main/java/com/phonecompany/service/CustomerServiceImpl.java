@@ -215,6 +215,11 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
+    public List<Customer> getSuitableCustomersForService(long corporateId) {
+        return customerDao.getSuitableCustomersForService(corporateId);
+    }
+
+    @Override
     public Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
         Query.Builder queryBuilder = new Query.Builder("dbuser");
         queryBuilder.where();

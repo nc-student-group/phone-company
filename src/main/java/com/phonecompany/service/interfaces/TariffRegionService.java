@@ -11,4 +11,6 @@ public interface TariffRegionService extends CrudService<TariffRegion> {
     void deleteByTariffId(long tariffId);
 
     TariffRegion getByTariffIdAndRegionId(Long tariffId, long regionId);
+
+    List<TariffRegion> getAllByRegionId(Long regionId);
 }

@@ -139,15 +139,21 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     }
 
     @Override
-    public CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer) {
-        boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer);
+    public CustomerServiceDto activateServiceForCustomer(long serviceId, Customer customer,
+                                                         boolean isForCorporateCustomer) {
+        boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer.getId());
         if (isActivated) {
-            throw new ConflictException("This service was already activated for you");
+            if (isForCorporateCustomer) {
+                throw new ConflictException("This service was already activated for " + customer.getEmail());
+            } else {
+                throw new ConflictException("This service was already activated for you");
+            }
         }
         Service service = serviceService.getById(serviceId);
         CustomerServiceDto customerService =
                 new CustomerServiceDto(customer, service,
-                        service.getPrice(), CustomerProductStatus.ACTIVE);
+                        service.getPrice() - (service.getPrice() * service.getDiscount() / 100),
+                        CustomerProductStatus.ACTIVE);
         this.save(customerService);
 
         return customerService;
@@ -157,7 +163,7 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
     public CustomerServiceDto activateMarketingServiceForCustomer(
             MarketingCampaignServices marketingCampaignService, Customer customer) {
         Long serviceId = marketingCampaignService.getService().getId();
-        boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer);
+        boolean isActivated = this.checkIfServiceWasAlreadyActivated(serviceId, customer.getId());
         if (isActivated) {
             throw new ConflictException("Service " +
                     marketingCampaignService.getService().getServiceName() +
@@ -173,8 +179,32 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
         return customerService;
     }
 
-    private boolean checkIfServiceWasAlreadyActivated(long serviceId, Customer customer) {
-        return customerServiceDao.isCustomerServiceAlreadyPresent(serviceId, customer.getId());
+    private boolean checkIfServiceWasAlreadyActivated(long serviceId, long customerId) {
+        return customerServiceDao.isCustomerServiceAlreadyPresent(serviceId, customerId);
+    }
+
+    @Override
+    public boolean isProductCategoryAvailable(Customer customer, long categoryId, boolean isForCorporateCustomer) {
+
+        /*3 - other services*/
+        if (categoryId == 3) {
+            return true;
+        }
+
+        List<CustomerServiceDto> services = getCurrentCustomerServices(customer.getId());
+        for (CustomerServiceDto customerServiceDto : services) {
+            if (customerServiceDto.getService().getProductCategory().getId() == categoryId) {
+                if (isForCorporateCustomer) {
+                    throw new ConflictException("Service in this category have already ordered for "
+                            + customer.getEmail());
+                } else {
+                    throw new ConflictException("Service in this category have already ordered. " +
+                            "Please deactivate the service of this type and try again");
+                }
+            }
+        }
+
+        return true;
     }
 }
 
