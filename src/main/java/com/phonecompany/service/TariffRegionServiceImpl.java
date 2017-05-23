@@ -40,4 +40,8 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
         return this.tariffRegionDao.getByTariffIdAndRegionId(tariffId, regionId);
     }
 
+    @Override
+    public List<TariffRegion> getAllByRegionId(Long regionId) {
+        return tariffRegionDao.getAllByRegionId(regionId);
+    }
 }

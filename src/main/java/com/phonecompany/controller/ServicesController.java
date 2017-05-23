@@ -73,6 +73,13 @@ public class ServicesController {
         return allServices;
     }
 
+    @GetMapping(value = "/active")
+    public Collection<Service> getAllActiveServices() {
+        List<Service> allServices = this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
+        LOG.debug("Services fetched from the storage: {}", allServices);
+        return allServices;
+    }
+
     @GetMapping("/category/{id}/{page}/{size}")
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,

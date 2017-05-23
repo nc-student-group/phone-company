@@ -79,6 +79,11 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return pagingResult;
     }
 
+    @Override
+    public List<Service> getServicesByStatus(ProductStatus status) {
+        return serviceDao.getServicesByStatus(status);
+    }
+
     private Query buildQueryForTariffTable(int page, int size, int productCategoryId,
                                            String partOfName, double priceFrom, double priceTo,
                                            int status, int orderBy, String orderByType) {

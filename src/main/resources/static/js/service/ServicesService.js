@@ -44,6 +44,19 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function getAllActiveServices() {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/active`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getServicesByProductCategoryId(productCategoryId, page, size, partOfName, priceFrom,
                                                 priceTo, selectedStatus, order, orderByType) {
             let deferred = $q.defer();
@@ -157,6 +170,7 @@ angular.module('phone-company')
             addService: addService,
             getAllCategories: getAllCategories,
             getAllServices: getAllServices,
+            getAllActiveServices: getAllActiveServices,
             changeServiceStatus: changeServiceStatus,
             getServiceById: getServiceById,
             performServiceEdit: performServiceEdit,
