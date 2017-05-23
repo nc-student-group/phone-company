@@ -8,6 +8,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
     var POST_ADD_TARIFF_URL = "api/tariff-region";
     var POST_ADD_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_TARIFF_TO_EDIT_BY_ID = "api/tariffs/";
+    var GET_TARIFFS_BY_REGION_ID = "api/tariff-region/region/";
     var POST_SAVE_TARIFF_URL = "api/tariff-region";
     var POST_SAVE_TARIFF_SINGLE_URL = "api/tariffs";
     var GET_CHANGE_TARIFF_STATUS_URL = "api/tariffs/";
@@ -39,7 +40,8 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
         activateTariffForCustomerId: activateTariffForCustomerId,
         resumeCustomerTariff: resumeCustomerTariff,
         getTariffsAvailableForCorporate: getTariffsAvailableForCorporate,
-        activateTariffForCorporateId: activateTariffForCorporateId
+        activateTariffForCorporateId: activateTariffForCorporateId,
+        getTariffsForRegion: getTariffsForRegion
     };
 
     return factory;
@@ -206,6 +208,19 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
     function getTariffForCustomerById(id) {
         var deferred = $q.defer();
         $http.get(GET_TARIFF_FOR_CUSTOMER_BY_UD_URL + id).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function getTariffsForRegion(id) {
+        var deferred = $q.defer();
+        $http.get(GET_TARIFFS_BY_REGION_ID + id).then(
             function (response) {
                 deferred.resolve(response.data);
             },

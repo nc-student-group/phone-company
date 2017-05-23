@@ -76,6 +76,17 @@
                 templateUrl: 'view/csr/tariffEdit.html',
                 controller: 'TariffEditController'
             });
+
+        $routeProvider.when('/csr/marketing-campaigns',
+            {
+                templateUrl: 'view/csr/marketing-campaigns.html',
+                controller: 'MarketingCampaignController'
+            });
+        $routeProvider.when('/csr/marketing-campaign/:id',
+            {
+                templateUrl: 'view/csr/marketingCampaignDetail.html',
+                controller: 'CsrMarketingCampaignDetailController'
+            });
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',

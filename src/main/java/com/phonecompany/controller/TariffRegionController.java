@@ -4,10 +4,7 @@ import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
 import com.phonecompany.service.email.tariff_related_emails.TariffNotificationEmailCreator;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
-import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +24,19 @@ public class TariffRegionController {
     private static final Logger LOG = LoggerFactory.getLogger(TariffRegionController.class);
 
     private TariffService tariffService;
+    private TariffRegionService tariffRegionService;
     private CustomerService customerService;
     private EmailService<Customer> emailService;
     private TariffNotificationEmailCreator tariffNotificationMailCreator;
 
     @Autowired
     public TariffRegionController(TariffService tariffService,
+                                  TariffRegionService tariffRegionService,
                                   CustomerService customerService,
                                   EmailService<Customer> emailService,
                                   TariffNotificationEmailCreator tariffNotificationMailCreator){
         this.tariffService = tariffService;
+        this.tariffRegionService = tariffRegionService;
         this.customerService = customerService;
         this.emailService = emailService;
         this.tariffNotificationMailCreator = tariffNotificationMailCreator;
@@ -67,5 +67,11 @@ public class TariffRegionController {
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
         return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/region/{id}")
+    public ResponseEntity<?> getTariffsForRegion(@PathVariable("id") Long regionId) {
+        return new ResponseEntity<Object>(tariffRegionService
+                .getAllByRegionId(regionId), HttpStatus.OK);
     }
 }

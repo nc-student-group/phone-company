@@ -6,6 +6,7 @@ import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.MarketingCampaign;
+import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.TypeMapper;
 import com.phonecompany.util.interfaces.QueryLoader;
@@ -46,7 +47,6 @@ public class MarketingCampaignDaoImpl extends JdbcOperationsImpl<MarketingCampai
             preparedStatement.setString(2, entity.getMarketingCampaignStatus().name());
             preparedStatement.setString(3, entity.getDescription());
             preparedStatement.setObject(4, TypeMapper.getNullableId(entity.getTariffRegion()));
-
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
@@ -85,5 +85,10 @@ public class MarketingCampaignDaoImpl extends JdbcOperationsImpl<MarketingCampai
     public List<MarketingCampaign> getAllByTariffRegion(Long tariffRegionId) {
         return this.executeForList(this.getQuery("getAllByTariffRegion"),
                 new Object[]{tariffRegionId});
+    }
+
+    @Override
+    public void updateMarketingCampaignStatus(Long campaignId, ProductStatus productStatus) {
+        this.executeUpdate(this.getQuery("updateStatus"), new Object[]{productStatus.name(), campaignId});
     }
 }

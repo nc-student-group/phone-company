@@ -1,15 +1,21 @@
 package com.phonecompany.dao;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.dao_layer.EntityInitializationException;
+import com.phonecompany.exception.dao_layer.EntityPersistenceException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
+import com.phonecompany.model.MarketingCampaign;
 import com.phonecompany.model.MarketingCampaignServices;
 import com.phonecompany.util.TypeMapper;
 import com.phonecompany.util.interfaces.QueryLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +24,9 @@ import java.util.List;
 @Repository
 public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<MarketingCampaignServices>
         implements MarketingCampaignServicesDao {
+
+    @Autowired
+    private ComboPooledDataSource dataSource;
 
     private QueryLoader queryLoader;
     private ServiceDao serviceDao;
@@ -71,5 +80,28 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
     public List<MarketingCampaignServices> getServicesByMarketingCampaignId(Long mcId) {
         return this.executeForList(this.getQuery("getByMarketingCampaignId"),
                 new Object[]{mcId});
+    }
+
+    @Override
+    public MarketingCampaignServices save(MarketingCampaignServices entity, MarketingCampaign marketingCampaign) {
+        Connection conn = DataSourceUtils.getConnection(this.dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("save"));
+            this.populateSaveStatement(ps, entity);
+            ps.setObject(3, TypeMapper.getNullableId(marketingCampaign));
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            long generatedId = rs.getLong(1);
+            entity.setId(generatedId);
+            return entity;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new EntityPersistenceException(entity, e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
     }
 }
