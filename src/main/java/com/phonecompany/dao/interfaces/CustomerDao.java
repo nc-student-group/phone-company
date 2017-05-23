@@ -12,6 +12,8 @@ public interface CustomerDao extends JdbcOperations<Customer>,
 
     List<Customer> getByCorporateId(long corporateId);
 
+    List<Customer> getSuitableCustomersForService(long corporateId);
+
     int getCountByPhone(String phone);
 
     int getCountByEmail(String email);

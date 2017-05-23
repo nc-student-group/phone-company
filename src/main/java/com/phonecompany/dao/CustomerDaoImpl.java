@@ -121,6 +121,11 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         }
     }
 
+    @Override
+    public List<Customer> getSuitableCustomersForService(long corporateId) {
+        return this.executeForList(this.getQuery("suitableCustomersForService"), new Object[]{corporateId});
+    }
+
     private List<Customer> getByCorporate(long corporateId) {
         return this.executeForList(this.getQuery("by.corporate"), new Object[]{corporateId});
     }

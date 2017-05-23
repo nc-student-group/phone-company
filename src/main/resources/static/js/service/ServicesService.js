@@ -5,6 +5,19 @@ angular.module('phone-company')
 
         const SERVICES = "api/services";
 
+        function isProductCategoryAvailable(customerId, categoryId, isForCorporateCustomer) {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/productCategoryAvailable/${customerId}/${categoryId}/${isForCorporateCustomer}`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getAllCategories() {
             let deferred = $q.defer();
             $http.get(`${SERVICES}/categories`).then(
@@ -127,7 +140,7 @@ angular.module('phone-company')
 
         function activateServiceForCustomerId(serviceId, customerId) {
             var deferred = $q.defer();
-            $http.get(SERVICES + "/activate/" + serviceId + "/" + customerId).then(
+            $http.get(`${SERVICES}/activate/${serviceId}/${customerId}`).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -148,6 +161,7 @@ angular.module('phone-company')
             getServiceById: getServiceById,
             performServiceEdit: performServiceEdit,
             activateService: activateService,
-            activateServiceForCustomerId: activateServiceForCustomerId
+            activateServiceForCustomerId: activateServiceForCustomerId,
+            isProductCategoryAvailable: isProductCategoryAvailable,
         };
     }]);
