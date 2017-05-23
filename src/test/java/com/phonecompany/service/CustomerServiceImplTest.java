@@ -97,7 +97,7 @@ public class CustomerServiceImplTest {
 
         when(customerDao.getByVerificationToken(token)).thenReturn(customer);
 
-        customerService.activateUserByToken(token);
+        customerService.activateCustomerByToken(token);
 
         verify(customerDao, atLeastOnce()).update(customer);
 

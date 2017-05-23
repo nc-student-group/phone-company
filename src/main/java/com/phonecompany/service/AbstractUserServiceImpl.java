@@ -44,22 +44,6 @@ public abstract class AbstractUserServiceImpl<T extends User>
         return userFoundByEmail;
     }
 
-    @Override
-    @EventListener
-    public T resetPassword(ResetPasswordEvent<T> resetPasswordEvent) {
-        T userToReset = resetPasswordEvent.getUserToReset();
-        Assert.notNull(userToReset, "User should not be null");
-        userToReset.setPassword(generatePassword());
-        LOG.info("Sending password reset email to: {}", userToReset.getEmail());
-        SimpleMailMessage mailMessage =
-                this.resetPassMessageCreator.constructMessage(userToReset);
-        emailService.sendMail(mailMessage, userToReset);
-        LOG.info("Resetting password");
-        userToReset.setPassword(shaPasswordEncoder.encodePassword(userToReset.getPassword(), null));
-        LOG.info("Password after reset: {}", userToReset.getPassword());
-        return update(userToReset);
-    }
-
     private String generatePassword() {
         SecureRandom random = new SecureRandom();
         return new BigInteger(50, random).toString(32);
@@ -73,6 +57,19 @@ public abstract class AbstractUserServiceImpl<T extends User>
         return super.save(entity);
     }
 
+    /**
+     * Performs a set of validating operations particular to the given
+     * entity.
+     *
+     * @param entity entity to be validated
+     */
     public abstract void validate(T entity);
+
+    /**
+     * Defines a default status that entities of the given type are
+     * being created with.
+     *
+     * @return default status
+     */
     public abstract Status getStatus();
 }

@@ -1,7 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.service_layer.KeyAlreadyPresentException;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.model.events.OnUserCreationEvent;
@@ -48,23 +48,16 @@ public class UserServiceImplTest {
     @MockBean
     private ResetPasswordEmailCreator resetPassMessageCreator;
     @MockBean
-    private PasswordAssignmentEmailCreator passwordAssignmentCreator;
-    @MockBean
     private EmailService<User> emailService;
-
-    @Captor
-    private ArgumentCaptor<User> userCaptor;
 
     @Autowired
     private UserService userService;
 
     private User user;
-    private OnUserCreationEvent userCreationEvent;
 
     @Before
     public void setUp() {
         user = new User(EXAMPLE_EMAIL, EXAMPLE_PASSWORD, UserRole.CLIENT, null);
-        userCreationEvent = new OnUserCreationEvent(user);
     }
 
     @Test
@@ -72,7 +65,7 @@ public class UserServiceImplTest {
         //given
         when(userDao.getCountByEmail(anyString()))
                 .thenReturn(1);
-        thrown.expect(KeyAlreadyPresentException.class);
+        thrown.expect(ConflictException.class);
         thrown.expectMessage("User associated with " + EXAMPLE_EMAIL
                 + " already exists");
 
@@ -105,26 +98,6 @@ public class UserServiceImplTest {
         assertThat(savedUser.getStatus(), is(ACTIVATED));
         assertThat(initialPassword, is(not(savedUser.getPassword())));
         assertThat(savedUser.getPassword(), is("encoded_pass"));
-    }
-
-    @Test
-    public void shouldSendConfirmationEmail() {
-        //given
-        SimpleMailMessage confirmationMessage = new SimpleMailMessage();
-        when(passwordAssignmentCreator.constructMessage(user))
-                .thenReturn(confirmationMessage);
-
-        //when
-        userService.sendConfirmationEmail(userCreationEvent);
-
-        //then
-        verify(passwordAssignmentCreator, times(1))
-                .constructMessage(userCaptor.capture());
-        verify(emailService, times(1))
-                .sendMail(confirmationMessage, user);
-
-        assertThat(userCaptor.getValue().getEmail(), is(EXAMPLE_EMAIL));
-        assertThat(userCaptor.getValue().getPassword(), is(EXAMPLE_PASSWORD));
     }
 
     @Test

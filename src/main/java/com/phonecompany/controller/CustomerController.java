@@ -2,34 +2,26 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.Status;
-import com.phonecompany.model.events.OnRegistrationCompleteEvent;
-import com.phonecompany.model.events.OnUserCreationEvent;
+import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
+import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.SecureRandom;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
-import static com.phonecompany.model.enums.UserRole.CLIENT;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -38,20 +30,32 @@ public class CustomerController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerController.class);
 
+    @Value("${application-url}")
+    private String applicationUrl;
+
     private CustomerService customerService;
     private AddressService addressService;
-    private ApplicationEventPublisher eventPublisher;
     private UserService userService;
+    private VerificationTokenService verificationTokenService;
+    private ConfirmationEmailCreator confirmMessageCreator;
+    private PasswordAssignmentEmailCreator passwordAssignmentEmailCreator;
+    private EmailService<Customer> emailService;
 
     @Autowired
     public CustomerController(CustomerService customerService,
                               AddressService addressService,
-                              ApplicationEventPublisher eventPublisher,
-                              UserService userService) {
+                              UserService userService,
+                              VerificationTokenService verificationTokenService,
+                              ConfirmationEmailCreator confirmMessageCreator,
+                              PasswordAssignmentEmailCreator passwordAssignmentEmailCreator,
+                              EmailService<Customer> emailService) {
         this.customerService = customerService;
         this.addressService = addressService;
-        this.eventPublisher = eventPublisher;
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
+        this.confirmMessageCreator = confirmMessageCreator;
+        this.passwordAssignmentEmailCreator = passwordAssignmentEmailCreator;
+        this.emailService = emailService;
     }
 
     @RequestMapping(method = POST, value = "/api/customers")
@@ -59,7 +63,12 @@ public class CustomerController {
         LOG.debug("Customer retrieved from the http request: " + customer);
         Customer persistedCustomer = customerService.addNewCustomer(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
-        this.eventPublisher.publishEvent(new OnRegistrationCompleteEvent(persistedCustomer));
+        VerificationToken persistedToken = this.verificationTokenService
+                .saveTokenForUser(persistedCustomer);
+        SimpleMailMessage confirmationMessage =
+                this.confirmMessageCreator.constructMessage(persistedToken);
+        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
+        emailService.sendMail(confirmationMessage, persistedCustomer);
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
@@ -88,7 +97,7 @@ public class CustomerController {
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
         LOG.debug("Token retrieved from the request parameter: {}", token);
-        this.customerService.activateUserByToken(token);
+        this.customerService.activateCustomerByToken(token);
         HttpHeaders redirectionHeaders = this.getRedirectionHeaders();
 
         return new ResponseEntity<>(redirectionHeaders, HttpStatus.SEE_OTHER);
@@ -106,7 +115,10 @@ public class CustomerController {
         LOG.debug("Customer retrieved from the http request: " + customer);
         if (customerService.findByEmail(customer.getEmail()) == null) {
             customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-            eventPublisher.publishEvent(new OnUserCreationEvent(customer));
+            SimpleMailMessage confirmationMessage =
+                    this.passwordAssignmentEmailCreator.constructMessage(customer);
+            LOG.info("Sending email confirmation message to: {}", customer.getEmail());
+            emailService.sendMail(confirmationMessage, customer);
         }
         Customer persistedCustomer = this.customerService.save(customer);
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);

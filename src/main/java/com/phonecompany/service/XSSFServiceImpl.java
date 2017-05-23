@@ -167,8 +167,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      */
     private void createCell(XSSFRow row, int colPosition, V cellValue) {
         XSSFCell cell = row.createCell(colPosition);
-        if (cellValue instanceof Number) {
-            cell.setCellValue((Double) cellValue);
+        if (cellValue instanceof Long) {
+            cell.setCellValue((Long) cellValue);
         } else if (cellValue instanceof String) {
             cell.setCellValue((String) cellValue);
         } else if (cellValue instanceof Date) {
@@ -222,9 +222,9 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         // add chart series for each line
         this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
-        this.noSmoothedLinesForChart(chart);
         chart.plot(data, bottomAxis, leftAxis);
         LOG.debug("Chart for {} has been drawn", chartTitle);
+        this.noSmoothedLinesForChart(chart);
     }
 
     /**

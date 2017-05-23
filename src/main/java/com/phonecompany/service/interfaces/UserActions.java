@@ -16,6 +16,4 @@ public interface UserActions extends CrudService<User>, AbstractUserService<User
     User getCurrentlyLoggedInUser();
 
     void changePassword(String oldPass, String newPass, User user);
-
-    void sendConfirmationEmail(OnUserCreationEvent onUserCreationEvent);
 }

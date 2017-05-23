@@ -96,20 +96,8 @@ public class ServicesController {
         Service persistedService = this.serviceService.save(service);
         SimpleMailMessage mailMessage = this
                 .serviceNotificationEmailCreator.constructMessage(service);
-        this.notifyAgreedCustomers(mailMessage);
+        this.customerService.notifyAgreedCustomers(mailMessage);
         return new ResponseEntity<>(persistedService, HttpStatus.OK);
-    }
-
-    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
-        this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    private List<Customer> getAgreedCustomers() {
-        return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     @GetMapping("/activate/{serviceId}")
