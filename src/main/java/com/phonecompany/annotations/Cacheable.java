@@ -15,8 +15,6 @@ import java.lang.annotation.Target;
  *
  * <p>Note that caching is performed through
  * {@link com.phonecompany.cache.CachingAspect}</p>
- *
- * @see com.phonecompany.cache.SimpleCacheImpl
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -9,76 +9,104 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                                <div class="header">
-                                    <h4 class="title">{{currentService.serviceName}}</h4>
-                                </div>
-                                <hr/>
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-4 col-lg-offset-1">
-                                            <div style="width: 360px; height: 240px;">
-                                                <img class="rounded img-thumbnail"
-                                                     style="width: 360px; height: 240px"
-                                                     ng-src="{{currentService.pictureUrl}}"
-                                                     class="rounded" alt="Image not found">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-5 col-md-offset-1">
-                                            <table class="table table-striped table-hover
-                                            table-bordered" style="table-layout: fixed">
-                                                <tbody>
-                                                <tr>
-                                                    <td>Price</td>
-                                                    <td>
-                                                        <div ng-hide="currentService.discount > 0
-                                                        && currentService.discount < 100">
-                                                            {{currentService.price | number : 2}} &#8372;
-                                                        </div>
-                                                        <div ng-show="currentService.discount > 0
-                                                        && currentService.discount < 100"
-                                                             class="service-price-individual"
-                                                             style="text-decoration: line-through">
-                                                            {{currentService.price | number : 2}} &#8372;
-                                                        </div>
-                                                        <div ng-show="currentService.discount > 0
-                                                        && currentService.discount < 100"
-                                                             style="font-weight: 700"
-                                                             class="service-price-individual-discounted">
-                                                            {{currentService.price * (1 - currentService.discount / 100) |
-                                                            number : 2}} &#8372;
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Duration</td>
-                                                    <td>
-                                                        {{currentService.durationInDays}} days
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Amount</td>
-                                                    <td>{{currentService.durationInDays}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" style="word-wrap: break-word">
-                                                        {{currentService.description}}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="/#/client/services"
-                                                           class="btn btn-primary">
-                                                        Back to all services
-                                                    </a>
-                                                    </td>
-                                                    <td><a ng-click="activateService()"
-                                                           class="pull-right btn btn-success">Order service</a>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
+                            <div class="header">
+                                <h4 class="title">{{currentService.serviceName}}</h4>
+                            </div>
+                            <hr/>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-4 col-lg-offset-1">
+                                        <div style="width: 360px; height: 240px;">
+                                            <img class="rounded img-thumbnail"
+                                                 style="width: 360px; height: 240px"
+                                                 ng-src="{{currentService.pictureUrl}}"
+                                                 class="rounded" alt="Image not found">
                                         </div>
                                     </div>
+                                    <div class="col-md-5 col-md-offset-1">
+                                        <table class="table table-striped table-hover
+                                        table-bordered" style="table-layout: fixed">
+                                            <tbody>
+                                            <tr>
+                                                <td>Price</td>
+                                                <td>
+                                                    <div ng-hide="currentService.discount > 0
+                                                    && currentService.discount < 100">
+                                                        {{currentService.price | number : 2}} &#8372;
+                                                    </div>
+                                                    <div ng-show="currentService.discount > 0
+                                                    && currentService.discount < 100"
+                                                         class="service-price-individual"
+                                                         style="text-decoration: line-through">
+                                                        {{currentService.price | number : 2}} &#8372;
+                                                    </div>
+                                                    <div ng-show="currentService.discount > 0
+                                                    && currentService.discount < 100"
+                                                         style="font-weight: 700"
+                                                         class="service-price-individual-discounted">
+                                                        {{currentService.price * (1 - currentService.discount / 100) |
+                                                        number : 2}} &#8372;
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Duration</td>
+                                                <td>
+                                                    {{currentService.durationInDays}} days
+                                                </td>
+                                            </tr>
+                                            <tr ng-show="currentService.amount != 0">
+                                                <td>Amount</td>
+                                                <td>{{currentService.amount}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="word-wrap: break-word">
+                                                    {{currentService.description}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><a href="/#/client/services"
+                                                       class="btn btn-primary">
+                                                    Back to all services
+                                                </a>
+                                                </td>
+                                                <td><a ng-click="isProductCategoryAvailable()"
+                                                       class="pull-right btn btn-success">Order service</a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-show="customer.isRepresentative === true">
+                                                <td colspan="2">
+                                                    <a ng-click="showOrderDialog($event)"
+                                                       class="pull-right btn btn-primary">Order service for corporate clients</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
+                            </div>
+                            <div class="content">
+                                <div style="display: none">
+                                    <div class="md-dialog-container" id="serviceOrderForCorporateClients">
+                                        <md-dialog layout-padding>
+                                            <md-content layout-padding>
+                                                <h3>Service order</h3>
+                                                <md-list ng-cloak="">
+                                                    <md-subheader class="md-no-sticky">Select the required corporate clients</md-subheader>
+                                                    <md-list-item ng-repeat="customer in suitableCustomers">
+                                                        <p> {{customer.email}} </p>
+                                                        <md-checkbox class="md-secondary" ng-model="customer.isChecked"></md-checkbox>
+                                                    </md-list-item>
+                                                </md-list>
+                                            </md-content>
+                                            <md-button class="md-raised md-primary"
+                                                       ng-click="orderServiceForCorporateClients()">
+                                                Order
+                                            </md-button>
+                                        </md-dialog>
+                                    </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>

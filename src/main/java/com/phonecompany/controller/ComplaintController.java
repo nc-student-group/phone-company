@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
+import com.phonecompany.service.email.customer_related_emails.ComplaintChangeStatusEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,13 @@ public class ComplaintController {
 
     private ComplaintService complaintService;
     private UserService userService;
-    private MailMessageCreator<Complaint> complaintChangeStatusCreator;
+    private ComplaintChangeStatusEmailCreator complaintChangeStatusCreator;
     private EmailService<User> emailService;
 
     @Autowired
     public ComplaintController(ComplaintService complaintService,
                                UserService userService,
-                               @Qualifier("complaintAcceptedEmailCreator") MailMessageCreator<Complaint> complaintChangeStatusCreator,
+                               ComplaintChangeStatusEmailCreator complaintChangeStatusCreator,
                                EmailService<User> emailService) {
         this.complaintService = complaintService;
         this.userService = userService;

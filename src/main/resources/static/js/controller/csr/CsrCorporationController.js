@@ -87,6 +87,23 @@
                 }
             );
         };
+        $scope.updateCustomer = function (customer) {
+            if( customer.isRepresentative ==  true){
+                customer.isRepresentative =  false;
+            }else{
+                customer.isRepresentative =  true;
+            }
+            CustomerService.updateCustomer(customer).then(
+                function (response) {
+                    $scope.getCustomers();
+                    toastr.success("Customer status in this company haven been changed");
+                },
+                function (errResponse) {
+                    toastr.error("Customer status in this company haven't been changed");
+                }
+            );
+        };
+
 
         $scope.getCorporateById = function (id) {
             CorporationService.getById(id).then(

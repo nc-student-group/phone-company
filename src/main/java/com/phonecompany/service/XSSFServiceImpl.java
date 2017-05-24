@@ -2,7 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.exception.service_layer.TypeNotSupportedException;
-import com.phonecompany.exception.service_layer.WorkbookToInputStreamConversionException;
+import com.phonecompany.exception.service_layer.ToInputStreamConversionException;
 import com.phonecompany.service.interfaces.XSSFService;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.RowDataSet;
@@ -33,6 +33,14 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 import static org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER;
 import static org.apache.poi.ss.util.CellUtil.setAlignment;
 
+/**
+ * Class responsible for creating xls reports
+ *
+ * @param <K> type of objects that represent range of definition
+ *            of the rows contained in the report
+ * @param <V> type of objects that represent range of values
+ *            of the rows contained in the report
+ */
 @ServiceStereotype
 public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
@@ -57,13 +65,12 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             LOG.debug("Created sheet with name: {}", sheetName);
             int rowPosition = 0;
             for (TableDataSet<K, V> tableDataSet : sheetDataSet.getTableDataSets()) {
-                LOG.debug("Created table with name: {}", tableDataSet.getTableDataSetName());
                 this.createTable(sheet, rowPosition, tableDataSet);
                 rowPosition += distanceBetweenTables;
             }
         }
 
-        return this.saveWorkBook(workbook);
+        return this.convertToInputStream(workbook);
     }
 
     /**
@@ -79,17 +86,17 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
                              TableDataSet<K, V> tableDataSet) {
         String tableName = tableDataSet.getTableDataSetName() + PLURAL_FORM;
         this.createTableHeading(sheet, rowPosition++, tableName);
+        RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
+        this.generateColHeadings(sheet.createRow(rowPosition++), firstTableRow.getRowValues());
         int initialRowPosition = rowPosition;
         for (RowDataSet<K, V> rowDataSet : tableDataSet.getRowDataSets()) {
             int colPosition = 1;
             XSSFRow row = this.generateRowHeading(sheet, rowPosition++, rowDataSet.getRowName());
             this.fillRow(row, colPosition, rowDataSet.getRowValues());
         }
-        RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
-        this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
-        LOG.debug("Created table with name: {}", tableName);
+        LOG.debug("Row position: {}", rowPosition);
         int rowValuesNumber = firstTableRow.getRowValues().size();
-        distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
+        distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 3;
         this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber, tableName);
     }
 
@@ -160,8 +167,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      */
     private void createCell(XSSFRow row, int colPosition, V cellValue) {
         XSSFCell cell = row.createCell(colPosition);
-        if (cellValue instanceof Number) {
-            cell.setCellValue(((Number) cellValue).doubleValue());
+        if (cellValue instanceof Long) {
+            cell.setCellValue((Long) cellValue);
         } else if (cellValue instanceof String) {
             cell.setCellValue((String) cellValue);
         } else if (cellValue instanceof Date) {
@@ -216,6 +223,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
         chart.plot(data, bottomAxis, leftAxis);
+        LOG.debug("Chart for {} has been drawn", chartTitle);
         this.noSmoothedLinesForChart(chart);
     }
 
@@ -325,7 +333,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
         // Define anchor points in the worksheet to position the chart
         XSSFClientAnchor anchor = drawing.createAnchor(
-                0, 0, 0, 0, 0, rowIndex + 2,
+                0, 0, 0, 0, 0, rowIndex + 1,
                 9, rowIndex + CHART_HEIGHT + 2);
 
         // Create the chart object based on the anchor point
@@ -338,20 +346,21 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     }
 
     /**
-     * Persist provided {@link XSSFWorkbook} workbook into the root of the project.
+     * Converts provided {@link XSSFWorkbook} workbook into an InputStream.
      *
-     * @param workbook workbook to save
+     * @param workbook workbook to be converted
      * @return {@code InputStream} of all bytes of the workbook
      */
-    private InputStream saveWorkBook(XSSFWorkbook workbook) {
+    private InputStream convertToInputStream(XSSFWorkbook workbook) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             workbook.write(byteArrayOutputStream);
             byteArrayOutputStream.flush();
             workbook.close();
+            LOG.debug("Workbook has been written into an OutputStream");
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            throw new WorkbookToInputStreamConversionException(e);
+            throw new ToInputStreamConversionException(e);
         }
     }
 }

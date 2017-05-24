@@ -17,13 +17,6 @@ public abstract class CrudServiceImpl<T extends DomainEntity>
     @Autowired
     protected JdbcOperations<T> dao;
 
-    public CrudServiceImpl(JdbcOperations<T> dao) {
-        this.dao = dao;
-    }
-
-    public CrudServiceImpl() {
-    }
-
     @Override
     public T save(T entity) {
         return dao.save(entity);

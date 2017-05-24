@@ -7,10 +7,10 @@ import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.model.paging.PagingResult;
-import com.phonecompany.service.email.ServiceActivationNotificationEmailCreator;
-import com.phonecompany.service.email.ServiceDeactivationNotificationEmailCreator;
-import com.phonecompany.service.email.ServiceNotificationEmailCreator;
-import com.phonecompany.service.email.ServiceSuspensionNotificationEmailCreator;
+import com.phonecompany.service.email.service_related_emails.ServiceActivationNotificationEmailCreator;
+import com.phonecompany.service.email.service_related_emails.ServiceDeactivationNotificationEmailCreator;
+import com.phonecompany.service.email.service_related_emails.ServiceNotificationEmailCreator;
+import com.phonecompany.service.email.service_related_emails.ServiceSuspensionNotificationEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,25 +68,30 @@ public class ServicesController {
 
     @GetMapping
     public Collection<Service> getAllServices() {
-        List<Service> allServices = this.serviceService.getAll();
-        LOG.debug("Services fetched from the storage: {}", allServices);
-        return allServices;
+        LOG.debug("Fetching all the services...");
+        return this.serviceService.getAll();
+    }
+
+    @GetMapping(value = "/active")
+    public Collection<Service> getAllActiveServices() {
+        LOG.debug("Fetching all the active services...");
+        return this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,
                                                      @PathVariable("size") int size,
-                                                     @RequestParam("pon") String partOfName,
-                                                     @RequestParam("pf") double priceFrom,
-                                                     @RequestParam("pt") double priceTo,
-                                                     @RequestParam("s") int status,
-                                                     @RequestParam("ob") int orderBy,
-                                                     @RequestParam("obt") String orderByType) {
+                                                     @RequestParam("partOfName") String partOfName,
+                                                     @RequestParam("startingPrice") double startingPrice,
+                                                     @RequestParam("endingPrice") double endingPrice,
+                                                     @RequestParam("selectedStatus") int status,
+                                                     @RequestParam("orderingCategory") int orderingCategory,
+                                                     @RequestParam("orderType") String orderType) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
         PagingResult<Service> servicePagingResult = serviceService
                 .getServicesByProductCategoryId(page, size, productCategoryId, partOfName,
-                        priceFrom, priceTo, status, orderBy, orderByType);
+                        startingPrice, endingPrice, status, orderingCategory, orderType);
         return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 
@@ -96,27 +101,15 @@ public class ServicesController {
         Service persistedService = this.serviceService.save(service);
         SimpleMailMessage mailMessage = this
                 .serviceNotificationEmailCreator.constructMessage(service);
-        this.notifyAgreedCustomers(mailMessage);
+        this.customerService.notifyAgreedCustomers(mailMessage);
         return new ResponseEntity<>(persistedService, HttpStatus.OK);
-    }
-
-    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
-        this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    private List<Customer> getAgreedCustomers() {
-        return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     @GetMapping("/activate/{serviceId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId) {
         Customer loggedInCustomer = this.customerService.getCurrentlyLoggedInUser();
         CustomerServiceDto activatedCustomerService = this.customerServiceService
-                .activateServiceForCustomer(serviceId, loggedInCustomer);
+                .activateServiceForCustomer(serviceId, loggedInCustomer, false);
         this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
                 .serviceActivationNotificationEmailCreator
@@ -129,13 +122,12 @@ public class ServicesController {
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
                                                     @PathVariable("customerId") long customerId) {
         Customer loggedInCustomer = this.customerService.getById(customerId);
-        Service currentService = this.serviceService.getById(serviceId);
-        CustomerServiceDto activatedCustomerService = this
-                .customerServiceService
-                .activateServiceForCustomer(serviceId, loggedInCustomer);
+        CustomerServiceDto activatedCustomerService = this.customerServiceService
+                .activateServiceForCustomer(serviceId, loggedInCustomer, true);
         this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
-                .serviceActivationNotificationEmailCreator.constructMessage(currentService);
+                .serviceActivationNotificationEmailCreator
+                .constructMessage(activatedCustomerService.getService());
         this.emailService.sendMail(notificationMessage, loggedInCustomer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -239,5 +231,13 @@ public class ServicesController {
                 .constructMessage(customerService.getService());
         this.emailService.sendMail(notificationMessage, customerService.getCustomer());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/productCategoryAvailable/{customerId}/{categoryId}/{isForCorporateCustomer}")
+    public Boolean isProductCategoryAvailable(@PathVariable("customerId") long customerId,
+                                              @PathVariable("categoryId") long categoryId,
+                                              @PathVariable("isForCorporateCustomer") boolean isForCorporateCustomer) {
+        Customer customer = this.customerService.getById(customerId);
+        return customerServiceService.isProductCategoryAvailable(customer, categoryId, isForCorporateCustomer);
     }
 }

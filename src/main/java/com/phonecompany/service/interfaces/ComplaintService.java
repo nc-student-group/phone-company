@@ -3,7 +3,6 @@ package com.phonecompany.service.interfaces;
 import com.phonecompany.model.*;
 import com.phonecompany.service.xssfHelper.*;
 
-import java.util.List;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public interface ComplaintService extends CrudService<Complaint> {
 
     Map<String, Object> getAllComplaintsSearch(int page, int size, String email, String status, String category);
 
-    WeeklyComplaintStatistics getComplaintStatistics();
+    WeeklyComplaintsAmount getComplaintStatistics();
 
     SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
                                                                 LocalDate startDate,

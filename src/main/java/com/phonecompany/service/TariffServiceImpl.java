@@ -13,7 +13,7 @@ import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
                              OrderService orderService,
                              CustomerTariffService customerTariffService,
                              StatisticsService<LocalDate, Long> statisticsService) {
-        super(tariffDao);
         this.tariffDao = tariffDao;
         this.tariffRegionService = tariffRegionService;
         this.fileService = fileService;
@@ -65,6 +64,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     @Override
     @CacheClear
+    @Transactional
     public Tariff updateTariff(List<TariffRegion> tariffRegions) {
         if (tariffRegions.size() > 0) {
             Tariff savedTariff = updateTariff(tariffRegions.get(0).getTariff());
@@ -101,6 +101,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         });
     }
 
+    @Override
     public Map<String, Object> getTariffsAvailableForCustomer(Customer customer, int page, int size) {
         Map<String, Object> response = new HashMap<>();
         if (customer.getCorporate() == null) {
@@ -168,6 +169,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void deactivateSingleTariff(CustomerTariff customerTariff) {
         LOGGER.debug("Tariff deactivation for customer id " + customerTariff.getCustomer().getId());
         LocalDate currentDate = LocalDate.now();
@@ -182,6 +184,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void activateSingleTariff(Customer customer, TariffRegion tariffRegion) {
         LOGGER.debug("Tariff deactivation for customer id " + customer.getId());
         LocalDate currentDate = LocalDate.now();
@@ -201,6 +204,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void deactivateCorporateTariff(CustomerTariff customerTariff) {
         LOGGER.debug("Tariff deactivation for corporate id " + customerTariff.getCorporate().getId());
         LocalDate currentDate = LocalDate.now();
@@ -215,6 +219,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void activateCorporateTariff(Corporate corporate, Tariff tariff) {
         LOGGER.debug("Tariff deactivation for corporate id " + corporate.getId());
         LocalDate currentDate = LocalDate.now();
@@ -247,6 +252,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void activateTariffForSingleCustomer(long tariffId, Customer customer) {
         TariffRegion tariffRegion = tariffRegionService
                 .getByTariffIdAndRegionId(tariffId, customer.getAddress().getRegion().getId());
@@ -265,6 +271,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    @Transactional
     public void activateTariffForCorporateCustomer(long tariffId, Corporate corporate) {
         Tariff tariff = this.getById(tariffId);
         if (tariff == null) {
@@ -282,6 +289,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     @Override
     @CacheClear
+    @Transactional
     public Tariff addNewTariff(List<TariffRegion> tariffRegions) {
         Tariff tariff;
         if (tariffRegions.size() > 0) {
@@ -298,7 +306,6 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
 
     @Override
     @CacheClear
-    @Transactional
     public Tariff addNewTariff(Tariff tariff) {
         if (this.findByTariffName(tariff.getTariffName()) != null) {
             throw new ConflictException("Tariff with name \"" +
@@ -431,5 +438,4 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         response.put("entitiesSelected", tariffDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
         return response;
     }
-
 }

@@ -1,7 +1,7 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.model.WeeklyComplaintStatistics;
-import com.phonecompany.model.WeeklyOrderStatistics;
+import com.phonecompany.model.WeeklyComplaintsAmount;
+import com.phonecompany.model.WeeklyOrdersAmount;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
@@ -47,7 +47,7 @@ public class ReportController {
         this.xssfService = xssfService;
     }
 
-    @GetMapping(value = "orders/{regionId}/{startDate}/{endDate}", produces = "application/octet-stream")
+    @GetMapping(value = "/orders/{regionId}/{startDate}/{endDate}", produces = "application/octet-stream")
     public ResponseEntity<?> getOrderReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                  @PathVariable("startDate") LocalDate startDate,
                                                                  @PathVariable("endDate") LocalDate endDate) {
@@ -85,15 +85,15 @@ public class ReportController {
     @GetMapping("/order-statistics")
     public ResponseEntity<?> getOrderStatisticsForTheLastMonthByWeeks() {
 
-        WeeklyOrderStatistics orderStatistics = this.orderService.getOrderStatistics();
+        WeeklyOrdersAmount ordersAmount = this.orderService.getWeeklyOrdersAmount();
 
-        return new ResponseEntity<>(orderStatistics, HttpStatus.OK);
+        return new ResponseEntity<>(ordersAmount, HttpStatus.OK);
     }
 
     @GetMapping("/complaints-statistics")
     public ResponseEntity<?> getComplaintStatisticsForTheLastMonthByWeeks() {
 
-        WeeklyComplaintStatistics complaintStatistics = this.complaintService.getComplaintStatistics();
+        WeeklyComplaintsAmount complaintStatistics = this.complaintService.getComplaintStatistics();
 
         return new ResponseEntity<>(complaintStatistics, HttpStatus.OK);
     }

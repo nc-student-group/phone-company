@@ -113,6 +113,12 @@ public class TariffRegionDaoImpl extends JdbcOperationsImpl<TariffRegion> implem
     }
 
     @Override
+    public List<TariffRegion> getAllByRegionId(Long regionId) {
+        return this.executeForList(this.getQuery("getAllByRegionId"),
+                new Object[]{regionId});
+    }
+
+    @Override
     public void deleteByTariffId(long tariffId) {
         this.executeUpdate(this.getQuery("deleteByTariffId"), new Object[]{tariffId});
     }

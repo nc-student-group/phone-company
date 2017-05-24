@@ -1,24 +1,19 @@
 package com.phonecompany.controller;
 
-import com.mchange.v2.util.DoubleWeakHashMap;
-import com.phonecompany.model.*;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 
 @RestController
 @RequestMapping(value = "/api/search")
 public class SearchController {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(com.phonecompany.controller.SearchController.class);
+
     private UserService userService;
     private CustomerService customerService;
     private ComplaintService complaintService;
@@ -34,7 +29,6 @@ public class SearchController {
         this.tariffService = tariffService;
         this.serviceService = serviceService;
     }
-
 
     @GetMapping(value = "/users/{page}/{size}/{role}/{status}")
     public Map<String, Object> getUsers(
@@ -71,7 +65,6 @@ public class SearchController {
 
         return this.complaintService.getAllComplaintsSearch(page,size,email, status, category);
     }
-
 
     @GetMapping(value = "/tariffs/{page}/{size}/{status}/{category}")
     public Map<String, Object> getTariffs(

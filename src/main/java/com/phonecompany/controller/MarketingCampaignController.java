@@ -2,23 +2,21 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.MarketingCampaign;
+import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.service.email.csr_related_emails.MarketingCampaignActivationNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
 import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
 import com.phonecompany.service.interfaces.MarketingCampaignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/marketing-campaigns")
@@ -29,15 +27,13 @@ public class MarketingCampaignController {
     private MarketingCampaignService marketingCampaignService;
     private CustomerService customerService;
     private EmailService<Customer> emailService;
-    private MailMessageCreator<MarketingCampaign> marketingCampaignMailMessageCreator;
+    private MarketingCampaignActivationNotificationEmailCreator marketingCampaignMailMessageCreator;
 
     @Autowired
     public MarketingCampaignController(MarketingCampaignService marketingCampaignService,
                                        CustomerService customerService,
                                        EmailService<Customer> emailService,
-                                       @Qualifier("marketingCampaignActivationNotificationEmailCreator")
-                                                   MailMessageCreator<MarketingCampaign>
-                                                   marketingCampaignMailMessageCreator) {
+                                       MarketingCampaignActivationNotificationEmailCreator marketingCampaignMailMessageCreator) {
         this.marketingCampaignService = marketingCampaignService;
         this.customerService = customerService;
         this.emailService = emailService;
@@ -77,5 +73,30 @@ public class MarketingCampaignController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{page}/{size}")
+    public Map<String, Object> getTariffs(@PathVariable("page") int page,
+                                          @PathVariable("size") int size) {
+        LOGGER.info("Trying to retrieve marketing campaigns...");
+        return marketingCampaignService.getMarketingCampaignsTable(page, size);
+    }
 
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<?> updateTariffStatus(@PathVariable("id") long marketingCampaignId,
+                                                @RequestBody String productStatus) {
+        this.marketingCampaignService.updateMarketingCampaignStatus(
+                marketingCampaignId, ProductStatus.valueOf(productStatus));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/empty")
+    public MarketingCampaign getEmptyMarketingCampaign() {
+        return new MarketingCampaign();
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addMarketingCampaign(@RequestBody MarketingCampaign campaign) {
+        campaign.setMarketingCampaignStatus(ProductStatus.ACTIVATED);
+        MarketingCampaign persistedCampaign = this.marketingCampaignService.save(campaign);
+        return new ResponseEntity<>(persistedCampaign, HttpStatus.OK);
+    }
 }

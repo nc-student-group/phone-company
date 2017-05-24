@@ -4,7 +4,7 @@ angular.module('phone-company')
     .factory('ClientService', ['$q', '$http', function ($q, $http) {
 
         const UPDATE_USER_URL = "api/user/update";
-        const GET_USER_URL = "api/user/get";
+        const GET_USER_URL = "api/users/logged-in-user";
 
         return {
             updateUser: updateUser,

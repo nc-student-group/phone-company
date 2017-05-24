@@ -8,6 +8,7 @@ import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.enums.CustomerProductStatus;
+import com.phonecompany.model.proxy.DynamicProxy;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;

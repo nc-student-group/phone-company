@@ -12,9 +12,12 @@ import com.phonecompany.model.OrderStatistics;
 import com.phonecompany.model.enums.OrderStatus;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.model.proxy.DynamicProxy;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.interfaces.QueryLoader;
 import com.phonecompany.util.TypeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -26,6 +29,8 @@ import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
 
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_SERVICE_MAPPER;
+import static com.phonecompany.model.proxy.SourceMappers.CUSTOMER_TARIFF_MAPPER;
 import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 import static com.phonecompany.util.TypeMapper.toLocalDate;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
@@ -33,6 +38,8 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 @Repository
 public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         implements OrderDao {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OrderDaoImpl.class);
 
     private QueryLoader queryLoader;
     private CustomerServiceDao customerServiceDao;
@@ -87,11 +94,11 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
         try {
             order.setId(rs.getLong("id"));
             long customerServiceId = rs.getLong("customer_service_id");
-//            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
             order.setCustomerService(customerServiceDao.getById(customerServiceId));
+//            order.setCustomerService(DynamicProxy.newInstance(customerServiceId, CUSTOMER_SERVICE_MAPPER));
             long customerTariffId = rs.getLong("customer_tariff_id");
-//            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
             order.setCustomerTariff(customerTariffDao.getById(customerTariffId));
+//            order.setCustomerTariff(DynamicProxy.newInstance(customerTariffId, CUSTOMER_TARIFF_MAPPER));
             order.setType(OrderType.valueOf(rs.getString("type")));
             order.setOrderStatus(OrderStatus.valueOf(rs.getString("order_status")));
             order.setCreationDate(toLocalDate(rs.getDate("creation_date")));
@@ -206,35 +213,47 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
     }
 
     @Override
+    @Deprecated
     public EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type) {
-        Connection conn = DataSourceUtils.getConnection(getDataSource());
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement(
-                    this.getQuery("for.the.last.month.by.type"));
-            ps.setString(1, type.name());
-            ResultSet rs = ps.executeQuery();
-            return this.associateWeeksWithOrderNumbers(rs);
-        } catch (SQLException e) {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-            throw new CrudException("Could not extract orders numbers", e);
-        } finally {
-            JdbcUtils.closeStatement(ps);
-            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-        }
+        String getWeeklyOrdersQuery = this.getQuery("for.the.last.month.by.type");
+        return this.executeForObject(
+                getWeeklyOrdersQuery,
+                new Object[]{type.toString()},
+                this.getWeeklyOrderAmountsRowMapper()
+        );
     }
 
-    private EnumMap<WeekOfMonth, Integer> associateWeeksWithOrderNumbers(ResultSet rs)
-            throws SQLException {
-        EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
-        while (rs.next()) {
-            long weekNumber = rs.getLong("week_number");
-            int numberOfOrders = rs.getInt("number_of_orders");
-            WeekOfMonth weekOfMonth = getEnumValueByDatabaseId(WeekOfMonth.class, weekNumber);
-            result.put(weekOfMonth, numberOfOrders);
-        }
-        return result;
+    @Override
+    public EnumMap<WeekOfMonth, Integer> getNumberOfServiceOrdersForTheLastMonthByType(OrderType type) {
+        String getWeeklyOrdersQuery = this.getQuery("services.for.the.last.month.by.type");
+        return this.executeForObject(
+                getWeeklyOrdersQuery,
+                new Object[]{type.toString()},
+                this.getWeeklyOrderAmountsRowMapper()
+        );
+    }
+
+    @Override
+    public EnumMap<WeekOfMonth, Integer> getNumberOfTariffOrdersForTheLastMonthByType(OrderType type) {
+        String getWeeklyOrdersQuery = this.getQuery("tariffs.for.the.last.month.by.type");
+        return this.executeForObject(
+                getWeeklyOrdersQuery,
+                new Object[]{type.toString()},
+                this.getWeeklyOrderAmountsRowMapper()
+        );
+    }
+
+    private RowMapper<EnumMap<WeekOfMonth, Integer>> getWeeklyOrderAmountsRowMapper() {
+        return rs -> {
+            EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
+            while (rs.next()) {
+                long weekNumber = rs.getLong("week_number");
+                int numberOfOrders = rs.getInt("number_of_orders");
+                WeekOfMonth weekOfMonth = getEnumValueByDatabaseId(WeekOfMonth.class, weekNumber);
+                result.put(weekOfMonth, numberOfOrders);
+            }
+            return result;
+        };
     }
 
     @Override

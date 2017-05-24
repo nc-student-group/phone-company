@@ -14,7 +14,6 @@ public class RegionServiceImpl extends CrudServiceImpl<Region> implements Region
 
     @Autowired
     public RegionServiceImpl(RegionDao regionDao){
-        super(regionDao);
         this.regionDao = regionDao;
     }
 }

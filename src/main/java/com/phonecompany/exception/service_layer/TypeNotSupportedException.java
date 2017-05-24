@@ -1,5 +1,9 @@
 package com.phonecompany.exception.service_layer;
 
+/**
+ * Gets thrown if the given type is not supported by the method that
+ * executes upon the object of this type.
+ */
 public class TypeNotSupportedException extends RuntimeException {
 
     public TypeNotSupportedException(Class<?> unsupportedType) {

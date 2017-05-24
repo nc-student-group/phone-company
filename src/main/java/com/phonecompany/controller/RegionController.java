@@ -25,7 +25,7 @@ public class RegionController {
 
     @GetMapping
     public List<Region> getAllRegions() {
-        LOGGER.debug("Get all regions.");
+        LOGGER.debug("Getting all the regions");
         return regionService.getAll();
     }
 }

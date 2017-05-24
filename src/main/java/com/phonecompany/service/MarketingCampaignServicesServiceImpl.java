@@ -18,7 +18,6 @@ public class MarketingCampaignServicesServiceImpl extends CrudServiceImpl<Market
 
     @Autowired
     public MarketingCampaignServicesServiceImpl(MarketingCampaignServicesDao marketingCampaignServicesDao) {
-        super(marketingCampaignServicesDao);
         this.marketingCampaignServicesDao = marketingCampaignServicesDao;
     }
 

@@ -14,7 +14,7 @@
         $routeProvider.when('/index',
             {
                 templateUrl: 'view/main.html',
-                controller: 'AuthorizeController'
+                controller: 'RegistrationController'
             });
         $routeProvider.when('/login',
             {
@@ -76,6 +76,17 @@
                 templateUrl: 'view/csr/tariffEdit.html',
                 controller: 'TariffEditController'
             });
+
+        $routeProvider.when('/csr/marketing-campaigns',
+            {
+                templateUrl: 'view/csr/marketing-campaigns.html',
+                controller: 'MarketingCampaignController'
+            });
+        $routeProvider.when('/csr/marketing-campaign/:id',
+            {
+                templateUrl: 'view/csr/marketingCampaignDetail.html',
+                controller: 'CsrMarketingCampaignDetailController'
+            });
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',
@@ -129,12 +140,12 @@
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/404',
             {
                 templateUrl: 'view/404.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/client',
             {

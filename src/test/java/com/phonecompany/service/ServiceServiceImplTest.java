@@ -3,9 +3,8 @@ package com.phonecompany.service;
 import com.phonecompany.TestUtil;
 import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
-import com.phonecompany.exception.ServiceAlreadyPresentException;
+import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.Service;
-import com.phonecompany.model.paging.PagingResult;
 import com.phonecompany.service.interfaces.*;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +26,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -59,7 +57,7 @@ public class ServiceServiceImplTest {
 
 //    @Test
 //    public void shouldApplyDiscountIfCurrentUserIsRepresentative() {
-//        //given
+//        given
 //        List<Service> sampleServices = getSampleServices();
 //        List<Double> initialPrices = this.getInitialPrices(sampleServices);
 //
@@ -70,14 +68,14 @@ public class ServiceServiceImplTest {
 //        when(customerService.getCurrentlyLoggedInUser())
 //                .thenReturn(getSampleRepresentative());
 //
-//        //when
+//        when
 //        PagingResult<Service> servicesByProductCategoryId = serviceService
 //                .getServicesByProductCategoryId(1, 0, 5, "",
 //                        0.0, 0.0, 0, 0, "ASC");
 //        List<Service> pagingResult = servicesByProductCategoryId.getPagingResult();
 //        int entityCount = servicesByProductCategoryId.getEntityCount();
 //
-//        //then
+//        then
 //        verify(serviceDao, times(1)).getEntityCount(any());
 //        verify(customerService, times(1)).getCurrentlyLoggedInUser();
 //
@@ -134,7 +132,7 @@ public class ServiceServiceImplTest {
         Service sampleService = TestUtil.getNonExistentService();
         when(serviceDao.isExist(any())).thenReturn(true);
 
-        thrown.expect(ServiceAlreadyPresentException.class);
+        thrown.expect(ConflictException.class);
         thrown.expectMessage("Service with name " +
                 sampleService.getServiceName() + " already exists");
 

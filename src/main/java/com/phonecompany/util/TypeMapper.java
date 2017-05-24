@@ -4,7 +4,7 @@ import com.phonecompany.model.DomainEntity;
 import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.interfaces.DataBaseEnum;
 import com.phonecompany.model.enums.interfaces.ItemType;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import org.springframework.util.Assert;
 
 import java.sql.Date;
@@ -107,17 +107,5 @@ public class TypeMapper {
         return Optional.ofNullable(localDate)
                 .map(l -> Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .orElse(null);
-    }
-
-    public static Predicate<Statistics> getStatisticsByItemNamePredicate(String targetName) {
-        return statistics -> statistics.getItemName().equals(targetName);
-    }
-
-    public static Predicate<Statistics> getStatisticsByItemTypePredicate(ItemType itemType) {
-        return statistics -> statistics.getItemType().equals(itemType);
-    }
-
-    public static Predicate<Statistics> getStatisticsByLocalDatePredicate(LocalDate date) {
-        return statistics -> statistics.getTimePoint().equals(date);
     }
 }

@@ -18,6 +18,13 @@ public class TariffRegion extends DomainEntity{
         this.price = price;
     }
 
+    public TariffRegion(Long id, Region region, Tariff tariff, Double price) {
+        super(id);
+        this.region = region;
+        this.tariff = tariff;
+        this.price = price;
+    }
+
     public Region getRegion() {
         return region;
     }

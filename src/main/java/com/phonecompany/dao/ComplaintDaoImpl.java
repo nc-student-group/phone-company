@@ -7,13 +7,13 @@ import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.ComplaintStatistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
-import com.phonecompany.model.enums.WeekOfMonth;
-import com.phonecompany.service.xssfHelper.Statistics;
 import com.phonecompany.util.Query;
-import com.phonecompany.util.TypeMapper;
+import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.util.interfaces.QueryLoader;
+import com.phonecompany.util.TypeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.EnumMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.EnumMap;
 
 import static com.phonecompany.util.TypeMapper.getEnumValueByDatabaseId;
 import static com.phonecompany.util.TypeMapper.toSqlDate;
@@ -151,33 +152,27 @@ public class ComplaintDaoImpl extends JdbcOperationsImpl<Complaint> implements C
     public List<Statistics> getComplaintStatisticsByRegionAndTimePeriod(long regionId,
                                                                         LocalDate startDate,
                                                                         LocalDate endDate) {
-        String query = this.getQuery("by.region.id.and.time.period");
-        return this.executeForList(query, new Object[]{regionId, toSqlDate(startDate), toSqlDate(endDate)},
-                rs -> new ComplaintStatistics(rs.getLong("complaint_count"),
-                        rs.getString("type"),
-                        ComplaintStatus.valueOf(rs.getString("status")),
-                        TypeMapper.toLocalDate(rs.getDate("date"))));
-//        Connection conn = DataSourceUtils.getConnection(getDataSource());
-//        PreparedStatement ps = null;
-//        try {
-//            ps = conn.prepareStatement(this.getQuery("by.region.id.and.time.period"));
-//            ps.setLong(1, regionId);
-//            ps.setDate(2, toSqlDate(startDate));
-//            ps.setDate(3, toSqlDate(endDate));
-//            ResultSet rs = ps.executeQuery();
-//            List<Statistics> statisticsList = new ArrayList<>();
-//            while (rs.next()) {
-//                statisticsList.add(this.createComplaintStatisticsObject(rs));
-//            }
-//            return statisticsList;
-//        } catch (SQLException e) {
-//            JdbcUtils.closeStatement(ps);
-//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-//            throw new CrudException("Could not extract service orders", e);
-//        } finally {
-//            JdbcUtils.closeStatement(ps);
-//            DataSourceUtils.releaseConnection(conn, this.getDataSource());
-//        }
+        Connection conn = DataSourceUtils.getConnection(getDataSource());
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(this.getQuery("by.region.id.and.time.period"));
+            ps.setLong(1, regionId);
+            ps.setDate(2, toSqlDate(startDate));
+            ps.setDate(3, toSqlDate(endDate));
+            ResultSet rs = ps.executeQuery();
+            List<Statistics> statisticsList = new ArrayList<>();
+            while (rs.next()) {
+                statisticsList.add(this.createComplaintStatisticsObject(rs));
+            }
+            return statisticsList;
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+            throw new CrudException("Could not extract service orders", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.getDataSource());
+        }
     }
 
     private ComplaintStatistics createComplaintStatisticsObject(ResultSet rs) throws SQLException {

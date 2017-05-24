@@ -12,6 +12,9 @@ import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class that implements caching capabilities
+ */
 @Aspect
 @Component
 public class CachingAspect {
@@ -19,9 +22,22 @@ public class CachingAspect {
     private static final Logger LOG = LoggerFactory.getLogger(CachingAspect.class);
 
     public static final int CACHE_CLEANUP_COUNTDOWN = 200;
-    public final SimpleCacheImpl<Pair<String, List<Object>>, SoftReference<Object>> cache =
-            new SimpleCacheImpl<>(CACHE_CLEANUP_COUNTDOWN); //made public in order to test
+    //All values from cache will be cleared before JVM throws OutOfMemoryError
+    private final SimpleCacheImpl<Pair<String, List<Object>>, SoftReference<Object>> cache =
+            new SimpleCacheImpl<>(CACHE_CLEANUP_COUNTDOWN);
 
+    /**
+     * Places the result of method invocation into the cache.
+     * <p>
+     * <p>Method will not perform its calculation if it is being invoked with
+     * the same set of parameters, already existing value from cache will be
+     * returned instead.</p>
+     *
+     * @param joinPoint point in a program execution where caching aspect is
+     *                  being inserted into
+     * @return result of an actual method invocation or an already calculated value
+     * @throws Throwable if an exception during method execution occurs
+     */
     @Around("@annotation(com.phonecompany.annotations.Cacheable)+")
     public Object cacheResult(ProceedingJoinPoint joinPoint)
             throws Throwable {

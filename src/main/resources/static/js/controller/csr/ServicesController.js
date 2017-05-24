@@ -19,11 +19,11 @@ angular.module('phone-company').controller('ServicesController', [
         $scope.size = 5;
         $scope.units = undefined;
         $scope.partOfName = "";
-        $scope.priceFrom = 0;
-        $scope.priceTo = 0;
+        $scope.startingPrice = 0;
+        $scope.endingPrice = 0;
         $scope.selectedStatus = 0;
-        $scope.orderBy = 0;
-        $scope.orderByType = "ASC";
+        $scope.orderingCategory = 0;
+        $scope.orderType = "ASC";
 
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
@@ -33,7 +33,8 @@ angular.module('phone-company').controller('ServicesController', [
 
         $scope.preloader.send = true;
         ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
-            $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+            $scope.partOfName, $scope.startingPrice, $scope.endingPrice, $scope.selectedStatus,
+            $scope.orderingCategory, $scope.orderType)
             .then(function (data) {
                 $scope.services = data.pagingResult;
                 console.log(JSON.stringify($scope.services));
@@ -47,7 +48,8 @@ angular.module('phone-company').controller('ServicesController', [
             $scope.page = 0;
             $scope.preloader.send = true;
             ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
-                $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+                $scope.partOfName, $scope.startingPrice, $scope.endingPrice, $scope.selectedStatus,
+                $scope.orderingCategory, $scope.orderType)
                 .then(function (data) {
                     $scope.services = data.pagingResult;
                     $scope.servicesCount = data.entityCount;

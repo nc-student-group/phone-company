@@ -1,0 +1,171 @@
+<div class="wrapper">
+    <ng-include src="'../../view/client/clientSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/client/clientHeader.html'"></ng-include>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title"><b>{{campaign.name}}</b></h4>
+                                <p>{{campaign.description}}</p>
+                            </div>
+                            <hr/>
+                            <div class="header">
+                                <h4 class="title"><b>{{campaign.tariffRegion.tariff.tariffName}}</b></h4>
+                            </div>
+                            <div class="row" style="margin: 0; padding: 20px;">
+                                <div class="col-md-4">
+                                    <div class="tariff-picture">
+                                        <img ng-src="{{campaign.tariffRegion.tariff.pictureUrl}}" width="90%"/>
+                                        <div class="specials-picture"><b>Specials</b></div>
+                                    </div>
+                                    <div class="row" style="padding-top: 20px;">
+                                        <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="editClick(campaign.id)">
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-default btn-fill col-md-8 col-md-offset-2"
+                                                ng-click="toListClick()">
+                                            To list
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row" style="text-align: center; font-size: 20px;">
+                                        <b>Conditions</b>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition">
+                                            <span>Calls in network</span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{campaign.tariffRegion.tariff.callsInNetwork}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Calls on other numbers</span></div>
+                                        <div class="col-md-4 conditions-value">
+                                            <span><b>{{campaign.tariffRegion.tariff.callsOnOtherNumbers}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Roaming</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.roaming}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>Internet</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.internet}}</b></span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>SMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.sms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-two">
+                                        <div class="col-md-8 condition"><span>MMS</span></div>
+                                        <div class="col-md-4 conditions-value"><span><b>{{campaign.tariffRegion.tariff.mms}}</b></span></div>
+                                    </div>
+                                    <div class="row row-one">
+                                        <div class="col-md-8 condition"><span>Monthly payment</span></div>
+                                        <div class="col-md-4"
+                                             style="text-align: center; font-size: 16px; color: #161121"
+                                             ng-hide="campaign.tariffRegion.tariff.discount > 0 &&
+                                             campaign.tariffRegion.tariff.discount <=100"><span>
+                                            <b>{{campaign.tariffRegion.tariff.price | number:2}} uah</b></span>
+                                        </div>
+                                        <div class="col-md-4 conditions-value"
+                                             ng-show="campaign.tariffRegion.tariff.discount > 0
+                                             && campaign.tariffRegion.tariff.discount <= 100">
+                                            <span><b>{{campaign.tariffRegion.tariff.price * (1 - campaign.tariffRegion.tariff.discount/100) | number: 2}} uah</b><br>
+                                                <s style="font-size: 14px; color: red">{{campaign.tariffRegion.tariff.price | number: 2}} uah</s></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" ng-repeat="ms in campaign.services">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="header">
+                                        <h4 class="title">{{ms.service.serviceName}}</h4>
+                                    </div>
+                                    <hr/>
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-4 col-lg-offset-1">
+                                                <div style="width: 360px; height: 240px;">
+                                                    <img class="rounded img-thumbnail"
+                                                         style="width: 360px; height: 240px"
+                                                         ng-src="{{ms.service.pictureUrl}}"
+                                                         class="rounded" alt="Image not found">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 col-md-offset-1">
+                                                <table class="table table-striped table-hover
+                                            table-bordered" style="table-layout: fixed">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Price</td>
+                                                        <td>
+                                                            <div ng-hide="ms.service.discount > 0
+                                                        && ms.service.discount < 100"
+                                                                 class="service-price-individual"
+                                                                 style="text-decoration: line-through">
+                                                                {{ms.service.price | number : 2}} &#8372;
+                                                            </div>
+                                                            <div ng-show="ms.service.discount > 0
+                                                        && ms.service.discount < 100"
+                                                                 class="service-price-individual"
+                                                                 style="text-decoration: line-through">
+                                                                {{ms.service.price * (1 - ms.service.discount / 100) |
+                                                                number : 2}} &#8372;
+                                                            </div>
+                                                            <div style="font-weight: 700"
+                                                                 class="service-price-individual-discounted">
+                                                                {{ms.price | number : 2}} &#8372;
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Duration</td>
+                                                        <td>
+                                                            {{ms.service.durationInDays}} days
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Amount</td>
+                                                        <td>{{ms.service.durationInDays}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="word-wrap: break-word">
+                                                            {{ms.service.description}}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

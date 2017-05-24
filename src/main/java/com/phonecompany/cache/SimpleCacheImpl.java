@@ -7,6 +7,7 @@ public class SimpleCacheImpl<K, V> {
     private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<>();
 
     public SimpleCacheImpl(long expirationTime) {
+        //invokes cache clearing at each requested repetitive time period
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::clear,
                 expirationTime, expirationTime, TimeUnit.SECONDS);
     }

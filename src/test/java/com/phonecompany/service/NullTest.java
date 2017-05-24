@@ -26,7 +26,7 @@ public class NullTest {
     @Test
     public void shouldReturnNull() {
         //given
-        Order order = orderDao.getById(76L);
+        Order order = orderDao.getById(1L);
 
         LOG.debug("order.getCustomerTariff(): {}", order.getCustomerTariff());
         LOG.debug("order.getCustomerTariff() != null: {}", order.getCustomerTariff() != null);

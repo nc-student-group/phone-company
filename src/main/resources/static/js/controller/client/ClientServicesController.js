@@ -8,8 +8,8 @@ angular.module('phone-company').controller('ClientServicesController', [
     'ServicesService',
     '$anchorScroll',
     'filterFilter',
-
-    function ($scope, $location, $rootScope,CustomerInfoService, ServicesService, filterFilter,) {
+    '$anchorScroll',
+    function ($scope, $location, $rootScope, CustomerInfoService, ServicesService, $anchorScroll) {
 
         $scope.shifted = false;
         $scope.page = 0;
@@ -18,18 +18,26 @@ angular.module('phone-company').controller('ClientServicesController', [
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer().then(function (data) {
             $scope.customer = data;
-            $scope.preloader.send = false;
             console.log($scope.customer)
-        },function (err) {
-            $scope.preloader.send = false;
+        }, function (err) {
+            toastr.error(`Error during current customer identification`);
         });
+
+        $scope.gotoAnchor = function (x) {
+            if ($location.hash() !== x) {
+                $location.hash(x);
+            }
+            console.log(`Should scroll`);
+            $anchorScroll();
+        };
 
         $scope.preloader.send = true;
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
-            console.log(`$scope.categories[0].categoryName ${$scope.categories[0].categoryName}`);
+            console.log(`Current category name: ${$scope.categories[0].categoryName}`);
             $scope.currentCategory = $scope.categories[0].categoryName;
             let allCategories = JSON.stringify($scope.categories);
+            $scope.gotoAnchor("service_page_bottom");
             console.log(`All categories: ${allCategories}`);
         });
 
@@ -51,11 +59,13 @@ angular.module('phone-company').controller('ClientServicesController', [
             $scope.services = $scope.allServices.filter(function (service) {
                 return service.productCategory.categoryName === $scope.currentCategory;
             });
-            console.log(`Filtered services ${JSON.stringify($scope.services)}`);
+            $scope.servicesCount = $scope.services.length;
         };
 
         $scope.specifyCurrentCategory = function (category) {
             $scope.currentCategory = category;
+            $scope.size = 6;
+            $scope.gotoAnchor("service_page_bottom");
             console.log(`New Current category: ${category}`);
             $scope.filterServicesByCurrentCategory();
         };
@@ -63,6 +73,9 @@ angular.module('phone-company').controller('ClientServicesController', [
         $scope.showServiceDetails = function (id) {
             $location.path("/client/services/" + id);
         };
+
+        $scope.showMore = function () {
+            $scope.size = $scope.size + 3;
+        };
     }
-])
-;
+]);

@@ -9,6 +9,8 @@ angular.module('phone-company').controller('CsrChartsController', [
     'ChartService',
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
+        $scope.activePage = "charts";
+
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
         });
@@ -17,16 +19,28 @@ angular.module('phone-company').controller('CsrChartsController', [
             $scope.reportStatistics = response;
             $scope.data = [
                 [
-                    $scope.reportStatistics.deactivations.FIRST_WEEK,
-                    $scope.reportStatistics.deactivations.SECOND_WEEK,
-                    $scope.reportStatistics.deactivations.THIRD_WEEK,
-                    $scope.reportStatistics.deactivations.FOURTH_WEEK
+                    $scope.reportStatistics.serviceActivations.FIRST_WEEK,
+                    $scope.reportStatistics.serviceActivations.SECOND_WEEK,
+                    $scope.reportStatistics.serviceActivations.THIRD_WEEK,
+                    $scope.reportStatistics.serviceActivations.FOURTH_WEEK
                 ],
                 [
-                    $scope.reportStatistics.activations.FIRST_WEEK,
-                    $scope.reportStatistics.activations.SECOND_WEEK,
-                    $scope.reportStatistics.activations.THIRD_WEEK,
-                    $scope.reportStatistics.activations.FOURTH_WEEK
+                    $scope.reportStatistics.serviceDeactivations.FIRST_WEEK,
+                    $scope.reportStatistics.serviceDeactivations.SECOND_WEEK,
+                    $scope.reportStatistics.serviceDeactivations.THIRD_WEEK,
+                    $scope.reportStatistics.serviceDeactivations.FOURTH_WEEK
+                ],
+                [
+                    $scope.reportStatistics.tariffActivations.FIRST_WEEK,
+                    $scope.reportStatistics.tariffActivations.SECOND_WEEK,
+                    $scope.reportStatistics.tariffActivations.THIRD_WEEK,
+                    $scope.reportStatistics.tariffActivations.FOURTH_WEEK
+                ],
+                [
+                    $scope.reportStatistics.tariffDeactivations.FIRST_WEEK,
+                    $scope.reportStatistics.tariffDeactivations.SECOND_WEEK,
+                    $scope.reportStatistics.tariffDeactivations.THIRD_WEEK,
+                    $scope.reportStatistics.tariffDeactivations.FOURTH_WEEK
                 ]
             ];
         });
@@ -40,9 +54,15 @@ angular.module('phone-company').controller('CsrChartsController', [
             });
         };
 
-        $scope.colors = ['#ff6384', '#32a9a4'];
+        $scope.colors = ['#32a9a4', '#ff6384', '#2725a3', '#ff6384'];
         $scope.labels = ['First week', 'Second week', 'Third week', 'Fourth week'];
-        $scope.series = ['Deactivations', 'Activations'];
+        $scope.series = [
+            'Service activations',
+            'Service deactivations',
+            'Tariff activations',
+            'Tariff deactivations'
+        ];
+        $scope.options = {legend: {display: true}};
 
         $scope.generateReport = function () {
             let convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");

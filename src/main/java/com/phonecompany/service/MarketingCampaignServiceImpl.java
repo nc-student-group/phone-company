@@ -1,28 +1,34 @@
 package com.phonecompany.service;
 
 import com.phonecompany.dao.interfaces.MarketingCampaignDao;
-import com.phonecompany.dao.interfaces.MarketingCampaignTariffDao;
+import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
+import com.phonecompany.dao.interfaces.TariffRegionDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.OrderType;
+import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.interfaces.CustomerServiceService;
 import com.phonecompany.service.interfaces.MarketingCampaignService;
 import com.phonecompany.service.interfaces.OrderService;
 import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampaign>
         implements MarketingCampaignService {
 
-    private MarketingCampaignTariffDao marketingCampaignTariffDao;
+    private TariffRegionDao tariffRegionDao;
     private MarketingCampaignDao marketingCampaignDao;
+    private MarketingCampaignServicesDao marketingCampaignServicesDao;
     private TariffService tariffService;
     private CustomerServiceService customerServiceService;
     private OrderService orderService;
@@ -31,13 +37,14 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
 
     @Autowired
     public MarketingCampaignServiceImpl(MarketingCampaignDao marketingCampaignDao,
-                                        MarketingCampaignTariffDao marketingCampaignTariffDao,
+                                        MarketingCampaignServicesDao marketingCampaignServicesDao,
+                                        TariffRegionDao tariffRegionDao,
                                         TariffService tariffService,
                                         CustomerServiceService customerServiceService,
                                         OrderService orderService) {
-        super(marketingCampaignDao);
         this.marketingCampaignDao = marketingCampaignDao;
-        this.marketingCampaignTariffDao = marketingCampaignTariffDao;
+        this.marketingCampaignServicesDao = marketingCampaignServicesDao;
+        this.tariffRegionDao = tariffRegionDao;
         this.tariffService = tariffService;
         this.customerServiceService = customerServiceService;
         this.orderService = orderService;
@@ -49,12 +56,11 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         LOG.info("Retrieving available marketing campaigns for customer with id = "
                 + customer.getId());
         if (customer.getCorporate() == null) {
-            List<MarketingCampaignTariff> tariffs = marketingCampaignTariffDao.
-                    getMarketingCampaignTariffsAvailableForCustomer(customer
-                            .getAddress().getRegion().getId());
+            List<TariffRegion> tariffs = tariffRegionDao.
+                    getAllByRegionId(customer.getAddress().getRegion().getId());
             if (tariffs != null) {
-                for (MarketingCampaignTariff tariff: tariffs) {
-                    campaigns.addAll(marketingCampaignDao.getAllByMarketingTariff(tariff.getId()));
+                for (TariffRegion tariff: tariffs) {
+                    campaigns.addAll(marketingCampaignDao.getAllByTariffRegion(tariff.getId()));
                 }
             }
         } else {
@@ -73,8 +79,38 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
             this.orderService.saveCustomerServiceOrder(
                     activatedCustomerService, OrderType.ACTIVATION);
         }
-        Long tariffId = campaign.getCampaignTariff()
-                .getTariffRegion().getTariff().getId();
+        Long tariffId = campaign.getTariffRegion().getTariff().getId();
         tariffService.activateTariffForSingleCustomer(tariffId, customer);
+    }
+
+    @Override
+    public Map<String, Object> getMarketingCampaignsTable(int page, int size) {
+        Query query = this.buildQueryForMarketingCampaignTable(page, size);
+        Map<String, Object> response = new HashMap<>();
+        response.put("campaigns", this.marketingCampaignDao
+                .executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("campaignsFound", this.marketingCampaignDao.executeForInt(query.getCountQuery(),
+                query.getCountParams().toArray()));
+        return response;
+    }
+
+    private Query buildQueryForMarketingCampaignTable(int page, int size) {
+        Query.Builder builder = new Query.Builder("marketing_campaign");
+        builder.addPaging(page, size);
+        return builder.build();
+    }
+
+    @Override
+    public void updateMarketingCampaignStatus(Long campaignId, ProductStatus productStatus) {
+        marketingCampaignDao.updateMarketingCampaignStatus(campaignId, productStatus);
+    }
+
+    @Override
+    public MarketingCampaign save(MarketingCampaign entity) {
+        MarketingCampaign campaign = super.save(entity);
+        for(MarketingCampaignServices service: entity.getServices()) {
+            marketingCampaignServicesDao.save(service, campaign);
+        }
+        return campaign;
     }
 }

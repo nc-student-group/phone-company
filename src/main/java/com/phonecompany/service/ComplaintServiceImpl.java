@@ -3,16 +3,17 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.exception.ConflictException;
+import com.phonecompany.exception.service_layer.MissingResultException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
-import com.phonecompany.model.WeeklyComplaintStatistics;
+import com.phonecompany.model.WeeklyComplaintsAmount;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
 import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.interfaces.UserService;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.phonecompany.model.enums.ComplaintCategory.*;
-
-//import com.phonecompany.exception.EmptyResultSetException;
+import static com.phonecompany.model.enums.ComplaintCategory.CUSTOMER_SERVICE;
+import static com.phonecompany.model.enums.ComplaintCategory.SUGGESTION;
+import static com.phonecompany.model.enums.ComplaintCategory.TECHNICAL_SERVICE;
 
 @ServiceStereotype
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
@@ -42,7 +43,6 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
     public ComplaintServiceImpl(ComplaintDao complaintDao,
                                 UserService userService,
                                 StatisticsService<LocalDate, Long> statisticsService) {
-        super(complaintDao);
         this.complaintDao = complaintDao;
         this.userService = userService;
         this.statisticsService = statisticsService;
@@ -211,14 +211,14 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
 
         Map<String, Object> response = new HashMap<>();
         Query query = queryBuilder.build();
-        response.put("complaints", complaintDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("complaints", complaintDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", complaintDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 
 
     @Override
-    public WeeklyComplaintStatistics getComplaintStatistics() {
+    public WeeklyComplaintsAmount getComplaintStatistics() {
 
         EnumMap<WeekOfMonth, Integer> numberOfCSComplaintsForTheLastMonth =
                 this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(CUSTOMER_SERVICE);
@@ -227,11 +227,20 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         EnumMap<WeekOfMonth, Integer> numberOfTSComplaintsForTheLastMonth =
                 this.complaintDao.getNumberOfComplaintsForTheLastMonthByCategory(TECHNICAL_SERVICE);
 
-        return new WeeklyComplaintStatistics(numberOfCSComplaintsForTheLastMonth,
+        return new WeeklyComplaintsAmount(numberOfCSComplaintsForTheLastMonth,
                 numberOfSComplaintsForTheLastMonth,
                 numberOfTSComplaintsForTheLastMonth);
     }
 
+    /**
+     * Responsible for creating a dataset containing statistical information regarding
+     * complaints posted by users from the requested region in some predefined period of time
+     *
+     * @param regionId  id of the region that statistics should be generated for
+     * @param startDate start of the period that statistics should be generated for
+     * @param endDate   end of the period that statistics should be generated for
+     * @return fully constructed {@link SheetDataSet}
+     */
     @Override
     public SheetDataSet<LocalDate, Long> getComplaintStatisticsDataSet(long regionId,
                                                                        LocalDate startDate,
@@ -240,10 +249,10 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         List<Statistics> statisticsList = this.complaintDao
                 .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
-//        if (statisticsList.size() == 0) {
-//            throw new EmptyResultSetException("There were no complaints orders in this region during " +
-//                    "this period");
-//        }
+        if (statisticsList.size() == 0) {
+            throw new MissingResultException("There were no complaints orders in this region during " +
+                    "this period");
+        }
 
         return this.statisticsService
                 .prepareStatisticsDataSet("Complaints", statisticsList,

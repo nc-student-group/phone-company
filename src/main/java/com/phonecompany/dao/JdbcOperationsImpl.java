@@ -249,13 +249,35 @@ public abstract class JdbcOperationsImpl<T extends DomainEntity>
         } catch (SQLException e) {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.dataSource);
-            throw new CrudException("Failed to load all the entities. " +
+            throw new CrudException("Failed to load all entity. " +
                     "Check your database connection or whether sql query is right", e);
         } finally {
             JdbcUtils.closeStatement(ps);
             DataSourceUtils.releaseConnection(conn, this.dataSource);
         }
         return null;
+    }
+
+    @Override
+    public <E> E executeForObject(String query, Object[] params, RowMapper<E> rowMapper) {
+        Connection conn = DataSourceUtils.getConnection(dataSource);
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = ps.executeQuery();
+            return rowMapper.mapRow(rs);
+        } catch (SQLException e) {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+            throw new CrudException("Failed to load entity. " +
+                    "Check your database connection or whether sql query is right", e);
+        } finally {
+            JdbcUtils.closeStatement(ps);
+            DataSourceUtils.releaseConnection(conn, this.dataSource);
+        }
     }
 
     @Override

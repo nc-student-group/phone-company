@@ -1,11 +1,9 @@
 package com.phonecompany.util;
 
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Query {
-
 
     private final String query;
     private final String countQuery;
@@ -160,6 +158,4 @@ public class Query {
         }
 
     }
-
-
 }

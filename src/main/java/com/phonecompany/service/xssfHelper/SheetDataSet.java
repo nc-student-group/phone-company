@@ -8,9 +8,6 @@ import java.util.List;
  * Class which serves an object representation of the data that can be
  * contained within a single xls sheet
  * <p>
- * <p>It can be used as an object that transfers processed data to the
- * service where this data will be rendered as an xls document</p>
- * <p>
  * <p>Consists of {@link TableDataSet} objects</p>
  *
  * @param <K> type of the objects that represent range of definition

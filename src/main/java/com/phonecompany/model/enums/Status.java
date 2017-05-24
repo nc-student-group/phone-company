@@ -1,5 +1,8 @@
 package com.phonecompany.model.enums;
 
+/**
+ * Defines statuses of user's account
+ */
 public enum Status {
     //user state before account verification
     INACTIVE,

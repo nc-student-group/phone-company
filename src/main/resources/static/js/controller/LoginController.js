@@ -14,7 +14,7 @@ angular.module('phone-company').controller('LoginController', [
     'CaptchaService',
     function ($scope, $q, $http, $location, SessionService, LoginService,
               UserService, $rootScope, $routeParams, vcRecaptchaService, CaptchaService) {
-        console.log('This is AuthorizeController');
+        console.log('This is LoginController');
         $scope.selected = 'signIn';
 
         $scope.recapthca = {

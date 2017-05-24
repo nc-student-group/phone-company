@@ -3,10 +3,8 @@ package com.phonecompany.controller;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.TariffRegion;
-import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.MailMessageCreator;
-import com.phonecompany.service.interfaces.TariffService;
+import com.phonecompany.service.email.tariff_related_emails.TariffNotificationEmailCreator;
+import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +24,19 @@ public class TariffRegionController {
     private static final Logger LOG = LoggerFactory.getLogger(TariffRegionController.class);
 
     private TariffService tariffService;
+    private TariffRegionService tariffRegionService;
     private CustomerService customerService;
     private EmailService<Customer> emailService;
-    private MailMessageCreator<Tariff> tariffNotificationMailCreator;
+    private TariffNotificationEmailCreator tariffNotificationMailCreator;
 
     @Autowired
     public TariffRegionController(TariffService tariffService,
+                                  TariffRegionService tariffRegionService,
                                   CustomerService customerService,
                                   EmailService<Customer> emailService,
-                                  @Qualifier("tariffNotificationEmailCreator")
-                                  MailMessageCreator<Tariff> tariffNotificationMailCreator){
+                                  TariffNotificationEmailCreator tariffNotificationMailCreator){
         this.tariffService = tariffService;
+        this.tariffRegionService = tariffRegionService;
         this.customerService = customerService;
         this.emailService = emailService;
         this.tariffNotificationMailCreator = tariffNotificationMailCreator;
@@ -47,25 +47,19 @@ public class TariffRegionController {
         Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
         SimpleMailMessage notificationMessage = this.tariffNotificationMailCreator
                 .constructMessage(savedTariff);
-        this.notifyAgreedCustomers(notificationMessage);
+        this.customerService.notifyAgreedCustomers(notificationMessage);
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
-    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
-        this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    private List<Customer> getAgreedCustomers() {
-        return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     @PutMapping
     public ResponseEntity<?> updateTariff(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff updatedTariff = tariffService.updateTariff(tariffRegions);
         return new ResponseEntity<Object>(updatedTariff, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/region/{id}")
+    public ResponseEntity<?> getTariffsForRegion(@PathVariable("id") Long regionId) {
+        return new ResponseEntity<Object>(tariffRegionService
+                .getAllByRegionId(regionId), HttpStatus.OK);
     }
 }

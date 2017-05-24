@@ -22,7 +22,6 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
 
     @Autowired
     public TariffRegionServiceImpl(TariffRegionDao tariffRegionDao){
-        super(tariffRegionDao);
         this.tariffRegionDao = tariffRegionDao;
     }
 
@@ -41,4 +40,8 @@ public class TariffRegionServiceImpl extends CrudServiceImpl<TariffRegion>
         return this.tariffRegionDao.getByTariffIdAndRegionId(tariffId, regionId);
     }
 
+    @Override
+    public List<TariffRegion> getAllByRegionId(Long regionId) {
+        return tariffRegionDao.getAllByRegionId(regionId);
+    }
 }

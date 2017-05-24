@@ -3,7 +3,7 @@ package com.phonecompany.dao.interfaces;
 import com.phonecompany.model.Order;
 import com.phonecompany.model.enums.OrderType;
 import com.phonecompany.model.enums.WeekOfMonth;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 
 import java.time.LocalDate;
 import java.util.EnumMap;
@@ -28,6 +28,10 @@ public interface OrderDao extends JdbcOperations<Order> {
     Integer getCountOfServicesByCustomerId(Long customerId);
 
     EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type);
+
+    EnumMap<WeekOfMonth, Integer> getNumberOfServiceOrdersForTheLastMonthByType(OrderType type);
+
+    EnumMap<WeekOfMonth, Integer> getNumberOfTariffOrdersForTheLastMonthByType(OrderType type);
 
     List<Order> getTariffOrdersByRegionId(long regionId);
 

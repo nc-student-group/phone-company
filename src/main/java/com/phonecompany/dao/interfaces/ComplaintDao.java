@@ -1,7 +1,7 @@
 package com.phonecompany.dao.interfaces;
 
 import com.phonecompany.model.Complaint;
-import com.phonecompany.service.xssfHelper.Statistics;
+import com.phonecompany.service.interfaces.Statistics;
 import com.phonecompany.util.Query;
 
 import java.time.LocalDate;
