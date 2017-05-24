@@ -55,9 +55,9 @@
                                                     {{currentService.durationInDays}} days
                                                 </td>
                                             </tr>
-                                            <tr>
+                                            <tr ng-show="currentService.amount != 0">
                                                 <td>Amount</td>
-                                                <td>{{currentService.durationInDays}}</td>
+                                                <td>{{currentService.amount}}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2" style="word-wrap: break-word">
