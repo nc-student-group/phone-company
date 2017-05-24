@@ -34,10 +34,10 @@ public class UserController {
         this.eventPublisher = eventPublisher;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> login() {
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
+//    @GetMapping("/login")
+//    public ResponseEntity<?> login() {
+//        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//    }
 
     @GetMapping("/api/users")
     public Collection<User> getAllUsers() {

@@ -6,7 +6,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security.xsd">
-    <http auto-config="true" authentication-manager-ref="authenticationManager">
+    <http auto-config="true" authentication-manager-ref="authenticationManager" entry-point-ref="authenticationEntryPoint">
         <!--<intercept-url pattern="/**" access="permitAll"/>-->
         <intercept-url pattern="/#/login" access="permitAll()"/>
         <intercept-url pattern="/css/**" access="permitAll()"/>
@@ -78,9 +78,8 @@
 
 
 
-        <form-login login-page='/login'/>
+        <form-login login-page='/login' always-use-default-target="true"/>
         <logout logout-success-url="/#/index"/>
-        <http-basic entry-point-ref="authenticationEntryPoint"/>
         <form-login authentication-success-handler-ref="authenticationSuccessHandler"/>
         <form-login authentication-failure-handler-ref="authenticationFailureHandler"/>
         <csrf disabled="true"/>
