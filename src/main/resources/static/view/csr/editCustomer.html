@@ -87,7 +87,7 @@
                                         <div class="row">
                                             <div class="form-group col-sm-11">
                                                 <md-input-container class="md-block" ng-click="changeCorporateClick()" flex-gt-sm>
-                                                    <md-checkbox ng-model="corporateUser"
+                                                    <md-checkbox ng-click="changeCorporateStatusClick()" ng-model="corporateUser"
                                                                  aria-label="There are a corporate client">
                                                         There are a corporate client
                                                     </md-checkbox>
@@ -100,7 +100,7 @@
                                                 <md-input-container class="md-block" ng-click="changeRegionClick()" flex-gt-sm>
                                                     <label>Region</label>
                                                     <md-select ng-model="customer.address.region"
-                                                               ng-required="!corporateUser">
+                                                               ng-required="corporateUser!=true">
                                                         <md-option ng-repeat="r in regions" value="{{r.nameRegion}}">
                                                             {{r.nameRegion}}
                                                         </md-option>
@@ -182,7 +182,7 @@
                                             <div class="form-group col-sm-11">
                                                 <md-input-container class="md-block" flex-gt-sm>
                                                     <label>Corporation</label>
-                                                    <md-select ng-model="customer.corporate.id">
+                                                    <md-select ng-required="corporateUser==true" ng-model="customer.corporate.id">
                                                         <md-option ng-repeat="c in corporations" value="{{c.id}}">
                                                             {{c.corporateName}}
                                                         </md-option>

@@ -136,7 +136,9 @@ public class CustomerController {
         LOG.debug("Customer retrieved from the http request: {}", customer);
 
         this.customerService.update(customer);
-        this.addressService.update(customer.getAddress());
+        if(customer.getAddress()!=null){
+            this.addressService.update(customer.getAddress());
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
