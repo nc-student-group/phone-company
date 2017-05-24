@@ -9,8 +9,11 @@ angular.module('phone-company').controller('PmgChartsController', [
     'ChartService',
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
+        $scope.currentRegion = "Kyiv Region";
+        
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
+            $scope.currentRegion = $scope.regions[0].nameRegion;
         });
 
         ChartService.getComplaintStatistics().then(function (response) {

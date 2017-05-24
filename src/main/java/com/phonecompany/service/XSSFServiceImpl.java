@@ -57,6 +57,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             LOG.debug("Created sheet with name: {}", sheetName);
             int rowPosition = 0;
             for (TableDataSet<K, V> tableDataSet : sheetDataSet.getTableDataSets()) {
+                LOG.debug("Created table with name: {}", tableDataSet.getTableDataSetName());
                 this.createTable(sheet, rowPosition, tableDataSet);
                 rowPosition += distanceBetweenTables;
             }
@@ -160,7 +161,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     private void createCell(XSSFRow row, int colPosition, V cellValue) {
         XSSFCell cell = row.createCell(colPosition);
         if (cellValue instanceof Number) {
-            cell.setCellValue((Double) cellValue);
+            cell.setCellValue(((Number) cellValue).doubleValue());
         } else if (cellValue instanceof String) {
             cell.setCellValue((String) cellValue);
         } else if (cellValue instanceof Date) {

@@ -3,11 +3,9 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.exception.EmptyResultSetException;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
 import com.phonecompany.model.WeeklyComplaintStatistics;
-import com.phonecompany.model.enums.ComplaintCategory;
 import com.phonecompany.model.enums.ComplaintStatus;
 import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.ComplaintService;
@@ -26,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.phonecompany.model.enums.ComplaintCategory.CUSTOMER_SERVICE;
-import static com.phonecompany.model.enums.ComplaintCategory.SUGGESTION;
-import static com.phonecompany.model.enums.ComplaintCategory.TECHNICAL_SERVICE;
+import static com.phonecompany.model.enums.ComplaintCategory.*;
+
+//import com.phonecompany.exception.EmptyResultSetException;
 
 @ServiceStereotype
 public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
@@ -242,10 +240,10 @@ public class ComplaintServiceImpl extends CrudServiceImpl<Complaint>
         List<Statistics> statisticsList = this.complaintDao
                 .getComplaintStatisticsByRegionAndTimePeriod(regionId, startDate, endDate);
 
-        if (statisticsList.size() == 0) {
-            throw new EmptyResultSetException("There were no complaints orders in this region during " +
-                    "this period");
-        }
+//        if (statisticsList.size() == 0) {
+//            throw new EmptyResultSetException("There were no complaints orders in this region during " +
+//                    "this period");
+//        }
 
         return this.statisticsService
                 .prepareStatisticsDataSet("Complaints", statisticsList,

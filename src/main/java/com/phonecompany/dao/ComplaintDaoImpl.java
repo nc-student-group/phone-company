@@ -2,9 +2,6 @@ package com.phonecompany.dao;
 
 import com.phonecompany.dao.interfaces.ComplaintDao;
 import com.phonecompany.dao.interfaces.UserDao;
-import com.phonecompany.exception.CrudException;
-import com.phonecompany.exception.EntityInitializationException;
-import com.phonecompany.exception.PreparedStatementPopulationException;
 import com.phonecompany.exception.dao_layer.CrudException;
 import com.phonecompany.exception.dao_layer.EntityInitializationException;
 import com.phonecompany.exception.dao_layer.PreparedStatementPopulationException;
