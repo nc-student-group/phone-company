@@ -9,6 +9,8 @@ angular.module('phone-company').controller('CsrChartsController', [
     'ChartService',
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
+        $scope.activePage = "charts";
+
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
         });
