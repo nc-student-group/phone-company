@@ -130,7 +130,7 @@
         };
         CustomerService.updateStatus = function (id, status) {
             var deferred = $q.defer();
-            $http.get("/api/customer/status/update/" + id + "/" + status).then(
+            $http.patch("/api/customers/status/update/" + id + "/" + status).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

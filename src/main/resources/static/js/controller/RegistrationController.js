@@ -1,75 +1,92 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('phone-company')
-        .controller('RegistrationController', RegistrationController);
-
-    RegistrationController.$inject = ['$scope', '$log', '$window',
-        'LoginService', 'UserService'];
-
-    function RegistrationController($scope, $log, $window,
-                                    LoginService, UserService) {
+angular.module('phone-company').controller('RegistrationController', [
+    '$scope',
+    '$q',
+    '$http',
+    '$location',
+    'SessionService',
+    'LoginService',
+    'UserService',
+    'TariffService', /* to fetch all the regions */
+    'CustomerService',
+    '$rootScope',
+    '$routeParams',
+    'vcRecaptchaService',
+    'CaptchaService',
+    function ($scope, $q, $http, $location, SessionService, LoginService,
+              UserService, TariffService, CustomerService, $rootScope, $routeParams, vcRecaptchaService, CaptchaService) {
         console.log('This is RegistrationController');
 
-        this.user = { // this.user - property of this controller
-            firstName: ""
-            , password: ""
-            , confirmPassword: ""
-            , email: ""
-        };
-
-        this.authRequest = {
-            firstName: "",
-            password: ""
-        };
-
-        $scope.registration_selected = 'representative';
         $scope.selected = 'signIn';
 
-        $scope.registerUser = registerUser;
-        $scope.loginUser = loginUser;
-        $scope.redirect = redirect;
-        /**
-         * Registers user.
-         */
+        $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
+        $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
+        $scope.phonePattern = /^\+38077[0-9]{7}$/;
+        $scope.textFieldPattern = /^[a-zA-Z]+$/;
+        $scope.streetPattern = /^[a-zA-Z#\\ ]+$/
+        $scope.numberPattern = /^[^-e]*[1-9]+$/;
+        $scope.houseNumberPattern = /^[^!@#$%^&*()_+-]*$/
 
-        function loginUser() {
-            $log.debug('Authentication request: ' +
-                JSON.stringify($scope.authRequest));
-            LoginService.getUserRole($scope.authRequest)
-                .then(function (role) {
-                    $log.debug("Got user Role: ", role);
-                    if (role.data === '') {
-                        toastr.error('You have entered the wrong credentials');
-                    } else {
-                        $scope.redirect(role.data.name);
-                    }
-                }, function (error) {
-                    $log.error("Failed to save user", error);
+        $scope.recapthca = {response: 0};
+
+        $scope.getNewCustomer = function () {
+            CustomerService.getNewCustomer().then(function (data) {
+                $scope.customer = data;
+            });
+        };
+
+        $scope.getNewCustomer();
+
+        TariffService.getAllRegions().then(function (data) {
+            $scope.regions = data;
+            console.log($scope.regionsToAdd);
+        });
+
+        $scope.registerCustomer = function () {
+            console.log('Registering customer');
+            CustomerService.registerCustomer($scope.customer)
+                .then(function (response) {
+                    console.log(response.data);
+                    toastr.success("Customer with an email" + response.data.email + "has been successfully created. " +
+                        "Please, check your email for the activation link");
+                }, function (errorResponse) {
+                    toastr.error(errorResponse.data.message);
                 });
-        }
+        };
 
-        function redirect(role) {
-            console.log('Deciding where to go');
-            console.log('Role name: ' + role);
-            switch (role) {
-                case 'ADMIN':
-                    console.log('Redirecting to admin');
-                    $window.location.href = '/#/admin';
-                    break;
-                case 'CSR':
-                    console.log('Redirecting to csr');
-                    $window.location.href = '/#/csr';
-                    break;
-                case 'PMG':
-                    console.log('Redirecting to pmg');
-                    $window.location.href = '/#/pmg';
-                    break;
-                case 'CLIENT':
-                    console.log('Redirecting to client');
-                    $window.location.href = '/#/client';
-                    break;
-            }
-        }
-    }
-}());
+        $scope.loginClick = function () {
+            console.log('Trying to login');
+            $scope.preloader.send = true;
+            console.log($scope.recapthca);
+            CaptchaService.verifyCaptchaResponse($scope.recapthca.response).then(function (data) {
+                console.log("success captcha verify");
+            }, function (data) {
+                console.log("success captcha verify");
+            });
+            // LoginService.login("username=" + $scope.user.email +
+            //     "&password=" + $scope.user.password).then(function (data) {
+            //         LoginService.tryLogin().then(function (response) {
+            //             var loggedInRole = '/' + response.replace(/['"]+/g, '');
+            //             console.log('Currently logged in role is: ' + loggedInRole);
+            //             var redirectionUrl = loggedInRole.toLowerCase();
+            //             console.log('Redirecting to: ' + redirectionUrl);
+            //             $scope.preloader.send = false;
+            //             $location.path(redirectionUrl);
+            //         });
+            //     },
+            //     function (data) {
+            //         $scope.preloader.send = false;
+            //         toastr.error('Bad credentials', 'Error');
+            //     });
+        };
+
+        $scope.fallBackToLogin = function () {
+            $location.path('/login');
+        };
+
+        $scope.onWidgetCreate = function (_widgetId) {
+            $scope.widgetId = _widgetId;
+        };
+
+    }]);

@@ -34,10 +34,6 @@ public class UserController {
         this.eventPublisher = eventPublisher;
     }
 
-//    @GetMapping("/login")
-//    public ResponseEntity<?> login() {
-//        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//    }
 
     @GetMapping("/api/users")
     public Collection<User> getAllUsers() {
@@ -50,8 +46,7 @@ public class UserController {
         return users;
     }
 
-    //TODO: should not be POST. Updates are performed via PUT
-    @PostMapping("/api/user/update")
+    @PutMapping("/api/users")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
         User foundedUser = userService.findByEmail(user.getEmail());
@@ -62,8 +57,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    //TODO: i think it should be: value = "/api/users/logged-in-user"
-    @GetMapping("/api/user/get")
+    @GetMapping("/api/users/logged-in-user")
     public User getUser() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("User retrieved from security context: {}", loggedInUser);
@@ -73,12 +67,17 @@ public class UserController {
 
     @GetMapping("/api/login/try")
     public ResponseEntity<?> tryLogin() {
-        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        User loggedInUser;
+        try {
+            loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        } catch (ClassCastException ex) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         LOG.debug("Currently logged in user: {}", loggedInUser);
         return new ResponseEntity<>(loggedInUser.getRole(), HttpStatus.OK);
     }
 
-    @PostMapping("/api/user/save")
+    @PostMapping("/api/users")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
         LOG.info(user.toString());
         if (userService.findByEmail(user.getEmail()) == null) {
@@ -122,8 +121,7 @@ public class UserController {
         return response;
     }
 
-    //TODO: should not be done via GET. Updates are performed with PUT
-    @GetMapping("/api/user/update/{id}/{status}")
+    @PatchMapping("/api/user/update/{id}/{status}")
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
         return new ResponseEntity<>(HttpStatus.OK);

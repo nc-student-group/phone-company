@@ -58,7 +58,7 @@
         UserService.saveUserByAdmin = function (user) {
             console.log('User in service: ' + JSON.stringify(user));
             var deferred = $q.defer();
-            $http.post("/api/user/save", user).then(
+            $http.post("/api/users", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -71,7 +71,7 @@
 
         UserService.updateStatus = function (id, status) {
             var deferred = $q.defer();
-            $http.get("/api/user/update/" + id + "/" + status).then(
+            $http.patch("/api/user/update/" + id + "/" + status).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -85,7 +85,7 @@
         UserService.updateUserByAdmin = function (user) {
             console.log('User: ' + JSON.stringify(user));
             var deferred = $q.defer();
-            $http.post("/api/user/update", user).then(
+            $http.put("/api/users", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

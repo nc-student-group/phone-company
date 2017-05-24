@@ -14,7 +14,7 @@
         $routeProvider.when('/index',
             {
                 templateUrl: 'view/main.html',
-                controller: 'AuthorizeController'
+                controller: 'RegistrationController'
             });
         $routeProvider.when('/login',
             {
@@ -140,12 +140,12 @@
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/404',
             {
                 templateUrl: 'view/404.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/client',
             {
