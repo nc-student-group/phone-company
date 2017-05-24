@@ -131,11 +131,6 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
         orderService.update(pendingResumingOrder);
         orderService.save(resumingOrder);
 
-        if (customerTariff.getCustomer() != null) {
-            SimpleMailMessage notificationMessage = this.tariffResumingNotificationEmailCreator
-                    .constructMessage(customerTariff.getTariff());
-            this.emailService.sendMail(notificationMessage, customerTariff.getCustomer());
-        }
         return customerTariff;
     }
 

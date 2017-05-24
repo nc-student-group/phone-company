@@ -29,6 +29,10 @@ public interface OrderDao extends JdbcOperations<Order> {
 
     EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type);
 
+    EnumMap<WeekOfMonth, Integer> getNumberOfServiceOrdersForTheLastMonthByType(OrderType type);
+
+    EnumMap<WeekOfMonth, Integer> getNumberOfTariffOrdersForTheLastMonthByType(OrderType type);
+
     List<Order> getTariffOrdersByRegionId(long regionId);
 
     List<Order> getServiceOrdersByTimePeriod(LocalDate startDate, LocalDate endDate);

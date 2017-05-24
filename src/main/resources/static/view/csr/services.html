@@ -131,19 +131,17 @@
                                             <td>{{s.discount}}%</td>
                                             <td>{{s.productCategory.categoryName}}</td>
                                             <td>
-                                                <div class="col-md-3">
-                                                    <button ng-show="s.productStatus === 'DEACTIVATED'"
-                                                            class="btn btn-success btn-sm btn-fill pull-left"
-                                                            ng-click="activateService($index)">Activate
-                                                    </button>
-                                                    <button ng-show="s.productStatus === 'ACTIVATED'"
-                                                            class="btn btn-danger btn-sm btn-fill pull-left"
-                                                            ng-click="deactivateService($index)">Deactivate
-                                                    </button>
-                                                    <button class="btn btn-toggle btn-sm btn-fill pull-right"
-                                                            ng-click="editService(s.id)">Edit
-                                                    </button>
-                                                </div>
+                                                <button ng-show="s.productStatus === 'DEACTIVATED'"
+                                                        class="btn btn-success btn-sm btn-fill pull-left"
+                                                        ng-click="activateService($index)">Activate
+                                                </button>
+                                                <button ng-show="s.productStatus === 'ACTIVATED'"
+                                                        class="btn btn-danger btn-sm btn-fill pull-left"
+                                                        ng-click="deactivateService($index)">Deactivate
+                                                </button>
+                                                <button class="btn btn-toggle btn-sm btn-fill pull-right"
+                                                        ng-click="editService(s.id)">Edit
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>

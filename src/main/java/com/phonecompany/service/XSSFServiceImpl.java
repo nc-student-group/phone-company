@@ -86,17 +86,17 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
                              TableDataSet<K, V> tableDataSet) {
         String tableName = tableDataSet.getTableDataSetName() + PLURAL_FORM;
         this.createTableHeading(sheet, rowPosition++, tableName);
+        RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
+        this.generateColHeadings(sheet.createRow(rowPosition++), firstTableRow.getRowValues());
         int initialRowPosition = rowPosition;
         for (RowDataSet<K, V> rowDataSet : tableDataSet.getRowDataSets()) {
             int colPosition = 1;
             XSSFRow row = this.generateRowHeading(sheet, rowPosition++, rowDataSet.getRowName());
             this.fillRow(row, colPosition, rowDataSet.getRowValues());
         }
-        RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
-        this.generateColHeadings(sheet.createRow(rowPosition), firstTableRow.getRowValues());
-        LOG.debug("Created table with name: {}", tableName);
+        LOG.debug("Row position: {}", rowPosition);
         int rowValuesNumber = firstTableRow.getRowValues().size();
-        distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 2;
+        distanceBetweenTables = rowValuesNumber + CHART_HEIGHT + 3;
         this.drawChart(sheet, initialRowPosition, rowPosition, rowValuesNumber, tableName);
     }
 
@@ -333,7 +333,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
         // Define anchor points in the worksheet to position the chart
         XSSFClientAnchor anchor = drawing.createAnchor(
-                0, 0, 0, 0, 0, rowIndex + 2,
+                0, 0, 0, 0, 0, rowIndex + 1,
                 9, rowIndex + CHART_HEIGHT + 2);
 
         // Create the chart object based on the anchor point
