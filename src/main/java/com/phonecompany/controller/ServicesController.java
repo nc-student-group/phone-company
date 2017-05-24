@@ -68,16 +68,14 @@ public class ServicesController {
 
     @GetMapping
     public Collection<Service> getAllServices() {
-        List<Service> allServices = this.serviceService.getAll();
-        LOG.debug("Services fetched from the storage: {}", allServices);
-        return allServices;
+        LOG.debug("Fetching all the services...");
+        return this.serviceService.getAll();
     }
 
     @GetMapping(value = "/active")
     public Collection<Service> getAllActiveServices() {
-        List<Service> allServices = this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
-        LOG.debug("Services fetched from the storage: {}", allServices);
-        return allServices;
+        LOG.debug("Fetching all the active services...");
+        return this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
