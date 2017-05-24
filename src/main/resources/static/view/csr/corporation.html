@@ -24,6 +24,7 @@
                                                         <th>Name</th>
                                                         <th>Second name</th>
                                                         <th>Last name</th>
+                                                        <th>Representative</th>
                                                         <th></th>
                                                         </thead>
                                                         <tbody>
@@ -32,6 +33,9 @@
                                                             <td>{{c.firstName}}</td>
                                                             <td>{{c.secondName}}</td>
                                                             <td>{{c.lastName}}</td>
+                                                            <td>
+                                                                <md-checkbox ng-model="c.representative"  ng-click="updateCustomer(c)"></md-checkbox>
+                                                            </td>
                                                             <td>
                                                                 <button class="btn btn-default btn-fill" ng-click="deleteCustomerFromCompany(c)">Remove</button>
                                                             </td>
@@ -61,6 +65,7 @@
                                                         <th>Name</th>
                                                         <th>Second name</th>
                                                         <th>Last name</th>
+
                                                         <th></th>
                                                         </thead>
                                                         <tbody>

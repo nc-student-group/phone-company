@@ -17,6 +17,12 @@
         $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
         $scope.numberPattern = /^[0-9]+$/;
 
+        var region;
+        var locality;
+        var street;
+        var houseNumber;
+        var apNumb;
+
         $scope.corporateUser = false;
         $routeParams["id"];
 
@@ -55,12 +61,38 @@
           function (data) {
               $scope.preloader.send = true;
               $scope.customer=data;
+              if($scope.customer.corporate!=null){
+                  $scope.corporateUser = true;
+              } else{
+                  $scope.corporateUser = false;
+              }
               $scope.preloader.send = false;
           }, function (errResponse) {
                 $scope.preloader.send = false;
                 toastr.error("Client wasn't found");
             }
         );
+
+        $scope.changeCorporateStatusClick = function(){
+            if ($scope.corporateUser!=true) {
+                region = $scope.customer.address.region;
+                locality = $scope.customer.address.locality
+                street = $scope.customer.address.street;
+                houseNumber = $scope.customer.address.houseNumber;
+                apNumb = $scope.customer.address.apartmentNumber;
+                $scope.customer.address.region = null;
+                $scope.customer.address.locality = "";
+                $scope.customer.address.street = "";
+                $scope.customer.address.houseNumber = "";
+                $scope.customer.address.apartmentNumber = "";
+            }else {
+                $scope.customer.address.region = region;
+                $scope.customer.address.locality = locality;
+                $scope.customer.address.street = street;
+                $scope.customer.address.houseNumber = houseNumber;
+                $scope.customer.address.apartmentNumber = apNumb;
+            }
+        };
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;

@@ -104,17 +104,27 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         } else {
             user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         }
-        if (notUpdatedCustomer.getCorporate() != null && user.getCorporate() != null) {
-            if ((!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) || (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))) {
+
+        if (notUpdatedCustomer.getCorporate() != null){
+            if (user.getCorporate() != null) {
+                if(!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())){
+                    this.deactivateCustomerTariff(user.getId());
+                }
+            } else{
                 this.deactivateCustomerTariff(user.getId());
             }
-        } else if (notUpdatedCustomer.getCorporate() != null && user.getCorporate() == null) {
-            this.deactivateCustomerTariff(user.getId());
-        } else if (notUpdatedCustomer.getCorporate() == null && user.getCorporate() != null) {
-            this.deactivateCustomerTariff(user.getId());
-        } else if ((!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId()))) {
-            this.deactivateCustomerTariff(user.getId());
         }
+
+        if (notUpdatedCustomer.getAddress() != null){
+            if (user.getAddress() != null) {
+                if(!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId())){
+                    this.deactivateCustomerTariff(user.getId());
+                }
+            } else{
+                this.deactivateCustomerTariff(user.getId());
+            }
+        }
+
         return super.update(user);
     }
 
