@@ -103,13 +103,20 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
     @Override
     public WeeklyOrdersAmount getWeeklyOrdersAmount() {
 
-        EnumMap<WeekOfMonth, Integer> numberOfActivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfOrdersForTheLastMonthByType(ACTIVATION);
-        EnumMap<WeekOfMonth, Integer> numberOfDeactivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfOrdersForTheLastMonthByType(DEACTIVATION);
+        EnumMap<WeekOfMonth, Integer> numberOfServiceActivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(ACTIVATION);
+        EnumMap<WeekOfMonth, Integer> numberOfServiceDeactivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
 
-        return new WeeklyOrdersAmount(numberOfDeactivationOrdersForTheLastMonth,
-                numberOfActivationOrdersForTheLastMonth);
+        EnumMap<WeekOfMonth, Integer> numberOfTariffActivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(ACTIVATION);
+        EnumMap<WeekOfMonth, Integer> numberOfTariffDeactivationOrdersForTheLastMonth =
+                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
+
+        return new WeeklyOrdersAmount(numberOfServiceActivationOrdersForTheLastMonth,
+                numberOfServiceDeactivationOrdersForTheLastMonth,
+                numberOfTariffActivationOrdersForTheLastMonth,
+                numberOfTariffDeactivationOrdersForTheLastMonth);
     }
 
     @Override
