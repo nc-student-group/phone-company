@@ -7,7 +7,6 @@ import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.service_layer.MissingResultException;
-import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
@@ -182,7 +181,8 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     public Service save(Service service) {
         Assert.notNull(service, "Service cannot be null");
         if (this.isExist(service)) {
-            throw new ServiceAlreadyPresentException(service.getServiceName());
+            throw new ConflictException("Service with name " + service.getServiceName()
+                    + " already exists");
         }
         String pictureUrl = this.getPictureUrlForService(service);
         service.setPictureUrl(pictureUrl);

@@ -84,16 +84,16 @@ public class ServicesController {
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,
                                                      @PathVariable("size") int size,
-                                                     @RequestParam("pon") String partOfName,
-                                                     @RequestParam("pf") double priceFrom,
-                                                     @RequestParam("pt") double priceTo,
-                                                     @RequestParam("s") int status,
-                                                     @RequestParam("ob") int orderBy,
-                                                     @RequestParam("obt") String orderByType) {
+                                                     @RequestParam("partOfName") String partOfName,
+                                                     @RequestParam("startingPrice") double startingPrice,
+                                                     @RequestParam("endingPrice") double endingPrice,
+                                                     @RequestParam("selectedStatus") int status,
+                                                     @RequestParam("orderingCategory") int orderingCategory,
+                                                     @RequestParam("orderType") String orderType) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
         PagingResult<Service> servicePagingResult = serviceService
                 .getServicesByProductCategoryId(page, size, productCategoryId, partOfName,
-                        priceFrom, priceTo, status, orderBy, orderByType);
+                        startingPrice, endingPrice, status, orderingCategory, orderType);
         return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 

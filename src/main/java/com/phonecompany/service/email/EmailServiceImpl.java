@@ -36,6 +36,7 @@ public class EmailServiceImpl<T extends User> implements EmailService<T> {
         executorService.execute(new EmailDispatchTask(mailSender, mailMessage));
     }
 
+
     private String[] getArrayOfEmailRecipients(List<T> recipients) {
         String[] arrayOfRecipientEmails = new String[recipients.size()];
 

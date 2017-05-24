@@ -1,8 +1,7 @@
 package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
-import com.phonecompany.dao.interfaces.OrderDao;
-import com.phonecompany.exception.service_layer.InsufficientFilteringException;
+import com.phonecompany.exception.service_layer.InsufficientFiltrationException;
 import com.phonecompany.model.enums.interfaces.ItemType;
 import com.phonecompany.service.interfaces.StatisticsService;
 import com.phonecompany.service.interfaces.Statistics;
@@ -10,7 +9,6 @@ import com.phonecompany.service.xssfHelper.filterChain.DateFilter;
 import com.phonecompany.service.xssfHelper.filterChain.Filter;
 import com.phonecompany.service.xssfHelper.filterChain.ItemTypeFilter;
 import com.phonecompany.service.xssfHelper.filterChain.NamingFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -54,12 +52,12 @@ public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<Lo
      * Makes sure that the incoming list was filtered properly
      *
      * @param statisticsList list to validate
-     * @throws InsufficientFilteringException if list was not properly filtered
+     * @throws InsufficientFiltrationException if list was not properly filtered
      */
     private void validateStatisticsList(List<Statistics> statisticsList) {
         int statisticsListSize = statisticsList.size();
         if (statisticsListSize > 1 || statisticsListSize < 0) {
-            throw new InsufficientFilteringException(statisticsList);
+            throw new InsufficientFiltrationException(statisticsList);
         }
     }
 
