@@ -7,7 +7,6 @@ import com.phonecompany.dao.interfaces.ProductCategoryDao;
 import com.phonecompany.dao.interfaces.ServiceDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.exception.service_layer.MissingResultException;
-import com.phonecompany.exception.ServiceAlreadyPresentException;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.ProductCategory;
 import com.phonecompany.model.Service;
@@ -68,11 +67,13 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         }
         Query query = this.buildQueryForTariffTable(page, size, productCategoryId,
                 partOfName, priceFrom, priceTo, status, orderBy, orderByType);
-        List<Service> services = this.serviceDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
+        List<Service> services = this.serviceDao.executeForList(query.getQuery(),
+                query.getPreparedStatementParams().toArray());
         List<Service> servicesWithDiscount = this.applyDiscount(services);
         LOG.debug("Services to be put in response: {}", servicesWithDiscount);
 
-        int serviceEntityCount = this.serviceDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray());
+        int serviceEntityCount = this.serviceDao.executeForInt(query.getCountQuery(),
+                query.getCountParams().toArray());
 
         PagingResult<Service> pagingResult = new PagingResult<>(servicesWithDiscount, serviceEntityCount);
         LOG.debug("Paging result to be returned: {}", pagingResult);
@@ -120,16 +121,26 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         }
     }
 
+    /**
+     * Applies a discount to all services depending on the current user.
+     *
+     * @param services services discount will be applied to
+     * @return modified {@code List} of services
+     */
     private List<Service> applyDiscount(List<Service> services) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
         if (currentlyLoggedInUser.getRepresentative()) {
-            return this.mapToANewPrice(services);
+            return this.mapToARepresentativePrice(services);
         }
         return services;
     }
 
-    private List<Service> mapToANewPrice(List<Service> services) {
+    /**
+     * @param services
+     * @return
+     */
+    private List<Service> mapToARepresentativePrice(List<Service> services) {
         return services.stream()
                 .map(TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT))
                 .collect(Collectors.toList());
@@ -170,7 +181,8 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     public Service save(Service service) {
         Assert.notNull(service, "Service cannot be null");
         if (this.isExist(service)) {
-            throw new ServiceAlreadyPresentException(service.getServiceName());
+            throw new ConflictException("Service with name " + service.getServiceName()
+                    + " already exists");
         }
         String pictureUrl = this.getPictureUrlForService(service);
         service.setPictureUrl(pictureUrl);
@@ -180,6 +192,12 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return super.save(service);
     }
 
+    /**
+     * Checks if such service already exists in the storage.
+     *
+     * @param service service to be verified
+     * @return {@literal true} if service exists, {@literal false} otherwise
+     */
     private boolean isExist(Service service) {
         return this.serviceDao.isExist(service);
     }
@@ -213,23 +231,23 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
 
     @Override
     @Cacheable
-    public Map<String, Object> getAllServicesSearch(int page, int size,String name, String status, int lowerPrice, int upperPrice) {
+    public Map<String, Object> getAllServicesSearch(int page, int size, String name, String status, int lowerPrice, int upperPrice) {
         Query.Builder queryBuilder = new Query.Builder("service");
         queryBuilder.where();
-        queryBuilder.addLikeCondition("service_name",name);
-        queryBuilder.and().addCondition("price > ?",lowerPrice);
-        queryBuilder.and().addCondition("price < ?",upperPrice);
-        if(status.equals("ACTIVATED") || status.equals("DEACTIVATED")){
-            queryBuilder.and().addCondition("product_status = ?",status);
-        }else if(!status.equals("-")){
+        queryBuilder.addLikeCondition("service_name", name);
+        queryBuilder.and().addCondition("price > ?", lowerPrice);
+        queryBuilder.and().addCondition("price < ?", upperPrice);
+        if (status.equals("ACTIVATED") || status.equals("DEACTIVATED")) {
+            queryBuilder.and().addCondition("product_status = ?", status);
+        } else if (!status.equals("-")) {
             throw new ConflictException("Incorrect parameter: service status");
         }
-        queryBuilder.addPaging(page,size);
+        queryBuilder.addPaging(page, size);
 
         Map<String, Object> response = new HashMap<>();
         Query query = queryBuilder.build();
-        response.put("services", serviceDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", serviceDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("services", serviceDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", serviceDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 }

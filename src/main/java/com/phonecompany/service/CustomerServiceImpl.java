@@ -3,24 +3,16 @@ package com.phonecompany.service;
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.CustomerDao;
 import com.phonecompany.exception.ConflictException;
-import com.phonecompany.exception.service_layer.KeyAlreadyPresentException;
 import com.phonecompany.model.Address;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
-import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
-import com.phonecompany.model.events.OnRegistrationCompleteEvent;
-import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
-import com.phonecompany.service.interfaces.EmailService;
-import com.phonecompany.service.interfaces.VerificationTokenService;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.util.Assert;
@@ -28,8 +20,9 @@ import org.springframework.util.Assert;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import static com.phonecompany.model.enums.UserRole.CLIENT;
+import static com.phonecompany.model.enums.Status.ACTIVATED;
 
 @ServiceStereotype
 public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
@@ -37,76 +30,59 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     private static final Logger LOG = LoggerFactory.getLogger(UserActions.class);
 
-    @Value("${application-url}")
-    private String applicationUrl;
-
     private CustomerDao customerDao;
-    private VerificationTokenService verificationTokenService;
-    private ConfirmationEmailCreator confirmMessageCreator;
-    private EmailService<Customer> emailService;
     private TariffService tariffService;
     private CustomerTariffService customerTariffService;
     private ShaPasswordEncoder shaPasswordEncoder;
     private AddressService addressService;
+    private EmailService<Customer> emailService;
 
     @Autowired
     public CustomerServiceImpl(CustomerDao customerDao,
-                               VerificationTokenService verificationTokenService,
-                               ConfirmationEmailCreator confirmMessageCreator,
-                               EmailService<Customer> emailService,
                                TariffService tariffService,
                                CustomerTariffService customerTariffService,
                                ShaPasswordEncoder shaPasswordEncoder,
-                               AddressService addressService) {
+                               AddressService addressService,
+                               EmailService<Customer> emailService) {
         this.customerDao = customerDao;
-        this.verificationTokenService = verificationTokenService;
-        this.confirmMessageCreator = confirmMessageCreator;
-        this.emailService = emailService;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.addressService = addressService;
+        this.emailService = emailService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Status getStatus() {
         return Status.INACTIVE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void validate(Customer customer) {
         Assert.notNull(customer);
         String phone = customer.getPhone();
         int countByPhone = this.customerDao.getCountByPhone(phone);
         if (countByPhone != 0) {
-            throw new KeyAlreadyPresentException(phone);
+            throw new ConflictException("User associated with " + phone + " already exists");
         }
         String email = customer.getEmail();
         int countByEmail = this.customerDao.getCountByEmail(email);
         if (countByEmail != 0) {
-            throw new KeyAlreadyPresentException(email);
+            throw new ConflictException("User associated with " + email + " already exists");
         }
     }
 
     @Override
-    @EventListener
-    public void confirmRegistration(OnRegistrationCompleteEvent registrationCompleteEvent) {
-        Customer persistedCustomer = registrationCompleteEvent.getPersistedUser();
-
-        VerificationToken persistedToken = verificationTokenService
-                .saveTokenForUser(persistedCustomer);
-
-        SimpleMailMessage confirmationMessage =
-                this.confirmMessageCreator.constructMessage(persistedToken);
-        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
-        emailService.sendMail(confirmationMessage, persistedCustomer);
-    }
-
-    @Override
-    public void activateUserByToken(String token) {
+    public void activateCustomerByToken(String token) {
         Customer customer = this.customerDao.getByVerificationToken(token);
         LOG.debug("Customer fetched by verification token: {}", customer);
-        customer.setStatus(Status.ACTIVATED);
+        customer.setStatus(ACTIVATED);
         this.customerDao.update(customer);
         LOG.debug("User has been activated");
     }
@@ -165,6 +141,30 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         response.put("customersSelected", this.customerDao.executeForInt(query.getCountQuery(),
                 query.getCountParams().toArray()));
         return response;
+    }
+
+    /**
+     * Sends a notification message to all the customers that agreed to receive
+     * advertisement emails.
+     *
+     * @param mailMessage message to be notified about
+     */
+    @Override
+    public void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
+        List<Customer> agreedCustomers = this.getAgreedCustomers();
+        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
+        this.emailService.sendMail(mailMessage, agreedCustomers);
+    }
+
+    /**
+     * Retrieves all the customers that agreed to receive advertisement emails
+     *
+     * @return {@code List} of agreed customers
+     */
+    private List<Customer> getAgreedCustomers() {
+        return this.getAll().stream()
+                .filter(Customer::getIsMailingEnabled)
+                .collect(Collectors.toList());
     }
 
     private Query buildQueryForCustomersTable(int page, int size, long regionId, String status, String partOfEmail,
@@ -255,8 +255,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Map<String, Object> response = new HashMap<>();
 
         Query query = queryBuilder.build();
-        response.put("customers", customerDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", customerDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("customers", customerDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", customerDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 
@@ -279,13 +279,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         }
     }
 
+    //TODO: test whether new customer be created with CLIENT role
     @Override
     public Customer addNewCustomer(Customer customer) {
-        customer.setRole(CLIENT);
         Address savedAddress = this.addressService.save(customer.getAddress());
         customer.setAddress(savedAddress);
         return this.save(customer);
     }
-
 }
 

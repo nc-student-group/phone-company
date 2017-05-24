@@ -2,7 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.exception.service_layer.TypeNotSupportedException;
-import com.phonecompany.exception.service_layer.WorkbookToInputStreamConversionException;
+import com.phonecompany.exception.service_layer.ToInputStreamConversionException;
 import com.phonecompany.service.interfaces.XSSFService;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.RowDataSet;
@@ -70,7 +70,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             }
         }
 
-        return this.saveWorkBook(workbook);
+        return this.convertToInputStream(workbook);
     }
 
     /**
@@ -167,8 +167,8 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      */
     private void createCell(XSSFRow row, int colPosition, V cellValue) {
         XSSFCell cell = row.createCell(colPosition);
-        if (cellValue instanceof Number) {
-            cell.setCellValue((Double) cellValue);
+        if (cellValue instanceof Long) {
+            cell.setCellValue((Long) cellValue);
         } else if (cellValue instanceof String) {
             cell.setCellValue((String) cellValue);
         } else if (cellValue instanceof Date) {
@@ -222,9 +222,9 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
         // add chart series for each line
         this.addChartSeries(sheet, data, initialRowPosition, rowIndex, rowValuesNumber);
 
-        this.noSmoothedLinesForChart(chart);
         chart.plot(data, bottomAxis, leftAxis);
         LOG.debug("Chart for {} has been drawn", chartTitle);
+        this.noSmoothedLinesForChart(chart);
     }
 
     /**
@@ -346,12 +346,12 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
     }
 
     /**
-     * Persist provided {@link XSSFWorkbook} workbook into the root of the project.
+     * Converts provided {@link XSSFWorkbook} workbook into an InputStream.
      *
-     * @param workbook workbook to save
+     * @param workbook workbook to be converted
      * @return {@code InputStream} of all bytes of the workbook
      */
-    private InputStream saveWorkBook(XSSFWorkbook workbook) {
+    private InputStream convertToInputStream(XSSFWorkbook workbook) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             workbook.write(byteArrayOutputStream);
@@ -360,7 +360,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
             LOG.debug("Workbook has been written into an OutputStream");
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            throw new WorkbookToInputStreamConversionException(e);
+            throw new ToInputStreamConversionException(e);
         }
     }
 }

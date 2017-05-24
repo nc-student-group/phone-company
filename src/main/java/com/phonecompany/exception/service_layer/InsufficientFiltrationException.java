@@ -3,16 +3,16 @@ package com.phonecompany.exception.service_layer;
 import java.util.List;
 
 /**
- *
+ * Gets thrown if target was not properly filtered.
  */
-public class InsufficientFilteringException extends RuntimeException {
+public class InsufficientFiltrationException extends RuntimeException {
 
-    public InsufficientFilteringException(List<?> failedList) {
+    public InsufficientFiltrationException(List<?> failedList) {
         this("There should be only one element in the list at the end of the filter chain. " +
                 "But actual number is: " + failedList.size());
     }
 
-    public InsufficientFilteringException(String message) {
+    public InsufficientFiltrationException(String message) {
         super(message);
     }
 }

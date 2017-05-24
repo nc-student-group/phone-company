@@ -65,13 +65,13 @@
                                     <div class="col-sm-3">
                                         <md-input-container class="md-block" flex-gt-sm>
                                             <label>Price from:</label>
-                                            <input type="number" ng-model="priceFrom" min="0"/>
+                                            <input type="number" ng-model="startingPrice" min="0"/>
                                         </md-input-container>
                                     </div>
                                     <div class="col-sm-3">
                                         <md-input-container class="md-block" flex-gt-sm>
                                             <label>Price to:</label>
-                                            <input type="number" ng-model="priceTo" min="0"/>
+                                            <input type="number" ng-model="endingPrice" min="0"/>
                                         </md-input-container>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                                     <div class="col-sm-4">
                                         <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
                                             <label>Order by:</label>
-                                            <md-select ng-model="orderBy">
+                                            <md-select ng-model="orderingCategory">
                                                 <md-option value="0">Name</md-option>
                                                 <md-option value="1">Price</md-option>
                                                 <md-option value="2">Status</md-option>
@@ -90,7 +90,7 @@
                                     <div class="col-sm-2">
                                         <md-input-container class="md-block" style="margin: 1px 1px;" flex-gt-sm>
                                             <label>Order type:</label>
-                                            <md-select ng-model="orderByType">
+                                            <md-select ng-model="orderType">
                                                 <md-option value="ASC">&uarr;</md-option>
                                                 <md-option value="DESC">&darr;</md-option>
                                             </md-select>
@@ -131,17 +131,19 @@
                                             <td>{{s.discount}}%</td>
                                             <td>{{s.productCategory.categoryName}}</td>
                                             <td>
-                                                <button ng-show="s.productStatus === 'DEACTIVATED'"
-                                                        class="btn btn-success btn-sm btn-fill pull-left"
-                                                        ng-click="activateService($index)">Activate
-                                                </button>
-                                                <button ng-show="s.productStatus === 'ACTIVATED'"
-                                                        class="btn btn-danger btn-sm btn-fill pull-left"
-                                                        ng-click="deactivateService($index)">Deactivate
-                                                </button>
-                                                <button class="btn btn-toggle btn-sm btn-fill pull-right"
-                                                        ng-click="editService(s.id)">Edit
-                                                </button>
+                                                <div class="col-md-3">
+                                                    <button ng-show="s.productStatus === 'DEACTIVATED'"
+                                                            class="btn btn-success btn-sm btn-fill pull-left"
+                                                            ng-click="activateService($index)">Activate
+                                                    </button>
+                                                    <button ng-show="s.productStatus === 'ACTIVATED'"
+                                                            class="btn btn-danger btn-sm btn-fill pull-left"
+                                                            ng-click="deactivateService($index)">Deactivate
+                                                    </button>
+                                                    <button class="btn btn-toggle btn-sm btn-fill pull-right"
+                                                            ng-click="editService(s.id)">Edit
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -308,14 +310,14 @@
                                             <div class="col-md-12">
                                                 <div class="col-md-6">
                                                     <md-input-container class="md-block">
-                                                        <input type="number" placeholder="Discount"
+                                                        <input type="number" placeholder="Discount, %"
                                                                ng-model="currentService.discount" name="discount"
                                                                ng-pattern="discountPattern" required/>
 
                                                         <div ng-messages="servicesForm.discount.$error" role="alert"
                                                              multiple>
                                                             <div ng-message="pattern">
-                                                                This field can only contain numbers from 0 to 1
+                                                                This field can only contain numbers from 0 to 100
                                                             </div>
                                                         </div>
                                                     </md-input-container>
@@ -505,7 +507,7 @@
                                         <div class="col-md-12">
                                             <div class="col-md-6">
                                                 <md-input-container class="md-block">
-                                                    <input type="number" placeholder="Discount"
+                                                    <input type="number" placeholder="Discount, %"
                                                            ng-model="serviceToEdit.discount" name="discount"
                                                            ng-pattern="discountPattern" required/>
 
@@ -580,7 +582,7 @@
                                             <div style="margin-left: 40px" class="col-md-offset-1">
                                                 <button class="btn btn-info btn-fill pull-left"
                                                         ng-click="submitServiceEdit()"
-                                                        style="margin-right: 10px">Edit service
+                                                        style="margin-right: 10px">Submit edit
                                                 </button>
                                                 <button class="btn btn-default btn-fill pull-left"
                                                         ng-click="cancelEdit()">Cancel edit

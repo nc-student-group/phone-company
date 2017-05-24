@@ -34,12 +34,12 @@ public class UserController {
         this.eventPublisher = eventPublisher;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @GetMapping("/login")
     public ResponseEntity<?> login() {
-        return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(method = GET, value = "/api/users")
+    @GetMapping("/api/users")
     public Collection<User> getAllUsers() {
         LOG.info("Retrieving all the users contained in the database");
 
@@ -47,11 +47,11 @@ public class UserController {
 
         LOG.info("Users fetched from the database: " + users);
 
-        return Collections.unmodifiableCollection(users);
+        return users;
     }
 
     //TODO: should not be POST. Updates are performed via PUT
-    @RequestMapping(method = POST, value = "/api/user/update")
+    @PostMapping("/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
         User foundedUser = userService.findByEmail(user.getEmail());
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     //TODO: i think it should be: value = "/api/users/logged-in-user"
-    @RequestMapping(method = GET, value = "/api/user/get")
+    @GetMapping("/api/user/get")
     public User getUser() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("User retrieved from security context: {}", loggedInUser);
@@ -71,14 +71,14 @@ public class UserController {
         return loggedInUser;
     }
 
-    @RequestMapping(value = "/api/login/try", method = RequestMethod.GET)
+    @GetMapping("/api/login/try")
     public ResponseEntity<?> tryLogin() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", loggedInUser);
         return new ResponseEntity<>(loggedInUser.getRole(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = POST, value = "/api/user/save")
+    @PostMapping("/api/user/save")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
         LOG.info(user.toString());
         if (userService.findByEmail(user.getEmail()) == null) {
@@ -89,13 +89,14 @@ public class UserController {
         return new ResponseEntity<>(persistedUser, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = POST, value = "/api/user/changePassword")
+    @PostMapping("/api/user/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody HashMap<String, String> pass) {
-        userService.changePassword(pass.get("oldPass"), pass.get("newPass"), userService.getCurrentlyLoggedInUser());
+        userService.changePassword(pass.get("oldPass"), pass.get("newPass"),
+                userService.getCurrentlyLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(method = POST, value = "api/user/reset")
+    @PostMapping("api/user/reset")
     public ResponseEntity<?> resetPassword(@RequestBody String email) {
         LOG.info("Trying to reset password for user with email: " + email);
         User persistedUser = userService.findByEmail(email);
@@ -104,12 +105,12 @@ public class UserController {
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
-            return new ResponseEntity<Object>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(persistedUser, HttpStatus.OK);
     }
 
-    @RequestMapping(method = GET, value = "/api/users/{page}/{size}/{role}/{status}")
+    @GetMapping("/api/users/{page}/{size}/{role}/{status}")
     public Map<String, Object> getAllUsers(@PathVariable("page") int page, @PathVariable("size") int size,
                                            @PathVariable("role") int userRole, @PathVariable("status") String status,
                                            @RequestParam("em") String email, @RequestParam("ob") int orderBy,
@@ -122,7 +123,7 @@ public class UserController {
     }
 
     //TODO: should not be done via GET. Updates are performed with PUT
-    @RequestMapping(value = "/api/user/update/{id}/{status}", method = RequestMethod.GET)
+    @GetMapping("/api/user/update/{id}/{status}")
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
         return new ResponseEntity<>(HttpStatus.OK);

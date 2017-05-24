@@ -68,32 +68,30 @@ public class ServicesController {
 
     @GetMapping
     public Collection<Service> getAllServices() {
-        List<Service> allServices = this.serviceService.getAll();
-        LOG.debug("Services fetched from the storage: {}", allServices);
-        return allServices;
+        LOG.debug("Fetching all the services...");
+        return this.serviceService.getAll();
     }
 
     @GetMapping(value = "/active")
     public Collection<Service> getAllActiveServices() {
-        List<Service> allServices = this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
-        LOG.debug("Services fetched from the storage: {}", allServices);
-        return allServices;
+        LOG.debug("Fetching all the active services...");
+        return this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
     }
 
     @GetMapping("/category/{id}/{page}/{size}")
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,
                                                      @PathVariable("size") int size,
-                                                     @RequestParam("pon") String partOfName,
-                                                     @RequestParam("pf") double priceFrom,
-                                                     @RequestParam("pt") double priceTo,
-                                                     @RequestParam("s") int status,
-                                                     @RequestParam("ob") int orderBy,
-                                                     @RequestParam("obt") String orderByType) {
+                                                     @RequestParam("partOfName") String partOfName,
+                                                     @RequestParam("startingPrice") double startingPrice,
+                                                     @RequestParam("endingPrice") double endingPrice,
+                                                     @RequestParam("selectedStatus") int status,
+                                                     @RequestParam("orderingCategory") int orderingCategory,
+                                                     @RequestParam("orderType") String orderType) {
         LOG.debug("Fetching services for the product category with an id: {}", productCategoryId);
         PagingResult<Service> servicePagingResult = serviceService
                 .getServicesByProductCategoryId(page, size, productCategoryId, partOfName,
-                        priceFrom, priceTo, status, orderBy, orderByType);
+                        startingPrice, endingPrice, status, orderingCategory, orderType);
         return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 
@@ -103,20 +101,8 @@ public class ServicesController {
         Service persistedService = this.serviceService.save(service);
         SimpleMailMessage mailMessage = this
                 .serviceNotificationEmailCreator.constructMessage(service);
-        this.notifyAgreedCustomers(mailMessage);
+        this.customerService.notifyAgreedCustomers(mailMessage);
         return new ResponseEntity<>(persistedService, HttpStatus.OK);
-    }
-
-    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
-        this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    private List<Customer> getAgreedCustomers() {
-        return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     @GetMapping("/activate/{serviceId}")

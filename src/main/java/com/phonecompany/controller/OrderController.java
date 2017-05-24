@@ -25,15 +25,12 @@ public class OrderController {
 
     private CustomerService customerService;
     private OrderService orderService;
-    private CorporateService corporateService;
 
     @Autowired
     public OrderController(CustomerService customerService,
-                           OrderService orderService,
-                           CorporateService corporateService) {
+                           OrderService orderService) {
         this.customerService = customerService;
         this.orderService = orderService;
-        this.corporateService = corporateService;
     }
 
     @GetMapping(value = "/history/{page}/{size}")

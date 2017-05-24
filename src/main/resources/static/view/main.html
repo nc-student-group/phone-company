@@ -162,7 +162,7 @@
                                     <label>House number</label>
                                     <input name="houseNumber" type="text" id="houseNumber"
                                            ng-model="customer.address.houseNumber"
-                                    ng-pattern="houseNumberPattern">
+                                           ng-pattern="houseNumberPattern">
 
                                     <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
                                         <div ng-message="pattern">
@@ -186,7 +186,7 @@
                                 </md-input-container>
                             </div>
                         </div>
-                        <div style="margin-top: -80px">
+                        <div class="row">
                             <button ng-class="{unsubmitable : registerForm.$invalid,
                         submitable: !registerForm.$invalid}"
                                     ng-disabled="registerForm.$invalid"
@@ -195,7 +195,6 @@
                                 Submit
                             </button>
                         </div>
-                        <div class="clearfix"></div>
                     </form>
                 </div>
             </div>

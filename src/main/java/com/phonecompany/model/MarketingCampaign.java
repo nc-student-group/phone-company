@@ -18,7 +18,6 @@ public class MarketingCampaign extends DomainEntity {
     @NotNull(message = "Marketing campaign services must not be null")
     private List<MarketingCampaignServices> services;
 
-
     public MarketingCampaign() {
     }
 
