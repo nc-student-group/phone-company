@@ -310,14 +310,14 @@
                                             <div class="col-md-12">
                                                 <div class="col-md-6">
                                                     <md-input-container class="md-block">
-                                                        <input type="number" placeholder="Discount"
+                                                        <input type="number" placeholder="Discount, %"
                                                                ng-model="currentService.discount" name="discount"
                                                                ng-pattern="discountPattern" required/>
 
                                                         <div ng-messages="servicesForm.discount.$error" role="alert"
                                                              multiple>
                                                             <div ng-message="pattern">
-                                                                This field can only contain numbers from 0 to 1
+                                                                This field can only contain numbers from 0 to 100
                                                             </div>
                                                         </div>
                                                     </md-input-container>
@@ -507,7 +507,7 @@
                                         <div class="col-md-12">
                                             <div class="col-md-6">
                                                 <md-input-container class="md-block">
-                                                    <input type="number" placeholder="Discount"
+                                                    <input type="number" placeholder="Discount, %"
                                                            ng-model="serviceToEdit.discount" name="discount"
                                                            ng-pattern="discountPattern" required/>
 
