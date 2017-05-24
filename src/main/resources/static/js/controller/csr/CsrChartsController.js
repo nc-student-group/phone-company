@@ -60,6 +60,7 @@ angular.module('phone-company').controller('CsrChartsController', [
             'Tariff activations',
             'Tariff deactivations'
         ];
+        $scope.options = {legend: {display: true}};
 
         $scope.generateReport = function () {
             let convertedStartDate = $filter('date')($scope.startDate, "yyyy-MM-dd");

@@ -75,20 +75,8 @@ public class TariffController {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
         SimpleMailMessage notificationMessage = this.tariffNotificationMailCreator
                 .constructMessage(savedTariff);
-        this.notifyAgreedCustomers(notificationMessage);
+        this.customerService.notifyAgreedCustomers(notificationMessage);
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
-    }
-
-    private void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
-        LOGGER.debug("Customers agreed for mailing: {}", agreedCustomers);
-        this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    private List<Customer> getAgreedCustomers() {
-        return this.customerService.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     @PutMapping
