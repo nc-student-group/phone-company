@@ -2,6 +2,7 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.WeeklyComplaintsAmount;
 import com.phonecompany.model.WeeklyOrdersAmount;
+import com.phonecompany.model.enums.WeekOfMonth;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.service.xssfHelper.BookDataSet;
 import com.phonecompany.service.xssfHelper.SheetDataSet;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.EnumMap;
 
 import static com.phonecompany.service.xssfHelper.SheetDataSet.combine;
 
@@ -86,6 +88,12 @@ public class ReportController {
     public ResponseEntity<?> getOrderStatisticsForTheLastMonthByWeeks() {
 
         WeeklyOrdersAmount ordersAmount = this.orderService.getWeeklyOrdersAmount();
+
+        EnumMap<WeekOfMonth, Integer> getServiceDeactivations = ordersAmount.getServiceDeactivations();
+        LOG.debug("getServiceDeactivations.get(WeekOfMonth.FIRST_WEEK): {}",
+                getServiceDeactivations.get(WeekOfMonth.FIRST_WEEK));
+        LOG.debug("getServiceDeactivations.get(WeekOfMonth.FOURTH_WEEK): {}",
+                getServiceDeactivations.get(WeekOfMonth.FOURTH_WEEK));
 
         return new ResponseEntity<>(ordersAmount, HttpStatus.OK);
     }

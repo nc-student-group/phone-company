@@ -52,7 +52,7 @@ angular.module('phone-company').controller('CsrChartsController', [
             });
         };
 
-        $scope.colors = ['#32a9a4', '#ff6384', '#2725a3', '#ff6384'];
+        $scope.colors = ['#a97f00', '#ff7e68', '#2725a3', '#a90600'];
         $scope.labels = ['First week', 'Second week', 'Third week', 'Fourth week'];
         $scope.series = [
             'Service activations',

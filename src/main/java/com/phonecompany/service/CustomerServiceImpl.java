@@ -276,4 +276,3 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         return this.save(customer);
     }
 }
-

@@ -109,9 +109,9 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
 
         EnumMap<WeekOfMonth, Integer> numberOfTariffActivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(ACTIVATION);
+                this.orderDao.getNumberOfTariffOrdersForTheLastMonthByType(ACTIVATION);
         EnumMap<WeekOfMonth, Integer> numberOfTariffDeactivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
+                this.orderDao.getNumberOfTariffOrdersForTheLastMonthByType(DEACTIVATION);
 
         return new WeeklyOrdersAmount(numberOfServiceActivationOrdersForTheLastMonth,
                 numberOfServiceDeactivationOrdersForTheLastMonth,
