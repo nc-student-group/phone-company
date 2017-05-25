@@ -151,20 +151,9 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
      */
     @Override
     public void notifyAgreedCustomers(SimpleMailMessage mailMessage) {
-        List<Customer> agreedCustomers = this.getAgreedCustomers();
+        List<Customer> agreedCustomers = this.customerDao.getCustomersAgreedForMailing();
         LOG.debug("Customers agreed for mailing: {}", agreedCustomers);
         this.emailService.sendMail(mailMessage, agreedCustomers);
-    }
-
-    /**
-     * Retrieves all the customers that agreed to receive advertisement emails
-     *
-     * @return {@code List} of agreed customers
-     */
-    private List<Customer> getAgreedCustomers() {
-        return this.getAll().stream()
-                .filter(Customer::getIsMailingEnabled)
-                .collect(Collectors.toList());
     }
 
     private Query buildQueryForCustomersTable(int page, int size, long regionId, String status, String partOfEmail,
