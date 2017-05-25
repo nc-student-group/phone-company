@@ -89,12 +89,6 @@ public class ReportController {
 
         WeeklyOrdersAmount ordersAmount = this.orderService.getWeeklyOrdersAmount();
 
-        EnumMap<WeekOfMonth, Integer> getServiceDeactivations = ordersAmount.getServiceDeactivations();
-        LOG.debug("getServiceDeactivations.get(WeekOfMonth.FIRST_WEEK): {}",
-                getServiceDeactivations.get(WeekOfMonth.FIRST_WEEK));
-        LOG.debug("getServiceDeactivations.get(WeekOfMonth.FOURTH_WEEK): {}",
-                getServiceDeactivations.get(WeekOfMonth.FOURTH_WEEK));
-
         return new ResponseEntity<>(ordersAmount, HttpStatus.OK);
     }
 

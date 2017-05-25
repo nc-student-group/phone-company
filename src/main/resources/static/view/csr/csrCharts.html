@@ -9,7 +9,7 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="content center-block"
-                                 style="width: 800px; height: 700px">
+                                 style="width: 800px; height: 550px">
                                 <h4 class="text-center">
                                     Amount of activations/deactivations for the last month
                                 </h4>
@@ -21,7 +21,7 @@
                                         chart-series="series"
                                         chart-options="options">
                                 </canvas>
-                                <md-button class="md-primary md-raised"
+                                <md-button style="margin-top: 50px" class="md-primary md-raised"
                                            ng-click="showGenerateReportDialog($event)">
                                     detailed report
                                 </md-button>
@@ -32,37 +32,63 @@
 
                                 <div style="display: none">
                                     <div class="md-dialog-container" id="generateReport">
-                                        <md-dialog layout-padding>
-                                            <md-content layout-padding>
-                                                <h3>Generate report</h3>
-
-                                                <md-input-container class="md-block" flex-gt-sm>
-                                                    <label>Region:</label>
-                                                    <md-select required ng-model="currentRegion">
-                                                        <md-option ng-repeat="r in regions" value="{{r.id}}">
-                                                            {{r.nameRegion}}
-                                                        </md-option>
-                                                    </md-select>
-                                                </md-input-container>
-                                                <div layout-gt-xs="row">
-                                                    <div flex-gt-xs>
-                                                        <h4>Pick start date</h4>
-                                                        <md-datepicker required
-                                                                       ng-model="startDate"
-                                                                       md-placeholder="Start date"></md-datepicker>
-                                                    </div>
-                                                    <div flex-gt-xs>
-                                                        <h4>Pick end date</h4>
-                                                        <md-datepicker required
-                                                                       ng-model="endDate"
-                                                                       md-placeholder="End date"></md-datepicker>
+                                        <md-dialog class="col-md-4">
+                                            <form name="statisticsForm" id="statisticsForm"
+                                                  autocomplete="off" novalidate>
+                                                <h3 layout="row" layout-align="center center">Generate report</h3>
+                                                <div layout="row">
+                                                    <div class="col-md-6">
+                                                        <md-input-container class="md-block">
+                                                            <label>Region:</label>
+                                                            <md-select required name="currentRegion"
+                                                                       ng-model="currentRegion">
+                                                                <md-option ng-repeat="r in regions"
+                                                                           value="{{r.id}}">
+                                                                    {{r.nameRegion}}
+                                                                </md-option>
+                                                            </md-select>
+                                                            <div ng-messages="statisticsForm.currentRegion.$error"
+                                                                 role="alert">
+                                                                <div ng-message="required">Region is required.
+                                                                </div>
+                                                            </div>
+                                                        </md-input-container>
                                                     </div>
                                                 </div>
-                                            </md-content>
-                                            <md-button class="md-raised md-primary"
-                                                       ng-click="generateReport()">
-                                                Generate report
-                                            </md-button>
+                                                <div layout="row">
+                                                    <md-input-container md-auto-hide="false" class="md-block" flex-sm>
+                                                        <md-datepicker required
+                                                                       name="startDate"
+                                                                       ng-model="startDate"
+                                                                       md-placeholder="Start date"></md-datepicker>
+                                                        <div ng-messages="statisticsForm.startDate.$error"
+                                                             role="alert" multiple>
+                                                            <div ng-message="required">End date is required.
+                                                            </div>
+                                                        </div>
+                                                    </md-input-container>
+                                                    <md-input-container md-auto-hide="false" class="md-block" flex-sm>
+                                                        <md-datepicker required
+                                                                       name="endDate"
+                                                                       ng-model="endDate"
+                                                                       md-placeholder="End date"></md-datepicker>
+                                                        <div ng-messages="statisticsForm.endDate.$error"
+                                                             role="alert" multiple>
+                                                            <div ng-message="required">End date is required.
+                                                            </div>
+                                                        </div>
+                                                    </md-input-container>
+                                                </div>
+                                                <md-button
+                                                        ng-class="{unsubmitable : statisticsForm.$invalid,
+                                                                   submitable: !statisticsForm.$invalid}"
+                                                        ng-disabled="statisticsForm.$invalid"
+                                                        class="md-raised md-primary"
+                                                        style="margin-bottom: 20px"
+                                                        ng-click="generateReport()">
+                                                    Generate report
+                                                </md-button>
+                                            </form>
                                         </md-dialog>
                                     </div>
                                 </div>

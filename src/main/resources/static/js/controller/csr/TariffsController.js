@@ -96,7 +96,9 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.tariffsSelected / $scope.size);
+            console.log(`max ${max}`);
             if (max == $scope.tariffsSelected) {
+                console.log(`$scope.tariffsSelected ${$scope.tariffsSelected}`);
                 return max;
             }
             return max + 1;
