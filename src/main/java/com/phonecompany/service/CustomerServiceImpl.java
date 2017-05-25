@@ -7,7 +7,7 @@ import com.phonecompany.model.Address;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.enums.Status;
-import com.phonecompany.service.interfaces.CustomerService;
+import com.phonecompany.model.enums.UserRole;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.phonecompany.model.enums.Status.ACTIVATED;
 
@@ -79,6 +78,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
+    public Customer save(Customer customer) {
+        customer.setRole(UserRole.CLIENT);
+        return super.save(customer);
+    }
+
+    @Override
     public void activateCustomerByToken(String token) {
         Customer customer = this.customerDao.getByVerificationToken(token);
         LOG.debug("Customer fetched by verification token: {}", customer);
@@ -105,22 +110,22 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
             user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
         }
 
-        if (notUpdatedCustomer.getCorporate() != null){
+        if (notUpdatedCustomer.getCorporate() != null) {
             if (user.getCorporate() != null) {
-                if(!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())){
+                if (!notUpdatedCustomer.getCorporate().getId().equals(user.getCorporate().getId())) {
                     this.deactivateCustomerTariff(user.getId());
                 }
-            } else{
+            } else {
                 this.deactivateCustomerTariff(user.getId());
             }
         }
 
-        if (notUpdatedCustomer.getAddress() != null){
+        if (notUpdatedCustomer.getAddress() != null) {
             if (user.getAddress() != null) {
-                if(!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId())){
+                if (!notUpdatedCustomer.getAddress().getRegion().getId().equals(user.getAddress().getRegion().getId())) {
                     this.deactivateCustomerTariff(user.getId());
                 }
-            } else{
+            } else {
                 this.deactivateCustomerTariff(user.getId());
             }
         }
@@ -249,7 +254,6 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         return response;
     }
 
-
     @Override
     public void updateStatus(long id, Status status) {
         customerDao.updateStatus(id, status);
@@ -266,13 +270,5 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         } else {
             //TODO DELETE CUSTOMER FROM COMPANY???
         }
-    }
-
-    //TODO: test whether new customer be created with CLIENT role
-    @Override
-    public Customer addNewCustomer(Customer customer) {
-        Address savedAddress = this.addressService.save(customer.getAddress());
-        customer.setAddress(savedAddress);
-        return this.save(customer);
     }
 }

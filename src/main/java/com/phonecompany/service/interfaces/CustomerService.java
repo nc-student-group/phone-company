@@ -23,10 +23,10 @@ public interface CustomerService extends CrudService<Customer>,
     void deactivateCustomerTariff(long id);
 
     List<Customer> getCustomersByCorporate(long corporateId);
+
     List<Customer> getSuitableCustomersForService(long corporateId);
 
     Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
 
-    Customer addNewCustomer(Customer customer);
-
+    Customer save(Customer customer);
 }

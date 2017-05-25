@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class TariffRegionController {
         this.emailService = emailService;
         this.tariffNotificationMailCreator = tariffNotificationMailCreator;
     }
-
+    
     @PostMapping
     public ResponseEntity<?> saveTariffRegion(@RequestBody List<TariffRegion> tariffRegions) {
         Tariff savedTariff = tariffService.addNewTariff(tariffRegions);
