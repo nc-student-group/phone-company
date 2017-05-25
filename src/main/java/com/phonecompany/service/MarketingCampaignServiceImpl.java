@@ -113,4 +113,17 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         }
         return campaign;
     }
+
+    @Override
+    public MarketingCampaign update(MarketingCampaign entity) {
+        MarketingCampaign campaign = super.update(entity);
+        for(MarketingCampaignServices service: entity.getServices()) {
+            if(service.getId() != null) {
+                marketingCampaignServicesDao.update(service);
+            } else {
+                marketingCampaignServicesDao.save(service, campaign);
+            }
+        }
+        return campaign;
+    }
 }

@@ -55,9 +55,8 @@ public class MarketingCampaignServicesDaoImpl extends JdbcOperationsImpl<Marketi
     @Override
     public void populateUpdateStatement(PreparedStatement preparedStatement, MarketingCampaignServices entity) {
         try {
-            preparedStatement.setObject(1, TypeMapper.getNullableId(entity.getService()));
-            preparedStatement.setDouble(2, entity.getPrice());
-            preparedStatement.setLong(3, entity.getId());
+            preparedStatement.setDouble(1, entity.getPrice());
+            preparedStatement.setLong(2, entity.getId());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
         }
