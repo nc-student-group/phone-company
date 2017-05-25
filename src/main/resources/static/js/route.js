@@ -49,12 +49,12 @@
         $routeProvider.when('/csr',
             {
                 templateUrl: 'view/csr/csrProfile.html',
-                controller: 'CsrProfileController'
+                controller: 'PmgProfileController'
             });
         $routeProvider.when('/pmg',
             {
                 templateUrl: 'view/pmg/pmgProfile.html',
-                controller: 'CsrProfileController'
+                controller: 'PmgProfileController'
             });
         $routeProvider.when('/user/profile/:success',
             {

@@ -3,6 +3,8 @@ package com.phonecompany.controller;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
+import com.phonecompany.service.email.customer_related_emails.ResetPasswordEmailCreator;
+import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -26,12 +29,16 @@ public class UserController {
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
+    private EmailService<User> emailService;
+    private ResetPasswordEmailCreator resetPassMessageCreator;
 
     @Autowired
-    public UserController(UserService userService,
-                          ApplicationEventPublisher eventPublisher) {
+    public UserController(UserService userService, ApplicationEventPublisher eventPublisher,
+                          ResetPasswordEmailCreator resetPassMessageCreator, EmailService<User> emailService) {
         this.userService = userService;
         this.eventPublisher = eventPublisher;
+        this.resetPassMessageCreator = resetPassMessageCreator;
+        this.emailService = emailService;
     }
 
 
@@ -100,7 +107,8 @@ public class UserController {
         LOG.info("Trying to reset password for user with email: " + email);
         User persistedUser = userService.findByEmail(email);
         if (persistedUser != null) {
-            userService.resetPassword(persistedUser);
+            String newPassword = userService.resetPassword(persistedUser);
+            sendResetPasswordMessage(persistedUser, newPassword);
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
@@ -125,5 +133,11 @@ public class UserController {
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    private void sendResetPasswordMessage(User user, String password) {
+        SimpleMailMessage resetPasswordMessage =
+                this.resetPassMessageCreator.constructMessage(password);
+        LOG.info("Sending email reset password to: {}", user.getEmail());
+        emailService.sendMail(resetPasswordMessage, user);
     }
 }

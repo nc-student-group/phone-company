@@ -20,6 +20,7 @@
         <intercept-url pattern="/api/users" method="PUT" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/api/users" method="POST" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/api/users/logged-in-user" method="PUT" access="hasAnyRole('ADMIN','CSR','PMG','CLIENT')"/>
+        <intercept-url pattern="/api/users/logged-in-user" method="GET" access="hasAnyRole('ADMIN','CSR','PMG','CLIENT')"/>
         <intercept-url pattern="/api/users/**" method="GET" access="hasRole('ADMIN')"/>
         <intercept-url pattern="/api/user/reset" access="permitAll()"/>
         <intercept-url pattern="/api/confirmRegistration" access="permitAll()"/>

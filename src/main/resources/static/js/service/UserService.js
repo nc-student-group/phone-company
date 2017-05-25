@@ -13,6 +13,7 @@
 
         var GET_ALL_USERS_URL = "api/users/";
         var CHANGE_PASSWORD_URL = "/api/user/changePassword";
+        var GET_USER = "/api/users/logged-in-user";
         // Basic CRUD operations
         UserService.perform = function () {
             console.log('Performing on api users');
@@ -103,6 +104,19 @@
                 'newPass': newPass
             };
             $http.post(CHANGE_PASSWORD_URL, pass).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        UserService.getUser = function () {
+            var deferred = $q.defer();
+            $http.get(GET_USER).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
