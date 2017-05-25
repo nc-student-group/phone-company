@@ -3,6 +3,8 @@ package com.phonecompany.controller;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
+import com.phonecompany.service.email.customer_related_emails.ResetPasswordEmailCreator;
+import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -26,18 +29,18 @@ public class UserController {
 
     private UserService userService;
     private ApplicationEventPublisher eventPublisher;
+    private EmailService<User> emailService;
+    private ResetPasswordEmailCreator resetPassMessageCreator;
 
     @Autowired
-    public UserController(UserService userService,
-                          ApplicationEventPublisher eventPublisher) {
+    public UserController(UserService userService, ApplicationEventPublisher eventPublisher,
+                          ResetPasswordEmailCreator resetPassMessageCreator, EmailService<User> emailService) {
         this.userService = userService;
         this.eventPublisher = eventPublisher;
+        this.resetPassMessageCreator = resetPassMessageCreator;
+        this.emailService = emailService;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> login() {
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
 
     @GetMapping("/api/users")
     public Collection<User> getAllUsers() {
@@ -50,8 +53,7 @@ public class UserController {
         return users;
     }
 
-    //TODO: should not be POST. Updates are performed via PUT
-    @PostMapping("/api/user/update")
+    @PutMapping("/api/users")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         LOG.info("User parsed from the request body: " + user);
         User foundedUser = userService.findByEmail(user.getEmail());
@@ -62,8 +64,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    //TODO: i think it should be: value = "/api/users/logged-in-user"
-    @GetMapping("/api/user/get")
+    @GetMapping("/api/users/logged-in-user")
     public User getUser() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("User retrieved from security context: {}", loggedInUser);
@@ -73,12 +74,17 @@ public class UserController {
 
     @GetMapping("/api/login/try")
     public ResponseEntity<?> tryLogin() {
-        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        User loggedInUser;
+        try {
+            loggedInUser = this.userService.getCurrentlyLoggedInUser();
+        } catch (ClassCastException ex) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         LOG.debug("Currently logged in user: {}", loggedInUser);
         return new ResponseEntity<>(loggedInUser.getRole(), HttpStatus.OK);
     }
 
-    @PostMapping("/api/user/save")
+    @PostMapping("/api/users")
     public ResponseEntity<?> saveUserByAdmin(@RequestBody User user) {
         LOG.info(user.toString());
         if (userService.findByEmail(user.getEmail()) == null) {
@@ -101,7 +107,8 @@ public class UserController {
         LOG.info("Trying to reset password for user with email: " + email);
         User persistedUser = userService.findByEmail(email);
         if (persistedUser != null) {
-            userService.resetPassword(persistedUser);
+            String newPassword = userService.resetPassword(persistedUser);
+            sendResetPasswordMessage(persistedUser, newPassword);
             LOG.info("User's new password " + persistedUser.getPassword());
         } else {
             LOG.info("User with email " + email + " not found!");
@@ -122,10 +129,15 @@ public class UserController {
         return response;
     }
 
-    //TODO: should not be done via GET. Updates are performed with PUT
-    @GetMapping("/api/user/update/{id}/{status}")
+    @PatchMapping("/api/user/update/{id}/{status}")
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         userService.updateStatus(id, status);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    private void sendResetPasswordMessage(User user, String password) {
+        SimpleMailMessage resetPasswordMessage =
+                this.resetPassMessageCreator.constructMessage(password);
+        LOG.info("Sending email reset password to: {}", user.getEmail());
+        emailService.sendMail(resetPasswordMessage, user);
     }
 }

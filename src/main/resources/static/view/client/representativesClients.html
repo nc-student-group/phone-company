@@ -38,8 +38,9 @@
                                             <td>{{c.address.region.nameRegion}}</td>
                                             <td>{{c.status}}</td>
                                             <td>
-                                                <button ng-show="c.status=='INACTIVE'" ng-click="activateClick(c)">Activate</button>
-                                                <button ng-show="c.status=='ACTIVATED'" ng-click="deactivateClick(c)">Deactivate</button>
+                                                <md-button class="md-raised md-primary" ng-show="c.status=='INACTIVE'" ng-click="activateClick(c)">Activate</md-button>
+                                                <md-button class="md-accent md-raised md-hue-1" ng-show="c.status=='ACTIVATED'" ng-click="deactivateClick(c)">Deactivate</md-button>
+                                                <md-button class="md-raised" ng-click="editCustomerClick(c)">Edit</md-button>
                                             </td>
                                         </tr>
                                         </tbody>

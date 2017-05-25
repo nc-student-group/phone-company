@@ -149,11 +149,15 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     @Override
     @Cacheable
     public Service getById(Long serviceId) {
+        LOG.debug("Try to get service with id: {}", serviceId);
         Service serviceFoundById = super.getById(serviceId);
-        LOG.debug("Service price without a discount: {}", serviceFoundById.getPrice());
-        Service serviceWithDiscount = this.applyDiscount(serviceFoundById);
-        LOG.debug("Service price after applying discount: {}", serviceWithDiscount.getPrice());
-        return serviceWithDiscount;
+        if(serviceFoundById != null) {
+            LOG.debug("Service price without a discount: {}", serviceFoundById.getPrice());
+            Service serviceWithDiscount = this.applyDiscount(serviceFoundById);
+            LOG.debug("Service price after applying discount: {}", serviceWithDiscount.getPrice());
+            return serviceWithDiscount;
+        }
+        return null;
     }
 
     private Service applyDiscount(Service service) {

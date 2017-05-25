@@ -13,7 +13,7 @@ public interface MarketingCampaignService extends CrudService<MarketingCampaign>
 
     void activateMarketingCampaign(MarketingCampaign campaign, Customer customer);
 
-    Map<String, Object> getMarketingCampaignsTable(int page, int size);
+    Map<String, Object> getMarketingCampaignsTable(int page, int size, String name, int status);
 
     void updateMarketingCampaignStatus(Long campaignId, ProductStatus productStatus);
 

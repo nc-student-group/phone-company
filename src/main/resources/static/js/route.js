@@ -14,7 +14,7 @@
         $routeProvider.when('/index',
             {
                 templateUrl: 'view/main.html',
-                controller: 'AuthorizeController'
+                controller: 'RegistrationController'
             });
         $routeProvider.when('/login',
             {
@@ -49,12 +49,12 @@
         $routeProvider.when('/csr',
             {
                 templateUrl: 'view/csr/csrProfile.html',
-                controller: 'CsrProfileController'
+                controller: 'PmgProfileController'
             });
         $routeProvider.when('/pmg',
             {
                 templateUrl: 'view/pmg/pmgProfile.html',
-                controller: 'CsrProfileController'
+                controller: 'PmgProfileController'
             });
         $routeProvider.when('/user/profile/:success',
             {
@@ -87,6 +87,12 @@
                 templateUrl: 'view/csr/marketingCampaignDetail.html',
                 controller: 'CsrMarketingCampaignDetailController'
             });
+        $routeProvider.when('/csr/marketing-campaign/edit/:id',
+            {
+                templateUrl: 'view/csr/marketingCampaignEdit.html',
+                controller: 'MarketingCampaignEditController'
+            });
+
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',
@@ -140,12 +146,12 @@
         $routeProvider.when('/403',
             {
                 templateUrl: 'view/403.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/404',
             {
                 templateUrl: 'view/404.html',
-                // controller: ''
+                controller: '403Controller'
             });
         $routeProvider.when('/client',
             {
@@ -227,6 +233,12 @@
                 templateUrl: 'view/client/representativesClients.html',
                 controller: 'RepresentativeCustomerController'
             });
+        $routeProvider.when('/client/editCustomer/:id',
+            {
+                templateUrl: 'view/client/editCustomer.html',
+                controller: 'RepresentativeEditCustomerController'
+            });
+
         $routeProvider.otherwise({redirectTo: '/404'});
     });
 

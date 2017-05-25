@@ -85,12 +85,19 @@ angular.module('phone-company').controller('CsrClientDetailController',
                     });
                 }
             };
-
-
+            
             $scope.activateServiceClick = function () {
+                console.log("Try to activate service with id: "
+                    + $scope.servicesList[$scope.selectedServiceId].id);
                 $scope.preloader.send = true;
-                ServicesService.activateServiceForCustomerId($scope.servicesList[$scope.selectedServiceId].id, $scope.customer.id).then(function () {
+                ServicesService.activateServiceForCustomerId($scope.servicesList[$scope.selectedServiceId].id, $scope.customer.id).then(function (data) {
+                    $scope.preloader.send = false;
+                    toastr.success(`Service has been successfully activated`);
                     $scope.loadCurrentServices();
+                }, function (error) {
+                    console.log(`Error ${error.data.message}`);
+                    toastr.error(error.data.message);
+                    $scope.preloader.send = false;
                 });
             };
 

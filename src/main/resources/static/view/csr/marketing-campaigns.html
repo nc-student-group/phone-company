@@ -29,6 +29,27 @@
                                             </md-input-container>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Name:</label>
+                                            <input type="text" ng-model="selectedName" maxlength="150"/>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Status:</label>
+                                            <md-select ng-model="selectedStatus">
+                                                <md-option value="0">All statuses</md-option>
+                                                <md-option value="1">ACTIVATED</md-option>
+                                                <md-option value="2">DEACTIVATED</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-info btn-fill" ng-click="updateData()">Filter</button>
+                                    </div>
+                                </div>
+
                                 </div>
                                 <table id="tariffTable" class="table table-striped table-bordered table-hover">
                                     <thead>
@@ -94,7 +115,7 @@
                                                         aria-controls="tariffTable"
                                                         data-dt-idx="1" tabindex="0">{{page+1}}</a>
                                                 </li>
-                                                <li class="paginate_button" ng-show="(page + 1)*size < tariffsSelected"
+                                                <li class="paginate_button" ng-show="(page + 1)*size < campaignsFound"
                                                     ng-click="getPage(page+1)">
                                                     <a
                                                             aria-controls="tariffTable"

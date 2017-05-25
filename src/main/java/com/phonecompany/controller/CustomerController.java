@@ -154,7 +154,7 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/customer/status/update/{id}/{status}", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/customers/status/update/{id}/{status}", method = RequestMethod.PATCH)
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         if (status.equals(Status.DEACTIVATED)) {
             customerService.deactivateCustomerTariff(id);

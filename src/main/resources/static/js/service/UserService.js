@@ -13,6 +13,7 @@
 
         var GET_ALL_USERS_URL = "api/users/";
         var CHANGE_PASSWORD_URL = "/api/user/changePassword";
+        var GET_USER = "/api/users/logged-in-user";
         // Basic CRUD operations
         UserService.perform = function () {
             console.log('Performing on api users');
@@ -58,7 +59,7 @@
         UserService.saveUserByAdmin = function (user) {
             console.log('User in service: ' + JSON.stringify(user));
             var deferred = $q.defer();
-            $http.post("/api/user/save", user).then(
+            $http.post("/api/users", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -71,7 +72,7 @@
 
         UserService.updateStatus = function (id, status) {
             var deferred = $q.defer();
-            $http.get("/api/user/update/" + id + "/" + status).then(
+            $http.patch("/api/user/update/" + id + "/" + status).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -85,7 +86,7 @@
         UserService.updateUserByAdmin = function (user) {
             console.log('User: ' + JSON.stringify(user));
             var deferred = $q.defer();
-            $http.post("/api/user/update", user).then(
+            $http.put("/api/users", user).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },
@@ -103,6 +104,19 @@
                 'newPass': newPass
             };
             $http.post(CHANGE_PASSWORD_URL, pass).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        };
+
+        UserService.getUser = function () {
+            var deferred = $q.defer();
+            $http.get(GET_USER).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

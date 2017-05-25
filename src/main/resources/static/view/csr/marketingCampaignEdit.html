@@ -1,0 +1,127 @@
+<div class="wrapper">
+    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+
+    <div class="main-panel">
+        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="tariff-editing" class="card">
+                            <div class="header">
+                                <h4 class="title">Edit marketing campaign</h4>
+                            </div>
+                            <div class="content">
+                                <form name="addMarketingCampaignForm" id="addMarketingCampaignForm"
+                                      autocomplete="off" novalidate ng-submit="saveMarketingCampaign()">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block">
+                                                <input type="text" placeholder="Marketing campaign name" name="name"
+                                                       ng-model="currentCampaign.name" md-maxlength="150" required/>
+                                                <div ng-messages="addMarketingCampaignForm.name.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Marketing campaign name is required.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block">
+                                                <textarea placeholder="Description" name="description"
+                                                          ng-model="currentCampaign.description"  required></textarea>
+                                                <div ng-messages="addMarketingCampaignForm.description.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Marketing campaign description is required.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Tariff plan region</label>
+                                                <md-select ng-model="currentRegion" ng-change="getTariffsForRegion()"
+                                                           name="region" required>
+                                                    <md-option ng-repeat="r in regions" value="{{r.id}}">
+                                                        {{r.nameRegion}}
+                                                    </md-option>
+                                                </md-select>
+                                                <div ng-messages="addMarketingCampaignForm.region.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Region is not chosen.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <md-input-container class="md-block" flex-gt-sm>
+                                                <label>Tariff plan</label>
+                                                <md-select ng-model="tariffRegionToAdd.id" name="tariff">
+                                                    <md-option ng-repeat="tr in tariffs" value="{{tr.id}}">
+                                                        {{tr.tariff.tariffName}}
+                                                    </md-option>
+                                                </md-select>
+                                                <div ng-messages="addMarketingCampaignForm.tariff.$error" role="alert"
+                                                     multiple>
+                                                    <div ng-message="required">
+                                                        Tariff plan is not chosen.
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5" ng-repeat="ms in marketingServices"
+                                             ng-class="{'first-elem-in-row': $index == 0}">
+                                            <div class="col-md-6">
+                                                <md-checkbox type="checkbox" class="md-block"
+                                                             ng-click="toggle(ms, marketingServicesToAdd)"
+                                                             ng-model="ms.selected">
+                                                    <label>{{ms.service.serviceName}}</label>
+                                                </md-checkbox>
+                                            </div>
+                                            <div class="col-md-6" style="height: 52px;">
+                                                <md-input-container ng-show="true"
+                                                                    style="margin: 0 0; padding: 0;">
+                                                    <input type="number"
+                                                           ng-model="ms.price" class="form-control"
+                                                           ng-change="checkPrice(ms, marketingServicesToAdd)">
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-info btn-fill pull-left" type="submit"
+                                            ng-disabled="addMarketingCampaignForm.$invalid">Save Marketing Campaign
+                                    </button>
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

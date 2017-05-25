@@ -17,6 +17,8 @@ angular.module('phone-company').controller('MarketingCampaignController', [
         $scope.size = 5;
         $scope.inProgress = false;
         $scope.campaignsFound = 0;
+        $scope.selectedName = '';
+        $scope.selectedStatus = 0;
         $scope.editing = false;
         $scope.currentRegion = 0;
         $scope.currentCategory = 0;
@@ -31,7 +33,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
         });
 
         $scope.preloader.send = true;
-        MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+        MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
             .then(function (data) {
                 $scope.campaigns = data.campaigns;
                 console.log($scope.campaigns);
@@ -46,7 +48,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -64,7 +66,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = page;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -90,7 +92,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -107,7 +109,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
             console.log($scope.dateTo);
             $scope.page = 0;
             $scope.preloader.send = true;
-            MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+            MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                 .then(function (data) {
                     $scope.campaigns = data.campaigns;
                     $scope.campaignsFound = data.campaignsFound;
@@ -211,6 +213,10 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 toastr.error('Tariff must not be empty', 'Error');
                 return false;
             }
+            if (campaign.services.length === 0) {
+                toastr.error('Services must not be empty', 'Error');
+                return false;
+            }
 
             return true;
         };
@@ -236,6 +242,10 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 toastr.error('Some problems with marketing campaign deactivation, try again!', 'Error');
                 $scope.preloader.send = false;
             })
+        };
+
+        $scope.editClick = function (id) {
+            $location.path("/csr/marketing-campaign/edit/" + id);
         };
 
     }]);

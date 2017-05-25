@@ -117,7 +117,10 @@
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="c in customers">
-                                            <td ng-click="moreClick(c.id)"><a>{{c.email}}</a></td>
+                                            <td ng-click="moreClick(c.id)">
+                                                <a>{{c.email}}</a><br>
+                                                <span ng-show="c.isRepresentative">(representative)</span>
+                                            </td>
                                             <td>
                                                 {{c.firstName}}<br>
                                                 {{c.secondName}}<br>
@@ -128,7 +131,6 @@
                                             <td>
                                                 <span ng-show="c.corporate==undefined">-</span>
                                                 {{c.corporate.corporateName}}
-                                                <span ng-show="c.isRepresentative">(representative)</span>
                                             </td>
                                             <td>{{c.status}}</td>
                                             <td>

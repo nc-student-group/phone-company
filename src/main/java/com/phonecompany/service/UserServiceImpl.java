@@ -5,16 +5,12 @@ import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.exception.ConflictException;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
-import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
-import com.phonecompany.service.email.customer_related_emails.ResetPasswordEmailCreator;
-import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.util.Assert;
 
@@ -34,18 +30,12 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
 
     private UserDao userDao;
     private ShaPasswordEncoder shaPasswordEncoder;
-    private EmailService<User> emailService;
-    private ResetPasswordEmailCreator resetPassMessageCreator;
 
     @Autowired
     public UserServiceImpl(UserDao userDao,
-                           ShaPasswordEncoder shaPasswordEncoder,
-                           ResetPasswordEmailCreator resetPassMessageCreator,
-                           EmailService<User> emailService) {
+                           ShaPasswordEncoder shaPasswordEncoder) {
         this.userDao = userDao;
         this.shaPasswordEncoder = shaPasswordEncoder;
-        this.resetPassMessageCreator = resetPassMessageCreator;
-        this.emailService = emailService;
     }
 
     @Override
@@ -80,20 +70,12 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         return super.update(user);
     }
 
-    //TODO: extract email dispatch to controller
     @Override
-    public User resetPassword(User user) {
-        user.setPassword(generatePassword());
-        sendResetPasswordMessage(user);
-        user.setPassword(shaPasswordEncoder.encodePassword(user.getPassword(), null));
-        return update(user);
-    }
-
-    private void sendResetPasswordMessage(User user) {
-        SimpleMailMessage resetPasswordMessage =
-                this.resetPassMessageCreator.constructMessage(user);
-        LOG.info("Sending email reset password to: {}", user.getEmail());
-        emailService.sendMail(resetPasswordMessage, user);
+    public String resetPassword(User user) {
+        String newPassword = generatePassword();
+        user.setPassword(shaPasswordEncoder.encodePassword(newPassword, null));
+        update(user);
+        return newPassword;
     }
 
     private String generatePassword() {
