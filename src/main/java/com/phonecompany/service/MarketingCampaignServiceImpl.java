@@ -84,8 +84,8 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
     }
 
     @Override
-    public Map<String, Object> getMarketingCampaignsTable(int page, int size) {
-        Query query = this.buildQueryForMarketingCampaignTable(page, size);
+    public Map<String, Object> getMarketingCampaignsTable(int page, int size, String name, int status) {
+        Query query = this.buildQueryForMarketingCampaignTable(page, size, name, status);
         Map<String, Object> response = new HashMap<>();
         response.put("campaigns", this.marketingCampaignDao
                 .executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
@@ -94,8 +94,14 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         return response;
     }
 
-    private Query buildQueryForMarketingCampaignTable(int page, int size) {
+    private Query buildQueryForMarketingCampaignTable(int page, int size, String name, int status) {
         Query.Builder builder = new Query.Builder("marketing_campaign");
+        builder.where().addLikeCondition("name", name);
+        if (status == 1) {
+            builder.and().addCondition("marketing_campaign_status = ? ", "ACTIVATED");
+        } else if (status == 2) {
+            builder.and().addCondition("marketing_campaign_status = ? ", "DEACTIVATED");
+        }
         builder.addPaging(page, size);
         return builder.build();
     }

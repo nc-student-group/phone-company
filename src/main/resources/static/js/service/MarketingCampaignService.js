@@ -60,9 +60,9 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
         return deferred.promise;
     }
 
-    function getAllMarketingCampaigns(page, size) {
+    function getAllMarketingCampaigns(page, size, name, status) {
         var deferred = $q.defer();
-        $http.get(GET_MARKETING_CAMPAIGNS_URL + page + "/" + size).then(
+        $http.get(GET_MARKETING_CAMPAIGNS_URL + page + "/" + size + "?n=" + name + "&s=" + status).then(
             function (response) {
                 deferred.resolve(response.data);
             },
