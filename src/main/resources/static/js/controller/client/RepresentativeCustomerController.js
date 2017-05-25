@@ -11,7 +11,7 @@
 
         console.log('This is RepresentativeCustomerController');
         $scope.activePage = 'clients';
-
+        $scope.editing = false;
 
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer().then(function (data) {
@@ -22,6 +22,27 @@
             $scope.preloader.send = false;
 
         });
+
+        $scope.editCustomerClick = function (customer) {
+                $location.path("/client/editCustomer/" + customer.id);
+        };
+
+        $scope.saveCustomer = function () {
+            $scope.preloader.send = true;
+            CustomerService.updateCustomer($scope.userToEdit).then(function (data) {
+                toastr.success('User "' + $scope.userToEdit.email + ' " updated!', 'Success update');
+                $scope.preloader.send = false;
+                $scope.editing = false;
+            }, function (data) {
+                console.log(data);
+                if (data.data.message != undefined) {
+                    toastr.error(data.data.message, 'Error');
+                } else {
+                    toastr.error('Some problems with user update, try again!', 'Error');
+                }
+                $scope.preloader.send = false;
+            });
+        };
 
         $scope.getCustomersByCompany = function () {
             CustomerService.getCustomerByCompany($scope.customer.corporate.id).then(
