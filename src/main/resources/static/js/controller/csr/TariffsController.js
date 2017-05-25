@@ -31,7 +31,7 @@ angular.module('phone-company').controller('TariffsController', [
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
             $scope.regionsToAdd = [];
-            for (var i = 0; i < $scope.regions.length; i++) {
+            for (var i = 0; i < $scope.regions.length; i++) { //tariffRegions for every region
                 $scope.regionsToAdd.push({
                     id: '',
                     price: 0,
@@ -96,7 +96,9 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.tariffsSelected / $scope.size);
+            console.log(`max ${max}`);
             if (max == $scope.tariffsSelected) {
+                console.log(`$scope.tariffsSelected ${$scope.tariffsSelected}`);
                 return max;
             }
             return max + 1;
@@ -145,6 +147,7 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.getNewTariff();
 
         $scope.addTariff = function () {
+            //sets current tariff for every item from tariffRegionToSave as well
             if (!$scope.validateTariff($scope.currentTariff, $scope.regionsToSave)) {
                 return;
             }
@@ -196,6 +199,7 @@ angular.module('phone-company').controller('TariffsController', [
             $window.scrollTo(0, 0);
         };
 
+        //insert tariffRegion from regionsToAdd into RegionsToSave
         $scope.toggle = function (item, list) {
             var idx = -1;
             for (var i = 0; i < list.length; i++) {
@@ -210,6 +214,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
         };
 
+        //Check if TariffRegionItem(r in regionsToAdd) is present in tariffRegionsToSave
         $scope.exists = function (item, list) {
             if (list != undefined) {
                 var idx = -1;
@@ -229,6 +234,10 @@ angular.module('phone-company').controller('TariffsController', [
             if (r.price > 2000) {
                 r.price = 2000;
             }
+            //from every element from tariffRegionsToSave
+            //find the one which id is equal to the one
+            //that price is being selected for
+            //set price for it (ng-model="r.price")
             for (var i = 0; i < list.length; i++) {
                 if (list[i].region.id == r.region.id)
                     list[i].price = r.price;

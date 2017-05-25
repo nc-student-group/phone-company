@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Gets thrown if target was not properly filtered.
  */
-public class InsufficientFiltrationException extends RuntimeException {
+public class InsufficientFiltrationException extends IllegalStateException {
 
     public InsufficientFiltrationException(List<?> failedList) {
         this("There should be only one element in the list at the end of the filter chain. " +

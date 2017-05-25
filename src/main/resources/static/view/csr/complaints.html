@@ -6,106 +6,97 @@
         <div class="content">
             <div class="container-fluid">
                 <div ng-cloak>
-                    <md-content>
-                        <md-tabs md-dynamic-height md-border-bottom>
+                    <!--CREATE COMPLAINT-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
 
-                            <md-tab label="Create complaint/suggestion">
-                                <md-content class="md-padding">
-                                    <!--CREATE COMPLAINT-->
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
+                                <div class="header">
+                                    <h4 class="title">Complaints/Suggestions</h4>
+                                    <p class="category">Create complaint/suggestion</p>
+                                </div>
+                                <div class="content">
+                                    <form name="createComplaintForm" id="createComplaintForm"
+                                          autocomplete="off" novalidate ng-submit="createComplaintByCsr()">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <md-input-container class="md-block">
+                                                    <input type="text" placeholder="User email" name="userEmail"
+                                                           ng-model="complaint.user.email" ng-pattern="emailPattern" required/>
+                                                    <div ng-messages="createComplaintForm.userEmail.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="pattern">
+                                                            It doesn't look like a valid email
+                                                        </div>
+                                                        <div ng-message="required">
+                                                            User email is required.
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-11">
+                                                <md-input-container class="md-block" flex-gt-sm>
+                                                    <label>Category</label>
+                                                    <md-select ng-model="complaint.type" name="complaintCategory" required>
+                                                        <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
+                                                        <md-option value="SUGGESTION">SUGGESTION</md-option>
+                                                        <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
+                                                        <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
+                                                            {{c}}
+                                                        </md-option-->
+                                                    </md-select>
+                                                    <div ng-messages="createComplaintForm.complaintCategory.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="required">
+                                                            Category is required.
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <md-input-container class="md-block">
+                                                    <input type="text" placeholder="Complaint subject" name="complaintSubject"
+                                                           ng-model="complaint.subject" md-maxlength="150" required/>
+                                                    <div ng-messages="createComplaintForm.complaintSubject.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="required">
+                                                            Subject is required.
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
 
-                                                <div class="header">
-                                                    <h4 class="title">Complaints/Suggestions</h4>
-                                                    <p class="category">Create complaint/suggestion</p>
-                                                </div>
-                                                <div class="content">
-                                                    <form name="createComplaintForm" id="createComplaintForm"
-                                                          autocomplete="off" novalidate ng-submit="createComplaintByCsr()">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <md-input-container class="md-block">
-                                                                    <input type="text" placeholder="User email" name="userEmail"
-                                                                           ng-model="complaint.user.email" ng-pattern="emailPattern" required/>
-                                                                    <div ng-messages="createComplaintForm.userEmail.$error" role="alert"
-                                                                         multiple>
-                                                                        <div ng-message="pattern">
-                                                                            It doesn't look like a valid email
-                                                                        </div>
-                                                                        <div ng-message="required">
-                                                                            User email is required.
-                                                                        </div>
-                                                                    </div>
-                                                                </md-input-container>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="form-group col-sm-11">
-                                                                <md-input-container class="md-block" flex-gt-sm>
-                                                                    <label>Category</label>
-                                                                    <md-select ng-model="complaint.type" name="complaintCategory" required>
-                                                                        <md-option value="TECHNICAL_SERVICE">TECHNICAL SERVICE</md-option>
-                                                                        <md-option value="SUGGESTION">SUGGESTION</md-option>
-                                                                        <md-option value="CUSTOMER_SERVICE">CUSTOMER SERVICE</md-option>
-                                                                        <!--md-option ng-repeat="c in complaintCategories" value="{{c}}">
-                                                                            {{c}}
-                                                                        </md-option-->
-                                                                    </md-select>
-                                                                    <div ng-messages="createComplaintForm.complaintCategory.$error" role="alert"
-                                                                         multiple>
-                                                                        <div ng-message="required">
-                                                                            Category is required.
-                                                                        </div>
-                                                                    </div>
-                                                                </md-input-container>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <md-input-container class="md-block">
-                                                                    <input type="text" placeholder="Complaint subject" name="complaintSubject"
-                                                                           ng-model="complaint.subject" md-maxlength="150" required/>
-                                                                    <div ng-messages="createComplaintForm.complaintSubject.$error" role="alert"
-                                                                         multiple>
-                                                                        <div ng-message="required">
-                                                                            Subject is required.
-                                                                        </div>
-                                                                    </div>
-                                                                </md-input-container>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="form-group col-md-12">
-                                                                <md-input-container class="md-block">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <md-input-container class="md-block">
                                                                     <textarea rows="5" cols="50" type="text" class="form-control"
                                                                               placeholder="Description" name="description"
                                                                               ng-model="complaint.text" md-maxlength="1000" required>
                                                                     </textarea>
-                                                                    <div ng-messages="createComplaintForm.description.$error" role="alert"
-                                                                         multiple>
-                                                                        <div ng-message="required">
-                                                                            Description is required.
-                                                                        </div>
-                                                                    </div>
-                                                                </md-input-container>
-                                                            </div>
+                                                    <div ng-messages="createComplaintForm.description.$error" role="alert"
+                                                         multiple>
+                                                        <div ng-message="required">
+                                                            Description is required.
                                                         </div>
-
-                                                        <button class="btn btn-info btn-fill pull-left" type="submit"
-                                                                ng-disabled="createComplaintForm.$invalid">Create complaint/suggestion
-                                                        </button>
-                                                        <div class="clearfix"></div>
-                                                    </form>
-                                                </div>
+                                                    </div>
+                                                </md-input-container>
                                             </div>
                                         </div>
-                                    </div>
-                                </md-content>
-                            </md-tab>
-                        </md-tabs>
-                    </md-content>
+
+                                        <button class="btn btn-info btn-fill pull-left" type="submit"
+                                                ng-disabled="createComplaintForm.$invalid">Create complaint/suggestion
+                                        </button>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

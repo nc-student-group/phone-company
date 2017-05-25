@@ -213,17 +213,6 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
     }
 
     @Override
-    @Deprecated
-    public EnumMap<WeekOfMonth, Integer> getNumberOfOrdersForTheLastMonthByType(OrderType type) {
-        String getWeeklyOrdersQuery = this.getQuery("for.the.last.month.by.type");
-        return this.executeForObject(
-                getWeeklyOrdersQuery,
-                new Object[]{type.toString()},
-                this.getWeeklyOrderAmountsRowMapper()
-        );
-    }
-
-    @Override
     public EnumMap<WeekOfMonth, Integer> getNumberOfServiceOrdersForTheLastMonthByType(OrderType type) {
         String getWeeklyOrdersQuery = this.getQuery("services.for.the.last.month.by.type");
         return this.executeForObject(
@@ -245,7 +234,7 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
 
     private RowMapper<EnumMap<WeekOfMonth, Integer>> getWeeklyOrderAmountsRowMapper() {
         return rs -> {
-            EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
+            EnumMap<WeekOfMonth, Integer> result = this.initializeWithZeros();
             while (rs.next()) {
                 long weekNumber = rs.getLong("week_number");
                 int numberOfOrders = rs.getInt("number_of_orders");
@@ -254,6 +243,14 @@ public class OrderDaoImpl extends JdbcOperationsImpl<Order>
             }
             return result;
         };
+    }
+
+    private EnumMap<WeekOfMonth, Integer> initializeWithZeros() {
+        return new EnumMap<WeekOfMonth, Integer>(WeekOfMonth.class) {{
+            for (WeekOfMonth weekOfMonth : WeekOfMonth.values()) {
+                put(weekOfMonth, 0);
+            }
+        }};
     }
 
     @Override

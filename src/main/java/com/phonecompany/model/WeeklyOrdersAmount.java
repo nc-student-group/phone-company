@@ -1,19 +1,22 @@
 package com.phonecompany.model;
 
 import com.phonecompany.model.enums.WeekOfMonth;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
  * Defines amount of orders distinguished by type that were made at the
  * given week of month.
  */
-public final class WeeklyOrdersAmount {
+public class WeeklyOrdersAmount {
 
-    private final EnumMap<WeekOfMonth, Integer> serviceActivations;
-    private final EnumMap<WeekOfMonth, Integer> serviceDeactivations;
-    private final EnumMap<WeekOfMonth, Integer> tariffActivations;
-    private final EnumMap<WeekOfMonth, Integer> tariffDeactivations;
+    private EnumMap<WeekOfMonth, Integer> serviceActivations;
+    private EnumMap<WeekOfMonth, Integer> serviceDeactivations;
+    private EnumMap<WeekOfMonth, Integer> tariffActivations;
+    private EnumMap<WeekOfMonth, Integer> tariffDeactivations;
 
     public WeeklyOrdersAmount(EnumMap<WeekOfMonth, Integer> serviceActivations,
                               EnumMap<WeekOfMonth, Integer> serviceDeactivations,

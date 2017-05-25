@@ -304,6 +304,7 @@ public abstract class JdbcOperationsImpl<T extends DomainEntity>
     public int executeForInt(String query, Object[] params) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;
+        LOG.debug("Query: {}", query);
         try {
             ps = conn.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {

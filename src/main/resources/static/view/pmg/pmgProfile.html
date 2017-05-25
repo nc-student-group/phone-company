@@ -26,7 +26,8 @@
                                         <div class="col-md-4">
                                             <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                                 <label>Current Password</label>
-                                                <input ng-model="curPassword" type="password" class="form-control" required />
+                                                <input ng-model="curPassword" type="password"
+                                                       class="form-control" required />
                                             </md-input-container>
                                         </div>
                                         <div class="col-md-4">
@@ -34,15 +35,9 @@
                                                 <label>New Password</label>
                                                 <input ng-model="newPassword" type="password"
                                                        class="form-control" name="newPassword"
-                                                       placeholder="Password"
                                                        md-minlength="8"
                                                        ng-pattern="passwordPattern"
                                                        required/>
-                                                <!--input ng-model="newPassword"
-                                                       type="password" class="form-control" id="newPassword"
-                                                       placeholder="Password"
-                                                       md-minlength="8"
-                                                       ng-pattern="passwordPattern" required-->
 
                                                 <div ng-messages="editProfileForm.newPassword.$error" role="alert" multiple>
                                                     <div ng-message-exp="['required', 'minlength', 'pattern']">
@@ -55,7 +50,8 @@
                                         <div class="col-md-4">
                                             <md-input-container class="md-block" flex-gt-sm multiple md-auto-hide="false">
                                                 <label>Confirm Password</label>
-                                                <input ng-model="newPasswordConf" type="password" class="form-control" required/>
+                                                <input ng-model="newPasswordConf" type="password" class="form-control"
+                                                       required/>
                                             </md-input-container>
                                         </div>
                                     </div>

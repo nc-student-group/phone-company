@@ -61,7 +61,7 @@ public class CustomerController {
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        Customer persistedCustomer = customerService.addNewCustomer(customer);
+        Customer persistedCustomer = this.customerService.save(customer);
         LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
         VerificationToken persistedToken = this.verificationTokenService
                 .saveTokenForUser(persistedCustomer);
