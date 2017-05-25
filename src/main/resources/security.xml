@@ -37,12 +37,12 @@
         <intercept-url pattern="/api/services/current/customer/**" access="hasAnyRole('CSR', 'ADMIN','PMG')"/>
         <intercept-url pattern="/api/services/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN','PMG')"/>
         <intercept-url pattern="/api/services/resume" method="PATCH" access="hasAnyRole('CLIENT','CSR', 'ADMIN')"/>
-        <intercept-url pattern="/api/services/active" method="GET" access="hasAnyRole('CLIENT','CSR','PMG')"/>
+        <intercept-url pattern="/api/services/active" method="GET" access="hasAnyRole('CLIENT','CSR','PMG','ADMIN')"/>
         <intercept-url pattern="/api/services/activate/**" method="GET" access="hasAnyRole('CLIENT','CSR')"/>
         <intercept-url pattern="/api/services/**" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT','PMG')"/>
         <intercept-url pattern="/api/regions" access="permitAll()"/>
         <intercept-url pattern="/api/customer/save" method="POST" access="hasAnyRole('ADMIN','CSR')"/>
-        <intercept-url pattern="/api/customer/getByCorporateId/**" method="GET" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customer/getByCorporateId/**" method="GET" access="hasAnyRole('CLIENT','CSR')"/>
         <intercept-url pattern="/api/customers" method="POST" access="permitAll()"/>
         <intercept-url pattern="/api/customers/empty-customer" access="permitAll()"/>
         <intercept-url pattern="/api/customers/logged-in-user/**" access="hasRole('CLIENT')"/>
@@ -76,13 +76,13 @@
         <intercept-url pattern="/api/tariff-region/region/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/reports/**" method="GET" access="hasAnyRole('CSR', 'PMG')"/>
 
-        <intercept-url pattern="/api/marketing-campaigns/**" method="GET" access="hasAnyRole('CLIENT', 'CSR')"/>
+        <intercept-url pattern="/api/marketing-campaigns/**" method="GET" access="hasAnyRole('CLIENT', 'CSR','ADMIN')"/>
         <intercept-url pattern="/api/marketing-campaigns/**" method="PATCH" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/marketing-campaigns/**" method="POST" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/marketing-campaigns/empty" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
 
         <intercept-url pattern="/api/corporations" access="hasAnyRole('CSR','ADMIN')"/>
-        <intercept-url pattern="/api/corporations/**" access="hasAnyRole('CSR','ADMIN','CLIENT')"/>
+        <intercept-url pattern="/api/corporations/**" access="hasAnyRole('CSR','ADMIN','CLIENT','PMG')"/>
 
         <intercept-url pattern="/api/complaints" method="GET" access="hasAnyRole('CLIENT', 'PMG', 'CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/complaints/customer" method="POST" access="hasAnyRole('CLIENT', 'ADMIN')"/>
