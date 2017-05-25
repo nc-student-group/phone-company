@@ -28,8 +28,8 @@
             });
         $routeProvider.when('/frontPage',
             {
-                templateUrl: 'view/frontPage.html'
-                // controller: ''
+                templateUrl: 'view/frontPage/welcomePage.html',
+                controller: 'FrontPageController'
             });
         $routeProvider.when('/login/:success',
             {

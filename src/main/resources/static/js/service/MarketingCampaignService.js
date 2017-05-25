@@ -15,10 +15,24 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
         changeCampaignStatus: changeCampaignStatus,
         getNewMarketingCampaign: getNewMarketingCampaign,
         addMarketingCampaign: addMarketingCampaign,
-        saveMarketingCampaign: saveMarketingCampaign
+        saveMarketingCampaign: saveMarketingCampaign,
+        getMarketingCampaignsByRegion: getMarketingCampaignsByRegion
     };
 
     return factory;
+
+    function getMarketingCampaignsByRegion(regionId) {
+        var deferred = $q.defer();
+        $http.get(`${GET_AVAILABLE_MARKETING_CAMPAIGNS_URL}${regionId}`).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
 
     function getMarketingCampaigns() {
         var deferred = $q.defer();

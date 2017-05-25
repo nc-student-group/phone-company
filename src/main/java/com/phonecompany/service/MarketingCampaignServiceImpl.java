@@ -70,6 +70,19 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
     }
 
     @Override
+    public List<MarketingCampaign> getAvailableMarketingCampaignsByRegionId(long regionId) {
+        List<MarketingCampaign> campaigns = new ArrayList<>();
+        LOG.info("Retrieving available marketing campaigns for region with id = " + regionId);
+        List<TariffRegion> tariffs = tariffRegionDao.getAllByRegionId(regionId);
+        if (tariffs != null) {
+            for (TariffRegion tariff : tariffs) {
+                campaigns.addAll(marketingCampaignDao.getAllByTariffRegion(tariff.getId()));
+            }
+        }
+        return campaigns;
+    }
+
+    @Override
     public void activateMarketingCampaign(MarketingCampaign campaign, Customer customer) {
         LOG.info("Trying to activate marketing campaign for customer with id = "
                 + customer.getId());

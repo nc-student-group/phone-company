@@ -118,6 +118,16 @@ public class ServiceDaoImpl extends JdbcOperationsImpl<Service>
     }
 
     @Override
+    public List<Service> getAllActiveServicesWithDiscount() {
+        return this.executeForList(this.getQuery("getAllActiveWithDiscount"), new Object[]{});
+    }
+
+    @Override
+    public List<Service> getTopActiveServices() {
+        return this.executeForList(this.getQuery("getTopActive"), new Object[]{});
+    }
+
+    @Override
     public boolean isExist(Service service) {
         Connection conn = DataSourceUtils.getConnection(getDataSource());
         PreparedStatement ps = null;

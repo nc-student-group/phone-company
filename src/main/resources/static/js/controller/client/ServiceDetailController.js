@@ -101,7 +101,6 @@ angular.module('phone-company').controller('ServiceDetailController', [
             $scope.preloader.send = true;
 
             for(var i = 0; i < $scope.suitableCustomers.length; i++) {
-                console.log(i);
                 if ($scope.suitableCustomers[i].isChecked === true) {
                     $scope.currentCustomer = $scope.suitableCustomers[i];
                     ServicesService.isProductCategoryAvailable($scope.currentCustomer.id,

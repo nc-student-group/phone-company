@@ -229,6 +229,29 @@ body > .navbar-collapse{
     }
 }
 
+.front-page-main-panel{
+    background: rgba(203,203,210,.15);
+    position: relative;
+    z-index: 2;
+    //float: right;
+    //width: $sidebar-width;
+    width: 100%;
+    min-height: 100%;
+
+    > .content{
+        padding: 30px 15px;
+        min-height: calc(100% - 123px);
+    }
+
+    > .footer{
+        border-top: 1px solid #e7e7e7;
+    }
+
+    .navbar{
+        margin-bottom: 0;
+    }
+}
+
 .sidebar,
 .main-panel{
     overflow: auto;

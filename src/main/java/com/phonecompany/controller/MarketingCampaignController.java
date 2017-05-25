@@ -51,6 +51,15 @@ public class MarketingCampaignController {
         return marketingCampaigns;
     }
 
+    @GetMapping(value = "/available/{regionId}")
+    public List<MarketingCampaign> getAvailableMarketingCampaignsByRegionId(
+            @PathVariable("regionId") long regionId) {
+        List<MarketingCampaign> marketingCampaigns = marketingCampaignService
+                .getAvailableMarketingCampaignsByRegionId(regionId);
+        LOGGER.info("Retrieved available marketing campaigns: " + marketingCampaigns);
+        return marketingCampaigns;
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getMarketingCampaignById(
             @PathVariable("id") Long marketingCampaignId) {

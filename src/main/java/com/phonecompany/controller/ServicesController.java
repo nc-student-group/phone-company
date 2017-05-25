@@ -78,6 +78,18 @@ public class ServicesController {
         return this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
     }
 
+    @GetMapping(value = "/activeWithDiscount")
+    public Collection<Service> getAllActiveServicesWithDiscount() {
+        LOG.debug("Fetching all the active services with discount...");
+        return this.serviceService.getAllActiveServicesWithDiscount();
+    }
+
+    @GetMapping(value = "/top")
+    public Collection<Service> getTopActiveServices() {
+        LOG.debug("Fetching top among the active services...");
+        return this.serviceService.getTopActiveServices();
+    }
+
     @GetMapping("/category/{id}/{page}/{size}")
     public ResponseEntity<?> getServicesByCategoryId(@PathVariable("id") int productCategoryId,
                                                      @PathVariable("page") int page,
