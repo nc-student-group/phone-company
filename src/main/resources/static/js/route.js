@@ -233,6 +233,12 @@
                 templateUrl: 'view/client/representativesClients.html',
                 controller: 'RepresentativeCustomerController'
             });
+        $routeProvider.when('/client/editCustomer/:id',
+            {
+                templateUrl: 'view/client/editCustomer.html',
+                controller: 'RepresentativeEditCustomerController'
+            });
+
         $routeProvider.otherwise({redirectTo: '/404'});
     });
 
