@@ -71,6 +71,7 @@
             );
         };
         $scope.deleteCustomerFromCompany = function (customer) {
+            customer.isRepresentative = null;
             customer.corporate = {
                 id: null
             };

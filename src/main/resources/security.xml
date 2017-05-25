@@ -42,7 +42,7 @@
         <intercept-url pattern="/api/services/**" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT','PMG')"/>
         <intercept-url pattern="/api/regions" access="permitAll()"/>
         <intercept-url pattern="/api/customer/save" method="POST" access="hasAnyRole('ADMIN','CSR')"/>
-        <intercept-url pattern="/api/customer/getByCorporateId/**" method="GET" access="hasRole('CLIENT')"/>
+        <intercept-url pattern="/api/customer/getByCorporateId/**" method="GET" access="hasAnyRole('CSR','CLIENT')"/>
         <intercept-url pattern="/api/customers" method="POST" access="permitAll()"/>
         <intercept-url pattern="/api/customers/empty-customer" access="permitAll()"/>
         <intercept-url pattern="/api/customers/logged-in-user/**" access="hasRole('CLIENT')"/>
