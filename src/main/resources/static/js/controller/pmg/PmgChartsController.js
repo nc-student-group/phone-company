@@ -10,7 +10,8 @@ angular.module('phone-company').controller('PmgChartsController', [
     function ($scope, $rootScope, $http, $mdDialog, $filter, TariffService, ChartService) {
 
         $scope.currentRegion = "Kyiv Region";
-        
+        $scope.activePage = 'charts';
+
         TariffService.getAllRegions().then(function (response) {
             $scope.regions = response;
             $scope.currentRegion = $scope.regions[0].nameRegion;
