@@ -2,6 +2,8 @@ package com.phonecompany.controller;
 
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.MarketingCampaign;
+import com.phonecompany.model.MarketingCampaignServices;
+import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.email.csr_related_emails.MarketingCampaignActivationNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;
@@ -97,6 +99,12 @@ public class MarketingCampaignController {
     public ResponseEntity<?> addMarketingCampaign(@RequestBody MarketingCampaign campaign) {
         campaign.setMarketingCampaignStatus(ProductStatus.ACTIVATED);
         MarketingCampaign persistedCampaign = this.marketingCampaignService.save(campaign);
+        return new ResponseEntity<>(persistedCampaign, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateMarketingCampaign(@RequestBody MarketingCampaign campaign) {
+        MarketingCampaign persistedCampaign = this.marketingCampaignService.update(campaign);
         return new ResponseEntity<>(persistedCampaign, HttpStatus.OK);
     }
 }

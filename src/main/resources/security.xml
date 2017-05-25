@@ -79,6 +79,7 @@
         <intercept-url pattern="/api/marketing-campaigns/**" method="GET" access="hasAnyRole('CLIENT', 'CSR')"/>
         <intercept-url pattern="/api/marketing-campaigns/**" method="PATCH" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/marketing-campaigns/**" method="POST" access="hasAnyRole('CSR', 'ADMIN')"/>
+        <intercept-url pattern="/api/marketing-campaigns/**" method="PUT" access="hasAnyRole('CSR', 'ADMIN')"/>
         <intercept-url pattern="/api/marketing-campaigns/empty" method="GET" access="hasAnyRole('CSR', 'ADMIN')"/>
 
         <intercept-url pattern="/api/corporations" access="hasAnyRole('CSR','ADMIN')"/>

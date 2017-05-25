@@ -211,6 +211,10 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 toastr.error('Tariff must not be empty', 'Error');
                 return false;
             }
+            if (campaign.services.length === 0) {
+                toastr.error('Services must not be empty', 'Error');
+                return false;
+            }
 
             return true;
         };
@@ -236,6 +240,10 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 toastr.error('Some problems with marketing campaign deactivation, try again!', 'Error');
                 $scope.preloader.send = false;
             })
+        };
+
+        $scope.editClick = function (id) {
+            $location.path("/csr/marketing-campaign/edit/" + id);
         };
 
     }]);

@@ -87,6 +87,12 @@
                 templateUrl: 'view/csr/marketingCampaignDetail.html',
                 controller: 'CsrMarketingCampaignDetailController'
             });
+        $routeProvider.when('/csr/marketing-campaign/edit/:id',
+            {
+                templateUrl: 'view/csr/marketingCampaignEdit.html',
+                controller: 'MarketingCampaignEditController'
+            });
+
         $routeProvider.when('/csr/orders',
             {
                 templateUrl: 'view/csr/orders.html',

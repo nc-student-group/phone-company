@@ -14,7 +14,8 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
         getAllMarketingCampaigns: getAllMarketingCampaigns,
         changeCampaignStatus: changeCampaignStatus,
         getNewMarketingCampaign: getNewMarketingCampaign,
-        addMarketingCampaign: addMarketingCampaign
+        addMarketingCampaign: addMarketingCampaign,
+        saveMarketingCampaign: saveMarketingCampaign
     };
 
     return factory;
@@ -101,6 +102,19 @@ angular.module('phone-company').factory('MarketingCampaignService', ['$q', '$htt
     function addMarketingCampaign(campaign) {
         var deferred = $q.defer();
         $http.post(POST_ADD_CAMPAIGN_URL, campaign).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse.data);
+            });
+        return deferred.promise;
+    }
+
+    function saveMarketingCampaign(campaign) {
+        var deferred = $q.defer();
+        $http.put(POST_ADD_CAMPAIGN_URL, campaign).then(
             function (response) {
                 deferred.resolve(response.data);
             },
