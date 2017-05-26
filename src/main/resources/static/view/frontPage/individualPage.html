@@ -82,6 +82,12 @@
                                                                     {{s.price * (1 - s.discount / 100) | number : 2}} &#8372;
                                                                 </p>
                                                                 <img style="height: 240px" ng-src="{{s.pictureUrl}}"/>
+                                                                <figcaption>
+                                                                    <h2>{{s.serviceName}}</h2>
+                                                                    <p style="word-break: break-all">
+                                                                        {{s.previewDescription}}
+                                                                    </p>
+                                                                </figcaption>
                                                             </figure>
                                                         </div>
                                                     </div>

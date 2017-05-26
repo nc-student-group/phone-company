@@ -43,4 +43,50 @@ angular.module('phone-company').controller('BusinessPageController', [
                 });
             }
         };
+
+        $scope.servicesTabClick = function () {
+            $scope.preloader.send = true;
+            ServicesService.getAllCategories().then(function (data) {
+                $scope.categories = data;
+                console.log(`Current category name: ${$scope.categories[0].categoryName}`);
+                $scope.currentCategory = $scope.categories[0].categoryName;
+                let allCategories = JSON.stringify($scope.categories);
+                console.log(`All categories: ${allCategories}`);
+            });
+
+            $scope.preloader.send = true;
+            $scope.getAllServices = function () {
+                ServicesService.getAllServices()
+                    .then(function (data) {
+                        $scope.allServices = data;
+                        $scope.filterServicesByCurrentCategory();
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
+                    });
+            };
+
+            $scope.filterServicesByCurrentCategory = function () {
+                $scope.services = $scope.allServices.filter(function (service) {
+                    return service.productCategory.categoryName === $scope.currentCategory;
+                });
+                $scope.pageSize = 6;
+                $scope.servicesCount = $scope.services.length;
+            };
+
+            $scope.specifyCurrentCategory = function (category) {
+                $scope.currentCategory = category;
+                $scope.pageSize = 6;
+                console.log(`New Current category: ${category}`);
+                $scope.filterServicesByCurrentCategory();
+            };
+
+            $scope.getAllServices();
+
+            $scope.showMore = function () {
+                $scope.pageSize = $scope.pageSize + 3;
+            };
+        }
+
+
     }]);

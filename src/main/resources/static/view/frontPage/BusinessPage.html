@@ -56,7 +56,50 @@
                             </md-tab>
                             <md-tab label="Services" ng-click="servicesTabClick()">
                                 <md-content class="md-padding">
-
+                                    <div class="col-md-12">
+                                        <div ng-cloak>
+                                            <div class="container-fluid">
+                                                <md-content>
+                                                    <md-tabs md-dynamic-height md-border-bottom>
+                                                        <md-tab ng-repeat="c in categories"
+                                                                label="{{c.categoryName}}"
+                                                                md-on-select="specifyCurrentCategory(c.categoryName)">
+                                                        </md-tab>
+                                                    </md-tabs>
+                                                    <div class="container-fluid services-cards">
+                                                        <div ng-repeat="s in services | limitTo:pageSize" class="col-md-4">
+                                                            <figure class="snip1174 blue">
+                                                                <p ng-hide="s.discount > 0 && s.discount < 100"
+                                                                   class="service-price">{{s.price | number : 2}} &#8372;</p>
+                                                                <p ng-show="s.discount > 0 && s.discount < 100"
+                                                                   class="service-price"
+                                                                   style="text-decoration: line-through">
+                                                                    {{s.price | number : 2}} &#8372;
+                                                                </p>
+                                                                <p ng-show="s.discount > 0 && s.discount < 100"
+                                                                   style="font-weight: 700"
+                                                                   class="service-price-discounted">
+                                                                    {{s.price * (1 - s.discount / 100) | number : 2}} &#8372;
+                                                                </p>
+                                                                <img style="height: 240px" ng-src="{{s.pictureUrl}}"/>
+                                                                <figcaption>
+                                                                    <h2>{{s.serviceName}}</h2>
+                                                                    <p style="word-break: break-all">
+                                                                        {{s.previewDescription}}
+                                                                    </p>
+                                                                </figcaption>
+                                                            </figure>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-center" style="font-size: 1.3em; margin-top: 20px; color: #4f51ff"
+                                                       ng-click="showMore()"
+                                                       ng-show="(pageSize < servicesCount)">
+                                                        Show more
+                                                    </p>
+                                                </md-content>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </md-content>
                             </md-tab>
                         </md-tabs>
