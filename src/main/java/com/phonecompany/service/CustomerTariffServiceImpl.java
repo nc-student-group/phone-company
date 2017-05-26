@@ -35,18 +35,13 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     private CustomerTariffDao customerTariffDao;
     private OrderService orderService;
-    private TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator;
-    private EmailService<User> emailService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffService.class);
 
     @Autowired
-    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
-                                     TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator,
-                                     EmailService<User> emailService) {
+    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao,
+                                     OrderService orderService) {
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
-        this.tariffResumingNotificationEmailCreator = tariffResumingNotificationEmailCreator;
-        this.emailService = emailService;
     }
 
     @Override

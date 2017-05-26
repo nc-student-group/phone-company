@@ -73,7 +73,8 @@
             }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
-                    toastr.success('Customer ' + createdCustomer.email + ' has been successfully created. Please, check your email for the password');
+                    toastr.success('Customer ' + createdCustomer.email +
+                        ' has been successfully created. User should check his mail for the auto generated password');
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {

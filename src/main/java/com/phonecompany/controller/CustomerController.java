@@ -93,7 +93,7 @@ public class CustomerController {
                 phone, partOfCorporate, orderBy, orderByType);
     }
 
-    @GetMapping("/api/sendConfirmationEmail")
+    @GetMapping("/api/verifyRegistration")
     public ResponseEntity<? extends User> confirmRegistration(@RequestParam String token)
             throws URISyntaxException {
         LOG.debug("Token retrieved from the request parameter: {}", token);

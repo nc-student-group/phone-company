@@ -38,7 +38,6 @@
         $scope.ordersFound = 0;
         $scope.servicesOrdersFound = 0;
         $scope.mailingSwitchDisabled = true;
-        $scope.loading = true;
         $scope.hasCurrentTariff = false;
         $scope.hasCurrentServices = false;
         $scope.corporateUser = false;
@@ -82,14 +81,12 @@
                     if ($scope.currentServices !== "") {
                         $scope.hasCurrentServices = true;
                     }
-                    $scope.loading = false;
                     $scope.preloader.send = false;
                     if ($scope.servicesOrders == undefined) {
                         $scope.loadServicesHistory();
                     }
                 }, function (data) {
                     $scope.preloader.send = false;
-                    $scope.loading = false;
                 });
         };
         // $scope.loadCurrentServices();
@@ -107,7 +104,6 @@
                     $scope.loading = false;
                     $scope.preloader.send = false;
                 }, function (data) {
-                    $scope.loading = false;
                     $scope.preloader.send = false;
                 });
         };
@@ -135,7 +131,6 @@
                     $scope.orders = data.orders;
                     $scope.ordersFound = data.ordersFound;
                     console.log($scope.orders);
-                    $scope.loading = false;
                 });
         };
         // $scope.loadTariffsHistory();
@@ -197,11 +192,8 @@
                 .then(function (data) {
                     $scope.servicesOrders = data.orders;
                     $scope.servicesOrdersFound = data.ordersFound;
-                    console.log($scope.servicesOrders);
-                    $scope.loading = false;
                     $scope.preloader.send = false;
                 }, function () {
-                    $scope.loading = false;
                     $scope.preloader.send = false;
                 });
         };
@@ -216,7 +208,6 @@
                     .then(function (data) {
                         $scope.servicesOrders = data.orders;
                         $scope.servicesOrdersFound = data.ordersFound;
-                        $scope.loading = false;
                         $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }, function () {
