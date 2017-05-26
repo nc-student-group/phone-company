@@ -125,6 +125,12 @@ public class TariffController {
                 .getTariffsAvailableForCorporate(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/corporate/available/{page}/{size}")
+    public Map<String, Object> getTariffsAvailableForCorporatePaged(@PathVariable("page") int page,
+                                                                  @PathVariable("size") int size) {
+        return tariffService.getTariffsAvailableForCorporatePaged(page, size);
+    }
+
     @GetMapping(value = "/customer/{id}")
     public ResponseEntity<?> getTariffForCustomerById(@PathVariable("id") long tariffId) {
         return new ResponseEntity<Object>(tariffService.getTariffForCustomer(tariffId,

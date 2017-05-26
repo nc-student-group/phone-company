@@ -28,6 +28,8 @@ public interface TariffService extends CrudService<Tariff>,
 
     List<Tariff> getTariffsAvailableForCorporate();
 
+    Map<String, Object> getTariffsAvailableForCorporatePaged(int page, int size);
+
     Integer getCountTariffsAvailableForCorporate();
 
     Tariff getByIdForSingleCustomer(long id, long regionId);
