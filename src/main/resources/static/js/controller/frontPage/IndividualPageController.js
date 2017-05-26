@@ -12,7 +12,7 @@ angular.module('phone-company').controller('IndividualPageController', [
         console.log('This is IndividualPageController');
         $scope.currentRegion = 0;
         $scope.page = 0;
-        $scope.size = 5;
+        $scope.size = 6;
         $scope.inProgress = false;
 
         $scope.preloader.send = true;
@@ -42,7 +42,6 @@ angular.module('phone-company').controller('IndividualPageController', [
             TariffService.getTariffsForRegionPaged($scope.currentRegion, $scope.page, $scope.size).then(function (data) {
                 $scope.tariffs = data.tariffs;
                 $scope.tariffsCount = data.tariffsCount;
-                console.log($scope.tariffsCount);
                 $scope.preloader.send = false;
             }, function () {
                 $scope.preloader.send = false;
@@ -65,5 +64,50 @@ angular.module('phone-company').controller('IndividualPageController', [
                 });
             }
         };
+
+        $scope.servicesTabClick = function () {
+            $scope.preloader.send = true;
+            ServicesService.getAllCategories().then(function (data) {
+                $scope.categories = data;
+                console.log(`Current category name: ${$scope.categories[0].categoryName}`);
+                $scope.currentCategory = $scope.categories[0].categoryName;
+                let allCategories = JSON.stringify($scope.categories);
+                console.log(`All categories: ${allCategories}`);
+            });
+
+            $scope.preloader.send = true;
+            $scope.getAllServices = function () {
+                ServicesService.getAllServices()
+                    .then(function (data) {
+                        $scope.allServices = data;
+                        $scope.filterServicesByCurrentCategory();
+                        $scope.preloader.send = false;
+                    }, function () {
+                        $scope.preloader.send = false;
+                    });
+            };
+
+            $scope.filterServicesByCurrentCategory = function () {
+                $scope.services = $scope.allServices.filter(function (service) {
+                    return service.productCategory.categoryName === $scope.currentCategory;
+                });
+                $scope.pageSize = 6;
+                $scope.servicesCount = $scope.services.length;
+            };
+
+            $scope.specifyCurrentCategory = function (category) {
+                $scope.currentCategory = category;
+                $scope.pageSize = 6;
+                console.log(`New Current category: ${category}`);
+                $scope.filterServicesByCurrentCategory();
+            };
+
+            $scope.getAllServices();
+
+            $scope.showMore = function () {
+                $scope.pageSize = $scope.pageSize + 3;
+            };
+        }
+
 
     }]);
