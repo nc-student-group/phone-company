@@ -1,6 +1,55 @@
 <div class="wrapper">
     <div class="front-page-main-panel">
-        <ng-include src="'../../view/frontPage/frontPageHeader.html'"></ng-include>
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand">Phone-company</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a style="color: #245bed; text-decoration: none;" href="/#/frontPage">
+                                Welcome
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/individualPage">
+                                Individual
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/businessPage">
+                                Business
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="{{loginOrUserPage.action}}">
+                                {{loginOrUserPage.name}}
+                            </a>
+                        </li>
+                        <li class="navbar-brand">
+                            Region:
+                        </li>
+                        <li>
+                            <md-input-container>
+                                <md-select ng-model="currentRegion" ng-change="change(currentRegion)">
+                                    <md-option ng-repeat="r in regions" value="{{r.id}}">
+                                        {{r.nameRegion}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
         <div class="content">
             <div class="container-fluid">
@@ -15,7 +64,6 @@
                                 <hr/>
                                 <div class="row" style="margin: 0;">
                                     <div class="col-md-4" style="padding: 10px;" ng-repeat="mc in marketingCampaigns">
-                                         <!--ng-click="campaignClick(mc.id)">-->
                                         <div class="tariff-picture">
                                             <img ng-src="{{mc.tariffRegion.tariff.pictureUrl}}" width="90%"/>
                                             <div class="specials-picture"><b>Specials</b></div>
@@ -34,12 +82,6 @@
                                             <s style="font-size: 14px; color: red">{{mc.tariffRegion.price | number:2}}
                                                 auh / 30 days</s>
                                         </div>
-                                        <!--<div class="row">-->
-                                            <!--<button class="btn btn-info btn-fill col-md-8 col-md-offset-2"-->
-                                                    <!--ng-click="campaignClick(mc.id); $event.stopPropagation();">-->
-                                                <!--More-->
-                                            <!--</button>-->
-                                        <!--</div>-->
                                     </div>
                                 </div>
                             </div>

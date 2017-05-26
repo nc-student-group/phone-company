@@ -4,15 +4,23 @@ angular.module('phone-company').controller('MainController', [
     '$rootScope',
     '$location',
     'LoginService',
+    'UserService',
     '$mdDialog',
-    function ($scope, $rootScope, $location, LoginService, $mdDialog) {
+    function ($scope, $rootScope, $location, LoginService, UserService, $mdDialog) {
         console.log('This is MainController');
 
         $scope.preloader = {send: false};
 
+        $scope.loginOrUserPage = {
+            name: "Log in",
+            action: "/#/login"
+        };
+
         $scope.logout = function () {
             LoginService.logout().then(function () {
                 $location.path("/");
+                $scope.loginOrUserPage.name = 'Log in';
+                $scope.loginOrUserPage.action = '#/login';
             });
         };
 

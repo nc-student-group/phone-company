@@ -21,10 +21,15 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
+        // $routeProvider.when('/',
+        //     {
+        //         templateUrl: 'view/login.html',
+        //         controller: 'LoginController'
+        //     });
         $routeProvider.when('/',
             {
-                templateUrl: 'view/login.html',
-                controller: 'LoginController'
+                templateUrl: 'view/frontPage/welcomePage.html',
+                controller: 'FrontPageController'
             });
         $routeProvider.when('/frontPage',
             {

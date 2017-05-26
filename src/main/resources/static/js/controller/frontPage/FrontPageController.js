@@ -7,9 +7,10 @@ angular.module('phone-company').controller('FrontPageController', [
     'MarketingCampaignService',
     'ServicesService',
     'TariffService',
+    'UserService',
     '$routeParams',
     function ($scope, $http, $location, $rootScope, MarketingCampaignService,
-              ServicesService, TariffService, $routeParams) {
+              ServicesService, TariffService, UserService, $routeParams) {
         console.log('This is FrontPageController');
         $scope.currentRegion = 0;
 

@@ -110,7 +110,7 @@
 
 
         <form-login login-page='/login' always-use-default-target="true"/>
-        <logout logout-success-url="/#/index"/>
+        <logout logout-success-url="/#/frontPage"/>
         <form-login authentication-success-handler-ref="authenticationSuccessHandler"/>
         <form-login authentication-failure-handler-ref="authenticationFailureHandler"/>
         <csrf disabled="true"/>

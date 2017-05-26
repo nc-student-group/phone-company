@@ -1,6 +1,43 @@
 <div class="wrapper">
     <div class="front-page-main-panel">
-        <ng-include src="'../../view/frontPage/frontPageHeader.html'"></ng-include>
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand">Phone-company</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a class="front-active" href="/#/frontPage">
+                                Welcome
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/individualPage">
+                                Individual
+                            </a>
+                        </li>
+                        <li>
+                            <a style="color: #245bed; text-decoration: none;" href="/#/businessPage">
+                                Business
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="{{loginOrUserPage.action}}">
+                                {{loginOrUserPage.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
         <div class="content">
             <div class="container-fluid">
