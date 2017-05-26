@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ public class ServiceServiceImplTest {
     private CustomerService customerService;
     @MockBean
     private CustomerServiceService customerServiceService;
+    @MockBean
+    private StatisticsService<LocalDate, Long> statisticsService;
 
     @Captor
     private ArgumentCaptor<Service> serviceCaptor;

@@ -85,14 +85,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getCountOfServicesByCustomerId(customer.getId());
     }
 
-    /**
-     * Gets a list of
-     *
-     * @param regionId
-     * @param startDate
-     * @param endDate
-     * @return
-     */
     @Override
     public List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
                                                                           LocalDate startDate,
