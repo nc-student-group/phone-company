@@ -13,6 +13,7 @@
         <intercept-url pattern="/favicon.ico" access="permitAll()"/>
         <intercept-url pattern="/index" access="permitAll()"/>
         <intercept-url pattern="/frontPage" access="permitAll()"/>
+        <intercept-url pattern="/businessPage" access="permitAll()"/>
         <intercept-url pattern="/individualPage" access="permitAll()"/>
         <intercept-url pattern="/register" access="permitAll()"/>
         <intercept-url pattern="/view/**" access="permitAll()"/>
@@ -67,6 +68,7 @@
         <intercept-url pattern="/api/tariffs/customer/**" method="GET" access="permitAll()"/>
         <intercept-url pattern="/api/tariffs/activate/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/corporate/available" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/corporate/available/**" method="GET" access="permitAll()"/>
         <intercept-url pattern="/api/tariffs/corporate/activate/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/available/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
         <!--<intercept-url pattern="/api/tariffs/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>-->

@@ -41,6 +41,7 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
         activateTariffForCustomerId: activateTariffForCustomerId,
         resumeCustomerTariff: resumeCustomerTariff,
         getTariffsAvailableForCorporate: getTariffsAvailableForCorporate,
+        getTariffsAvailableForCorporatePaged: getTariffsAvailableForCorporatePaged,
         activateTariffForCorporateId: activateTariffForCorporateId,
         getTariffsForRegion: getTariffsForRegion,
         getTariffsForRegionPaged: getTariffsForRegionPaged
@@ -197,6 +198,19 @@ angular.module('phone-company').factory('TariffService', ['$q', '$http', '$filte
     function getTariffsAvailableForCorporate() {
         var deferred = $q.defer();
         $http.get(GET_TARIFFS_AVAILABLE_FOR_CORPORATE_URL).then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function (errResponse) {
+                console.error(errResponse.toString());
+                deferred.reject(errResponse);
+            });
+        return deferred.promise;
+    }
+
+    function getTariffsAvailableForCorporatePaged(page, size) {
+        var deferred = $q.defer();
+        $http.get(`${GET_TARIFFS_AVAILABLE_FOR_CORPORATE_URL}/${page}/${size}`).then(
             function (response) {
                 deferred.resolve(response.data);
             },

@@ -360,6 +360,14 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         return response;
     }
 
+    @Override
+    public Map<String, Object> getTariffsAvailableForCorporatePaged(int page, int size) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("tariffs", this.tariffDao.getTariffsAvailableForCorporate (page, size));
+        response.put("tariffsCount", this.tariffDao.getCountTariffsAvailableForCorporate());
+        return response;
+    }
+
     private Query buildQueryForTariffTable(int page, int size, String name, int status,
                                            int type, Date from, Date to, int orderBy, String orderByType) {
         Query.Builder builder = new Query.Builder("tariff");

@@ -5,6 +5,7 @@ import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.util.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TariffDao extends JdbcOperations<Tariff> {
 

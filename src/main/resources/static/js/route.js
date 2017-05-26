@@ -31,6 +31,11 @@
                 templateUrl: 'view/frontPage/welcomePage.html',
                 controller: 'FrontPageController'
             });
+        $routeProvider.when('/businessPage',
+            {
+                templateUrl: 'view/frontPage/businessPage.html',
+                controller: 'BusinessPageController'
+            });
         $routeProvider.when('/individualPage',
             {
                 templateUrl: 'view/frontPage/individualPage.html',
