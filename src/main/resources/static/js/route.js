@@ -31,6 +31,11 @@
                 templateUrl: 'view/frontPage/welcomePage.html',
                 controller: 'FrontPageController'
             });
+        $routeProvider.when('/individualPage',
+            {
+                templateUrl: 'view/frontPage/individualPage.html',
+                controller: 'IndividualPageController'
+            });
         $routeProvider.when('/login/:success',
             {
                 templateUrl: 'view/login.html',

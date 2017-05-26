@@ -55,6 +55,8 @@ public interface TariffService extends CrudService<Tariff>,
     Map<String, Object> getTariffsTable(int page, int size, String name, int status,
                                         int type, String from, String to, int orderBy, String orderByType);
 
+    Map<String, Object> getTariffsTable(int page, int size, long regionId);
+
     void activateTariffForSingleCustomer(long tariffId, Customer customer);
 
     void activateTariffForCorporateCustomer(long tariffId, Corporate corporate);

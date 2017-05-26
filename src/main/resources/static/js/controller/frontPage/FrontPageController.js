@@ -20,6 +20,7 @@ angular.module('phone-company').controller('FrontPageController', [
             for (var i = 0; i < data.length; i++) {
                 if (data[i].nameRegion === 'Kyiv Region') {
                     $scope.currentRegion = data[i].id;
+                    $scope.getMarketingCampaignsByRegion();
                     break;
                 }
             }
@@ -43,7 +44,6 @@ angular.module('phone-company').controller('FrontPageController', [
                 $scope.preloader.send = false;
             });
         };
-        $scope.getMarketingCampaignsByRegion();
 
         $scope.getAllActiveServicesWithDiscount = function() {
             $scope.preloader.send = true;
