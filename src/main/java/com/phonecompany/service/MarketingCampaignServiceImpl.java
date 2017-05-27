@@ -1,5 +1,7 @@
 package com.phonecompany.service;
 
+import com.phonecompany.annotations.CacheClear;
+import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.dao.interfaces.MarketingCampaignDao;
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
 import com.phonecompany.dao.interfaces.TariffRegionDao;
@@ -47,6 +49,7 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         this.orderService = orderService;
     }
 
+    @Cacheable
     @Override
     public List<MarketingCampaign> getMarketingCampaignsAvailableForCustomer(Customer customer) {
         List<MarketingCampaign> campaigns = new ArrayList<>();
@@ -67,6 +70,7 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         return campaigns;
     }
 
+    @Cacheable
     @Override
     public List<MarketingCampaign> getAvailableMarketingCampaignsByRegionId(long regionId) {
         List<MarketingCampaign> campaigns = new ArrayList<>();
@@ -94,6 +98,7 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         tariffService.activateTariffForSingleCustomer(tariffId, customer);
     }
 
+    @Cacheable
     @Override
     public Map<String, Object> getMarketingCampaignsTable(int page, int size, String name, int status) {
         Query query = this.buildQueryForMarketingCampaignTable(page, size, name, status);
@@ -117,11 +122,13 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         return builder.build();
     }
 
+    @CacheClear
     @Override
     public void updateMarketingCampaignStatus(Long campaignId, ProductStatus productStatus) {
         marketingCampaignDao.updateMarketingCampaignStatus(campaignId, productStatus);
     }
 
+    @CacheClear
     @Override
     public MarketingCampaign save(MarketingCampaign entity) {
         MarketingCampaign campaign = super.save(entity);
@@ -131,6 +138,7 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         return campaign;
     }
 
+    @CacheClear
     @Override
     public MarketingCampaign update(MarketingCampaign entity) {
         MarketingCampaign campaign = super.update(entity);
