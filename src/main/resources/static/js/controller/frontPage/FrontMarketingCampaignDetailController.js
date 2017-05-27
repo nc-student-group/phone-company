@@ -23,4 +23,6 @@ angular.module('phone-company').controller('FrontMarketingCampaignDetailControll
             $location.path("/frontPage");
         };
 
+
+
     }]);

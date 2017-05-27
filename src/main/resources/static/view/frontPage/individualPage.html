@@ -66,7 +66,8 @@
                                                 </div>
                                                 <hr/>
                                                 <div class="row" style="margin: 0;">
-                                                    <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs">
+                                                    <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs"
+                                                         ng-click="tariffClick(t.id)">
                                                         <div class="tariff-picture">
                                                             <img ng-src="{{t.pictureUrl}}" width="90%"/>
                                                             <div class="sale-picture" ng-show="t.discount > 0 && t.discount <= 100"><b>-{{t.discount}}%</b>
@@ -83,6 +84,12 @@
                                                              style="text-align: center; font-size: 16px; color: #161121">
                                                             <b>{{t.price * (1 - t.discount/100) | number:2}} auh / 30 days</b>
                                                             <s style="font-size: 14px; color: red">{{t.price | number:2}} auh / 30 days</s>
+                                                        </div>
+                                                        <div class="row">
+                                                            <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                                    ng-click="tariffClick(t.id); $event.stopPropagation();">
+                                                                More
+                                                            </button>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4" style="padding: 10px;"

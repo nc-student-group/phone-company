@@ -109,6 +109,10 @@ angular.module('phone-company').controller('IndividualPageController', [
             };
         };
 
+        $scope.tariffClick = function (tariffId) {
+            $location.path("/frontPage/tariff/" + tariffId);
+        };
+
         $scope.showServiceDetails = function (id) {
             $location.path("/frontPage/services/" + id);
         };

@@ -137,6 +137,11 @@ public class TariffController {
                 customerService.getCurrentlyLoggedInUser()), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/tariff/{id}")
+    public ResponseEntity<?> getTariffForCorporateById(@PathVariable("id") long tariffId) {
+        return new ResponseEntity<Object>(tariffService.getTariff(tariffId), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/activate/{id}")
     public ResponseEntity<?> activateTariff(@PathVariable("id") long tariffId) {
         Customer currentlyLoggedInUser = customerService.getCurrentlyLoggedInUser();

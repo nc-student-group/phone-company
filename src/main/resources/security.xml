@@ -73,6 +73,7 @@
         <intercept-url pattern="/api/tariffs/available/**" method="GET" access="hasAnyRole('CLIENT','CSR','ADMIN')"/>
         <!--<intercept-url pattern="/api/tariffs/**" method="GET" access="hasAnyRole('CSR','ADMIN')"/>-->
         <intercept-url pattern="/api/tariffs/empty" method="GET" access="hasAnyRole('CSR','ADMIN')"/>
+        <intercept-url pattern="/api/tariffs/tariff/**" method="GET" access="permitAll()"/>
         <intercept-url pattern="/api/tariffs" method="POST" access="hasAnyRole('CSR','ADMIN')"/>
         <intercept-url pattern="/api/tariffs/region/**" method="GET" access="permitAll()"/>
         <intercept-url pattern="/api/tariffs" method="PUT" access="hasAnyRole('CSR','ADMIN')"/>

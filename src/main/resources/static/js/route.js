@@ -36,6 +36,11 @@
                 templateUrl: 'view/frontPage/marketingCampaignDetail.html',
                 controller: 'FrontMarketingCampaignDetailController'
             });
+        $routeProvider.when('/frontPage/tariff/:id',
+            {
+                templateUrl: 'view/frontPage/tariffDetail.html',
+                controller: 'FrontTariffDetailController'
+            });
         $routeProvider.when('/frontPage',
             {
                 templateUrl: 'view/frontPage/welcomePage.html',
