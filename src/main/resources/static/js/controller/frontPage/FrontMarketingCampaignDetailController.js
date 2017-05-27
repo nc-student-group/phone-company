@@ -20,7 +20,7 @@ angular.module('phone-company').controller('FrontMarketingCampaignDetailControll
         });
 
         $scope.backClick = function () {
-            $location.path("/frontPage");
+            window.history.back();
         };
 
 
