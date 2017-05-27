@@ -17,9 +17,7 @@ public class User extends DomainEntity {
             message = "Password should be 8 characters long and contain at least 1 special character")
     @NotNull(message = "User has to have a password")
     private String password;
-    @NotNull(message = "User has to have a role")
     private UserRole role;
-    @NotNull(message = "User has to have a status")
     private Status status;
 
     public User() {

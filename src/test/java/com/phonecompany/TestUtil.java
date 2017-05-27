@@ -1,9 +1,8 @@
 package com.phonecompany;
 
-import com.phonecompany.model.Customer;
-import com.phonecompany.model.ProductCategory;
-import com.phonecompany.model.Service;
+import com.phonecompany.model.*;
 import com.phonecompany.model.enums.ProductStatus;
+import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
 
 import java.util.ArrayList;
@@ -58,5 +57,14 @@ public class TestUtil {
     public static ProductStatus getAnotherProductStatus(ProductStatus productStatus) {
         ProductStatus[] productStatusValues = ProductStatus.values();
         return productStatusValues[(productStatus.ordinal() + 1) % productStatusValues.length];
+    }
+
+    public static Customer getSampleCustomer() {
+        Region region = new Region(10, "Kyiv Region");
+        Address address = new Address(region, "Some locality", "Some street",
+                "55B", "12A");
+        return new Customer("test_email@gmail.com", "$root$", UserRole.CLIENT,
+                Status.INACTIVE, "%r32r2", "f", null, "+380770071245", address,
+                null, false, false);
     }
 }

@@ -72,11 +72,14 @@
                                     <label>First name</label>
                                     <input name="firstName" type="text" id="firstName"
                                            ng-model="customer.firstName"
+                                           md-minlength="2"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.firstName.$error" role="alert">
-                                        <div ng-message="pattern">
-                                            This field can only contain letters
+
+                                    <div ng-messages="registerForm.firstName.$error" role="alert" multiple>
+
+                                        <div ng-message-exp="['minlength', 'pattern']">
+                                            This field can only contain letters and be longer than 1 symbol
                                         </div>
                                     </div>
                                 </md-input-container>
@@ -86,11 +89,13 @@
                                     <label>Second name</label>
                                     <input name="secondName" type="text" id="secondName"
                                            ng-model="customer.secondName"
+                                           md-minlength="2"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.secondName.$error" role="alert">
-                                        <div ng-message="pattern">
-                                            This field can only contain letters
+                                    <div ng-messages="registerForm.secondName.$error" role="alert" multiple>
+
+                                        <div ng-message-exp="['minlength', 'pattern']">
+                                            This field can only contain letters and be longer than 1 symbol
                                         </div>
                                     </div>
                                 </md-input-container>
@@ -100,11 +105,13 @@
                                     <label>Last name</label>
                                     <input name="lastName" type="text" id="lastName"
                                            ng-model="customer.lastName"
+                                           md-minlength="2"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.lastName.$error" role="alert">
-                                        <div ng-message="pattern">
-                                            This field can only contain letters
+                                    <div ng-messages="registerForm.lastName.$error" role="alert" multiple>
+
+                                        <div ng-message-exp="['minlength', 'pattern']">
+                                            This field can only contain letters and be longer than 1 symbol
                                         </div>
                                     </div>
                                 </md-input-container>

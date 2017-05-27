@@ -9,14 +9,14 @@ import javax.validation.constraints.Pattern;
 
 public class Customer extends User {
 
-    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
-    @NotNull(message = "First name must not be null")
+    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Last name can only contain letters " +
+            "and be longer than 1 symbol")
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
-    @NotNull(message = "Second name must not be null")
+    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Second name can only contain letters " +
+            "and be longer than 1 symbol")
     private String secondName;
-    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Last name can only contain letters")
-    @NotNull(message = "Last name must not be null")
+    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Last name can only contain letters " +
+            "and be longer than 1 symbol")
     private String lastName;
     @Pattern(regexp = "^\\+38077[0-9]{7}$", message = "Phone should be in format of +38077#######")
     @NotNull(message = "Phone must not be null")
@@ -24,10 +24,8 @@ public class Customer extends User {
     @NotNull(message = "Address must not be null")
     private Address address;
     private Corporate corporate;
-    @NotNull(message = "isRepresentative must not be null")
     @JsonProperty(value = "isRepresentative")
     private Boolean isRepresentative;
-    @NotNull(message = "Mailing agreement has to be specified")
     private Boolean isMailingEnabled = true; // mailing is enabled by default
 
     public Customer() {

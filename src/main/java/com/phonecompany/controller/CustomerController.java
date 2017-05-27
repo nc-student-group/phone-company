@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.annotations.Validate;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -59,18 +61,20 @@ public class CustomerController {
         this.emailService = emailService;
     }
 
+    @Validate
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: " + customer);
-        Customer persistedCustomer = this.customerService.save(customer);
-        LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
-        VerificationToken persistedToken = this.verificationTokenService
-                .saveTokenForUser(persistedCustomer);
-        SimpleMailMessage confirmationMessage =
-                this.confirmMessageCreator.constructMessage(persistedToken);
-        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
-        emailService.sendMail(confirmationMessage, persistedCustomer);
-        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+//        Customer persistedCustomer = this.customerService.save(customer);
+//        LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
+//        VerificationToken persistedToken = this.verificationTokenService
+//                .saveTokenForUser(persistedCustomer);
+//        SimpleMailMessage confirmationMessage =
+//                this.confirmMessageCreator.constructMessage(persistedToken);
+//        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
+//        emailService.sendMail(confirmationMessage, persistedCustomer);
+//        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+    return null;
     }
 
     @GetMapping(value = "/api/customers/empty-customer")

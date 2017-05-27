@@ -23,8 +23,8 @@ angular.module('phone-company').controller('RegistrationController', [
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;
         $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
         $scope.phonePattern = /^\+38077[0-9]{7}$/;
-        $scope.textFieldPattern = /^[a-zA-Z]+$/;
-        $scope.streetPattern = /^[a-zA-Z#\\ ]+$/
+        $scope.textFieldPattern = /^[a-zA-Z]{2,}$/;
+        $scope.streetPattern = /^[a-zA-Z0-9#\\ ]+$/;
         $scope.numberPattern = /^[^-e]*[1-9]+$/;
         $scope.houseNumberPattern = /^[^!@#$%^&*()_+-]*$/
 

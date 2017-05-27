@@ -8,16 +8,13 @@ public class Address extends DomainEntity {
     @NotNull(message = "Region must not be null")
     private Region region;
     @Pattern(regexp = "[a-zA-Z]{3,}", message = "Locality can only contain letters")
-    @NotNull(message = "Locality must not be null")
     private String locality;
-    @Pattern(regexp = "[a-zA-Z]{3,}", message = "Street can only contain letters")
-    @NotNull(message = "Street must not be null")
+    @Pattern(regexp = "^[a-zA-Z0-9#\\\\ ]+$", message = "Street should not contain special characters")
     private String street;
-    @NotNull(message = "House number must not be null")
+    @Pattern(regexp = "^[^!@#$%^&*()_+-]*", message = "House number should not contain special characters")
     private String houseNumber;
     @Pattern(regexp = "^[^!@#$%^&*()_+-]*$",
             message = "This field should not contain special characters")
-    @NotNull(message = "Apartment number must not be null")
     private String apartmentNumber;
 
     public Address() {

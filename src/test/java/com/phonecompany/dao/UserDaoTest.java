@@ -1,5 +1,6 @@
 package com.phonecompany.dao;
 
+import com.phonecompany.TestUtil;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
