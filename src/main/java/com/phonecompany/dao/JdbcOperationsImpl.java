@@ -1,7 +1,6 @@
 package com.phonecompany.dao;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.phonecompany.annotations.Validate;
 import com.phonecompany.dao.interfaces.JdbcOperations;
 import com.phonecompany.dao.interfaces.RowMapper;
 import com.phonecompany.exception.dao_layer.CrudException;
@@ -16,7 +15,6 @@ import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 
-import javax.validation.Valid;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -88,6 +88,9 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public Customer save(Customer customer) {
         customer.setRole(UserRole.CLIENT);
+        Address persistedAddress = this.addressService.save(customer.getAddress());
+        customer.setAddress(persistedAddress);
+        LOG.debug("Persisting customer: {}", customer);
         return super.save(customer);
     }
 
@@ -98,10 +101,10 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                     this.passwordAssignmentEmailCreator.constructMessage(customer);
             LOG.info("Sending email confirmation message to: {}", customer.getEmail());
             emailService.sendMail(confirmationMessage, customer);
-        }else{
-            throw new ConflictException("Customer with email "+customer.getEmail()+" already registered");
+        } else {
+            throw new ConflictException("Customer with email " + customer.getEmail() + " already registered");
         }
-        if(customer.getAddress()!=null){
+        if (customer.getAddress() != null) {
             Address persistedAddress = this.addressService.save(customer.getAddress());
             customer.setAddress(persistedAddress);
         }

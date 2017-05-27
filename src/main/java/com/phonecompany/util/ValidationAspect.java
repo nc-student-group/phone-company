@@ -19,7 +19,7 @@ public class ValidationAspect {
     private ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
     private Validator validator = vf.getValidator();
 
-    @Around("@annotation(com.phonecompany.annotations.Validate)")
+    @Around("@annotation(com.phonecompany.annotations.ValidateParams)")
     public Object validateParameters(ProceedingJoinPoint joinPoint)
             throws Throwable {
 

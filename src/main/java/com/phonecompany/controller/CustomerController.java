@@ -1,27 +1,22 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.annotations.Validate;
+import com.phonecompany.annotations.ValidateParams;
 import com.phonecompany.model.*;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
-import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
@@ -58,11 +53,11 @@ public class CustomerController {
         this.emailService = emailService;
     }
 
-    @Validate
+    @ValidateParams
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
+        LOG.debug("Customer retrieved from the http request: {}", customer);
         Customer persistedCustomer = this.customerService.save(customer);
-        LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
         VerificationToken persistedToken = this.verificationTokenService
                 .saveTokenForUser(persistedCustomer);
         SimpleMailMessage confirmationMessage =
