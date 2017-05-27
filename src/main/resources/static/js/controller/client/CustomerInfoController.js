@@ -81,10 +81,11 @@
                     if ($scope.currentServices !== "") {
                         $scope.hasCurrentServices = true;
                     }
-                    $scope.preloader.send = false;
                     if ($scope.servicesOrders == undefined) {
                         $scope.loadServicesHistory();
                     }
+                    $scope.loading = false;
+                    $scope.preloader.send = false;
                 }, function (data) {
                     $scope.preloader.send = false;
                 });
