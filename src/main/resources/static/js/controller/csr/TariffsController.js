@@ -12,7 +12,7 @@ angular.module('phone-company').controller('TariffsController', [
         console.log('This is TariffsController');
         $scope.activePage = 'tariffs';
         $scope.page = 0;
-        $scope.size = 1;
+        $scope.size = 5;
         $scope.inProgress = false;
         $scope.tariffsSelected = 0;
         $scope.currentRegion = 0;
