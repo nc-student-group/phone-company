@@ -18,7 +18,7 @@ import java.util.List;
  * {@inheritDoc}
  */
 @ServiceStereotype
-public class OrderStatisticsServiceImpl extends AbstractStatisticsServiceImpl<LocalDate, Long>
+public class StatisticsServiceImpl extends AbstractStatisticsServiceImpl<LocalDate, Long>
         implements StatisticsService<LocalDate, Long> {
 
     /**

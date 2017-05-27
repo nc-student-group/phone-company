@@ -73,7 +73,7 @@ public class ReportController {
     public ResponseEntity<?> getComplaintReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                      @PathVariable("startDate") LocalDate startDate,
                                                                      @PathVariable("endDate") LocalDate endDate) {
-        LOG.debug("Get complaints report");
+        LOG.debug("Generating report regarding all orders made between {} and {}", startDate, endDate);
         SheetDataSet<LocalDate, Long> complaintStatisticsDataSet = this.complaintService
                 .getComplaintStatisticsDataSet(regionId, startDate, endDate);
         LOG.debug("Complaints report: {}", complaintStatisticsDataSet);
