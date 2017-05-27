@@ -112,16 +112,7 @@ public class CustomerController {
 
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
-        LOG.debug("Customer retrieved from the http request: " + customer);
-        if (customerService.findByEmail(customer.getEmail()) == null) {
-            customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-            SimpleMailMessage confirmationMessage =
-                    this.passwordAssignmentEmailCreator.constructMessage(customer);
-            LOG.info("Sending email confirmation message to: {}", customer.getEmail());
-            emailService.sendMail(confirmationMessage, customer);
-        }
-        Customer persistedCustomer = this.customerService.save(customer);
-        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+        return new ResponseEntity<>(this.customerService.saveByAdmin(customer), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/customers/logged-in-user")

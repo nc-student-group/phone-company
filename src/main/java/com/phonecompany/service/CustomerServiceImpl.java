@@ -8,6 +8,7 @@ import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerTariff;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
+import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
 import com.phonecompany.service.interfaces.*;
 import com.phonecompany.util.Query;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.util.Assert;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private ShaPasswordEncoder shaPasswordEncoder;
     private AddressService addressService;
     private EmailService<Customer> emailService;
+    private PasswordAssignmentEmailCreator passwordAssignmentEmailCreator;
 
     @Autowired
     public CustomerServiceImpl(CustomerDao customerDao,
@@ -42,13 +46,15 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                                CustomerTariffService customerTariffService,
                                ShaPasswordEncoder shaPasswordEncoder,
                                AddressService addressService,
-                               EmailService<Customer> emailService) {
+                               EmailService<Customer> emailService,
+                               PasswordAssignmentEmailCreator passwordAssignmentEmailCreator) {
         this.customerDao = customerDao;
         this.tariffService = tariffService;
         this.customerTariffService = customerTariffService;
         this.shaPasswordEncoder = shaPasswordEncoder;
         this.addressService = addressService;
         this.emailService = emailService;
+        this.passwordAssignmentEmailCreator = passwordAssignmentEmailCreator;
     }
 
     /**
@@ -80,6 +86,24 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     @Override
     public Customer save(Customer customer) {
         customer.setRole(UserRole.CLIENT);
+        return super.save(customer);
+    }
+
+    public Customer saveByAdmin(Customer customer) {
+        if (this.findByEmail(customer.getEmail()) == null) {
+            customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+            SimpleMailMessage confirmationMessage =
+                    this.passwordAssignmentEmailCreator.constructMessage(customer);
+            LOG.info("Sending email confirmation message to: {}", customer.getEmail());
+            emailService.sendMail(confirmationMessage, customer);
+        }else{
+            throw new ConflictException("Customer with email "+customer.getEmail()+" already registered");
+        }
+        if(customer.getAddress()!=null){
+            Address persistedAddress = this.addressService.save(customer.getAddress());
+            customer.setAddress(persistedAddress);
+        }
+        customer.setStatus(Status.ACTIVATED);
         return super.save(customer);
     }
 

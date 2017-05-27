@@ -34,7 +34,9 @@ public abstract class AbstractUserServiceImpl<T extends User>
     @Override
     public T save(T entity) {
         this.validate(entity);
-        entity.setStatus(this.getStatus());
+        if(entity.getStatus()==null){
+            entity.setStatus(this.getStatus());
+        }
         entity.setPassword(shaPasswordEncoder.encodePassword(entity.getPassword(), null));
         return super.save(entity);
     }
