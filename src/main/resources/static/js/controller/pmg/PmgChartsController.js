@@ -52,6 +52,7 @@ angular.module('phone-company').controller('PmgChartsController', [
         $scope.colors = ['#ff6384', '#32a9a4', '#615ebc'];
         $scope.labels = ['First week', 'Second week', 'Third week', 'Fourth week'];
         $scope.series = ['Customaer Service', 'Suggestion', 'Technical Service'];
+        $scope.options = {legend: {display: true}};
 
         $scope.generateReport = function () {
             console.log(`Generation complaint report`);
