@@ -70,4 +70,9 @@ angular.module('phone-company').controller('FrontPageController', [
         };
         $scope.getTopActiveServices();
 
+        $scope.campaignClick = function (marketingCampaignId) {
+            $location.path("/frontPage/marketing-campaign/" + marketingCampaignId);
+        };
+
+
     }]);

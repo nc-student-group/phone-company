@@ -31,6 +31,11 @@
                 templateUrl: 'view/frontPage/welcomePage.html',
                 controller: 'FrontPageController'
             });
+        $routeProvider.when('/frontPage/marketing-campaign/:id',
+            {
+                templateUrl: 'view/frontPage/marketingCampaignDetail.html',
+                controller: 'FrontMarketingCampaignDetailController'
+            });
         $routeProvider.when('/frontPage',
             {
                 templateUrl: 'view/frontPage/welcomePage.html',
