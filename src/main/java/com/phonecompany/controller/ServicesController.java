@@ -189,7 +189,7 @@ public class ServicesController {
     }
 
     @GetMapping("/current/customer/{id}")
-    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerService(@PathVariable("id") long customerId) {
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff(@PathVariable("id") long customerId) {
         Customer customer = customerService.getById(customerId);
         List<CustomerServiceDto> customerServices =
                 customerServiceService.getCurrentCustomerServices(customer.getId());

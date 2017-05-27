@@ -82,16 +82,19 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return pagingResult;
     }
 
+    @Cacheable
     @Override
     public List<Service> getAllActiveServicesWithDiscount() {
         return serviceDao.getAllActiveServicesWithDiscount();
     }
 
+    @Cacheable
     @Override
     public List<Service> getTopActiveServices() {
         return serviceDao.getTopActiveServices();
     }
 
+    @Cacheable
     @Override
     public List<Service> getServicesByStatus(ProductStatus status) {
         return serviceDao.getServicesByStatus(status);
@@ -270,5 +273,11 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         response.put("services", serviceDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
         response.put("entitiesSelected", serviceDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
+    }
+
+    @Cacheable
+    @Override
+    public List<Service> getAll() {
+        return super.getAll();
     }
 }
