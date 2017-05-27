@@ -137,7 +137,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.entitiesSelected / $scope.size);
-            if (max == $scope.entitiesSelected) {
+            if (max * $scope.size == $scope.entitiesSelected) {
                 return max;
             }
             return max + 1;

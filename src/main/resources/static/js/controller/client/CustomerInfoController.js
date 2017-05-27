@@ -137,7 +137,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.ordersFound / $scope.size);
-            if (max == $scope.ordersFound) {
+            if (max * $scope.size == $scope.ordersFound) {
                 return max;
             }
             return max + 1;
@@ -219,7 +219,7 @@
 
         $scope.getMaxServicesPageNumber = function () {
             var max = Math.floor($scope.servicesOrdersFound / $scope.size);
-            if (max == $scope.servicesOrdersFound) {
+            if (max * $scope.size == $scope.servicesOrdersFound) {
                 return max;
             }
             return max + 1;
