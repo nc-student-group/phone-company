@@ -62,7 +62,7 @@ angular.module('phone-company').controller('ServicesController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.servicesCount / $scope.size);
-            if (max == $scope.servicesCount) {
+            if (max * $scope.size * $scope.size == $scope.servicesCount) {
                 return max;
             }
             return max + 1;
@@ -74,7 +74,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.page = page;
                 $scope.preloader.send = true;
                 ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
-                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+                    $scope.partOfName, $scope.startingPrice, $scope.endingPrice, $scope.selectedStatus,
+                    $scope.orderingCategory, $scope.orderType)
                     .then(function (data) {
                         $scope.services = data.pagingResult;
                         $scope.servicesCount = data.entityCount;
@@ -93,7 +94,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
                 ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
-                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+                    $scope.partOfName, $scope.startingPrice, $scope.endingPrice, $scope.selectedStatus,
+                    $scope.orderingCategory, $scope.orderType)
                     .then(function (data) {
                         $scope.services = data.pagingResult;
                         $scope.servicesCount = data.entityCount;
@@ -112,7 +114,8 @@ angular.module('phone-company').controller('ServicesController', [
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
                 ServicesService.getServicesByProductCategoryId($scope.currentCategory, $scope.page, $scope.size,
-                    $scope.partOfName, $scope.priceFrom, $scope.priceTo, $scope.selectedStatus, $scope.orderBy, $scope.orderByType)
+                    $scope.partOfName, $scope.startingPrice, $scope.endingPrice, $scope.selectedStatus,
+                    $scope.orderingCategory, $scope.orderType)
                     .then(function (data) {
                         $scope.services = data.pagingResult;
                         $scope.servicesCount = data.entityCount;

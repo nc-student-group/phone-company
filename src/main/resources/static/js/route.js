@@ -21,15 +21,30 @@
                 templateUrl: 'view/login.html',
                 controller: 'LoginController'
             });
+        // $routeProvider.when('/',
+        //     {
+        //         templateUrl: 'view/login.html',
+        //         controller: 'LoginController'
+        //     });
         $routeProvider.when('/',
             {
-                templateUrl: 'view/login.html',
-                controller: 'LoginController'
+                templateUrl: 'view/frontPage/welcomePage.html',
+                controller: 'FrontPageController'
             });
         $routeProvider.when('/frontPage',
             {
-                templateUrl: 'view/frontPage.html'
-                // controller: ''
+                templateUrl: 'view/frontPage/welcomePage.html',
+                controller: 'FrontPageController'
+            });
+        $routeProvider.when('/businessPage',
+            {
+                templateUrl: 'view/frontPage/businessPage.html',
+                controller: 'BusinessPageController'
+            });
+        $routeProvider.when('/individualPage',
+            {
+                templateUrl: 'view/frontPage/individualPage.html',
+                controller: 'IndividualPageController'
             });
         $routeProvider.when('/login/:success',
             {
@@ -66,12 +81,22 @@
                 templateUrl: 'view/csr/tariffs.html',
                 controller: 'TariffsController'
             });
+        $routeProvider.when('/admin/tariffs',
+            {
+                templateUrl: 'view/csr/tariffs.html',
+                controller: 'TariffsController'
+            });
         $routeProvider.when('/csr/tariff/:id',
             {
                 templateUrl: 'view/csr/tariffDetail.html',
                 controller: 'CsrTariffDetailController'
             });
         $routeProvider.when('/csr/tariff/edit/:id',
+            {
+                templateUrl: 'view/csr/tariffEdit.html',
+                controller: 'TariffEditController'
+            });
+        $routeProvider.when('/admin/tariff/edit/:id',
             {
                 templateUrl: 'view/csr/tariffEdit.html',
                 controller: 'TariffEditController'
@@ -104,6 +129,11 @@
                 controller: 'CsrComplaintsController'
             });
         $routeProvider.when('/csr/services',
+            {
+                templateUrl: 'view/csr/services.html',
+                controller: 'ServicesController'
+            });
+        $routeProvider.when('/admin/services',
             {
                 templateUrl: 'view/csr/services.html',
                 controller: 'ServicesController'
@@ -203,6 +233,11 @@
                 templateUrl: 'view/csr/clientDetail.html',
                 controller: 'CsrClientDetailController'
             });
+        $routeProvider.when('/admin/clients/:id',
+            {
+                templateUrl: 'view/csr/clientDetail.html',
+                controller: 'CsrClientDetailController'
+            });
         $routeProvider.when('/pmg/complaints',
             {
                 templateUrl: 'view/pmg/complaints.html',
@@ -224,6 +259,11 @@
                 controller: 'PmgClientDetailController'
             });
         $routeProvider.when('/csr/editCustomer/:id',
+            {
+                templateUrl: 'view/csr/editCustomer.html',
+                controller: 'CsrClientEditController'
+            });
+        $routeProvider.when('/admin/editCustomer/:id',
             {
                 templateUrl: 'view/csr/editCustomer.html',
                 controller: 'CsrClientEditController'

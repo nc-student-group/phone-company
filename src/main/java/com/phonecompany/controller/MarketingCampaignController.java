@@ -51,6 +51,15 @@ public class MarketingCampaignController {
         return marketingCampaigns;
     }
 
+    @GetMapping(value = "/available/{regionId}")
+    public List<MarketingCampaign> getAvailableMarketingCampaignsByRegionId(
+            @PathVariable("regionId") long regionId) {
+        List<MarketingCampaign> marketingCampaigns = marketingCampaignService
+                .getAvailableMarketingCampaignsByRegionId(regionId);
+        LOGGER.info("Retrieved available marketing campaigns: " + marketingCampaigns);
+        return marketingCampaigns;
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getMarketingCampaignById(
             @PathVariable("id") Long marketingCampaignId) {
@@ -77,9 +86,11 @@ public class MarketingCampaignController {
 
     @GetMapping(value = "/{page}/{size}")
     public Map<String, Object> getTariffs(@PathVariable("page") int page,
-                                          @PathVariable("size") int size) {
+                                          @PathVariable("size") int size,
+                                          @RequestParam("n") String name,
+                                          @RequestParam("s") int status) {
         LOGGER.info("Trying to retrieve marketing campaigns...");
-        return marketingCampaignService.getMarketingCampaignsTable(page, size);
+        return marketingCampaignService.getMarketingCampaignsTable(page, size, name, status);
     }
 
     @PatchMapping(value = "/{id}")

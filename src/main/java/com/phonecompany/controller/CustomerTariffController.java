@@ -64,6 +64,7 @@ public class CustomerTariffController {
         CustomerTariff updatedCustomerTariff = customerTariffService.resumeCustomerTariff(customerTariff);
         return new ResponseEntity<Object>(updatedCustomerTariff, HttpStatus.OK);
     }
+
     @PatchMapping(value = "/deactivate")
     public ResponseEntity<Void> deactivateCustomerTariff(@RequestBody CustomerTariff customerTariff) {
         customerTariffService.deactivateCustomerTariff(customerTariff);

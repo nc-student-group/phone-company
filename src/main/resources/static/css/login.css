@@ -508,3 +508,12 @@
     padding-bottom: 10px;
     font-size: 18px;
 }
+
+.paginate_button_points>a:hover{
+    background-color: #fff !important;
+}
+
+.paginate_button_points > a:focus {
+    background-color: #fff !important;
+    border-color: #fff;
+}

@@ -17,6 +17,10 @@ public interface ServiceService extends CrudService<Service>,
 
     List<Service> getServicesByStatus(ProductStatus status);
 
+    List<Service> getAllActiveServicesWithDiscount();
+
+    List<Service> getTopActiveServices();
+
     Service save(Service service);
 
     void updateServiceStatus(long serviceId, ProductStatus productStatus);

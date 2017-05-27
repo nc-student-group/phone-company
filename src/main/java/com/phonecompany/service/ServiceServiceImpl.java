@@ -81,6 +81,16 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     }
 
     @Override
+    public List<Service> getAllActiveServicesWithDiscount() {
+        return serviceDao.getAllActiveServicesWithDiscount();
+    }
+
+    @Override
+    public List<Service> getTopActiveServices() {
+        return serviceDao.getTopActiveServices();
+    }
+
+    @Override
     public List<Service> getServicesByStatus(ProductStatus status) {
         return serviceDao.getServicesByStatus(status);
     }

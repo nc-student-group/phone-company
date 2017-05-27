@@ -54,7 +54,7 @@
                                            ng-model="customer.phone"
                                            required ng-pattern="phonePattern">
 
-                                    <div ng-messages="registerForm.phone.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.phone.$error" role="alert">
                                         <div ng-message="pattern">
                                             Example: +380770076563
                                         </div>
@@ -74,7 +74,7 @@
                                            ng-model="customer.firstName"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.firstName.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.firstName.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field can only contain letters
                                         </div>
@@ -88,7 +88,7 @@
                                            ng-model="customer.secondName"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.secondName.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.secondName.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field can only contain letters
                                         </div>
@@ -102,7 +102,7 @@
                                            ng-model="customer.lastName"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.lastName.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.lastName.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field can only contain letters
                                         </div>
@@ -136,7 +136,7 @@
                                            ng-model="customer.address.locality"
                                            ng-pattern="textFieldPattern">
 
-                                    <div ng-messages="registerForm.locality.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.locality.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field can only contain letters
                                         </div>
@@ -150,7 +150,7 @@
                                            ng-model="customer.address.street"
                                            ng-pattern="streetPattern">
 
-                                    <div ng-messages="registerForm.street.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.street.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field should not contain special characters or numbers
                                         </div>
@@ -164,7 +164,7 @@
                                            ng-model="customer.address.houseNumber"
                                            ng-pattern="houseNumberPattern">
 
-                                    <div ng-messages="registerForm.houseNumber.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.houseNumber.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field should not contain special characters
                                         </div>
@@ -178,7 +178,7 @@
                                            ng-model="customer.address.apartmentNumber"
                                            ng-pattern="numberPattern">
 
-                                    <div ng-messages="registerForm.apartmentNumber.$error" role="alert" multiple>
+                                    <div ng-messages="registerForm.apartmentNumber.$error" role="alert">
                                         <div ng-message="pattern">
                                             This field can only contain positive numbers
                                         </div>

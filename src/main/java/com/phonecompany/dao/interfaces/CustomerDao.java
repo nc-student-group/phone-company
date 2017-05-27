@@ -18,5 +18,7 @@ public interface CustomerDao extends JdbcOperations<Customer>,
 
     int getCountByEmail(String email);
 
+    List<Customer> getCustomersAgreedForMailing();
+
     List<Customer> getAllCustomersSearch(Query query);
 }

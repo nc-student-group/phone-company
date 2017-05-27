@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Gets thrown if conversion to {@code InputStream} fails.
  *
- * @see com.phonecompany.service.XSSFServiceImpl#saveWorkBook(XSSFWorkbook)
+ * @see com.phonecompany.service.XSSFServiceImpl#convertToInputStream(XSSFWorkbook)
  */
 public class ToInputStreamConversionException extends RuntimeException {
     public ToInputStreamConversionException(IOException e) {

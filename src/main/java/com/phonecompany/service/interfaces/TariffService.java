@@ -28,6 +28,8 @@ public interface TariffService extends CrudService<Tariff>,
 
     List<Tariff> getTariffsAvailableForCorporate();
 
+    Map<String, Object> getTariffsAvailableForCorporatePaged(int page, int size);
+
     Integer getCountTariffsAvailableForCorporate();
 
     Tariff getByIdForSingleCustomer(long id, long regionId);
@@ -54,6 +56,8 @@ public interface TariffService extends CrudService<Tariff>,
 
     Map<String, Object> getTariffsTable(int page, int size, String name, int status,
                                         int type, String from, String to, int orderBy, String orderByType);
+
+    Map<String, Object> getTariffsTable(int page, int size, long regionId);
 
     void activateTariffForSingleCustomer(long tariffId, Customer customer);
 

@@ -1,8 +1,8 @@
 <div class="wrapper">
-    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+    <ng-include src="getSidebar()"></ng-include>
 
     <div class="main-panel">
-        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+        <ng-include src="getHeader()"></ng-include>
 
         <div class="content">
             <div class="container-fluid">
@@ -279,7 +279,7 @@
                                                                     <p ng-hide="s.service.discount > 0 && s.service.discount < 100">
                                                                         {{s.price | number : 2}}</p>
                                                                     <p ng-show="s.service.discount > 0 && s.service.discount < 100">
-                                                                        <s class="red">{{s.price | number : 2}}</s>
+                                                                        <s class="red">{{s.service.price | number : 2}}</s>
                                                                     </p>
                                                                     <p ng-show="s.service.discount > 0 && s.service.discount < 100">
                                                                         {{s.service.price * (1 - s.service.discount /
@@ -451,7 +451,7 @@
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">1</a>
                                                                         </li>
-                                                                        <li class="paginate_button" ng-show="page > 3">
+                                                                        <li class="paginate_button_points" ng-show="page > 3">
                                                                             <a
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">...</a>
@@ -483,7 +483,7 @@
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">{{page+3}}</a>
                                                                         </li>
-                                                                        <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                                        <li class="paginate_button_points" ng-show="page < getMaxPageNumber() - 4">
                                                                             <a
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">...</a>
@@ -597,7 +597,7 @@
                                                                                             aria-controls="tariffTable"
                                                                                             data-dt-idx="1" tabindex="0">1</a>
                                                                                 </li>
-                                                                                <li class="paginate_button" ng-show="page > 3">
+                                                                                <li class="paginate_button_points" ng-show="page > 3">
                                                                                     <a
                                                                                             aria-controls="tariffTable"
                                                                                             data-dt-idx="1" tabindex="0">...</a>
@@ -629,7 +629,7 @@
                                                                                             aria-controls="tariffTable"
                                                                                             data-dt-idx="1" tabindex="0">{{page+3}}</a>
                                                                                 </li>
-                                                                                <li class="paginate_button" ng-show="page < getMaxServicesPageNumber() - 4">
+                                                                                <li class="paginate_button_points" ng-show="page < getMaxServicesPageNumber() - 4">
                                                                                     <a
                                                                                             aria-controls="tariffTable"
                                                                                             data-dt-idx="1" tabindex="0">...</a>

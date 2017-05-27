@@ -31,7 +31,7 @@
             $log.debug('User: ' + JSON.stringify($scope.user));
             UserService.saveUserByAdmin($scope.user)
                 .then(function (createdUser) {
-                    toastr.success('User with an email ${createdUser.email} has been successfully created. Email with password was sent to user');
+                    toastr.success("User with an email" + createdUser.email + "has been successfully created. Email with password was sent to user");
 
                     $log.debug("Created user: ", createdUser);
                     $scope.users.push(createdUser);
@@ -65,7 +65,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.usersSelected / $scope.size);
-            if (max == $scope.usersSelected) {
+            if (max * $scope.size == $scope.usersSelected) {
                 return max;
             }
             return max + 1;

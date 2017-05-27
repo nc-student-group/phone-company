@@ -134,6 +134,7 @@ public class UserController {
         userService.updateStatus(id, status);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     private void sendResetPasswordMessage(User user, String password) {
         SimpleMailMessage resetPasswordMessage =
                 this.resetPassMessageCreator.constructMessage(password);

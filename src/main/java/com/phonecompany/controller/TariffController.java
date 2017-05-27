@@ -16,9 +16,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/tariffs")
@@ -64,6 +62,14 @@ public class TariffController {
                                           @RequestParam("ot") String orderByType) {
         return tariffService.getTariffsTable(page, size, name, status, type, from, to, orderBy, orderByType);
     }
+
+    @GetMapping(value = "/region/{id}/{page}/{size}")
+    public Map<String, Object> getTariffsForRegion(@PathVariable("page") int page,
+                                          @PathVariable("size") int size,
+                                          @PathVariable("id") Long regionId) {
+        return tariffService.getTariffsTable(page, size, regionId);
+    }
+
 
     @GetMapping(value = "/empty")
     public Tariff getEmptyTariff() {
@@ -117,6 +123,12 @@ public class TariffController {
     public ResponseEntity<?> getTariffsAvailableForCorporate() {
         return new ResponseEntity<Object>(tariffService
                 .getTariffsAvailableForCorporate(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/corporate/available/{page}/{size}")
+    public Map<String, Object> getTariffsAvailableForCorporatePaged(@PathVariable("page") int page,
+                                                                  @PathVariable("size") int size) {
+        return tariffService.getTariffsAvailableForCorporatePaged(page, size);
     }
 
     @GetMapping(value = "/customer/{id}")

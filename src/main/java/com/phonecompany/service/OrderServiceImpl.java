@@ -85,14 +85,6 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         return orderDao.getCountOfServicesByCustomerId(customer.getId());
     }
 
-    /**
-     * Gets a list of
-     *
-     * @param regionId
-     * @param startDate
-     * @param endDate
-     * @return
-     */
     @Override
     public List<Statistics> getTariffOrderStatisticsByRegionAndTimePeriod(long regionId,
                                                                           LocalDate startDate,
@@ -109,9 +101,9 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
                 this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
 
         EnumMap<WeekOfMonth, Integer> numberOfTariffActivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(ACTIVATION);
+                this.orderDao.getNumberOfTariffOrdersForTheLastMonthByType(ACTIVATION);
         EnumMap<WeekOfMonth, Integer> numberOfTariffDeactivationOrdersForTheLastMonth =
-                this.orderDao.getNumberOfServiceOrdersForTheLastMonthByType(DEACTIVATION);
+                this.orderDao.getNumberOfTariffOrdersForTheLastMonthByType(DEACTIVATION);
 
         return new WeeklyOrdersAmount(numberOfServiceActivationOrdersForTheLastMonth,
                 numberOfServiceDeactivationOrdersForTheLastMonth,

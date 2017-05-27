@@ -4,15 +4,43 @@ angular.module('phone-company').controller('MainController', [
     '$rootScope',
     '$location',
     'LoginService',
+    'UserService',
     '$mdDialog',
-    function ($scope, $rootScope, $location, LoginService, $mdDialog) {
+    function ($scope, $rootScope, $location, LoginService, UserService, $mdDialog) {
         console.log('This is MainController');
 
         $scope.preloader = {send: false};
 
+        $scope.loginOrUserPage = {
+            name: "Log in",
+            action: "/#/login"
+        };
+
+        $scope.getSidebar = function () {
+            var role = $location.$$path.split('/')[1];
+            if (role == 'csr') {
+                return '../../view/csr/csrSidebar.html';
+            }
+            if (role == 'admin') {
+                return '../../view/admin/adminSidebar.html';
+            }
+        };
+
+        $scope.getHeader = function () {
+            var role = $location.$$path.split('/')[1];
+            if (role == 'csr') {
+                return '../../view/csr/csrHeader.html';
+            }
+            if (role == 'admin') {
+                return '../../view/admin/adminHeader.html';
+            }
+        };
+
         $scope.logout = function () {
             LoginService.logout().then(function () {
                 $location.path("/");
+                $scope.loginOrUserPage.name = 'Log in';
+                $scope.loginOrUserPage.action = '#/login';
             });
         };
 
@@ -240,4 +268,5 @@ angular.module('phone-company').controller('MainController', [
         }
 
 
-    }]);
+    }
+]);

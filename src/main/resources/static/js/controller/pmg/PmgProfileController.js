@@ -10,7 +10,7 @@ angular.module('phone-company').controller('PmgProfileController', [
         $scope.curPassword = "";
         $scope.newPassword = "";
         $scope.newPasswordConf = "";
-
+        $scope.activePage = 'profile';
         $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
         $scope.email = "";
 

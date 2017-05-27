@@ -17,6 +17,8 @@ angular.module('phone-company').controller('MarketingCampaignController', [
         $scope.size = 5;
         $scope.inProgress = false;
         $scope.campaignsFound = 0;
+        $scope.selectedName = '';
+        $scope.selectedStatus = 0;
         $scope.editing = false;
         $scope.currentRegion = 0;
         $scope.currentCategory = 0;
@@ -31,7 +33,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
         });
 
         $scope.preloader.send = true;
-        MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+        MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
             .then(function (data) {
                 $scope.campaigns = data.campaigns;
                 console.log($scope.campaigns);
@@ -46,7 +48,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -64,7 +66,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = page;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -79,7 +81,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.campaignsFound / $scope.size);
-            if (max == $scope.campaignsFound) {
+            if (max * $scope.size == $scope.campaignsFound) {
                 return max;
             }
             return max + 1;
@@ -90,7 +92,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
                 $scope.inProgress = true;
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
-                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+                MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                     .then(function (data) {
                         $scope.campaigns = data.campaigns;
                         $scope.campaignsFound = data.campaignsFound;
@@ -107,7 +109,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
             console.log($scope.dateTo);
             $scope.page = 0;
             $scope.preloader.send = true;
-            MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size)
+            MarketingCampaignService.getAllMarketingCampaigns($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus)
                 .then(function (data) {
                     $scope.campaigns = data.campaigns;
                     $scope.campaignsFound = data.campaignsFound;

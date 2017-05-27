@@ -323,7 +323,7 @@ angular.module('phone-company').controller('PmgComplaintsController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.complaintsCount / $scope.size);
-            if (max == $scope.complaintsCount) {
+            if (max * $scope.size == $scope.complaintsCount) {
                 return max;
             }
             return max + 1;

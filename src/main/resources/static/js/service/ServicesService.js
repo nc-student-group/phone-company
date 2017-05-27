@@ -57,6 +57,32 @@ angular.module('phone-company')
             return deferred.promise;
         }
 
+        function getAllActiveServicesWithDiscount() {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/activeWithDiscount`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function getTopActiveServices() {
+            let deferred = $q.defer();
+            $http.get(`${SERVICES}/top`).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
         function getServicesByProductCategoryId(productCategoryId, page, size, partOfName, startingPrice,
                                                 endingPrice, selectedStatus, orderingCategory, orderType) {
             let deferred = $q.defer();
@@ -179,5 +205,7 @@ angular.module('phone-company')
             activateService: activateService,
             activateServiceForCustomerId: activateServiceForCustomerId,
             isProductCategoryAvailable: isProductCategoryAvailable,
+            getAllActiveServicesWithDiscount: getAllActiveServicesWithDiscount,
+            getTopActiveServices: getTopActiveServices
         };
     }]);

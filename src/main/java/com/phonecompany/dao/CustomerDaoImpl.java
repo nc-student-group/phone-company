@@ -139,6 +139,10 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         return this.getCountByKey(phone, this.getCountByPhoneQuery());
     }
 
+    @Override
+    public List<Customer> getCustomersAgreedForMailing() {
+        return this.executeForList(this.getQuery("agreed.for.mailing"), new Object[]{});
+    }
 
     private String getCountByPhoneQuery() {
         return this.getQuery("count.by.phone");

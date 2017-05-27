@@ -238,8 +238,6 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div ng-hide="editing" class="card">
-                                                <img class="center-block" style="padding-top: 50px"
-                                                     ng-show="loading === true" src="../../css/ring.gif" alt=""/>
                                                 <div ng-show="loading === false">
                                                     <div class="header">
                                                         <h4 class="title">Manage my tariff plans</h4>
@@ -374,7 +372,7 @@
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">1</a>
                                                                         </li>
-                                                                        <li class="paginate_button" ng-show="page > 3">
+                                                                        <li class="paginate_button_points" ng-show="page > 3">
                                                                             <a
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">...</a>
@@ -406,7 +404,7 @@
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">{{page+3}}</a>
                                                                         </li>
-                                                                        <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                                        <li class="paginate_button_points" ng-show="page < getMaxPageNumber() - 4">
                                                                             <a
                                                                                     aria-controls="tariffTable"
                                                                                     data-dt-idx="1" tabindex="0">...</a>
@@ -564,7 +562,7 @@
                                                                                         aria-controls="tariffTable"
                                                                                         data-dt-idx="1" tabindex="0">1</a>
                                                                             </li>
-                                                                            <li class="paginate_button" ng-show="servicesPage > 3">
+                                                                            <li class="paginate_button_points" ng-show="servicesPage > 3">
                                                                                 <a
                                                                                         aria-controls="tariffTable"
                                                                                         data-dt-idx="1" tabindex="0">...</a>
@@ -596,7 +594,7 @@
                                                                                         aria-controls="tariffTable"
                                                                                         data-dt-idx="1" tabindex="0">{{servicesPage+3}}</a>
                                                                             </li>
-                                                                            <li class="paginate_button" ng-show="servicesPage < getMaxServicesPageNumber() - 4">
+                                                                            <li class="paginate_button_points" ng-show="servicesPage < getMaxServicesPageNumber() - 4">
                                                                                 <a
                                                                                         aria-controls="tariffTable"
                                                                                         data-dt-idx="1" tabindex="0">...</a>

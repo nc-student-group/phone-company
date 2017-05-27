@@ -73,7 +73,8 @@
             }
             CustomerService.saveCustomerByAdmin($scope.customer)
                 .then(function (createdCustomer) {
-                    toastr.success('Customer ' + createdCustomer.email + ' has been successfully created. Please, check your email for the password');
+                    toastr.success('Customer ' + createdCustomer.email +
+                        ' has been successfully created. User should check his mail for the auto generated password');
                     $log.debug("Created customer: ", createdCustomer);
                     $scope.customers.push(createdCustomer);
                 }, function (error) {
@@ -160,10 +161,23 @@
             }
         };
         $scope.moreClick = function (id) {
-            $location.path("/csr/clients/" + id);
+            var role = $location.$$path.split('/')[1];
+            if (role == 'csr') {
+                $location.path("/csr/clients/" + id);
+            }
+            if (role == 'admin') {
+                $location.path("/admin/clients/" + id);
+            }
         };
 
         $scope.editClick = function (id) {
+            var role = $location.$$path.split('/')[1];
+            if (role == 'csr') {
+                $location.path("/csr/editCustomer/" + id);
+            }
+            if (role == 'admin') {
+                $location.path("/admin/editCustomer/" + id);
+            }
             $location.path("/csr/editCustomer/" + id);
         };
 
@@ -228,7 +242,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.customersSelected / $scope.size);
-            if (max == $scope.customersSelected) {
+            if (max * $scope.size == $scope.customersSelected) {
                 return max;
             }
             return max + 1;

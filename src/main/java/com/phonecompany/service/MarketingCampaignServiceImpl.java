@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampaign>
@@ -64,7 +61,21 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
                 }
             }
         } else {
-            throw new ConflictException("You are corporate client.");
+            LOG.warn("Corporate client can not see marketing campaigns");
+            return Collections.emptyList();
+        }
+        return campaigns;
+    }
+
+    @Override
+    public List<MarketingCampaign> getAvailableMarketingCampaignsByRegionId(long regionId) {
+        List<MarketingCampaign> campaigns = new ArrayList<>();
+        LOG.info("Retrieving available marketing campaigns for region with id = " + regionId);
+        List<TariffRegion> tariffs = tariffRegionDao.getAllByRegionId(regionId);
+        if (tariffs != null) {
+            for (TariffRegion tariff : tariffs) {
+                campaigns.addAll(marketingCampaignDao.getAllByTariffRegion(tariff.getId()));
+            }
         }
         return campaigns;
     }
@@ -84,8 +95,8 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
     }
 
     @Override
-    public Map<String, Object> getMarketingCampaignsTable(int page, int size) {
-        Query query = this.buildQueryForMarketingCampaignTable(page, size);
+    public Map<String, Object> getMarketingCampaignsTable(int page, int size, String name, int status) {
+        Query query = this.buildQueryForMarketingCampaignTable(page, size, name, status);
         Map<String, Object> response = new HashMap<>();
         response.put("campaigns", this.marketingCampaignDao
                 .executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
@@ -94,8 +105,14 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
         return response;
     }
 
-    private Query buildQueryForMarketingCampaignTable(int page, int size) {
+    private Query buildQueryForMarketingCampaignTable(int page, int size, String name, int status) {
         Query.Builder builder = new Query.Builder("marketing_campaign");
+        builder.where().addLikeCondition("name", name);
+        if (status == 1) {
+            builder.and().addCondition("marketing_campaign_status = ? ", "ACTIVATED");
+        } else if (status == 2) {
+            builder.and().addCondition("marketing_campaign_status = ? ", "DEACTIVATED");
+        }
         builder.addPaging(page, size);
         return builder.build();
     }

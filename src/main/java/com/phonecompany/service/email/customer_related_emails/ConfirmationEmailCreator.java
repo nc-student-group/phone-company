@@ -32,7 +32,7 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator<VerificationT
     @Override
     public String getEmailBody(VerificationToken entity) {
         Context context = new Context();
-        String verificationUrl = applicationUrl + "/sendConfirmationEmail?token="
+        String verificationUrl = applicationUrl + "/verifyRegistration?token="
                 + entity.getToken();
 
         LOG.debug("Verification url: {}", verificationUrl);
@@ -40,7 +40,6 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator<VerificationT
 
         return this.templateEngine
                 .process("email-template", context);
-
     }
 
     /**

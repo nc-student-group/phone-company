@@ -15,4 +15,8 @@ public interface ServiceDao extends JdbcOperations<Service> {
     List<Service> getAllServicesSearch(Query query);
 
     List<Service> getServicesByStatus(ProductStatus status);
+
+    List<Service> getAllActiveServicesWithDiscount();
+
+    List<Service> getTopActiveServices();
 }

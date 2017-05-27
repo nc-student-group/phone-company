@@ -28,10 +28,12 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.orderBy = 0;
         $scope.orderByType = "ASC";
 
+
+        $scope.getSidebar();
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
             $scope.regionsToAdd = [];
-            for (var i = 0; i < $scope.regions.length; i++) {
+            for (var i = 0; i < $scope.regions.length; i++) { //tariffRegions for every region
                 $scope.regionsToAdd.push({
                     id: '',
                     price: 0,
@@ -44,13 +46,16 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.preloader.send = true;
         TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-            $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+            $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
             .then(function (data) {
                 $scope.tariffs = data.tariffs;
                 console.log($scope.tariffs);
                 $scope.tariffsSelected = data.tariffsSelected;
                 $scope.preloader.send = false;
             }, function () {
+                if (data.data.message != undefined) {
+                    toastr.error(data.data.message, 'Error');
+                }
                 $scope.preloader.send = false;
             });
 
@@ -60,7 +65,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -69,6 +74,9 @@ angular.module('phone-company').controller('TariffsController', [
                         // $scope.gotoAnchor("tariffTable");
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -80,7 +88,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = page;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -89,6 +97,9 @@ angular.module('phone-company').controller('TariffsController', [
                         // $scope.gotoAnchor("tariffTable");
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -96,7 +107,9 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.tariffsSelected / $scope.size);
-            if (max == $scope.tariffsSelected) {
+            // console.log(`max ${max}`);
+            if (max * $scope.size == $scope.tariffsSelected) {
+                // console.log(`$scope.tariffsSelected ${$scope.tariffsSelected}`);
                 return max;
             }
             return max + 1;
@@ -108,7 +121,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -116,6 +129,9 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.preloader.send = false;
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -126,12 +142,15 @@ angular.module('phone-company').controller('TariffsController', [
             $scope.page = 0;
             $scope.preloader.send = true;
             TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                 .then(function (data) {
                     $scope.tariffs = data.tariffs;
                     $scope.tariffsSelected = data.tariffsSelected;
                     $scope.preloader.send = false;
-                }, function () {
+                }, function (data) {
+                    if (data.data.message != undefined) {
+                        toastr.error(data.data.message, 'Error');
+                    }
                     $scope.preloader.send = false;
                 });
         };
@@ -145,6 +164,7 @@ angular.module('phone-company').controller('TariffsController', [
         $scope.getNewTariff();
 
         $scope.addTariff = function () {
+            //sets current tariff for every item from tariffRegionToSave as well
             if (!$scope.validateTariff($scope.currentTariff, $scope.regionsToSave)) {
                 return;
             }
@@ -196,6 +216,7 @@ angular.module('phone-company').controller('TariffsController', [
             $window.scrollTo(0, 0);
         };
 
+        //insert tariffRegion from regionsToAdd into RegionsToSave
         $scope.toggle = function (item, list) {
             var idx = -1;
             for (var i = 0; i < list.length; i++) {
@@ -210,6 +231,7 @@ angular.module('phone-company').controller('TariffsController', [
             }
         };
 
+        //Check if TariffRegionItem(r in regionsToAdd) is present in tariffRegionsToSave
         $scope.exists = function (item, list) {
             if (list != undefined) {
                 var idx = -1;
@@ -229,6 +251,10 @@ angular.module('phone-company').controller('TariffsController', [
             if (r.price > 2000) {
                 r.price = 2000;
             }
+            //from every element from tariffRegionsToSave
+            //find the one which id is equal to the one
+            //that price is being selected for
+            //set price for it (ng-model="r.price")
             for (var i = 0; i < list.length; i++) {
                 if (list[i].region.id == r.region.id)
                     list[i].price = r.price;
@@ -245,24 +271,14 @@ angular.module('phone-company').controller('TariffsController', [
         };
 
         $scope.editClick = function (id) {
-            $location.path("/csr/tariff/edit/" + id);
-            // $scope.preloader.send = true;
-            // TariffService.getTariffToEditById(id).then(function (data) {
-            //     $scope.tariffToEdit = data.tariff;
-            //     $scope.regionsToEdit = data.regions;
-            //     for (var i = 0; i < data.regions.length; i++) {
-            //         for (var j = 0; j < $scope.regionsToAdd.length; j++) {
-            //             if (data.regions[i].region.id == $scope.regionsToAdd[j].region.id) {
-            //                 $scope.regionsToAdd[j].price = data.regions[i].price;
-            //             }
-            //         }
-            //     }
-            //     $scope.preloader.send = false;
-            //     $scope.editing = true;
-            //     $window.scrollTo(0, 0);
-            // }, function () {
-            //     $scope.preloader.send = false;
-            // });
+            var role = $location.$$path.split('/')[1];
+            if (role == 'csr') {
+                $location.path("/csr/tariff/edit/" + id);
+            }
+            if (role == 'admin') {
+                $location.path("/admin/tariff/edit/" + id);
+            }
+
         };
 
         $scope.toggleEdit = function (item, list) {
@@ -405,10 +421,9 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.activateTariff = function (index) {
             $scope.preloader.send = true;
-            TariffService.changeTariffStatus($scope.tariffs[index].tariff.id, 'ACTIVATED').then(function () {
-                $scope.tariffs[index].tariff.productStatus = "ACTIVATED";
-                console.log($scope.tariffs[index].tariff);
-                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.tariffName + ' " activated!', 'Success activation');
+            TariffService.changeTariffStatus($scope.tariffs[index].id, 'ACTIVATED').then(function () {
+                $scope.tariffs[index].productStatus = "ACTIVATED";
+                toastr.success('Your tariff "' + $scope.tariffs[index].tariffName + ' " activated!', 'Success activation');
                 $scope.preloader.send = false;
             }, function () {
                 toastr.error('Some problems with tariff activation, try again!', 'Error');
@@ -417,9 +432,9 @@ angular.module('phone-company').controller('TariffsController', [
         };
         $scope.deactivateTariff = function (index) {
             $scope.preloader.send = true;
-            TariffService.changeTariffStatus($scope.tariffs[index].tariff.id, 'DEACTIVATED').then(function () {
-                $scope.tariffs[index].tariff.productStatus = "DEACTIVATED";
-                toastr.success('Your tariff "' + $scope.tariffs[index].tariff.tariffName + ' " deactivated!', 'Success deactivation');
+            TariffService.changeTariffStatus($scope.tariffs[index].id, 'DEACTIVATED').then(function () {
+                $scope.tariffs[index].productStatus = "DEACTIVATED";
+                toastr.success('Your tariff "' + $scope.tariffs[index].tariffName + ' " deactivated!', 'Success deactivation');
                 $scope.preloader.send = false;
             }, function () {
                 toastr.error('Some problems with tariff deactivation, try again!', 'Error');

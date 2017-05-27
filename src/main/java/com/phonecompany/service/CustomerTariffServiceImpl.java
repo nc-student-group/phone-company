@@ -35,23 +35,18 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     private CustomerTariffDao customerTariffDao;
     private OrderService orderService;
-    private TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator;
-    private EmailService<User> emailService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerTariffService.class);
 
     @Autowired
-    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao, OrderService orderService,
-                                     TariffResumingNotificationEmailCreator tariffResumingNotificationEmailCreator,
-                                     EmailService<User> emailService) {
+    public CustomerTariffServiceImpl(CustomerTariffDao customerTariffDao,
+                                     OrderService orderService) {
         this.customerTariffDao = customerTariffDao;
         this.orderService = orderService;
-        this.tariffResumingNotificationEmailCreator = tariffResumingNotificationEmailCreator;
-        this.emailService = emailService;
     }
 
     @Override
     public List<CustomerTariff> getByClientId(Customer customer) {
-        return customer.getRepresentative() ?
+        return customer.getCorporate() != null ?
                 customerTariffDao.getCustomerTariffsByCorporateId(customer.getCorporate().getId()) :
                 customerTariffDao.getCustomerTariffsByCustomerId(customer.getId());
     }
@@ -81,7 +76,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     @Override
     public CustomerTariff getCurrentActiveOrSuspendedClientTariff(Customer customer) {
-        return customer.getRepresentative() ?
+        return customer.getCorporate() != null ?
                 customerTariffDao.getCurrentActiveOrSuspendedCorporateTariff(customer.getCorporate().getId()) :
                 customerTariffDao.getCurrentActiveOrSuspendedCustomerTariff(customer.getId());
     }

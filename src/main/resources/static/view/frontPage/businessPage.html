@@ -1,0 +1,156 @@
+<div class="wrapper">
+    <div class="front-page-main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="sidebar-controls navbar-brand">
+                        <span class="fa fa-tasks"></span>
+                    </div>
+                    <h3 class="navbar-brand">Phone-company</h3>
+                </div>
+                <div class="collapse navbar-collapse">
+
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a class="front-active" href="/#/frontPage">
+                                Welcome
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/individualPage">
+                                Individual
+                            </a>
+                        </li>
+                        <li>
+                            <a style="color: #245bed; text-decoration: none;" href="/#/businessPage">
+                                Business
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="{{loginOrUserPage.action}}">
+                                {{loginOrUserPage.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div ng-cloak>
+                    <md-content>
+                        <md-tabs md-dynamic-height md-border-bottom>
+                            <md-tab label="Available tariff plans" ng-click="tariffPlansTabClick()">
+                                <md-content class="md-padding">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h4 class="title">Tariff plans</h4>
+                                                </div>
+                                                <hr/>
+                                                <div class="row" style="margin: 0;">
+                                                    <div class="col-md-4" style="padding: 10px;" ng-repeat="t in tariffs">
+                                                        <div class="tariff-picture">
+                                                            <img ng-src="{{t.pictureUrl}}" width="90%"/>
+                                                            <div class="sale-picture" ng-show="t.discount > 0 && t.discount <= 100"><b>-{{t.discount}}%</b>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tariff-picture"
+                                                             style="text-align: center; color: #212121; font-size: 18px;"><b>{{t.tariffName}}</b>
+                                                        </div>
+                                                        <div class="row" style="text-align: center; font-size: 16px; color: #161121"
+                                                             ng-hide="t.discount > 0 && t.discount <= 100">
+                                                            <b>{{t.price | number:2}} auh / 30 days</b>
+                                                        </div>
+                                                        <div class="row" ng-show="t.discount > 0 && t.discount <= 100"
+                                                             style="text-align: center; font-size: 16px; color: #161121">
+                                                            <b>{{t.price * (1 - t.discount/100) | number:2}} auh / 30 days</b>
+                                                            <s style="font-size: 14px; color: red">{{t.price | number:2}} auh / 30 days</s>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4" style="padding: 10px;"
+                                                         ng-click="nextPage()" ng-show="tariffsCount > tariffs.length">
+                                                        <div class="tariff-picture"><img src="../../css/img/show-more.png" width="90%"/>
+                                                        </div>
+                                                        <div class="row" style="height: 47px;"></div>
+                                                        <div class="row">
+                                                            <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
+                                                                    ng-click="nextPage(); $event.stopPropagation();">
+                                                                Show More
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Services" ng-click="servicesTabClick()">
+                                <md-content class="md-padding">
+                                    <div class="col-md-12">
+                                        <div ng-cloak>
+                                            <div class="container-fluid">
+                                                <md-content>
+                                                    <md-tabs md-dynamic-height md-border-bottom>
+                                                        <md-tab ng-repeat="c in categories"
+                                                                label="{{c.categoryName}}"
+                                                                md-on-select="specifyCurrentCategory(c.categoryName)">
+                                                        </md-tab>
+                                                    </md-tabs>
+                                                    <div class="container-fluid services-cards">
+                                                        <div ng-repeat="s in services | limitTo:pageSize" class="col-md-4">
+                                                            <figure class="snip1174 blue">
+                                                                <p ng-hide="s.discount > 0 && s.discount < 100"
+                                                                   class="service-price">{{s.price | number : 2}} &#8372;</p>
+                                                                <p ng-show="s.discount > 0 && s.discount < 100"
+                                                                   class="service-price"
+                                                                   style="text-decoration: line-through">
+                                                                    {{s.price | number : 2}} &#8372;
+                                                                </p>
+                                                                <p ng-show="s.discount > 0 && s.discount < 100"
+                                                                   style="font-weight: 700"
+                                                                   class="service-price-discounted">
+                                                                    {{s.price * (1 - s.discount / 100) | number : 2}} &#8372;
+                                                                </p>
+                                                                <img style="height: 240px" ng-src="{{s.pictureUrl}}"/>
+                                                                <figcaption>
+                                                                    <h2>{{s.serviceName}}</h2>
+                                                                    <p style="word-break: break-all">
+                                                                        {{s.previewDescription}}
+                                                                    </p>
+                                                                </figcaption>
+                                                            </figure>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-center" style="font-size: 1.3em; margin-top: 20px; color: #4f51ff"
+                                                       ng-click="showMore()"
+                                                       ng-show="(pageSize < servicesCount)">
+                                                        Show more
+                                                    </p>
+                                                </md-content>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                    </md-content>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <p class="copyright">
+                    &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
+                </p>
+            </div>
+        </footer>
+    </div>
+</div>

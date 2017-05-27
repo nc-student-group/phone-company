@@ -13,7 +13,7 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 @ImportResource("classpath:security.xml")
 public class Application  {
 
@@ -21,9 +21,9 @@ public class Application  {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
+    /*@Bean
     public HttpMessageConverters customConverters() {
         ByteArrayHttpMessageConverter arrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
         return new HttpMessageConverters(arrayHttpMessageConverter);
-    }
+    }*/
 }
