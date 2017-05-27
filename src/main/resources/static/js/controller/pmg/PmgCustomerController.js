@@ -79,7 +79,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.customersSelected / $scope.size);
-            if (max == $scope.customersSelected) {
+            if (max * $scope.size == $scope.customersSelected) {
                 return max;
             }
             return max + 1;

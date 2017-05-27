@@ -32,7 +32,7 @@
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.corporationsSelected / $scope.size);
-            if (max == $scope.corporationsSelected) {
+            if (max * $scope.size == $scope.corporationsSelected) {
                 return max;
             }
             return max + 1;
