@@ -39,19 +39,25 @@ angular.module('phone-company').controller('CsrClientDetailController',
             });
 
             $scope.editClick = function (id) {
-                $location.path("/csr/editCustomer/" + id);
+                var role = $location.$$path.split('/')[1];
+                if (role == 'csr') {
+                    $location.path("/csr/editCustomer/" + id);
+                }
+                if (role == 'admin') {
+                    $location.path("/admin/editCustomer/" + id);
+                }
             };
 
             $scope.getMaxPageNumber = function () {
                 var max = Math.floor($scope.ordersFound / $scope.size);
-                if (max == $scope.ordersFound) {
+                if (max * $scope.size == $scope.ordersFound) {
                     return max;
                 }
                 return max + 1;
             };
             $scope.getMaxServicesPageNumber = function () {
                 var max = Math.floor($scope.servicesOrdersFound / $scope.size);
-                if (max == $scope.servicesOrdersFound) {
+                if (max * $scope.size == $scope.servicesOrdersFound) {
                     return max;
                 }
                 return max + 1;
@@ -85,7 +91,7 @@ angular.module('phone-company').controller('CsrClientDetailController',
                     });
                 }
             };
-            
+
             $scope.activateServiceClick = function () {
                 console.log("Try to activate service with id: "
                     + $scope.servicesList[$scope.selectedServiceId].id);
@@ -191,13 +197,15 @@ angular.module('phone-company').controller('CsrClientDetailController',
             };
 
             $scope.tariffsHistoryClick = function () {
-                if ($scope.orders == undefined) {
+                if ($scope.orders == undefined || $scope.page != 0) {
+                    $scope.page = 0;
                     $scope.loadTariffsHistory();
                 }
             };
 
             $scope.servicesHistoryClick = function () {
-                if ($scope.servicesOrders == undefined) {
+                if ($scope.servicesOrders == undefined || $scope.page != 0) {
+                    $scope.page = 0;
                     $scope.loadServicesHistory();
                 }
             };
@@ -230,10 +238,10 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.orders = data.orders;
                             $scope.ordersFound = data.ordersFound;
                             $scope.preloader.send = false;
-                            $scope.inProgress=false;
+                            $scope.inProgress = false;
                         }, function (data) {
                             $scope.preloader.send = false;
-                            $scope.inProgress=false;
+                            $scope.inProgress = false;
                         });
                 }
             };
@@ -300,10 +308,10 @@ angular.module('phone-company').controller('CsrClientDetailController',
                             $scope.servicesOrdersFound = data.ordersFound;
                             $scope.loading = false;
                             $scope.preloader.send = false;
-                            $scope.inProgress=false;
+                            $scope.inProgress = false;
                         }, function (data) {
                             $scope.preloader.send = false;
-                            $scope.inProgress=false;
+                            $scope.inProgress = false;
                         });
                 }
             };

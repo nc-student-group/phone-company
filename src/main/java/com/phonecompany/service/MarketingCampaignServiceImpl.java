@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampaign>
@@ -64,7 +61,8 @@ public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampa
                 }
             }
         } else {
-            throw new ConflictException("You are corporate client.");
+            LOG.warn("Corporate client can not see marketing campaigns");
+            return Collections.emptyList();
         }
         return campaigns;
     }

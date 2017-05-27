@@ -81,7 +81,7 @@ angular.module('phone-company').controller('MarketingCampaignController', [
 
         $scope.getMaxPageNumber = function () {
             var max = Math.floor($scope.campaignsFound / $scope.size);
-            if (max == $scope.campaignsFound) {
+            if (max * $scope.size == $scope.campaignsFound) {
                 return max;
             }
             return max + 1;

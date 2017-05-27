@@ -1,7 +1,7 @@
 <div class="wrapper">
-    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+    <ng-include src="getSidebar()"></ng-include>
     <div class="main-panel">
-        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+        <ng-include src="getHeader()"></ng-include>
 
         <div class="content">
             <div class="container-fluid">
@@ -151,7 +151,7 @@
                                                             aria-controls="tariffTable"
                                                             data-dt-idx="1" tabindex="0">1</a>
                                                 </li>
-                                                <li class="paginate_button" ng-show="page > 3">
+                                                <li class="paginate_button_points" ng-show="page > 3">
                                                     <a
                                                             aria-controls="tariffTable"
                                                             data-dt-idx="1" tabindex="0">...</a>
@@ -183,7 +183,7 @@
                                                             aria-controls="tariffTable"
                                                             data-dt-idx="1" tabindex="0">{{page+3}}</a>
                                                 </li>
-                                                <li class="paginate_button" ng-show="page < getMaxPageNumber() - 4">
+                                                <li class="paginate_button_points" ng-show="page < getMaxPageNumber() - 4">
                                                     <a
                                                             aria-controls="tariffTable"
                                                             data-dt-idx="1" tabindex="0">...</a>

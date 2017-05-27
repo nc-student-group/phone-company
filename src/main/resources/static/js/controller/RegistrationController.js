@@ -48,7 +48,7 @@ angular.module('phone-company').controller('RegistrationController', [
             CustomerService.registerCustomer($scope.customer)
                 .then(function (response) {
                     console.log(response.data);
-                    toastr.success("Customer with an email " + response.data.email + "has been successfully created. " +
+                    toastr.success("Customer with an email " + response.data.email + " has been successfully created. " +
                         "Please, check your email for the activation link");
                 }, function (errorResponse) {
                     toastr.error(errorResponse.data.message);
