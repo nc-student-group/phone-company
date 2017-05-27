@@ -2,9 +2,7 @@ package com.phonecompany.util;
 
 import com.phonecompany.model.DomainEntity;
 import com.phonecompany.model.Service;
-import com.phonecompany.model.enums.interfaces.DataBaseEnum;
-import com.phonecompany.model.enums.interfaces.ItemType;
-import com.phonecompany.service.interfaces.Statistics;
+import com.phonecompany.model.enums.interfaces.Storable;
 import org.springframework.util.Assert;
 
 import java.sql.Date;
@@ -14,7 +12,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Class provides with a set of methods that help to map one entity
@@ -28,10 +25,10 @@ public class TypeMapper {
      * @param id id that maps an enum instance to its storage entry
      * @return corresponding enum instance
      */
-    public static <E extends Enum & DataBaseEnum> E getEnumValueByDatabaseId(Class<E> enumClass, Long id) {
+    public static <E extends Enum & Storable> E getEnumValueByDatabaseId(Class<E> enumClass, Long id) {
         E[] enumConstants = enumClass.getEnumConstants();
         return Arrays.stream(enumConstants)
-                .filter(e -> Objects.equals(e.getDatabaseId(), id))
+                .filter(e -> Objects.equals(e.getId(), id))
                 .findFirst().orElse(null);
     }
 

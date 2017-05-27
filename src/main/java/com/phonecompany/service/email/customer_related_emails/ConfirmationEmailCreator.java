@@ -36,7 +36,7 @@ public class ConfirmationEmailCreator extends AbstractEmailCreator<VerificationT
                 + entity.getToken();
 
         LOG.debug("Verification url: {}", verificationUrl);
-        context.setVariable("body", verificationUrl);
+        context.setVariable("verificationUrl", verificationUrl);
 
         return this.templateEngine
                 .process("email-template", context);

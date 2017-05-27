@@ -36,7 +36,7 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         try {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
-            statement.setLong(3, user.getRole().getDatabaseId());
+            statement.setLong(3, user.getRole().getId());
             statement.setString(4, user.getStatus().name());
         } catch (SQLException e) {
             throw new PreparedStatementPopulationException(e);
@@ -63,7 +63,7 @@ public class UserDaoImpl extends AbstractUserDaoImpl<User>
         try {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
-            statement.setLong(3, user.getRole().getDatabaseId());
+            statement.setLong(3, user.getRole().getId());
             statement.setString(4, user.getStatus().name());
             statement.setLong(5, user.getId());
         } catch (SQLException e) {

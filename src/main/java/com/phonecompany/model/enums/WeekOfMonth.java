@@ -1,6 +1,6 @@
 package com.phonecompany.model.enums;
 
-import com.phonecompany.model.enums.interfaces.DataBaseEnum;
+import com.phonecompany.model.enums.interfaces.Storable;
 
 import static com.phonecompany.model.enums.WeekOfMonth.Constants.*;
 
@@ -10,7 +10,7 @@ import static com.phonecompany.model.enums.WeekOfMonth.Constants.*;
  * @see com.phonecompany.model.WeeklyComplaintsAmount
  * @see com.phonecompany.model.WeeklyOrdersAmount
  */
-public enum WeekOfMonth implements DataBaseEnum {
+public enum WeekOfMonth implements Storable {
     FIRST_WEEK(FIRST_WEEK_DATABASE_ID),
     SECOND_WEEK(SECOND_WEEK_DATABASE_ID),
     THIRD_WEEK(THIRD_WEEK_DATABASE_ID),
@@ -23,7 +23,7 @@ public enum WeekOfMonth implements DataBaseEnum {
     }
 
     @Override
-    public Long getDatabaseId() {
+    public Long getId() {
         return databaseId;
     }
 

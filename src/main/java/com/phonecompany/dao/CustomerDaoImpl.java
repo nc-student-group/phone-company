@@ -47,7 +47,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         try {
             statement.setString(1, customer.getEmail());
             statement.setString(2, customer.getPassword());
-            statement.setLong(3, customer.getRole().getDatabaseId());
+            statement.setLong(3, customer.getRole().getId());
             statement.setString(4, customer.getFirstName());
             statement.setString(5, customer.getSecondName());
             statement.setString(6, customer.getLastName());
@@ -67,7 +67,7 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
         try {
             statement.setString(1, customer.getEmail());
             statement.setString(2, customer.getPassword());
-            statement.setLong(3, customer.getRole().getDatabaseId());
+            statement.setLong(3, customer.getRole().getId());
             statement.setString(4, customer.getFirstName());
             statement.setString(5, customer.getSecondName());
             statement.setString(6, customer.getLastName());

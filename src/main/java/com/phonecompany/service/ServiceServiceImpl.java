@@ -146,10 +146,6 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
         return services;
     }
 
-    /**
-     * @param services
-     * @return
-     */
     private List<Service> mapToARepresentativePrice(List<Service> services) {
         return services.stream()
                 .map(TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT))

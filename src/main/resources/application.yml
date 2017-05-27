@@ -15,3 +15,4 @@ security:
    enabled: false
 
 application-url: https://phone-company.herokuapp.com/api
+registration-success-url: https://phone-company.herokuapp.com/#/login/success

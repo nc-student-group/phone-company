@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,8 @@ public class CustomerController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerController.class);
 
-    @Value("${application-url}")
-    private String applicationUrl;
+    @Value("${registration-success-url}")
+    private String registrationSuccessUrl;
 
     private CustomerService customerService;
     private AddressService addressService;
@@ -104,7 +105,7 @@ public class CustomerController {
     }
 
     private HttpHeaders getRedirectionHeaders() throws URISyntaxException {
-        URI registration = new URI("https://phone-company.herokuapp.com/#/login/success");
+        URI registration = new URI(registrationSuccessUrl);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(registration);
         return httpHeaders;

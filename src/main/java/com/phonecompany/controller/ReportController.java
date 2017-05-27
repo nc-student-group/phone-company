@@ -53,6 +53,7 @@ public class ReportController {
     public ResponseEntity<?> getOrderReportByRegionAndTimePeriod(@PathVariable("regionId") Integer regionId,
                                                                  @PathVariable("startDate") LocalDate startDate,
                                                                  @PathVariable("endDate") LocalDate endDate) {
+        LOG.debug("Generating report regarding all orders made between {} and {}", startDate, endDate);
         SheetDataSet<LocalDate, Long> tariffStatisticsDataSet = this.tariffService
                 .getTariffStatisticsDataSet(regionId, startDate, endDate);
 

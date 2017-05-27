@@ -199,7 +199,7 @@ angular.module('phone-company').controller('TariffsController', [
             $window.scrollTo(0, 0);
         };
 
-        //insert tariffRegion from regionsToAdd into RegionsToSave
+        //insert tariffRegion item from regionsToAdd into RegionsToSave
         $scope.toggle = function (item, list) {
             var idx = -1;
             for (var i = 0; i < list.length; i++) {
@@ -234,10 +234,6 @@ angular.module('phone-company').controller('TariffsController', [
             if (r.price > 2000) {
                 r.price = 2000;
             }
-            //from every element from tariffRegionsToSave
-            //find the one which id is equal to the one
-            //that price is being selected for
-            //set price for it (ng-model="r.price")
             for (var i = 0; i < list.length; i++) {
                 if (list[i].region.id == r.region.id)
                     list[i].price = r.price;

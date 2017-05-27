@@ -57,10 +57,7 @@ angular.module('phone-company').controller('TariffEditController', [
         TariffService.getTariffToEditById($routeParams['id']).then(function (data) {
             $scope.tariffToEdit = data.tariff;
             $scope.regionsToEdit = data.regions;
-            //for each tariffRegion related to the given tariff
             for (var i = 0; i < data.regions.length; i++) {
-                //get price from it and set it into tariffRegionToAdd object
-                //which region.id is equal to the prefetched tariffRegion.region.id
                 for (var j = 0; j < $scope.regionsToAdd.length; j++) {
                     if (data.regions[i].region.id == $scope.regionsToAdd[j].region.id) {
                         $scope.regionsToAdd[j].price = data.regions[i].price;
@@ -72,11 +69,8 @@ angular.module('phone-company').controller('TariffEditController', [
             $scope.preloader.send = false;
         });
 
-        //function(tariffRegion from all (r in regionsToAdd), tariffRegionFrom the tariffRegions By tariffId)
         $scope.toggleEdit = function (item, list) {
             var idx = -1;
-            //when removing checkbox element should be removed from list
-            //of tariffRegions that is to be edited
             for (var i = 0; i < list.length; i++) {
                 if (list[i].region.id == item.region.id)
                     idx = i;
@@ -92,9 +86,7 @@ angular.module('phone-company').controller('TariffEditController', [
         $scope.existsEdit = function (item, list) {
             if (list != undefined) {
                 var idx = -1;
-                //for each tariffRegion that we have fetched by the tariffId
                 for (var i = 0; i < list.length; i++) {
-                    //if current tariffRegion.region.id equals the current prefetched one
                     if (list[i].region.id == item.region.id)
                         idx = i;
                 }
@@ -102,8 +94,8 @@ angular.module('phone-company').controller('TariffEditController', [
             }
             return false;
         };
+
         $scope.saveTariff = function () {
-            //sets current tariff for every region that is to be saved
             if (!$scope.validateTariff($scope.tariffToEdit, $scope.regionsToEdit)) {
                 return;
             }

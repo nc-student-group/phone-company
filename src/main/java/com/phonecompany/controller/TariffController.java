@@ -70,7 +70,6 @@ public class TariffController {
         return tariffService.getTariffsTable(page, size, regionId);
     }
 
-
     @GetMapping(value = "/empty")
     public Tariff getEmptyTariff() {
         return new Tariff();
@@ -102,6 +101,7 @@ public class TariffController {
     @PatchMapping(value = "/{id}")
     public ResponseEntity<?> updateTariffStatus(@PathVariable("id") long tariffId,
                                                 @RequestBody String productStatus) {
+        LOGGER.debug("In tariff status update method: {}", productStatus);
         this.tariffService.updateTariffStatus(tariffId, ProductStatus.valueOf(productStatus));
         return new ResponseEntity<>(HttpStatus.OK);
     }

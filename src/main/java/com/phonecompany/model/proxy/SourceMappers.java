@@ -1,14 +1,14 @@
 package com.phonecompany.model.proxy;
 
-import com.phonecompany.dao.interfaces.CorporateDao;
-import com.phonecompany.dao.interfaces.CustomerServiceDao;
-import com.phonecompany.dao.interfaces.CustomerTariffDao;
-import com.phonecompany.dao.interfaces.TariffDao;
+import com.phonecompany.dao.interfaces.*;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.CustomerTariff;
+import com.phonecompany.model.MarketingCampaignServices;
+import com.phonecompany.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -21,10 +21,12 @@ public class SourceMappers {
 
     private static CustomerTariffDao customerTariffDao;
     private static CustomerServiceDao customerServiceDao;
+    private static MarketingCampaignServicesDao marketingCampaignServicesDao;
 
     @Autowired
     public SourceMappers(CustomerTariffDao customerTariffDao,
-                         CustomerServiceDao customerServiceDao) {
+                         CustomerServiceDao customerServiceDao,
+                         MarketingCampaignServicesDao marketingCampaignServicesDao) {
         SourceMappers.customerTariffDao = customerTariffDao;
         SourceMappers.customerServiceDao = customerServiceDao;
     }
@@ -44,5 +46,12 @@ public class SourceMappers {
                     return (id) -> customerTariffDao.getById(id);
                 }
             };
-}
 
+    public static final SourceMapper<List<MarketingCampaignServices>> MARKETING_CAMPAIGN_SERVICES_MAPPER =
+            new SourceMapper<List<MarketingCampaignServices>>() {
+        @Override
+        public Function<Long, List<MarketingCampaignServices>> getMapper() {
+            return (id) -> marketingCampaignServicesDao.getServicesByMarketingCampaignId(id);
+        }
+    };
+}

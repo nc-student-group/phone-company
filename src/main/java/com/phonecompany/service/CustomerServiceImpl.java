@@ -249,6 +249,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         Map<String, Object> response = new HashMap<>();
 
         Query query = queryBuilder.build();
+        LOG.debug("Query for customer search: {}", query.getQuery());
         response.put("customers", customerDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
         response.put("entitiesSelected", customerDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;

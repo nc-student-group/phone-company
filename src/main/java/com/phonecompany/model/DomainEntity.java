@@ -1,8 +1,9 @@
 package com.phonecompany.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.phonecompany.model.enums.interfaces.Storable;
 
-public abstract class DomainEntity {
+public abstract class DomainEntity implements Storable {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private Long id;
@@ -13,6 +14,7 @@ public abstract class DomainEntity {
         this.id = id;
     }
 
+    @Override
     public Long getId() {
         return id;
     }

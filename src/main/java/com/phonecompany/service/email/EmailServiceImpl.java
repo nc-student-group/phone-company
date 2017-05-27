@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class EmailServiceImpl<T extends User> implements EmailService<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
-
     private JavaMailSender mailSender;
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
