@@ -46,7 +46,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     @Override
     public List<CustomerTariff> getByClientId(Customer customer) {
-        return customer.getRepresentative() ?
+        return customer.getCorporate() != null ?
                 customerTariffDao.getCustomerTariffsByCorporateId(customer.getCorporate().getId()) :
                 customerTariffDao.getCustomerTariffsByCustomerId(customer.getId());
     }
@@ -76,7 +76,7 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     @Override
     public CustomerTariff getCurrentActiveOrSuspendedClientTariff(Customer customer) {
-        return customer.getRepresentative() ?
+        return customer.getCorporate() != null ?
                 customerTariffDao.getCurrentActiveOrSuspendedCorporateTariff(customer.getCorporate().getId()) :
                 customerTariffDao.getCurrentActiveOrSuspendedCustomerTariff(customer.getId());
     }
