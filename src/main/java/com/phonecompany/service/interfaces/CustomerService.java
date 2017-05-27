@@ -29,4 +29,5 @@ public interface CustomerService extends CrudService<Customer>,
     Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status);
 
     Customer save(Customer customer);
+    Customer saveByAdmin(Customer customer);
 }
