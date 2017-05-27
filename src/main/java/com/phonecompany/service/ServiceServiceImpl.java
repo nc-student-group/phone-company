@@ -26,6 +26,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ServiceStereotype
@@ -169,10 +171,19 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
     private Service applyDiscount(Service service) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
-        if (currentlyLoggedInUser.getRepresentative()) {
-            return TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT).apply(service);
-        }
-        return service;
+        return Optional.ofNullable(currentlyLoggedInUser)
+                .map(this.getServiceIfLoggedInFunction(service))
+                .orElse(service);
+    }
+
+    private Function<Customer, Service> getServiceIfLoggedInFunction(Service service) {
+        return customer -> {
+            Boolean isRepresentative = customer.getRepresentative();
+            if (isRepresentative) {
+                return TypeMapper.getDiscountMapper(REPRESENTATIVE_DISCOUNT).apply(service);
+            }
+            return service;
+        };
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.phonecompany.controller;
 
 import com.phonecompany.annotations.ValidateParams;
-import com.phonecompany.model.*;
+import com.phonecompany.model.Customer;
+import com.phonecompany.model.User;
+import com.phonecompany.model.VerificationToken;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.service.email.customer_related_emails.ConfirmationEmailCreator;
 import com.phonecompany.service.interfaces.*;
@@ -19,9 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 public class CustomerController {
@@ -54,7 +53,7 @@ public class CustomerController {
     }
 
     @ValidateParams
-    @RequestMapping(method = POST, value = "/api/customers")
+    @PostMapping("/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
         Customer persistedCustomer = this.customerService.save(customer);
@@ -67,12 +66,12 @@ public class CustomerController {
         return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/api/customers/empty-customer")
+    @GetMapping("/api/customers/empty-customer")
     public Customer getEmptyCustomer() {
         return new Customer();
     }
 
-    @RequestMapping(method = GET, value = "/api/customers/{page}/{size}/{rId}/{status}")
+    @GetMapping("/api/customers/{page}/{size}/{rId}/{status}")
     public Map<String, Object> getAllCustomers(@PathVariable("page") int page,
                                                @PathVariable("size") int size,
                                                @PathVariable("rId") long rId,
@@ -105,12 +104,12 @@ public class CustomerController {
         return httpHeaders;
     }
 
-    @RequestMapping(method = POST, value = "/api/customer/save")
+    @PostMapping("/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
         return new ResponseEntity<>(this.customerService.saveByAdmin(customer), HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = GET, value = "/api/customers/logged-in-user")
+    @GetMapping("/api/customers/logged-in-user")
     public Customer getCustomerByCurrentUserId() {
         User loggedInUser = this.userService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user retrieved from the security context: {}", loggedInUser);
@@ -119,17 +118,17 @@ public class CustomerController {
         return loggedInCustomer;
     }
 
-    @RequestMapping(method = GET, value = "/api/customer/getByCorporateId/{id}")
+    @GetMapping("/api/customer/getByCorporateId/{id}")
     public List<Customer> getCustomerByCorporateId(@PathVariable("id") long corporateId) {
         return this.customerService.getCustomersByCorporate(corporateId);
     }
 
-    @RequestMapping(method = GET, value = "/api/customers/suitableCustomersForService/{corporateId}")
+    @GetMapping("/api/customers/suitableCustomersForService/{corporateId}")
     public List<Customer> getSuitableCustomersForService(@PathVariable("corporateId") long corporateId) {
         return this.customerService.getSuitableCustomersForService(corporateId);
     }
 
-    @PatchMapping(value = "/api/customers/")
+    @PatchMapping("/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);
 
@@ -140,7 +139,7 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/customers/status/update/{id}/{status}", method = RequestMethod.PATCH)
+    @PatchMapping("/api/customers/status/update/{id}/{status}")
     public ResponseEntity<Void> updateUserStatus(@PathVariable("id") long id, @PathVariable("status") Status status) {
         if (status.equals(Status.DEACTIVATED)) {
             customerService.deactivateCustomerTariff(id);
@@ -149,7 +148,7 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/api/customers/{id}")
+    @GetMapping("/api/customers/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") long id) {
         return new ResponseEntity<Object>(customerService.getById(id), HttpStatus.OK);
     }

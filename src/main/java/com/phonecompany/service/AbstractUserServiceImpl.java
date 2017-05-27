@@ -24,8 +24,12 @@ public abstract class AbstractUserServiceImpl<T extends User>
     }
 
     public T getCurrentlyLoggedInUser() {
-        SecuredUser securedUser = new SecuredUser(SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal());
+        Object principal = SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        if(principal.equals("anonymousUser")) {
+            return null;
+        }
+        SecuredUser securedUser = new SecuredUser(principal);
         T userFoundByEmail = this.findByEmail(securedUser.getUserName());
         LOG.debug("User retrieved from the security context: {}", userFoundByEmail);
         return userFoundByEmail;
