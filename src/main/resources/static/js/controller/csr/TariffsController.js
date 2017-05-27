@@ -46,13 +46,16 @@ angular.module('phone-company').controller('TariffsController', [
 
         $scope.preloader.send = true;
         TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-            $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+            $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
             .then(function (data) {
                 $scope.tariffs = data.tariffs;
                 console.log($scope.tariffs);
                 $scope.tariffsSelected = data.tariffsSelected;
                 $scope.preloader.send = false;
             }, function () {
+                if (data.data.message != undefined) {
+                    toastr.error(data.data.message, 'Error');
+                }
                 $scope.preloader.send = false;
             });
 
@@ -62,7 +65,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = $scope.page + 1;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -71,6 +74,9 @@ angular.module('phone-company').controller('TariffsController', [
                         // $scope.gotoAnchor("tariffTable");
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -82,7 +88,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = page;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -91,6 +97,9 @@ angular.module('phone-company').controller('TariffsController', [
                         // $scope.gotoAnchor("tariffTable");
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -112,7 +121,7 @@ angular.module('phone-company').controller('TariffsController', [
                 $scope.page = $scope.page - 1;
                 $scope.preloader.send = true;
                 TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                    $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                     .then(function (data) {
                         $scope.tariffs = data.tariffs;
                         $scope.tariffsSelected = data.tariffsSelected;
@@ -120,6 +129,9 @@ angular.module('phone-company').controller('TariffsController', [
                         $scope.preloader.send = false;
                         $window.scrollTo(0, 0);
                     }, function () {
+                        if (data.data.message != undefined) {
+                            toastr.error(data.data.message, 'Error');
+                        }
                         $scope.preloader.send = false;
                     });
             }
@@ -130,12 +142,15 @@ angular.module('phone-company').controller('TariffsController', [
             $scope.page = 0;
             $scope.preloader.send = true;
             TariffService.getTariffs($scope.page, $scope.size, $scope.selectedName, $scope.selectedStatus,
-                $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy,$scope.orderByType)
+                $scope.selectedType, $scope.dateFrom, $scope.dateTo, $scope.orderBy, $scope.orderByType)
                 .then(function (data) {
                     $scope.tariffs = data.tariffs;
                     $scope.tariffsSelected = data.tariffsSelected;
                     $scope.preloader.send = false;
-                }, function () {
+                }, function (data) {
+                    if (data.data.message != undefined) {
+                        toastr.error(data.data.message, 'Error');
+                    }
                     $scope.preloader.send = false;
                 });
         };

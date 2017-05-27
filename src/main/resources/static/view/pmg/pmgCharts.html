@@ -18,7 +18,8 @@
                                         chart-colors="colors"
                                         chart-data="data"
                                         chart-labels="labels"
-                                        chart-series="series">
+                                        chart-series="series"
+                                        chart-options="options">
                                 </canvas>
                                 <md-button class="md-primary md-raised"
                                            ng-click="showGenerateReportDialog($event)">
@@ -39,24 +40,43 @@
 
                                                     <md-input-container class="md-block" flex-gt-sm>
                                                         <label>Region:</label>
-                                                        <md-select ng-model="currentRegion" required>
+                                                        <md-select ng-model="currentRegion" name="currentRegion" required>
                                                             <md-option ng-repeat="r in regions" value="{{r.id}}">
                                                                 {{r.nameRegion}}
                                                             </md-option>
                                                         </md-select>
+                                                        <div ng-messages="complaintReportForm.currentRegion.$error"
+                                                             role="alert">
+                                                            <div ng-message="required">Region is required.
+                                                            </div>
+                                                        </div>
                                                     </md-input-container>
                                                     <div layout-gt-xs="row">
                                                         <div flex-gt-xs>
-                                                            <h4>Pick start date</h4>
-                                                            <md-datepicker required
-                                                                           ng-model="startDate"
-                                                                           md-placeholder="Start date"></md-datepicker>
+                                                            <md-input-container>
+                                                                <h4>Pick start date</h4>
+                                                                <md-datepicker required
+                                                                               ng-model="startDate"
+                                                                               name="startDate"
+                                                                               md-placeholder="Start date"></md-datepicker>
+                                                                <div ng-messages="complaintReportForm.startDate.$error"
+                                                                     role="alert">
+                                                                    <div ng-message="required">Start date is required.</div>
+                                                                </div>
+                                                            </md-input-container>
                                                         </div>
                                                         <div flex-gt-xs>
-                                                            <h4>Pick end date</h4>
-                                                            <md-datepicker required
-                                                                           ng-model="endDate"
-                                                                           md-placeholder="End date"></md-datepicker>
+                                                            <md-input-container>
+                                                                <h4>Pick end date</h4>
+                                                                <md-datepicker required
+                                                                               ng-model="endDate"
+                                                                               name="endDate"
+                                                                               md-placeholder="End date"></md-datepicker>
+                                                                <div ng-messages="complaintReportForm.endDate.$error"
+                                                                     role="alert">
+                                                                    <div ng-message="required">End date is required.</div>
+                                                                </div>
+                                                            </md-input-container>
                                                         </div>
                                                     </div>
                                                 </md-content>

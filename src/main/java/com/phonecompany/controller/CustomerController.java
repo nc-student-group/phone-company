@@ -41,7 +41,6 @@ public class CustomerController {
     private UserService userService;
     private VerificationTokenService verificationTokenService;
     private ConfirmationEmailCreator confirmMessageCreator;
-    private PasswordAssignmentEmailCreator passwordAssignmentEmailCreator;
     private EmailService<Customer> emailService;
 
     @Autowired
@@ -50,31 +49,27 @@ public class CustomerController {
                               UserService userService,
                               VerificationTokenService verificationTokenService,
                               ConfirmationEmailCreator confirmMessageCreator,
-                              PasswordAssignmentEmailCreator passwordAssignmentEmailCreator,
                               EmailService<Customer> emailService) {
         this.customerService = customerService;
         this.addressService = addressService;
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
         this.confirmMessageCreator = confirmMessageCreator;
-        this.passwordAssignmentEmailCreator = passwordAssignmentEmailCreator;
         this.emailService = emailService;
     }
 
     @Validate
     @RequestMapping(method = POST, value = "/api/customers")
     public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
-        LOG.debug("Customer retrieved from the http request: " + customer);
-//        Customer persistedCustomer = this.customerService.save(customer);
-//        LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
-//        VerificationToken persistedToken = this.verificationTokenService
-//                .saveTokenForUser(persistedCustomer);
-//        SimpleMailMessage confirmationMessage =
-//                this.confirmMessageCreator.constructMessage(persistedToken);
-//        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
-//        emailService.sendMail(confirmationMessage, persistedCustomer);
-//        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
-    return null;
+        Customer persistedCustomer = this.customerService.save(customer);
+        LOG.debug("Customer persisted with an id: " + persistedCustomer.getId());
+        VerificationToken persistedToken = this.verificationTokenService
+                .saveTokenForUser(persistedCustomer);
+        SimpleMailMessage confirmationMessage =
+                this.confirmMessageCreator.constructMessage(persistedToken);
+        LOG.info("Sending email confirmation message to: {}", persistedCustomer.getEmail());
+        emailService.sendMail(confirmationMessage, persistedCustomer);
+        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/api/customers/empty-customer")
@@ -117,16 +112,7 @@ public class CustomerController {
 
     @RequestMapping(method = POST, value = "/api/customer/save")
     public ResponseEntity<?> saveCustomerByAdmin(@RequestBody Customer customer) {
-        LOG.debug("Customer retrieved from the http request: " + customer);
-        if (customerService.findByEmail(customer.getEmail()) == null) {
-            customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
-            SimpleMailMessage confirmationMessage =
-                    this.passwordAssignmentEmailCreator.constructMessage(customer);
-            LOG.info("Sending email confirmation message to: {}", customer.getEmail());
-            emailService.sendMail(confirmationMessage, customer);
-        }
-        Customer persistedCustomer = this.customerService.save(customer);
-        return new ResponseEntity<>(persistedCustomer, HttpStatus.CREATED);
+        return new ResponseEntity<>(this.customerService.saveByAdmin(customer), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = GET, value = "/api/customers/logged-in-user")
@@ -153,7 +139,7 @@ public class CustomerController {
         LOG.debug("Customer retrieved from the http request: {}", customer);
 
         this.customerService.update(customer);
-        if(customer.getAddress()!=null){
+        if (customer.getAddress() != null) {
             this.addressService.update(customer.getAddress());
         }
         return new ResponseEntity<>(HttpStatus.OK);
