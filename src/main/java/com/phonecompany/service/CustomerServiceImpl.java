@@ -164,9 +164,9 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     private Query buildQueryForCustomersTable(int page, int size, long regionId, String status, String partOfEmail,
                                               String partOfName, String selectedPhone, String partOfCorporate,
                                               int orderBy, String orderByType) {
-        Query.Builder builder = new Query.Builder("dbuser inner join address on dbuser.address_id = address.id " +
+        Query.Builder builder = new Query.Builder("dbuser left join address on dbuser.address_id = address.id " +
                 "left join corporate on dbuser.corporate_id = corporate.id " +
-                "inner join region on address.region_id = region.id");
+                "left join region on address.region_id = region.id");
         builder.where();
         builder.addLikeCondition("dbuser.email", partOfEmail)
                 .and().openBracket().addLikeCondition("dbuser.firstname", partOfName)

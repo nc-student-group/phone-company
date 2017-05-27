@@ -110,12 +110,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
             response.put("tariffsCount",
                     this.getCountTariffsAvailableForCustomer(customer.getAddress().getRegion().getId()));
         } else {
-            if (customer.getRepresentative()) {
-                response.put("tariffs", this.getTariffsAvailableForCorporate(page, size));
-                response.put("tariffsCount", this.getCountTariffsAvailableForCorporate());
-            } else {
-                throw new ConflictException("You aren't representative of your company.");
-            }
+            response.put("tariffs", this.getTariffsAvailableForCorporate(page, size));
+            response.put("tariffsCount", this.getCountTariffsAvailableForCorporate());
         }
         return response;
     }
@@ -363,7 +359,7 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     @Override
     public Map<String, Object> getTariffsAvailableForCorporatePaged(int page, int size) {
         Map<String, Object> response = new HashMap<>();
-        response.put("tariffs", this.tariffDao.getTariffsAvailableForCorporate (page, size));
+        response.put("tariffs", this.tariffDao.getTariffsAvailableForCorporate(page, size));
         response.put("tariffsCount", this.tariffDao.getCountTariffsAvailableForCorporate());
         return response;
     }
@@ -450,8 +446,8 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
         Map<String, Object> response = new HashMap<>();
 
         Query query = queryBuilder.build();
-        response.put("tariffs", tariffDao.executeForList(query.getQuery(),query.getPreparedStatementParams().toArray()));
-        response.put("entitiesSelected", tariffDao.executeForInt(query.getCountQuery(),query.getCountParams().toArray()));
+        response.put("tariffs", tariffDao.executeForList(query.getQuery(), query.getPreparedStatementParams().toArray()));
+        response.put("entitiesSelected", tariffDao.executeForInt(query.getCountQuery(), query.getCountParams().toArray()));
         return response;
     }
 }
