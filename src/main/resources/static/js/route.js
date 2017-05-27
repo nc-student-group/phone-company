@@ -203,6 +203,11 @@
                 templateUrl: 'view/client/serviceDetail.html',
                 controller: 'ServiceDetailController'
             });
+        $routeProvider.when('/frontPage/services/:id',
+            {
+                templateUrl: 'view/frontPage/serviceDetail.html',
+                controller: 'FrontPageServiceDetailController'
+            });
         $routeProvider.when('/client/tariffs/available',
             {
                 templateUrl: 'view/client/allTariffs.html',

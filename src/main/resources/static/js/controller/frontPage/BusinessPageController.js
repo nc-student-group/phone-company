@@ -88,5 +88,8 @@ angular.module('phone-company').controller('BusinessPageController', [
             };
         }
 
+        $scope.showServiceDetails = function (id) {
+            $location.path("/frontPage/services/" + id);
+        };
 
     }]);

@@ -12,7 +12,7 @@
         <intercept-url pattern="/js/**" access="permitAll()"/>
         <intercept-url pattern="/favicon.ico" access="permitAll()"/>
         <intercept-url pattern="/index" access="permitAll()"/>
-        <intercept-url pattern="/frontPage" access="permitAll()"/>
+        <intercept-url pattern="/frontPage/**" access="permitAll()"/>
         <intercept-url pattern="/businessPage" access="permitAll()"/>
         <intercept-url pattern="/individualPage" access="permitAll()"/>
         <intercept-url pattern="/register" access="permitAll()"/>
@@ -36,7 +36,7 @@
         <intercept-url pattern="/api/services/empty-service" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
         <intercept-url pattern="/api/services/categories" access="permitAll()"/>
         <intercept-url pattern="/api/services/category/**" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT')"/>
-        <intercept-url pattern="/api/services" method="GET" access="hasAnyRole('CSR', 'ADMIN', 'CLIENT','PMG')"/>
+        <intercept-url pattern="/api/services/**" method="GET" access="permitAll()"/>
         <intercept-url pattern="/api/services/current/customer/**" access="hasAnyRole('CSR', 'ADMIN','PMG')"/>
         <intercept-url pattern="/api/services/history/customer/**" method="GET" access="hasAnyRole('CSR', 'ADMIN','PMG')"/>
         <intercept-url pattern="/api/services/resume" method="PATCH" access="hasAnyRole('CLIENT','CSR', 'ADMIN')"/>
