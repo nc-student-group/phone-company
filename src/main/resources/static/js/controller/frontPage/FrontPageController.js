@@ -74,5 +74,9 @@ angular.module('phone-company').controller('FrontPageController', [
             $location.path("/frontPage/marketing-campaign/" + marketingCampaignId);
         };
 
+        $scope.showServiceDetails = function (id) {
+            $location.path("/frontPage/services/" + id);
+        };
+
 
     }]);

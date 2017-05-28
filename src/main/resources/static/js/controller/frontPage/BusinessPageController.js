@@ -86,7 +86,13 @@ angular.module('phone-company').controller('BusinessPageController', [
             $scope.showMore = function () {
                 $scope.pageSize = $scope.pageSize + 3;
             };
-        }
+        };
 
+        $scope.tariffClick = function (tariffId) {
+            $location.path("/frontPage/tariff/" + tariffId);
+        };
+        $scope.showServiceDetails = function (id) {
+            $location.path("/frontPage/services/" + id);
+        };
 
     }]);

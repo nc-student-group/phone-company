@@ -36,6 +36,11 @@
                 templateUrl: 'view/frontPage/marketingCampaignDetail.html',
                 controller: 'FrontMarketingCampaignDetailController'
             });
+        $routeProvider.when('/frontPage/tariff/:id',
+            {
+                templateUrl: 'view/frontPage/tariffDetail.html',
+                controller: 'FrontTariffDetailController'
+            });
         $routeProvider.when('/frontPage',
             {
                 templateUrl: 'view/frontPage/welcomePage.html',
@@ -202,6 +207,11 @@
             {
                 templateUrl: 'view/client/serviceDetail.html',
                 controller: 'ServiceDetailController'
+            });
+        $routeProvider.when('/frontPage/services/:id',
+            {
+                templateUrl: 'view/frontPage/serviceDetail.html',
+                controller: 'FrontPageServiceDetailController'
             });
         $routeProvider.when('/client/tariffs/available',
             {

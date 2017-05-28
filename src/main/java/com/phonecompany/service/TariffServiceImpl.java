@@ -326,6 +326,11 @@ public class TariffServiceImpl extends CrudServiceImpl<Tariff>
     }
 
     @Override
+    public Tariff getTariff(long tariffId) {
+        return this.getById(tariffId);
+    }
+
+    @Override
     @Cacheable
     public Map<String, Object> getTariffsTable(int page, int size, String name, int status,
                                                int type, String fromStr, String toStr, int orderBy, String orderByType) {
