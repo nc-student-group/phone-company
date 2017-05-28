@@ -19,14 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/services")
@@ -136,14 +134,14 @@ public class ServicesController {
     @GetMapping("/activate/{serviceId}/{customerId}")
     public ResponseEntity<?> activateServiceForUser(@PathVariable("serviceId") long serviceId,
                                                     @PathVariable("customerId") long customerId) {
-        Customer loggedInCustomer = this.customerService.getById(customerId);
+        Customer customer = this.customerService.getById(customerId);
         CustomerServiceDto activatedCustomerService = this.customerServiceService
-                .activateServiceForCustomer(serviceId, loggedInCustomer, true);
+                .activateServiceForCustomer(serviceId, customer, true);
         this.orderService.saveCustomerServiceOrder(activatedCustomerService, OrderType.ACTIVATION);
         SimpleMailMessage notificationMessage = this
                 .serviceActivationNotificationEmailCreator
                 .constructMessage(activatedCustomerService.getService());
-        this.emailService.sendMail(notificationMessage, loggedInCustomer);
+        this.emailService.sendMail(notificationMessage, customer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -192,7 +190,7 @@ public class ServicesController {
     }
 
     @GetMapping("/current/customer/{id}")
-    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerTariff(@PathVariable("id") long customerId) {
+    public ResponseEntity<?> getCurrentActiveOrSuspendedCustomerServices(@PathVariable("id") long customerId) {
         Customer customer = customerService.getById(customerId);
         List<CustomerServiceDto> customerServices =
                 customerServiceService.getCurrentCustomerServices(customer.getId());
@@ -240,7 +238,7 @@ public class ServicesController {
     @PostMapping(value = "/suspend")
     public ResponseEntity<Void> suspendCustomerService(@RequestBody Map<String, Object> data) {
         customerServiceService.suspendCustomerService(data);
-        //TODO: questionable line
+        //TODO: this questionable line appears to be unavoidable
         CustomerServiceDto customerService = this.customerServiceService.
                 getById((new Long((Integer) data.get("customerServiceId"))));
         SimpleMailMessage notificationMessage = this.serviceSuspensionNotificationEmailCreator

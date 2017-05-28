@@ -9,7 +9,8 @@ angular.module('phone-company').controller('CsrClientDetailController',
         'CustomerService',
         'TariffService',
         'ServicesService',
-        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService, TariffService, ServicesService) {
+        function ($scope, $location, CustomerInfoService, $rootScope, $mdDialog, $routeParams, CustomerService,
+                  TariffService, ServicesService) {
             console.log('This is CsrClientDetailController');
             $scope.activePage = 'clients';
             $scope.ordersFound = 0;

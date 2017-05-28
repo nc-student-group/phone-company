@@ -14,6 +14,7 @@ angular.module('phone-company').controller('ClientServicesController', [
         $scope.shifted = false;
         $scope.page = 0;
         $scope.size = 6;
+        // $scope.currentCategory = 'Internet package';
 
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer().then(function (data) {
@@ -23,37 +24,29 @@ angular.module('phone-company').controller('ClientServicesController', [
             toastr.error(`Error during current customer identification`);
         });
 
-        $scope.gotoAnchor = function (x) {
-            if ($location.hash() !== x) {
-                $location.hash(x);
-            }
-            console.log(`Should scroll`);
-            $anchorScroll();
-        };
-
         $scope.preloader.send = true;
         ServicesService.getAllCategories().then(function (data) {
             $scope.categories = data;
             console.log(`Current category name: ${$scope.categories[0].categoryName}`);
             $scope.currentCategory = $scope.categories[0].categoryName;
             let allCategories = JSON.stringify($scope.categories);
-            $scope.gotoAnchor("service_page_bottom");
             console.log(`All categories: ${allCategories}`);
+            $scope.getAllServices();
         });
 
-        $scope.preloader.send = true;
         $scope.getAllServices = function () {
             ServicesService.getAllServices()
                 .then(function (data) {
+                    console.log(`Requesting for all the services`);
                     $scope.allServices = data;
+                    console.log(`$scope.currentCategory ${$scope.currentCategory}`);
                     $scope.filterServicesByCurrentCategory();
+                    console.log(`Services have been filtered`);
                     $scope.preloader.send = false;
                 }, function () {
                     $scope.preloader.send = false;
                 });
         };
-
-        $scope.getAllServices();
 
         $scope.filterServicesByCurrentCategory = function () {
             $scope.services = $scope.allServices.filter(function (service) {
@@ -65,7 +58,6 @@ angular.module('phone-company').controller('ClientServicesController', [
         $scope.specifyCurrentCategory = function (category) {
             $scope.currentCategory = category;
             $scope.size = 6;
-            $scope.gotoAnchor("service_page_bottom");
             console.log(`New Current category: ${category}`);
             $scope.filterServicesByCurrentCategory();
         };
