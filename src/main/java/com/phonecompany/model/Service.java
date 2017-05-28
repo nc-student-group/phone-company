@@ -24,8 +24,7 @@ public class Service extends DomainEntity {
     private String pictureUrl;
     private String description;
     private String previewDescription;
-    @Min(value = 0, message = "This field can only contain non negative integers")
-    @NotNull(message = "Service should have a duration")
+    @Min(value = 1, message = "This field can only contain non negative integers")
     private int durationInDays;
     @Min(value = 0, message = "This field can only contain non negative integers")
     private int amount;

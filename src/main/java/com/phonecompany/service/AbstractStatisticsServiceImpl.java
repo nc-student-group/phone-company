@@ -74,7 +74,8 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
         List<String> uniqueProductNames = this.extractUniqueValues(statisticsList, Statistics::getItemName);
         for (String itemName : uniqueProductNames) {
             RowDataSet<K, V> row = table.createRow(itemName);
-            this.populateRowDataSet(row, statisticsList, itemName, itemType, definitionRange);
+            FilteringConditions filteringConditions = new FilteringConditions(itemName, itemType, definitionRange);
+            this.populateRowDataSet(row, filteringConditions, statisticsList);
         }
     }
 
@@ -98,19 +99,14 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
     /**
      * Populates {@code RowDataSet} object with the cell representations.
      *
-     * @param row               row to be populated with data
-     * @param statisticsList    source to fetch statistical data from
-     * @param itemName          item name the given row corresponds to
-     * @param itemType          item type the given row corresponds to
-     * @param rangeOfDefinition a set of unique values that represent a
-     *                          range of definition for the given row
+     * @param row row to be populated with data
      */
-    private void populateRowDataSet(RowDataSet<K, V> row, List<Statistics> statisticsList,
-                                    String itemName, ItemType itemType, List<K> rangeOfDefinition) {
+    private void populateRowDataSet(RowDataSet<K, V> row, FilteringConditions filteringConditions,
+                                    List<Statistics> statisticsList) {
 
-        for (K rangePoint : rangeOfDefinition) {
+        for (K rangePoint : filteringConditions.rangeOfDefinition) {
             Filter<Statistics, ?> filterChainHead = this
-                    .createFilterChain(itemName, itemType, rangePoint);
+                    .createFilterChain(filteringConditions.itemName, filteringConditions.itemType, rangePoint);
             List<Statistics> filteredStatistics = filterChainHead.doFilter(statisticsList);
             V value = this.getValue(filteredStatistics);
             row.addKeyValuePair(rangePoint, value);
@@ -140,4 +136,25 @@ public abstract class AbstractStatisticsServiceImpl<K, V>
      * @return numerical representation
      */
     public abstract V getValue(List<Statistics> statisticsList);
+
+    private class FilteringConditions {
+
+        //filtering conditions
+        String itemName;
+        ItemType itemType;
+        List<K> rangeOfDefinition;
+
+        /**
+         * @param itemName          item name data should be filtered by
+         * @param itemType          item type data should be filtered by
+         * @param rangeOfDefinition a set of unique values that represent a range of
+         *                          definition for the data to be filtered
+         */
+        FilteringConditions(String itemName, ItemType itemType,
+                            List<K> rangeOfDefinition) {
+            this.itemName = itemName;
+            this.itemType = itemType;
+            this.rangeOfDefinition = rangeOfDefinition;
+        }
+    }
 }
