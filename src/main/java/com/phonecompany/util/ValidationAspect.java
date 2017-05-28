@@ -15,41 +15,53 @@ import java.util.Set;
 @Component
 public class ValidationAspect {
 
-    private final Logger LOG = LoggerFactory.getLogger(ValidationAspect.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValidationAspect.class);
+
     private ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
     private Validator validator = vf.getValidator();
 
     @Around("@annotation(com.phonecompany.annotations.ValidateParams)")
-    public Object validateParameters(ProceedingJoinPoint joinPoint)
-            throws Throwable {
+    public Object validateParameters(ProceedingJoinPoint joinPoint) throws Throwable {
 
         LOG.debug("Validating arguments for method: {}", joinPoint.getTarget());
-        HashSet<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
 
-        for (Object methodParam : joinPoint.getArgs()) {
-            constraintViolations.addAll(this.getViolationsFromParam(methodParam));
-        }
+        Set<ConstraintViolation<Object>> constraintViolations =
+                this.collectParamViolations(joinPoint.getArgs());
 
-        StringBuilder violationMessageBuilder = new StringBuilder();
+        LOG.debug("There were {} constraint violations among method parameters",
+                constraintViolations.size());
 
-        for (ConstraintViolation<Object> cv : constraintViolations) {
-            violationMessageBuilder.append(this.getViolationMessage(cv));
-        }
-        if (constraintViolations.size() != 0) {
-            throw new ValidationException(violationMessageBuilder.toString());
+        if(!constraintViolations.isEmpty()) {
+            String constraintViolationsMessage = this.getViolationsMessage(constraintViolations);
+            throw new ValidationException(constraintViolationsMessage);
         }
 
         return joinPoint.proceed();
     }
 
+    private Set<ConstraintViolation<Object>> collectParamViolations(Object[] methodParams) {
+        HashSet<ConstraintViolation<Object>> constraintViolations = new HashSet<>();
+        for (Object methodParam : methodParams) {
+            constraintViolations.addAll(this.getViolationsFromParam(methodParam));
+        }
+        return constraintViolations;
+    }
+
     private Set<ConstraintViolation<Object>> getViolationsFromParam(Object methodArg) {
         LOG.debug("Validating argument: {}", methodArg);
-
         return validator.validate(methodArg);
     }
 
-    private String getViolationMessage(ConstraintViolation<Object> cv) {
+    private String getViolationsMessage(Set<ConstraintViolation<Object>> constraintViolations) {
+        StringBuilder violationMessageBuilder = new StringBuilder();
+        for (ConstraintViolation<Object> violation : constraintViolations) {
+            violationMessageBuilder.append(this.stringifyViolation(violation));
+        }
+        return violationMessageBuilder.toString();
+    }
+
+    private String stringifyViolation(ConstraintViolation<Object> violation) {
         return String.format("property: [%s], value: [%s], message: [%s] \n",
-                cv.getPropertyPath(), cv.getInvalidValue(), cv.getMessage());
+                violation.getPropertyPath(), violation.getInvalidValue(), violation.getMessage());
     }
 }

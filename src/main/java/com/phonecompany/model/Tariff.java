@@ -7,6 +7,7 @@ import com.phonecompany.config.datetime_config.LocalDateTimeDeserializer;
 import com.phonecompany.config.datetime_config.LocalDateTimeSerializer;
 import com.phonecompany.model.enums.ProductStatus;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -14,7 +15,6 @@ public class Tariff extends DomainEntity {
 
     @NotNull(message = "Tariff name must not be null")
     private String tariffName;
-    @NotNull(message = "Product status must not be null")
     private ProductStatus productStatus;
     @NotNull(message = "Internet must not be null")
     private String internet;
@@ -31,12 +31,13 @@ public class Tariff extends DomainEntity {
     @NotNull(message = "IsCorporate must not be null")
     @JsonProperty(value = "isCorporate")
     private boolean isCorporate;
-    @NotNull(message = "Creation date must not be null")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate creationDate;
+    @Min(value = 0, message = "Discount value cannot be less than zero")
     private double discount;
     private String pictureUrl;
+    @Min(value = 0, message = "Price cannot be less than zero")
     private double price;
 
     public Tariff() {

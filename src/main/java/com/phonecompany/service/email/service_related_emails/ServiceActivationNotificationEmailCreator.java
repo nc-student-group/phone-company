@@ -22,7 +22,7 @@ public class ServiceActivationNotificationEmailCreator extends AbstractEmailCrea
     @Override
     public String getEmailBody(Service service) {
         Context context = new Context();
-        context.setVariable("tariffName", service.getServiceName());
+        context.setVariable("serviceName", service.getServiceName());
         return this.templateEngine
                 .process("service-activation-notification", context);
     }

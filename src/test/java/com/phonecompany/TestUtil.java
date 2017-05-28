@@ -25,16 +25,16 @@ public class TestUtil {
 
         List<Service> sampleServices = new ArrayList<>();
 
-        sampleServices.add(new Service(1L, "Service1", 115,
-                ProductStatus.ACTIVATED, 0, null, null, null, null, 0, 0));
-        sampleServices.add(new Service(2L, "Service2", 100,
-                ProductStatus.ACTIVATED, 0, null, null, null, null, 0, 0));
-        sampleServices.add(new Service(3L, "Service3", 260,
-                ProductStatus.ACTIVATED, 0, null, null, null, null, 0, 0));
-        sampleServices.add(new Service(4L, "Service4", 180,
-                ProductStatus.ACTIVATED, 0, null, null, null, null, 0, 0));
-        sampleServices.add(new Service(5L, "Service5", 200,
-                ProductStatus.ACTIVATED, 0, null, null, null, null, 0, 0));
+        sampleServices.add(new Service(1L, "Service1", 50.99,
+                ProductStatus.ACTIVATED, 0.0, null, null, null, null, 0, 0));
+        sampleServices.add(new Service(2L, "Service2", 100.99,
+                ProductStatus.ACTIVATED, 0.0, null, null, null, null, 0, 0));
+        sampleServices.add(new Service(3L, "Service3", 260.99,
+                ProductStatus.ACTIVATED, 0.0, null, null, null, null, 0, 0));
+        sampleServices.add(new Service(4L, "Service4", 180.99,
+                ProductStatus.ACTIVATED, 0.0, null, null, null, null, 0, 0));
+        sampleServices.add(new Service(5L, "Service5", 200.99,
+                ProductStatus.ACTIVATED, 0.0, null, null, null, null, 0, 0));
 
         return sampleServices;
     }
@@ -43,13 +43,13 @@ public class TestUtil {
 
     public static Service getNonExistentService() {
         ProductCategory productCategory = new ProductCategory(1L, "Sample category", "Sample units");
-        return new Service(1000L, "Service under test", 115,
-                ProductStatus.ACTIVATED, 0, productCategory, null, null, null, 0, 0);
+        return new Service(1000L, "Service under test", 115.99,
+                ProductStatus.ACTIVATED, 0.0, productCategory, null, null, null, 0, 0);
     }
 
     public static Service getExistingService() {
         return new Service(5L, "3G ONLINE 8GB", 129.99,
-                ProductStatus.ACTIVATED, 0, null,
+                ProductStatus.ACTIVATED, 0.0, null,
                 "https://s3-us-west-2.amazonaws.com/contentorders/service/218969357/picture.png",
                 null, null, 30, 15);
     }

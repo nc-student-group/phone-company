@@ -22,7 +22,6 @@ import static com.phonecompany.util.TypeMapper.toSqlDate;
 public class TariffDaoImpl extends JdbcOperationsImpl<Tariff> implements TariffDao {
 
     private QueryLoader queryLoader;
-    private static final Logger LOG = LoggerFactory.getLogger(TariffDaoImpl.class);
 
     @Autowired
     public TariffDaoImpl(QueryLoader queryLoader) {

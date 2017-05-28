@@ -2,6 +2,7 @@ package com.phonecompany.service;
 
 import com.phonecompany.annotations.CacheClear;
 import com.phonecompany.annotations.Cacheable;
+import com.phonecompany.annotations.ServiceStereotype;
 import com.phonecompany.dao.interfaces.MarketingCampaignDao;
 import com.phonecompany.dao.interfaces.MarketingCampaignServicesDao;
 import com.phonecompany.dao.interfaces.TariffRegionDao;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
+@ServiceStereotype
 public class MarketingCampaignServiceImpl extends CrudServiceImpl<MarketingCampaign>
         implements MarketingCampaignService {
 

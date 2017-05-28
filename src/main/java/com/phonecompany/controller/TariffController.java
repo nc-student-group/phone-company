@@ -1,6 +1,7 @@
 package com.phonecompany.controller;
 
 
+import com.phonecompany.annotations.ValidateParams;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.Tariff;
 import com.phonecompany.model.enums.ProductStatus;
@@ -75,6 +76,7 @@ public class TariffController {
         return new Tariff();
     }
 
+    @ValidateParams
     @PostMapping
     public ResponseEntity<?> addSingleTariff(@RequestBody Tariff tariff) {
         Tariff savedTariff = tariffService.addNewTariff(tariff);
@@ -84,6 +86,7 @@ public class TariffController {
         return new ResponseEntity<Object>(savedTariff, HttpStatus.CREATED);
     }
 
+    @ValidateParams
     @PutMapping
     public ResponseEntity<?> updateTariffSingle(@RequestBody Tariff tariff) {
         Tariff updatedTariff = tariffService.updateTariff(tariff);

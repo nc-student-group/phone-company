@@ -3,6 +3,8 @@ package com.phonecompany.model;
 import com.phonecompany.model.enums.ProductStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -10,38 +12,32 @@ public class Service extends DomainEntity {
 
     @NotNull(message = "Service name must not be null")
     private String serviceName;
-    @Pattern(regexp = "^[^0-]([0-9]*(\\.\\d{2}))$",
-            message = "This field should be in decimal format, like 99.99 and not be negative")
-    @NotNull(message = "Price must not be null")
+    @Min(value = 0, message = "Price must be greater than zero")
     private double price;
-    @NotNull(message = "Product status must not be null")
-    private ProductStatus productStatus = ProductStatus.ACTIVATED; //product ACTIVATED by default
-    @Pattern(regexp = "^[0-9][0-9]?$|^100$", message = "This field can only contain numbers from 0 to 100")
+    private ProductStatus productStatus = ProductStatus.ACTIVATED; //product is ACTIVATED by default
+    @Min(value = 0, message = "Discount should be greater than zero")
+    @Max(value = 100, message = "Discount cannot be greater than 100")
     @NotNull(message = "Discount must not be null")
     private double discount;
     @NotNull(message = "Product category must not be null")
     private ProductCategory productCategory;
-    @NotNull(message = "Picture URL must not be null")
     private String pictureUrl;
-    @NotNull(message = "Description must not be null")
     private String description;
-    @NotNull(message = "Preview description must not be null")
     private String previewDescription;
-    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
-    @NotNull(message = "Duration must not be null")
+    @Min(value = 0, message = "This field can only contain non negative integers")
+    @NotNull(message = "Service should have a duration")
     private int durationInDays;
-    @Pattern(regexp = "^[1-9][0-9]*$", message = "This field can only contain non negative integers")
-    @NotNull(message = "Duration must not be null")
+    @Min(value = 0, message = "This field can only contain non negative integers")
     private int amount;
 
     public Service() {
     }
 
     public Service(Long id, String serviceName,
-                   double price, ProductStatus productStatus, double discount,
+                   Double price, ProductStatus productStatus, Double discount,
                    ProductCategory productCategory, String pictureUrl,
                    String description, String previewDescription,
-                   int durationInDays, int amount) {
+                   Integer durationInDays, Integer amount) {
         super(id);
         this.serviceName = serviceName;
         this.price = price;

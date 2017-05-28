@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-@Component("tariffSuspensionNotificationEmailCreator")
+@Component
 public class TariffSuspensionNotificationEmailCreator extends AbstractEmailCreator<Tariff>
         implements MailMessageCreator<Tariff> {
 

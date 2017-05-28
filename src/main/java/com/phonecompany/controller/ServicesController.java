@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.annotations.ValidateParams;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.CustomerServiceDto;
 import com.phonecompany.model.ProductCategory;
@@ -108,6 +109,7 @@ public class ServicesController {
         return new ResponseEntity<>(servicePagingResult, HttpStatus.OK);
     }
 
+    @ValidateParams
     @PostMapping
     public ResponseEntity<?> addService(@RequestBody Service service) {
         LOG.debug("Service parsed from the request body: {}", service);
@@ -172,6 +174,7 @@ public class ServicesController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ValidateParams
     @PatchMapping
     public ResponseEntity<?> updateService(@RequestBody Service service) {
         LOG.debug("Service to be updated: ", service);

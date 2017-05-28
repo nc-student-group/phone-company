@@ -1,5 +1,6 @@
 package com.phonecompany.controller;
 
+import com.phonecompany.annotations.ValidateParams;
 import com.phonecompany.model.Complaint;
 import com.phonecompany.model.User;
 import com.phonecompany.service.email.customer_related_emails.ComplaintChangeStatusEmailCreator;
@@ -40,6 +41,7 @@ public class ComplaintController {
         this.emailService = emailService;
     }
 
+    @ValidateParams
     @PostMapping("/customer")
     public ResponseEntity<?> createComplaint(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);
@@ -50,6 +52,7 @@ public class ComplaintController {
         return new ResponseEntity<>(createdComplaint, HttpStatus.OK);
     }
 
+    @ValidateParams
     @PostMapping("/csr")
     public ResponseEntity<?> createComplaintByCsr(@RequestBody Complaint complaint) {
         LOG.debug("Trying to add complaint {}", complaint);

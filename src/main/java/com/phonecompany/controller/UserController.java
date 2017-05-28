@@ -66,10 +66,7 @@ public class UserController {
 
     @GetMapping("/api/users/logged-in-user")
     public User getUser() {
-        User loggedInUser = this.userService.getCurrentlyLoggedInUser();
-        LOG.debug("User retrieved from security context: {}", loggedInUser);
-
-        return loggedInUser;
+        return this.userService.getCurrentlyLoggedInUser();
     }
 
     @GetMapping("/api/login/try")
