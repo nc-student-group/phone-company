@@ -47,7 +47,7 @@ public class OrderServiceImpl extends CrudServiceImpl<Order>
         LocalDate currentDate = LocalDate.now();
         Order order =
                 new Order(customerService, orderType,
-                        OrderStatus.CREATED, currentDate, currentDate);
+                        OrderStatus.DONE, currentDate, currentDate);
         return super.save(order);
     }
 

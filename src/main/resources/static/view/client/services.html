@@ -16,7 +16,9 @@
                             <div ng-repeat="s in services | limitTo:size" class="col-md-4">
                                 <figure class="snip1174 blue">
                                     <p ng-hide="s.discount > 0 && s.discount < 100"
-                                       class="service-price">{{s.price | number : 2}} &#8372;</p>
+                                       class="service-price">
+                                        {{s.price | number : 2}} &#8372;
+                                    </p>
                                     <p ng-show="s.discount > 0 && s.discount < 100"
                                        class="service-price"
                                        style="text-decoration: line-through">
@@ -46,7 +48,6 @@
                             Show more
                         </p>
                     </md-content>
-                    <div id="service_page_bottom"></div>
                 </div>
             </div>
         </div>

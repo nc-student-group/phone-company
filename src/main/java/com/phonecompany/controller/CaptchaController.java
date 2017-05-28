@@ -4,6 +4,7 @@ import com.phonecompany.service.interfaces.CaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -12,6 +13,13 @@ import org.springframework.web.bind.annotation.*;
 public class CaptchaController {
 
     private CaptchaService captchaService;
+
+    public static void main(String[] args) {
+        String password = "root";
+        ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder();
+        String s = shaPasswordEncoder.encodePassword(password, null);
+        System.out.println(s);
+    }
 
     @Autowired
     public CaptchaController(CaptchaService captchaService) {
