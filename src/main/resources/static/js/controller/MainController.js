@@ -10,37 +10,70 @@ angular.module('phone-company').controller('MainController', [
         console.log('This is MainController');
 
         $scope.preloader = {send: false};
+        $scope.homePage = 'Home Page';
+        $scope.logIn = 'Log in';
+        $scope.loginLink = '/#/login';
 
         $scope.loginOrUserPage = {
-            name: "Log in",
-            action: "/#/login"
+            name: $scope.logIn,
+            action: $scope.loginLink
         };
+
+        LoginService.tryLogin().then(function (response) {
+            console.log('Currently logged in role is: ' + response);
+
+            if (response == 'UNAUTHORIZED') {
+                $scope.loginOrUserPage.name = $scope.logIn;
+                $scope.loginOrUserPage.action = $scope.loginLink;
+            } else {
+                $scope.loginOrUserPage.name = $scope.homePage;
+                $scope.loginOrUserPage.action = '/#/' + response.toString().toLowerCase();
+            }
+
+        });
+
 
         $scope.getSidebar = function () {
             var role = $location.$$path.split('/')[1];
-            if (role == 'csr') {
+            if (role === 'csr') {
                 return '../../view/csr/csrSidebar.html';
             }
-            if (role == 'admin') {
+            if (role === 'admin') {
                 return '../../view/admin/adminSidebar.html';
+            }
+            if (role === 'pmg') {
+                return '../../view/pmg/pmgSidebar.html';
+            }
+            if (role === 'client') {
+                return '../../view/client/clientSidebar.html';
             }
         };
 
         $scope.getHeader = function () {
             var role = $location.$$path.split('/')[1];
-            if (role == 'csr') {
+            if (role === 'csr') {
                 return '../../view/csr/csrHeader.html';
             }
-            if (role == 'admin') {
+            if (role === 'admin') {
                 return '../../view/admin/adminHeader.html';
             }
+            if (role === 'pmg') {
+                return '../../view/pmg/pmgHeader.html';
+            }
+            if (role === 'client') {
+                return '../../view/client/clientHeader.html';
+            }
+        };
+
+        $scope.getFooter = function () {
+            return '../../view/footer.html';
         };
 
         $scope.logout = function () {
             LoginService.logout().then(function () {
                 $location.path("/");
-                $scope.loginOrUserPage.name = 'Log in';
-                $scope.loginOrUserPage.action = '#/login';
+                $scope.loginOrUserPage.name = $scope.logIn;
+                $scope.loginOrUserPage.action = $scope.loginLink;
             });
         };
 

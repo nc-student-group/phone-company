@@ -99,7 +99,7 @@ angular.module('phone-company').controller('LoginController', [
                     LoginService.tryLogin().then(function (response) {
                         var loggedInRole = '/' + response.replace(/['"]+/g, '');
                         console.log('Currently logged in role is: ' + loggedInRole);
-                        $scope.loginOrUserPage.name = 'Home page';
+                        $scope.loginOrUserPage.name = $scope.homePage;
                         $scope.loginOrUserPage.action = '/#' + loggedInRole.toLowerCase();
                         var redirectionUrl = loggedInRole.toLowerCase();
                         console.log('Redirecting to: ' + redirectionUrl);
