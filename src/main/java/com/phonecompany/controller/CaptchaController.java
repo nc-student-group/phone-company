@@ -14,13 +14,6 @@ public class CaptchaController {
 
     private CaptchaService captchaService;
 
-    public static void main(String[] args) {
-        String password = "root";
-        ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder();
-        String s = shaPasswordEncoder.encodePassword(password, null);
-        System.out.println(s);
-    }
-
     @Autowired
     public CaptchaController(CaptchaService captchaService) {
         this.captchaService = captchaService;
