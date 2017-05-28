@@ -1,8 +1,8 @@
 <div class="wrapper">
-    <ng-include src="'../../view/client/clientSidebar.html'"></ng-include>
+    <ng-include src="getSidebar()"></ng-include>
 
     <div class="main-panel">
-        <ng-include src="'../../view/client/clientHeader.html'"></ng-include>
+        <ng-include src="getHeader()"></ng-include>
 
         <div class="content" ng-show="preloader.send === false" >
             <div class="container-fluid">
@@ -113,6 +113,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <ng-include src="getFooter()"></ng-include>
     </div>
 </div>

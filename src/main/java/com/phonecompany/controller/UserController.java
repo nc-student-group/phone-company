@@ -77,7 +77,12 @@ public class UserController {
         } catch (ClassCastException ex) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        LOG.debug("Currently logged in user: {}", loggedInUser);
+        LOG.debug("Currently logged in user: {}", loggedInUser != null ? loggedInUser : "UNAUTHORIZED");
+
+        if (loggedInUser == null) {
+            return new ResponseEntity<>(new Object[]{"UNAUTHORIZED"}, HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(loggedInUser.getRole(), HttpStatus.OK);
     }
 

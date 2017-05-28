@@ -1,7 +1,8 @@
 <div class="wrapper">
-    <ng-include src="'../../view/csr/csrSidebar.html'"></ng-include>
+    <ng-include src="getSidebar()"></ng-include>
+
     <div class="main-panel">
-        <ng-include src="'../../view/csr/csrHeader.html'"></ng-include>
+        <ng-include src="getHeader()"></ng-include>
 
         <div class="content">
             <div class="container-fluid">
@@ -254,14 +255,6 @@
                     </div>
                 </div>
             </div>
-
-            <footer class="footer">
-                <div class="container-fluid">
-                    <p class="copyright">
-                        &copy; 2017 <a href="/#/index">Phone Company</a>, made with love for customers
-                    </p>
-                </div>
-            </footer>
-        </div>
+        <ng-include src="'../../view/footer.html'"></ng-include>
     </div>
 </div>
