@@ -99,10 +99,12 @@ public class CustomerServiceServiceImpl extends CrudServiceImpl<CustomerServiceD
 
     @Override
     public void resumeCustomerService(Order order) {
-        order.getCustomerService().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
-        customerServiceDao.update(order.getCustomerService());
-        order.setOrderStatus(OrderStatus.DONE);
-        orderService.update(order);
+        if(order.getOrderStatus().equals(OrderStatus.CREATED)){
+            order.getCustomerService().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+            customerServiceDao.update(order.getCustomerService());
+            order.setOrderStatus(OrderStatus.DONE);
+            orderService.update(order);
+        }
     }
 
     @Override

@@ -131,11 +131,13 @@ public class CustomerTariffServiceImpl extends CrudServiceImpl<CustomerTariff>
 
     @Override
     public void resumeCustomerTariff(Order order) {
-        LOGGER.debug("RESUMING ORDER ID {}", order.getId());
-        order.getCustomerTariff().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
-        customerTariffDao.update(order.getCustomerTariff());
-        order.setOrderStatus(OrderStatus.DONE);
-        orderService.update(order);
+        if(order.getOrderStatus().equals(OrderStatus.CREATED)){
+            LOGGER.debug("RESUMING ORDER ID {}", order.getId());
+            order.getCustomerTariff().setCustomerProductStatus(CustomerProductStatus.ACTIVE);
+            customerTariffDao.update(order.getCustomerTariff());
+            order.setOrderStatus(OrderStatus.DONE);
+            orderService.update(order);
+        }
     }
 
     @Override
