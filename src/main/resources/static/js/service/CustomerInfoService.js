@@ -12,7 +12,7 @@ angular.module('phone-company').factory('CustomerInfoService',
         const GET_CURRENT_CUSTOMER_TARIFF_BY_CUSTOMER_ID_URL = "api/customer-tariffs/customer/";
         const CURRENTLY_LOGGED_IN_USER_URL = "api/customers/logged-in-user";
         const GET_CURRENT_CUSTOMER_SERVICES_URL = "api/services/current";
-        const CUSTOMERS = "api/customers/";
+        const CUSTOMERS = "api/customers";
         const DEACTIVATE_TARIFF_URL = "api/customer-tariffs/deactivate";
         const DEACTIVATE_SERVICE_URL = "api/services/deactivate";
         const ACTIVATE_SERVICE_URL = "api/services/resume";
@@ -38,12 +38,26 @@ angular.module('phone-company').factory('CustomerInfoService',
             getTariffsHistoryByCustomerId: getTariffsHistoryByCustomerId,
             getTariffsHistoryByCorporateId: getTariffsHistoryByCorporateId,
             getCurrentServicesByCustomerId: getCurrentServicesByCustomerId,
-            getServicesHistoryByCustomerId: getServicesHistoryByCustomerId
+            getServicesHistoryByCustomerId: getServicesHistoryByCustomerId,
+            changeMailingAgreement: changeMailingAgreement
         };
 
         function patchCustomer(customer) {
             let deferred = $q.defer();
-            $http.patch(CUSTOMERS, customer).then(
+            $http.patch(`${CUSTOMERS}/`, customer).then(
+                function (response) {
+                    deferred.resolve(response.data);
+                },
+                function (errResponse) {
+                    console.error(errResponse.toString());
+                    deferred.reject(errResponse);
+                });
+            return deferred.promise;
+        }
+
+        function changeMailingAgreement(customerId, agreementState) {
+            let deferred = $q.defer();
+            $http.put(`${CUSTOMERS}/${customerId}/mailingAgreement/${agreementState}`).then(
                 function (response) {
                     deferred.resolve(response.data);
                 },

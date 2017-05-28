@@ -1,10 +1,7 @@
 package com.phonecompany.controller;
 
-import com.phonecompany.annotations.Cacheable;
 import com.phonecompany.model.Customer;
 import com.phonecompany.model.MarketingCampaign;
-import com.phonecompany.model.MarketingCampaignServices;
-import com.phonecompany.model.Service;
 import com.phonecompany.model.enums.ProductStatus;
 import com.phonecompany.service.email.csr_related_emails.MarketingCampaignActivationNotificationEmailCreator;
 import com.phonecompany.service.interfaces.CustomerService;

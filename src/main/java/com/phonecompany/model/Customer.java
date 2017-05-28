@@ -9,15 +9,11 @@ import javax.validation.constraints.Pattern;
 
 public class Customer extends User {
 
-    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Last name can only contain letters " +
-            "and be longer than 1 symbol")
+    //optional fields
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Second name can only contain letters " +
-            "and be longer than 1 symbol")
     private String secondName;
-    @Pattern(regexp = "[a-zA-Z]{2,}", message = "Last name can only contain letters " +
-            "and be longer than 1 symbol")
     private String lastName;
+    //fields that have to be validated
     @Pattern(regexp = "^\\+38077[0-9]{7}$", message = "Phone should be in format of +38077#######")
     @NotNull(message = "Phone must not be null")
     private String phone;

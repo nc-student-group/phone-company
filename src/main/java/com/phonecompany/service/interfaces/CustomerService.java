@@ -31,4 +31,6 @@ public interface CustomerService extends CrudService<Customer>,
     Customer save(Customer customer);
 
     Customer saveByAdmin(Customer customer);
+
+    void changeMailingAgreement(boolean state, long customerId);
 }

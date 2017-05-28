@@ -66,8 +66,8 @@ public class TariffController {
 
     @GetMapping(value = "/region/{id}/{page}/{size}")
     public Map<String, Object> getTariffsForRegion(@PathVariable("page") int page,
-                                          @PathVariable("size") int size,
-                                          @PathVariable("id") Long regionId) {
+                                                   @PathVariable("size") int size,
+                                                   @PathVariable("id") Long regionId) {
         return tariffService.getTariffsTable(page, size, regionId);
     }
 
@@ -130,7 +130,7 @@ public class TariffController {
 
     @GetMapping(value = "/corporate/available/{page}/{size}")
     public Map<String, Object> getTariffsAvailableForCorporatePaged(@PathVariable("page") int page,
-                                                                  @PathVariable("size") int size) {
+                                                                    @PathVariable("size") int size) {
         return tariffService.getTariffsAvailableForCorporatePaged(page, size);
     }
 

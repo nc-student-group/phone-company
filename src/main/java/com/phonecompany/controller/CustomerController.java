@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -151,5 +152,12 @@ public class CustomerController {
     @GetMapping("/api/customers/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") long id) {
         return new ResponseEntity<Object>(customerService.getById(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/api/customers/{id}/mailingAgreement/{agreementState}")
+    public ResponseEntity<?> changeAgreement(@PathVariable("id") long customerId,
+                                             @PathVariable("agreementState") boolean state) {
+        this.customerService.changeMailingAgreement(state, customerId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
