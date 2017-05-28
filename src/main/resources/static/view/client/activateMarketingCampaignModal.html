@@ -11,8 +11,8 @@
             <div class="row">
                 <div class="col-md-9 modal-label">New tariff plan:</div>
                 <div class="col-md-3 modal-label">New price:</div>
-                <div class="col-md-9 modal-label"><b>"{{marketingCampaign.campaignTariff.tariffRegion.tariff.tariffName}}"</b></div>
-                <div class="col-md-3 modal-label"><b>{{marketingCampaign.campaignTariff.tariffRegion.tariff.price * (1 - marketingCampaign.campaignTariff.tariffRegion.tariff.discount/100)}} uah</b></div>
+                <div class="col-md-9 modal-label"><b>"{{marketingCampaign.tariffRegion.tariff.tariffName}}"</b></div>
+                <div class="col-md-3 modal-label"><b>{{marketingCampaign.tariffRegion.tariff.price * (1 - marketingCampaign.tariffRegion.tariff.discount/100) | number: 2}} uah</b></div>
             </div>
             <div class="row" ng-repeat="mc in marketingCampaign.services">
                 <div class="col-md-9 modal-label">New service:</div>

@@ -223,6 +223,7 @@ angular.module('phone-company').controller('MainController', [
         }
 
         $scope.showActivateMarketingCampaignModalWindow = function (currentTariff, marketingCampaign, preloader) {
+            console.log("MC: ",marketingCampaign);
             $mdDialog.show({
                 controller: ActivateMarketingCampaignDialogController,
                 templateUrl: '../../view/client/activateMarketingCampaignModal.html',

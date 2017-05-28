@@ -128,7 +128,6 @@ public class CustomerController {
         return this.customerService.getSuitableCustomersForService(corporateId);
     }
 
-    @ValidateParams
     @PatchMapping("/api/customers/")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         LOG.debug("Customer retrieved from the http request: {}", customer);

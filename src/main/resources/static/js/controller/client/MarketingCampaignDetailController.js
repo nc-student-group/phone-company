@@ -20,6 +20,7 @@ angular.module('phone-company').controller('MarketingCampaignDetailController', 
             } else {
                 $scope.campaign = data;
                 $scope.tariffId = data.tariffRegion.tariff.id;
+                console.log('MarketingCampaign', $scope.campaign);
             }
         }, function () {
             $scope.preloader.send = false;
