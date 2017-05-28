@@ -56,7 +56,7 @@
         $scope.setMailingAgreement = function () {
             console.log(`Current customer state ${JSON.stringify($scope.customer)}`);
             console.log(`Setting mailing agreement to: ${$scope.customer.isMailingEnabled}`);
-            CustomerInfoService.patchCustomer($scope.customer);
+            CustomerInfoService.changeMailingAgreement($scope.customer.id, $scope.customer.isMailingEnabled);
         };
 
         $scope.preloader.send = true;

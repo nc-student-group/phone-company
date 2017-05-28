@@ -113,6 +113,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
     }
 
     @Override
+    public void changeMailingAgreement(boolean state, long customerId) {
+        LOG.debug("Changing mailing agreement to {}", state);
+        this.customerDao.changeMailingAgreement(state, customerId);
+    }
+
+    @Override
     public void activateCustomerByToken(String token) {
         Customer customer = this.customerDao.getByVerificationToken(token);
         LOG.debug("Customer fetched by verification token: {}", customer);

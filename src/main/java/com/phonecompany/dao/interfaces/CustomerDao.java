@@ -21,4 +21,6 @@ public interface CustomerDao extends JdbcOperations<Customer>,
     List<Customer> getCustomersAgreedForMailing();
 
     List<Customer> getAllCustomersSearch(Query query);
+
+    void changeMailingAgreement(boolean state, long customerId);
 }

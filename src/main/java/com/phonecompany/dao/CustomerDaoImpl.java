@@ -169,4 +169,10 @@ public class CustomerDaoImpl extends AbstractUserDaoImpl<Customer>
     public List<Customer> getAllCustomersSearch(Query query) {
         return executeForList(query.getQuery(), query.getPreparedStatementParams().toArray());
     }
+
+    @Override
+    public void changeMailingAgreement(boolean state, long customerId) {
+        executeUpdate(this.getQuery("set.mailing.agreement"),
+                new Object[]{state, customerId});
+    }
 }
