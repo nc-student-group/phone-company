@@ -122,8 +122,11 @@ public class ComplaintDaoImpl extends JdbcOperationsImpl<Complaint> implements C
             EnumMap<WeekOfMonth, Integer> result = new EnumMap<>(WeekOfMonth.class);
             while (rs.next()) {
                 long weekNumber = rs.getLong("week_number");
+                LOG.debug("Week number: {}", weekNumber);
                 int numberOfOrders = rs.getInt("number_of_complaints");
+                LOG.debug("Number of orders: {}", numberOfOrders);
                 WeekOfMonth weekOfMonth = getEnumValueByDatabaseId(WeekOfMonth.class, weekNumber);
+                LOG.debug("Week of month: {}", weekOfMonth);
                 result.put(weekOfMonth, numberOfOrders);
             }
             return result;
