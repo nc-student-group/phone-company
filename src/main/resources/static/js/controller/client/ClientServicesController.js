@@ -14,7 +14,7 @@ angular.module('phone-company').controller('ClientServicesController', [
         $scope.shifted = false;
         $scope.page = 0;
         $scope.size = 6;
-        // $scope.currentCategory = 'Internet package';
+        $scope.activePage = 'services';
 
         $scope.preloader.send = true;
         CustomerInfoService.getCustomer().then(function (data) {

@@ -8,8 +8,6 @@ import java.util.function.Predicate;
 
 /**
  * Class that provides with a set of filtering predicates
- *
- * @see com.phonecompany.service.xssfHelper.filterChain.DateFilter
  */
 public class FilteringPredicates {
 
