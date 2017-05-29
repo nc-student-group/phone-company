@@ -3,6 +3,7 @@ package com.phonecompany.controller;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.events.OnUserCreationEvent;
+import com.phonecompany.service.email.customer_related_emails.PasswordAssignmentEmailCreator;
 import com.phonecompany.service.email.customer_related_emails.ResetPasswordEmailCreator;
 import com.phonecompany.service.interfaces.EmailService;
 import com.phonecompany.service.interfaces.UserService;
@@ -31,14 +32,18 @@ public class UserController {
     private ApplicationEventPublisher eventPublisher;
     private EmailService<User> emailService;
     private ResetPasswordEmailCreator resetPassMessageCreator;
+    private PasswordAssignmentEmailCreator passwordAssignmentEmailCreator;
 
     @Autowired
     public UserController(UserService userService, ApplicationEventPublisher eventPublisher,
-                          ResetPasswordEmailCreator resetPassMessageCreator, EmailService<User> emailService) {
+                          ResetPasswordEmailCreator resetPassMessageCreator,
+                          EmailService<User> emailService,
+                          PasswordAssignmentEmailCreator passwordAssignmentEmailCreator) {
         this.userService = userService;
         this.eventPublisher = eventPublisher;
         this.resetPassMessageCreator = resetPassMessageCreator;
         this.emailService = emailService;
+        this.passwordAssignmentEmailCreator = passwordAssignmentEmailCreator;
     }
 
 
@@ -91,6 +96,8 @@ public class UserController {
         LOG.info(user.toString());
         if (userService.findByEmail(user.getEmail()) == null) {
             user.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
+            SimpleMailMessage notificationMessage = this.passwordAssignmentEmailCreator.constructMessage(user);
+            this.emailService.sendMail(notificationMessage, user);
             eventPublisher.publishEvent(new OnUserCreationEvent(user));
         }
         User persistedUser = this.userService.save(user);
