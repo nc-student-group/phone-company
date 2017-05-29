@@ -152,6 +152,7 @@ public class UserServiceImpl extends AbstractUserServiceImpl<User>
         } else if (userRole != 0) {
             throw new ConflictException("Incorrect search parameter: user role.");
         }
+        queryBuilder.and().addCondition("role_id <> ?", 4);
 
         if (!status.equals("ALL")) {
             queryBuilder.and().addCondition("status = ?", status);

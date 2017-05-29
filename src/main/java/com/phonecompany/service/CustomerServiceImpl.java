@@ -263,7 +263,7 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
 
     @Override
     public Map<String, Object> getAllCustomersSearch(int page, int size, String email, String phone, String surname, int corporate, int region, String status) {
-        Query.Builder queryBuilder = new Query.Builder("dbuser");
+        Query.Builder queryBuilder = new Query.Builder("dbuser inner join address ON dbuser.address_id = address.id");
         queryBuilder.where();
         queryBuilder.addLikeCondition("email", email);
         queryBuilder.and().addLikeCondition("phone", phone);
@@ -282,7 +282,12 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         } else if (corporate < -1) {
             throw new ConflictException("Search parameters error: corporate.");
         }
+        if(region!=0){
+            queryBuilder.and().addCondition("region_id=?", region);
+        }
         queryBuilder.addPaging(page, size);
+
+
 
         Map<String, Object> response = new HashMap<>();
 

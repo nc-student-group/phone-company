@@ -97,19 +97,25 @@
                 );
             }else if($scope.selectedCategory == "SERVICES"){
                 $scope.preloader.send = true;
-                SearchService.getForServiceCategory($scope.page, $scope.size,$scope.partOfServiceName,$scope.lowerPrice,$scope.upperPrice,$scope.tariffOrServiceStatus).then(
-                    function (data) {
-                        $scope.services=data.services;
-                        $scope.entitiesSelected = data.entitiesSelected;
-                        $scope.inProgress = false;
-                        $scope.preloader.send = false;
-                    },
-                    function(err){
-                        toastr.error("Error");
-                        $scope.inProgress = false;
-                        $scope.preloader.send = false;
-                    }
-                );
+                if($scope.lowerPrice<$scope.upperPrice){
+                    SearchService.getForServiceCategory($scope.page, $scope.size,$scope.partOfServiceName,$scope.lowerPrice,$scope.upperPrice,$scope.tariffOrServiceStatus).then(
+                        function (data) {
+                            $scope.services=data.services;
+                            $scope.entitiesSelected = data.entitiesSelected;
+                            $scope.inProgress = false;
+                            $scope.preloader.send = false;
+                        },
+                        function(err){
+                            toastr.error("Error");
+                            $scope.inProgress = false;
+                            $scope.preloader.send = false;
+                        }
+                    );
+                } else{
+                    toastr.info('Lower price is bigger than upper price')
+                    $scope.inProgress = false;
+                    $scope.preloader.send = false;
+                }
             }
 
         };
@@ -161,7 +167,5 @@
                 $scope.searchUpdate();
             }
         };
-
-
     }
 }());
