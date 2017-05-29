@@ -73,15 +73,15 @@
                                         </div>
                                         <div class="row" style="text-align: center; font-size: 16px; color: #161121"
                                              ng-hide="mc.tariffRegion.tariff.discount > 0 && mc.tariffRegion.tariff.discount <= 100">
-                                            <b>{{mc.tariffRegion.price | number:2}} auh / 30 days</b>
+                                            <b>{{mc.tariffRegion.price | number:2}} uah / 30 days</b>
                                         </div>
                                         <div class="row"
                                              ng-show="mc.tariffRegion.tariff.discount > 0 && mc.tariffRegion.tariff.discount <= 100"
                                              style="text-align: center; font-size: 16px; color: #161121">
                                             <b>{{mc.tariffRegion.price * (1 - mc.tariffRegion.tariff.discount/100) |
-                                                number:2}} auh / 30 days</b>
+                                                number:2}} uah / 30 days</b>
                                             <s style="font-size: 14px; color: red">{{mc.tariffRegion.price | number:2}}
-                                                auh / 30 days</s>
+                                                uah / 30 days</s>
                                         </div>
                                         <div class="row">
                                             <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
