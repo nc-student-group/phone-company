@@ -142,7 +142,7 @@ public class ServiceServiceImpl extends CrudServiceImpl<Service>
      * @param services services discount will be applied to
      * @return modified {@code List} of services
      */
-    private List<Service> applyDiscount(List<Service> services) {
+    public List<Service> applyDiscount(List<Service> services) {
         Customer currentlyLoggedInUser = this.customerService.getCurrentlyLoggedInUser();
         LOG.debug("Currently logged in user: {}", currentlyLoggedInUser);
         if (currentlyLoggedInUser.getRepresentative()) {

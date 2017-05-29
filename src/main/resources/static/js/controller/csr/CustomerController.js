@@ -19,7 +19,7 @@
         $scope.partOfName = "";
         $scope.selectedPhone = "";
         $scope.partOfCorporate = "";
-        $scope.orderBy = 0;
+        $scope.orderBy = 5;
         $scope.orderByType = "ASC";
 
         $scope.emailPattern = /^([a-zA-Z0-9])+([a-zA-Z0-9._%+-])+@([a-zA-Z0-9_.-])+\.(([a-zA-Z]){2,6})$/;

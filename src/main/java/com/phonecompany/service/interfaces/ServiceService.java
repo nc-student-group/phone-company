@@ -29,4 +29,6 @@ public interface ServiceService extends CrudService<Service>,
 
     Map<String, Object> getAllServicesSearch(int page, int size, String name, String status,
                                              int lowerPrice, int upperPrice);
+
+    List<Service> applyDiscount(List<Service> services);
 }

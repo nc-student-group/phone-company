@@ -48,7 +48,6 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
 
     private static final int CHART_HEIGHT = 15;
     private static final int FIRST_ROW_INDEX = 0;
-    private static final String PLURAL_FORM = "S";
     private int distanceBetweenTables = 25;
 
     /**
@@ -84,7 +83,7 @@ public class XSSFServiceImpl<K, V> implements XSSFService<K, V> {
      */
     private void createTable(XSSFSheet sheet, int rowPosition,
                              TableDataSet<K, V> tableDataSet) {
-        String tableName = tableDataSet.getTableDataSetName() + PLURAL_FORM;
+        String tableName = tableDataSet.getTableDataSetName();
         this.createTableHeading(sheet, rowPosition++, tableName);
         RowDataSet<K, V> firstTableRow = tableDataSet.getRowDataSets().get(FIRST_ROW_INDEX);
         this.generateColHeadings(sheet.createRow(rowPosition++), firstTableRow.getRowValues());

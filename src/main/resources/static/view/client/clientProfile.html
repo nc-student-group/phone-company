@@ -103,10 +103,10 @@
                                                             <div class="form-group col-sm-11">
                                                                 <md-input-container class="md-block" flex-gt-sm>
                                                                     <label>Region</label>
-                                                                    <md-select ng-model="customer.address.region"
+                                                                    <md-select ng-model="customer.address.region.id"
                                                                                ng-required="!corporateUser && hasCurrentTariff">
                                                                         <md-option ng-repeat="r in regions"
-                                                                                   ng-value="{{r}}">
+                                                                                   ng-value="{{r.id}}">
                                                                             {{r.nameRegion}}
                                                                         </md-option>
                                                                     </md-select>

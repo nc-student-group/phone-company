@@ -34,7 +34,7 @@ public class UserDaoTest {
         //then
         User user = userDao.getById(1L);
 
-        assertThat(user.getEmail(), is("admin@gmail.com"));
+        assertThat(user.getEmail(), is("phcompadm@gmail.com"));
         assertTrue(encodedRoot.equals(user.getPassword()));
         assertThat(user.getRole(), is(UserRole.ADMIN));
         assertThat(user.getStatus(), is(Status.ACTIVATED));

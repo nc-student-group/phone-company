@@ -314,10 +314,10 @@
                         $location.path('/login');
                         break;
                     }
-                    case 500:
-                        toastr.error("500 error");
-                        // $window.location = './500.html';
-                        break;
+                    // case 500:
+                    //     toastr.error("500 error");
+                    //     $window.location = './500.html';
+                        // break;
                 }
                 return $q.reject(errorResponse);
             }

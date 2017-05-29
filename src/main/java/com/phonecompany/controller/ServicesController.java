@@ -75,7 +75,9 @@ public class ServicesController {
     @GetMapping(value = "/active")
     public Collection<Service> getAllActiveServices() {
         LOG.debug("Fetching all the active services...");
-        return this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
+        List<Service> activeServices = this.serviceService.getServicesByStatus(ProductStatus.ACTIVATED);
+        LOG.debug("Services for client tab");
+        return this.serviceService.applyDiscount(activeServices);
     }
 
     @GetMapping(value = "/activeWithDiscount")

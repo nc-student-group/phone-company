@@ -14,6 +14,7 @@ angular.module('phone-company').controller('ServiceDetailController', [
 
         var currentServiceId = $routeParams['id'];
 
+        $scope.activePage = 'services';
         $scope.preloader.send = true;
 
         ServicesService.getServiceById(currentServiceId)
