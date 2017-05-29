@@ -165,7 +165,7 @@
             });
         $routeProvider.when('/admin/customers',
             {
-                templateUrl: 'view/admin/customers.html',
+                templateUrl: 'view/csr/clients.html',
                 controller: 'CustomerController'
             });
         $routeProvider.when('/admin/search',

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
@@ -94,6 +95,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
         return super.save(customer);
     }
 
+    @Override
+    @Transactional
     public Customer saveByAdmin(Customer customer) {
         if (this.findByEmail(customer.getEmail()) == null) {
             customer.setPassword(new BigInteger(50, new SecureRandom()).toString(32));
@@ -304,7 +307,8 @@ public class CustomerServiceImpl extends AbstractUserServiceImpl<Customer>
                 tariffService.deactivateSingleTariff(customerTariff);
             }
         } else {
-            //TODO DELETE CUSTOMER FROM COMPANY???
+            customer.getCorporate().setId(null);
+            customerDao.update(customer);
         }
     }
 }
