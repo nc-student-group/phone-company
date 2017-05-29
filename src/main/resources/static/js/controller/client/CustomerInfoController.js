@@ -45,7 +45,7 @@
         $scope.servicesPage = 0;
         $scope.size = 5;
         $scope.servicesSize = 5;
-        $scope.passwordPattern = /^(?=.*[\W])(?=[a-zA-Z]).{8,}$/;
+        $scope.passwordPattern = /^(?=.*[\W_])(?=[a-zA-Z]).{8,}$/;
         $scope.textFieldPattern = /^[a-zA-Z]+$/;
         $scope.textFieldPatternWithNumbers = /^[a-zA-Z0-9]+$/;
         $scope.numberPattern = /^[0-9]+$/;
