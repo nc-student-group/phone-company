@@ -23,7 +23,7 @@
                                              ng-show="tariff.discount > 0 && tariff.discount <= 100">
                                             <b>-{{tariff.discount}}%</b></div>
                                     </div>
-                                    <div class="row" style="padding-top: 20px;" ng-hide="user.corporate===true && user.isRepresentative===false">
+                                    <div class="row" style="padding-top: 20px;" ng-hide="user.corporate!=null && user.isRepresentative===false">
                                         <button class="btn btn-info btn-fill col-md-8 col-md-offset-2"
                                                 ng-click="activateClick()">
                                             ACTIVATE
