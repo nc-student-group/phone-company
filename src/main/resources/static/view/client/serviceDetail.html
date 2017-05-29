@@ -71,7 +71,7 @@
                                                 </a>
                                                 </td>
                                                 <td><a ng-click="isProductCategoryAvailable()"
-                                                       ng-hide="customer.corporate != null"
+                                                       ng-hide="customer.corporate != null && customer.isRepresentative === false"
                                                        class="pull-right btn btn-success">Order service</a>
                                                 </td>
                                             </tr>
