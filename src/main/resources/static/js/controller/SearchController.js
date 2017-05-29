@@ -42,9 +42,11 @@
                         $scope.users=data.users;
                         $scope.preloader.send = false;
                         $scope.entitiesSelected = data.entitiesSelected;
+                        $scope.inProgress = false;
                     },
                     function(err){
                         toastr.error("Error");
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }
                 );
@@ -55,9 +57,11 @@
                         $scope.customers=data.customers;
                         $scope.preloader.send = false;
                         $scope.entitiesSelected = data.entitiesSelected;
+                        $scope.inProgress = false;
                     },
                     function(err){
                         toastr.error("Error");
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }
                 );
@@ -67,10 +71,12 @@
                     function (data) {
                         $scope.complaints=data.complaints;
                         $scope.preloader.send = false;
+                        $scope.inProgress = false;
                         $scope.entitiesSelected = data.entitiesSelected;
                     },
                     function(err){
                         toastr.error("Error");
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }
                 );
@@ -80,10 +86,12 @@
                     function (data) {
                         $scope.tariffs=data.tariffs;
                         $scope.preloader.send = false;
+                        $scope.inProgress = false;
                         $scope.entitiesSelected = data.entitiesSelected;
                     },
                     function(err){
                         toastr.error("Error");
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }
                 );
@@ -93,10 +101,12 @@
                     function (data) {
                         $scope.services=data.services;
                         $scope.entitiesSelected = data.entitiesSelected;
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     },
                     function(err){
                         toastr.error("Error");
+                        $scope.inProgress = false;
                         $scope.preloader.send = false;
                     }
                 );
