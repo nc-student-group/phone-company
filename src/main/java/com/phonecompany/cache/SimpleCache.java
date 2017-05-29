@@ -2,11 +2,11 @@ package com.phonecompany.cache;
 
 import java.util.concurrent.*;
 
-public class SimpleCacheImpl<K, V> {
+public class SimpleCache<K, V> {
 
     private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<>();
 
-    public SimpleCacheImpl(long expirationTime) {
+    SimpleCache(long expirationTime) {
         //invokes cache clearing at each requested repetitive time period
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::clear,
                 expirationTime, expirationTime, TimeUnit.SECONDS);
@@ -28,7 +28,7 @@ public class SimpleCacheImpl<K, V> {
         }
     }
 
-    public V getValue(final K key)
+    V getValue(final K key)
             throws InterruptedException, ExecutionException {
         Future<V> future = cache.getOrDefault(key, null);
         try {
@@ -43,7 +43,6 @@ public class SimpleCacheImpl<K, V> {
      * Clean-up the cache entries.
      */
     public void clear() {
-        // Clear the cache
         cache.clear();
     }
 
@@ -51,7 +50,7 @@ public class SimpleCacheImpl<K, V> {
         return cache.size();
     }
 
-    public boolean contains(K key) {
+    boolean contains(K key) {
         return cache.containsKey(key);
     }
 

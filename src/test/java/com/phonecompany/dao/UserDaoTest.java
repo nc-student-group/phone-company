@@ -1,13 +1,9 @@
 package com.phonecompany.dao;
 
-import com.phonecompany.TestUtil;
 import com.phonecompany.dao.interfaces.UserDao;
 import com.phonecompany.model.User;
 import com.phonecompany.model.enums.Status;
 import com.phonecompany.model.enums.UserRole;
-import com.phonecompany.service.interfaces.UserService;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

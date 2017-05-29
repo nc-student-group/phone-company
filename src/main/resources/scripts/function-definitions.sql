@@ -1,5 +1,5 @@
--- Returns number of orders of each three most popular product
--- product of each type made in every day between start date and end date
+-- Returns number of orders of each three most popular products
+-- of each type made in every day between start date and end date
 CREATE OR REPLACE FUNCTION get_services_statistics(start_date DATE,
                                                    end_date   DATE)
   RETURNS TABLE(

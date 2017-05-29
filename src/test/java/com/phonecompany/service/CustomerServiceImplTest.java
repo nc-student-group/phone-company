@@ -18,7 +18,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class CustomerServiceImplTest {
 
     @Mock
@@ -28,81 +27,8 @@ public class CustomerServiceImplTest {
     private CustomerServiceImpl customerService;
 
     @Before
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void shouldReturnCustomerById() {
-        long id = 1L;
-        Customer customer = createCustomer(id);
-
-        when(customerDao.getById(id)).thenReturn(customer);
-
-        customer = customerService.getById(id);
-
-        assertThat(id, equalTo(customer.getId()));
-    }
-
-    @Test
-    public void shouldUpdateCustomer() {
-        long id = 1L;
-        Customer customer = createCustomer(id);
-
-        customerService.update(customer);
-
-        verify(customerDao, atLeastOnce()).update(customer);
-    }
-
-    @Test
-    public void shouldSaveCustomer() {
-        long id = 1L;
-        Customer customer = createCustomer(id);
-
-        customerService.save(customer);
-
-        verify(customerDao, atLeastOnce()).save(customer);
-    }
-
-    @Test
-    public void shouldGetAllCustomers() {
-        long id1 = 1L;
-        Customer customer1 = createCustomer(id1);
-
-        long id2 = 2L;
-        Customer customer2 = createCustomer(id2);
-
-        when(customerDao.getAll()).thenReturn(Arrays.asList(customer1, customer2));
-
-        customerService.getAll();
-
-        assertThat(id1, equalTo(customer1.getId()));
-
-        assertThat(id2, equalTo(customer2.getId()));
-    }
-
-    @Test
-    public void shouldGetStatus() throws Exception {
-    }
-
-    @Test
-    public void shouldConfirmRegistration() throws Exception {
-    }
-
-    @Test
-    public void shouldActivateUserByToken() throws Exception {
-        long id = 1L;
-        String token = "token";
-        Customer customer = createCustomer(id);
-
-        when(customerDao.getByVerificationToken(token)).thenReturn(customer);
-
-        customerService.activateCustomerByToken(token);
-
-        verify(customerDao, atLeastOnce()).update(customer);
-
-        assertThat(Status.ACTIVATED, equalTo(customer.getStatus()));
-
     }
 
     @Test

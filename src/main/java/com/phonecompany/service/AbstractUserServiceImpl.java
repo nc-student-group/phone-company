@@ -26,7 +26,7 @@ public abstract class AbstractUserServiceImpl<T extends User>
     public T getCurrentlyLoggedInUser() {
         Object principal = SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
-        if(principal.equals("anonymousUser")) {
+        if (principal.equals("anonymousUser")) {
             return null;
         }
         SecuredUser securedUser = new SecuredUser(principal);
@@ -38,7 +38,7 @@ public abstract class AbstractUserServiceImpl<T extends User>
     @Override
     public T save(T entity) {
         this.validate(entity);
-        if(entity.getStatus()==null){
+        if (entity.getStatus() == null) {
             entity.setStatus(this.getStatus());
         }
         entity.setPassword(shaPasswordEncoder.encodePassword(entity.getPassword(), null));

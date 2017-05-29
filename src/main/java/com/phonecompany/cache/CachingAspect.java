@@ -23,8 +23,8 @@ public class CachingAspect {
 
     public static final int CACHE_CLEANUP_COUNTDOWN = 200;
     //All values from cache will be cleared before JVM throws OutOfMemoryError
-    private final SimpleCacheImpl<Pair<String, List<Object>>, SoftReference<Object>> cache =
-            new SimpleCacheImpl<>(CACHE_CLEANUP_COUNTDOWN);
+    private final SimpleCache<Pair<String, List<Object>>, SoftReference<Object>> cache =
+            new SimpleCache<>(CACHE_CLEANUP_COUNTDOWN);
 
     /**
      * Places the result of method invocation into the cache.
