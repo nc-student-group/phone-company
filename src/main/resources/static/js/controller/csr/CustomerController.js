@@ -31,6 +31,26 @@
 
         $scope.corporateUser = false;
 
+        $scope.customer = {
+            email: "",
+            fistName: "",
+            secondName: "",
+            lastName: "",
+            phone: "",
+            role: "CLIENT",
+            corporate: {
+                id: ""
+            },
+            isRepresentative: false,
+            address: {
+                region: {id: 0},
+                locality: "",
+                street: "",
+                houseNumber: "",
+                apartmentNumber: ""
+            }
+        };
+
         CorporationService.getAllCorporation().then(
             function (data) {
                 $scope.corporations = data;
@@ -42,25 +62,7 @@
 
         TariffService.getAllRegions().then(function (data) {
             $scope.regions = data;
-            $scope.customer = {
-                email: "",
-                fistName: "",
-                secondName: "",
-                lastName: "",
-                phone: "",
-                role: "CLIENT",
-                corporate: {
-                    id: ""
-                },
-                isRepresentative: false,
-                address: {
-                    region: "",
-                    locality: "",
-                    street: "",
-                    houseNumber: "",
-                    apartmentNumber: ""
-                }
-            };
+
         });
         $scope.createCustomer = createCustomer;
         /**
