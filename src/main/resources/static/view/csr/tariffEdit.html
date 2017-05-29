@@ -153,7 +153,8 @@
                                         </md-button>
                                         <div>
                                             <br/>
-
+                                            <input type="file" name="fileInput" id="fileInput"
+                                                   onchange="angular.element(this).scope().fileChanged(event)"/>
                                         </div>
                                         <div class="bg_crop_modal" ng-show="imageCropStep == 2"
                                              ng-click="clear()"></div>
