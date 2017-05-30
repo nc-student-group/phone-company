@@ -131,7 +131,10 @@
                 .then(function (data) {
                     $scope.orders = data.orders;
                     $scope.ordersFound = data.ordersFound;
+                    $scope.loading = false;
                     console.log($scope.orders);
+                }, function () {
+                    $scope.loading = false;
                 });
         };
         // $scope.loadTariffsHistory();
