@@ -315,7 +315,7 @@
                         break;
                     }
                     case 500:
-                        toastr.error("500 error");
+                        // toastr.error("500 error");
                         // $window.location = './500.html';
                         break;
                 }

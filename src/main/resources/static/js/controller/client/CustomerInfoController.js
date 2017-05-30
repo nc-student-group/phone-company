@@ -108,12 +108,12 @@
                     $scope.preloader.send = false;
                 });
         };
-        // $scope.loadCurrentTariff();
+        $scope.loadCurrentTariff();
 
         $scope.myTariffPlansTabClick = function () {
-            if ($scope.currentTariff == undefined) {
-                $scope.loadCurrentTariff();
-            }
+            // if ($scope.currentTariff == undefined) {
+            //     $scope.loadCurrentTariff();
+            // }
             if ($scope.orders == undefined) {
                 $scope.loadTariffsHistory();
             }
